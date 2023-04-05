@@ -3,7 +3,7 @@ Contributors: cbutlerjr
 Tags: access, authentication, content, login, member, membership, password, protect, register, registration, restriction, subscriber
 Requires at least: 4.0
 Tested up to: 6.1
-Stable tag: 3.4.7
+Stable tag: 3.4.7.1
 
 License: GPLv3
 
@@ -108,7 +108,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.4.4 is a minor update. 3.4.4.2 is a compatibility release for users of WP-Members Advanced Options. Backup prior to upgrading is recommended, but rollback is possible. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.4.7 is a minor update. 3.4.7.1 is a compatibility release for users integrating WP-Members with WooCommerce. Backup prior to upgrading is recommended, but rollback is possible. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -136,8 +136,13 @@ WP-Members 3.4.4 is a minor update. 3.4.4.2 is a compatibility release for users
 
 * @todo WP-Members pluggable deprecated for use in theme functions.php (wpmem will be initialized when plugins are loaded).  If you have any WP-Members pluggable functions that load in the theme functions.php, you'll need to move these to another location, such as a custom plugin file.  Keep in mind, pluggable functions are no longer the preferred way of customizing (and have not been for many years) as most customizations, if not all, can be handled by using the plugin's filter and action hooks.
 
+= 3.4.7.1 =
+
+* Fixes some compatibility issues when the plugin is used along with WooCommerce.  Specifically, there is a bug fix in the new WC integration object, as well as some fixes for integrating WP-Members fields into the WC account form and checkout form.
+
 = 3.4.7 =
 
+* Code improvement and database upgrade for admin user search functions; removes the wp_wpmembers_user_search_keys table and replaces it with wp_wpmembers_user_search_crud.
 * Code improvement in the password reset function for situations where an error may result in an empty user object.
 * Code improvement in REST API filtering of blocked content for situations where there may be additional (i.e. custom) values (such as those created by page builders).
 * Code improvement in hidden posts checking in case the "post__not_in" query_var is not set.
@@ -155,8 +160,8 @@ WP-Members 3.4.4 is a minor update. 3.4.4.2 is a compatibility release for users
 * Moved WooCommerce options out of "new feature" settings and expanded options.
 * Added option to add WP-Members fields to the WooCommerce My Account user profile update.
 * Added option to restrict WooCommerce product purchase if the product is set as restricted (requires that WC "product" custom post type be enabled for WP-Members).
-* Fix bug in wpmem_add_membership_to_post().
 * Added wpmem_remove_membership_from_post() to the API.
+* Fix bug in wpmem_add_membership_to_post().
 
 = 3.4.6 =
 

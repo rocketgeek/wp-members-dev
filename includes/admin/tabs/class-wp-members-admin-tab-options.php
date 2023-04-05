@@ -204,7 +204,7 @@ class WP_Members_Admin_Tab_Options {
 								<?php
 									$woo_options[] = array(__('WooCommerce Checkout', 'wp-members' ),'wpmem_settings_add_woo_checkout_fields',__('Add WP-Members fields to WooCommerce registration during checkout','wp-members'),'add_checkout_fields');
 									$woo_options[] = array(__('WooCommerce My Account', 'wp-members' ),'wpmem_settings_add_woo_my_account_fields',__('Add WP-Members fields to WooCommerce My Account registration','wp-members'),'add_my_account_fields');
-									$woo_options[] = array(__('WooCommerce Update', 'wp-members' ),'wpmem_settings_add_woo_update_fields',__('Add WP-Members fields to WooCommerce My Account user profile update','wp-members'),'add_update_fields');
+									//$woo_options[] = array(__('WooCommerce Update', 'wp-members' ),'wpmem_settings_add_woo_update_fields',__('Add WP-Members fields to WooCommerce My Account user profile update','wp-members'),'add_update_fields');
 									$woo_options[] = array(__('Restrict Product Purchase', 'wp-members' ),'wpmem_settings_add_restrict_woo_products',__('If a WooCommerce product is restricted, it will not be purchasable','wp-members'),'product_restrict');
 								?>
 								<ul><?php
@@ -617,8 +617,14 @@ class WP_Members_Admin_Tab_Options {
 				foreach ( $val as $subkey => $subval ) {
 					$val[ $subkey ] = ( is_numeric( $subval ) ) ? get_page_link( $subval ) : $subval;
 				}
+				$wpmem->{$key} = $val;
+			} elseif ( 'woo' == $key ) {
+				foreach ( $val as $subkey => $subval ) {
+					$wpmem->woo->{$subkey} = $subval;
+				}
+			} else {
+				$wpmem->{$key} = $val;
 			}
-			$wpmem->{$key} = $val;
 		}
 
 		if ( isset( $_POST['wpmem_settings_optin'] ) && 0 == $wpmem->optin ) {
