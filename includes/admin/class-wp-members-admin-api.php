@@ -42,6 +42,14 @@ class WP_Members_Admin_API {
 	public $dialogs = array();
 
 	/**
+	 * Container for user search.
+	 * 
+	 * @since 3.4.7
+	 * @access public
+	 */
+	public $user_search;
+
+	/**
 	 * Plugin initialization function.
 	 *
 	 * @since 3.1.0

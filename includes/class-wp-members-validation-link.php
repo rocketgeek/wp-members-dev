@@ -21,6 +21,10 @@ class WP_Members_Validation_Link {
 	public $show_success = true;
 	public $send_notify  = true;
 	public $validated = false;
+	public $email_text;
+	public $invalid_message;
+	public $success_message;
+	public $moderated_message;
 	
 	/**
 	 * Initialize validation link feature.

@@ -850,6 +850,7 @@ class WP_Members_User {
 	 *
 	 * @since 3.1.8
 	 * @since 3.2.6 Add file's post ID to $this->post_data.
+	 * @since 3.4.7 Add wpmem_file_uploaded action hook.
 	 *
 	 * @param string $user_id
 	 * @param array  $fields
@@ -1043,7 +1044,6 @@ class WP_Members_User {
 		 * @param  boolean $access
 		 * @param  array   $product
 		 * @param  integer $user_id
-		 * @param  array   $args
 		 */
 		return apply_filters( 'wpmem_user_has_access', $access, $product_array, $user_id );
 
