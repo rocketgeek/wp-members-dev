@@ -1998,8 +1998,9 @@ class WP_Members {
 	 * Check for errors.
 	 * 
 	 * @since 3.4.6
+	 * @since 3.4.8 Check as WP_Error (use is_wp_error()).
 	 */
 	public function has_errors() {
-		return ( isset( $this->error ) && $this->error->has_errors() ) ? true : false;
+		return ( is_wp_error( $this->error ) && $this->error->has_errors() ) ? true : false;
 	}
 } // End of WP_Members class.
