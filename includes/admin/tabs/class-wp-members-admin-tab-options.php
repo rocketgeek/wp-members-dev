@@ -618,7 +618,8 @@ class WP_Members_Admin_Tab_Options {
 					$val[ $subkey ] = ( is_numeric( $subval ) ) ? get_page_link( $subval ) : $subval;
 				}
 				$wpmem->{$key} = $val;
-			} elseif ( 'woo' == $key ) {
+			} elseif ( wpmem_is_woo_active() && 'woo' == $key ) {
+				// Set Woo options.
 				foreach ( $val as $subkey => $subval ) {
 					$wpmem->woo->{$subkey} = $subval;
 				}
