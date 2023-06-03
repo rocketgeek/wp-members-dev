@@ -2,8 +2,8 @@
 Contributors: cbutlerjr
 Tags: access, authentication, content, login, member, membership, password, protect, register, registration, restriction, subscriber
 Requires at least: 4.0
-Tested up to: 6.1
-Stable tag: 3.4.7.1
+Tested up to: 6.2
+Stable tag: 3.4.8
 
 License: GPLv3
 
@@ -108,7 +108,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.4.7 is a minor update. 3.4.7.1 is a compatibility release for users integrating WP-Members with WooCommerce. Backup prior to upgrading is recommended, but rollback is possible. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.4.8 is a security update, along with a series of bug fix patches. Backup prior to upgrading is recommended, but rollback is possible. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -136,9 +136,15 @@ WP-Members 3.4.7 is a minor update. 3.4.7.1 is a compatibility release for users
 
 * @todo WP-Members pluggable deprecated for use in theme functions.php (wpmem will be initialized when plugins are loaded).  If you have any WP-Members pluggable functions that load in the theme functions.php, you'll need to move these to another location, such as a custom plugin file.  Keep in mind, pluggable functions are no longer the preferred way of customizing (and have not been for many years) as most customizations, if not all, can be handled by using the plugin's filter and action hooks.
 
-= 3.4.7.1 =
+= 3.4.8 =
 
-* Fixes some compatibility issues when the plugin is used along with WooCommerce.  Specifically, there is a bug fix in the new WC integration object, as well as some fixes for integrating WP-Members fields into the WC account form and checkout form.
+* Fixes a 3.4.7 bug that causes "extra" user fields to not save option to add to user screen (users > all users).
+* Fixes a 3.4.7 bug that throws a php error when saving settings in the main options tab.
+* Fixes bug in 3.4.7 that causes custom fields array to be overwritten as empty when updating fields in the plugin's Fields tab.
+* Fixes issues with updating WP-Members WooCommerce integration settings in the main WP-Members options tab.
+* Security update in Fields tab reorder processing.
+* Code improvement udpates to RS Captcha validation processing.
+* Adds wpmem_get_form_state() API function (replaces checking $wpmem->regchk directly).
 
 = 3.4.7 =
 
