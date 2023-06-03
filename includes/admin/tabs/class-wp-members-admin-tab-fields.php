@@ -448,16 +448,16 @@ Last Row|last_row<?php } } ?></textarea>
 					'compare' => ( ( 'y' == $profile ) ? $meta : false )
 				) ) : '';
 				$item['userscrn'] = ( ! in_array( $meta, $wpmem_ut_fields_skip ) ) ? wpmem_form_field( array(
-					'name' => "wpmem_fields_uscreen[]",
+					'name' => "wpmem_fields_uscreen[" . $meta . "]",
 					'type' => 'checkbox',
-					'value' => $meta,
-					'compare' => ( ( $ut_checked == $meta ) ? $ut_checked : false ) 
+					'value' => $field[1],
+					'compare' => ( ( $ut_checked == $meta ) ? $field[1] : false ) 
 				) ) : '';
 				$item['usearch']  = ( ! in_array( $meta, $wpmem_us_fields_skip ) ) ? wpmem_form_field( array(
-					'name' => "wpmem_fields_usearch[]",
+					'name' => "wpmem_fields_usearch[" . $meta . "]",
 					'type' => 'checkbox',
-					'value' => $meta,
-					'compare' =>  ( ( $us_checked == $meta ) ? $us_checked : false ) 
+					'value' => $field[1],
+					'compare' =>  ( ( $us_checked == $meta ) ? $field[1] : false ) 
 				) ) : '';
 
 				/*
@@ -514,7 +514,7 @@ Last Row|last_row<?php } } ?></textarea>
 				|| ( 'active' == $key && 1 == $wpmem->mod_reg ) 
 				|| defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 && ( 'exp_type' == $key || 'expires' == $key ) ) {
 				$user_screen_items[ $key ] = array( 'label' => __( $item, 'wp-members' ), 'meta' => $key,
-					'userscrn' => wpmem_form_field( "ut_fields[{$key}]", 'checkbox', $item, $ut_checked ),
+					'userscrn' => wpmem_form_field( "wpmem_fields_uscreen[{$key}]", 'checkbox', $item, $ut_checked ),
 				);
 			}
 		}
@@ -606,20 +606,16 @@ Last Row|last_row<?php } } ?></textarea>
 				check_admin_referer( 'bulk-settings_page_wpmem-settings' );
 
 				// Update user table fields.
-				$arr = ( isset( $_POST['ut_fields'] ) ) ? $_POST['ut_fields'] : array();
-				$ut_fields_arr = array();
-				foreach ( $arr as $key => $item ) {
-					$ut_fields_arr[ sanitize_text_field( $key ) ] = sanitize_text_field( $item );
-				}
+				$ut_fields_arr = wpmem_sanitize_array( wpmem_get( 'wpmem_fields_uscreen', array() ) );
 				update_option( 'wpmembers_utfields', $ut_fields_arr );
 
 				// Update user search fields.
-				$arr = ( isset( $_POST['us_fields'] ) ) ? $_POST['us_fields'] : array();
-				$us_fields_arr = array();
-				foreach ( $arr as $key => $item ) {
-					$us_fields_arr[ sanitize_text_field( $key ) ] = sanitize_text_field( $item );
-				}
+				$us_fields_arr = wpmem_sanitize_array( wpmem_get( 'wpmem_fields_usearch', array() ) );
 				update_option( 'wpmembers_usfields', $us_fields_arr );
+
+				$wpmem_fields_display_post  = wpmem_get( 'wpmem_fields_display',  array() );
+				$wpmem_fields_required_post = wpmem_get( 'wpmem_fields_required', array() );
+				$wpmem_fields_profile_post  = wpmem_get( 'wpmem_fields_profile',  array() );
 
 				// Update display/required settings
 				foreach ( $wpmem_fields as $key => $field ) {
@@ -633,9 +629,9 @@ Last Row|last_row<?php } } ?></textarea>
 						$wpmem_fields[ $key ][5] = 'y';
 						$wpmem_fields[ $key ]['profile'] = ( 'username' == $meta_key ) ? false : true;
 					} else {
-						$wpmem_fields[ $key ][4] = ( wpmem_get( $meta_key . "_display"  ) ) ? 'y' : '';
-						$wpmem_fields[ $key ][5] = ( wpmem_get( $meta_key . "_required" ) ) ? 'y' : '';
-						$wpmem_fields[ $key ]['profile'] = ( wpmem_get( $meta_key . '_profile' ) ) ? true : false;
+						$wpmem_fields[ $key ][4] = ( in_array( $meta_key, $wpmem_fields_display_post ) ) ? 'y' : '';
+						$wpmem_fields[ $key ][5] = ( in_array( $meta_key, $wpmem_fields_required_post ) ) ? 'y' : '';
+						$wpmem_fields[ $key ]['profile'] = ( in_array( $meta_key, $wpmem_fields_profile_post ) ) ? true : false;
 					}
 				}
 
