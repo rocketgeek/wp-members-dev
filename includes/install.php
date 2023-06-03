@@ -862,10 +862,8 @@ function wpmem_plugin_deactivate() {
 function wpmem_upgrade_user_search_crud_table() {
 	global $wpdb;
 	// Drop old table if it exists.
-	$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . "wpmembers_user_search_keys;" );
-	// Check collation to make sure we use what WP is using.
-	$charset_collate = $wpdb->get_charset_collate();
+	$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud;" );
 	// If the table does not exist, create the table to store the meta keys.
-	$wpdb->query( "CREATE TABLE IF NOT EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud (meta_key VARCHAR(255) NOT NULL) " . $charset_collate . ";" );
+	$wpdb->query( "CREATE TABLE IF NOT EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud (meta_key VARCHAR(255) NOT NULL);" );
 }
 // End of file.
