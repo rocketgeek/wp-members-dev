@@ -101,7 +101,7 @@ class WP_Members_Admin_User_Search {
 			$mktable = $wpdb->prefix . $this->table;
 
 			// If the table does not exist, create the table to store the meta keys.
-			$wpdb->query( "CREATE TABLE IF NOT EXISTS {$mktable} (meta_key VARCHAR(255) NOT NULL) " . $wpdb->get_charset_collate() . ";" );
+			$wpdb->query( "CREATE TABLE IF NOT EXISTS {$mktable} (meta_key VARCHAR(255) NOT NULL);" );
 
 			// Empty the table to ensure that we have an accurate set of meta keys.
 			$wpdb->query( "TRUNCATE TABLE {$mktable};" );
