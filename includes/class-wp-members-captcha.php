@@ -158,7 +158,6 @@ class WP_Members_Captcha {
 	 *
 	 * @since 3.3.0 Replaces wpmem_build_rs_captcha().
 	 *
-	 * @global object $wpmem The WP_Members object.
 	 * @return string|array {
 	 *     HTML string, OR array of form elements for Really Simple CAPTCHA.
 	 *
@@ -168,8 +167,6 @@ class WP_Members_Captcha {
 	 * }
 	 */
 	static function rs_captcha( $return = 'string' ) {
-
-		global $wpmem;
 
 		if ( defined( 'REALLYSIMPLECAPTCHA_VERSION' ) ) {
 			// setup defaults								
@@ -256,15 +253,15 @@ class WP_Members_Captcha {
 	 * @since 3.1.6
 	 * @since 3.3.0 Ported from wpmem_register_handle_captcha() in register.php.
 	 * @since 3.3.4 Added argument to specify which captcha type to validate.
+	 * @since 3.4.8 Additional error checking on RS Captchas
 	 *
-	 * @global $wpmem
 	 * @global $wpmem_themsg
 	 * @param  $which_captcha
 	 * @return $string
 	 */
 	static function validate( $which_captcha = false, $secret = false ) {
 
-		global $wpmem, $wpmem_themsg;
+		global $wpmem_themsg;
 		
 		$captcha = ( ! $which_captcha ) ? self::type() : $which_captcha;
 
@@ -273,9 +270,17 @@ class WP_Members_Captcha {
 				// Validate Really Simple Captcha.
 				$rs_captcha = new ReallySimpleCaptcha();
 				// This variable holds the CAPTCHA image prefix, which corresponds to the correct answer.
-				$rs_captcha_prefix = ( isset( $_POST['captcha_prefix'] ) ) ? sanitize_text_field( $_POST['captcha_prefix'] ) : '';
+				$rs_captcha_prefix = ( wpmem_get( 'captcha_prefix', false ) );
+				if ( ! $rs_captcha_prefix ) {
+					$wpmem_themsg = __( 'Error with the captcha code configuration. Please notify the site administrator', 'wp-members' );
+					return false;
+				}
 				// This variable holds the CAPTCHA response, entered by the user.
-				$rs_captcha_code = ( isset( $_POST['captcha_code'] ) ) ? sanitize_text_field( $_POST['captcha_code'] ) : '';
+				$rs_captcha_code = ( wpmem_get('captcha_code', false ) );
+				if ( ! $rs_captcha_code ) {
+					$wpmem_themsg = __( 'Captcha code was empty. You must complete the captcha code.', 'wp-members' );
+					return false;
+				}
 				// Check CAPTCHA validity.
 				$rs_captcha_correct = ( $rs_captcha->check( $rs_captcha_prefix, $rs_captcha_code ) ) ? true : false;
 				// Clean up the tmp directory.
