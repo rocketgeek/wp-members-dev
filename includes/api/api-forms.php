@@ -13,6 +13,18 @@
  * @copyright  2006-2023
  */
 
+/**
+ * Gets the present state of a form. 
+ * 
+ * Currently uses the value contained in $wpmem->regchk
+ * 
+ * @since 3.4.8.
+ */
+function wpmem_get_form_state() {
+	global $wpmem;
+	return $wpmem->regchk;
+}
+
 if ( ! function_exists( 'wpmem_login_form' ) ):
 /**
  * Invokes a login form.
