@@ -587,7 +587,7 @@ class WP_Members_Shortcodes {
 	 *     @type string $field
 	 *     @type int    $id
 	 *     @type string $underscores
-	 *     @type string $display
+	 *     @type string $display     default:raw
 	 *     @type string $size
 	 *     @type string $clickable   default:false
 	 *     @type string $label       default:false

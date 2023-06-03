@@ -257,7 +257,7 @@ class WP_Members {
 	 *
 	 * @since  3.2.0
 	 * @access public
-	 * @var    string
+	 * @var    stdClass
 	 */
 	public $error;
 	

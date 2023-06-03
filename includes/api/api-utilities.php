@@ -237,6 +237,8 @@ function wpmem_do_shortcode( $tag, array $atts = array(), $content = null ) {
  * user activation.
  *
  * @since 3.3.0
+ * 
+ * @return bool $chk_pass true if the user creates a password at registration, otherwise false.
  */
 function wpmem_user_sets_password() {
 	$chk_pass = false;

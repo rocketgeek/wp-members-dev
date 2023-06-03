@@ -70,10 +70,10 @@ endif;
  *     Settings arguments or The User's ID.
  *
  *     @type int    $user_id
- *     @type string $password
- *     @type string $tag
- *     @type array  $wpmem_fields
- *     @type array  $fields
+ *     @type string $password     Password from the registration process.
+ *     @type string $tag          Indicates the email being sent (newreg|newmod|appmod|repass|getuser).
+ *     @type array  $wpmem_fields Array of the WP-Members fields (deprecated)
+ *     @type array  $fields       Array of the registration data
  *     @type array  $custom {
  *          Settings for custom email if used (optional).
  *
