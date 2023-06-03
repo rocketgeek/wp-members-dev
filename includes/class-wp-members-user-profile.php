@@ -24,7 +24,7 @@ class WP_Members_User_Profile {
 	 */
 	static function get_fields( $tag ) {
 		$fields = wpmem_fields( $tag );
-		if ( 'profile_dashboard' == $tag && false === current_user_can( 'edit_users' ) ) {
+		if ( 'profile_dashboard' == $tag && false == current_user_can( 'edit_users' ) ) {
 			foreach( $fields as $key => $field ) {
 				if ( false == $field['profile'] ) {
 					unset( $fields[ $key ] );
@@ -407,7 +407,7 @@ class WP_Members_User_Profile {
 		if ( 'admin' == $display || current_user_can( 'edit_users' ) ) {
 			if ( $wpmem->mod_reg == 1 ) {
 
-				$wpmem_activate_user = ( isset( $_POST['activate_user'] ) == '' ) ? -1 : filter_var( $_POST['activate_user'], FILTER_SANITIZE_NUMBER_INT );
+				$wpmem_activate_user = ( isset( $_POST['activate_user'] ) == '' ) ? -1 : intval( $_POST['activate_user'] );
 
 				if ( $wpmem_activate_user == 1 ) {
 					wpmem_activate_user( $user_id );
