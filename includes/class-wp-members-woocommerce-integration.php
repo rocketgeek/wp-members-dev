@@ -41,11 +41,11 @@ class WP_Members_WooCommerce_Integration {
             add_action( 'woocommerce_form_field_checkbox',      'wpmem_form_field_wc_custom_field_types', 10, 4 );
         }
 
-        if (  wpmem_is_enabled( 'woo/add_update_fields' ) ) {
+        if ( 1 == $this->add_update_fields ) { // if (  wpmem_is_enabled( 'woo/add_update_fields' ) ) {
             add_action( 'woocommerce_edit_account_form', 'wpmem_woo_edit_account_form' );
         }
 
-        if ( wpmem_is_enabled( 'woo/product_restrict' ) ) {
+        if ( 1 == $this->product_restrict ) { // if ( wpmem_is_enabled( 'woo/product_restrict' ) ) {
             add_filter( 'woocommerce_is_purchasable', 'wpmem_woo_is_purchasable', PHP_INT_MAX, 2 );
         }
     }
