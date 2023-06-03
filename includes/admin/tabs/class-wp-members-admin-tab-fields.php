@@ -795,8 +795,21 @@ Last Row|last_row<?php } } ?></textarea>
 	 * @since 2.5.1
 	 * @since 3.1.8 Rebuilt for new List Table.
 	 * @since 3.3.0 Merged do_field_reorder() and field_reorder().
+	 * @since 3.4.8 Added nonce check.
 	 */
 	public static function do_field_reorder() {
+
+		// Check nonce.
+		if ( ! check_admin_referer( 'wpmem_settings_nonce', 'nonce' ) ) {
+			_e( 'The link has expired. Please reload the page, or make sure your request originates from the WP-Members Fields tab.', 'wp-members' );
+			die();
+		}
+
+		// Check user caps in case this is hit by a non-admin user.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			_e( 'User lacks required capability to make this change.', 'wp-members' );
+			die();
+		}
 
 		// Start fresh.
 		$new_order = $wpmem_fields = $field = $key = $wpmem_new_fields = $id = $k = '';
@@ -809,7 +822,7 @@ Last Row|last_row<?php } } ?></textarea>
 		$wpmem_new_fields = array();
 		foreach ( $new_order['list_items'] as $id ) {
 			foreach( $wpmem_fields as $val ) {
-				if ( $val[0] == $id ) {
+				if ( $val[0] == intval( $id ) ) {
 					$wpmem_new_fields[] = $val;
 				}
 			}

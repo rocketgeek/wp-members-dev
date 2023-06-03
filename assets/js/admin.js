@@ -24,13 +24,14 @@
   */
 (function($) {
 	$(document).ready(function($) {
+		var nonce = wpmem_get_settings_vars.nonce;
 		$("#the-list").sortable({
 			items: '.list_item',
 			opacity: 0.6,
 			cursor: 'move',
 			axis: 'y',
 			update: function() {
-				var order = $(this).sortable('serialize') + '&action=wpmem_do_field_reorder';
+				var order = $(this).sortable('serialize') + '&action=wpmem_do_field_reorder&nonce=' + nonce;
 				$.post(ajaxurl, order, function(response) {
 					alert(response);
 				});
@@ -46,7 +47,7 @@
 		$('[id^="wpmem_all_fields_"]').on('change', function() {
 			var type = this.id.split('_')[3];
 
-			$('[id^="wpmem_fields_'+type+'[]"]').prop('checked', this.checked);
+			$('[id^="wpmem_fields_'+type+'"]').prop('checked', this.checked);
 		});
 	});
 })(jQuery);

@@ -579,8 +579,12 @@ class WP_Members_Admin_API {
 		if ( 'settings_page_wpmem-settings' == $hook || 'post.php' == $hook || 'post-new.php' == $hook  ) {
 			wp_enqueue_script( 'jquery-ui-dialog' ); // enqueue jQuery UI Dialog dependency
 			wp_register_script( 'wpmem-admin', wpmem_get_plugin_url() . 'assets/js/admin' . wpmem_get_suffix() . '.js', 'jquery', wpmem_get_plugin_version(), true );
+			$ajax_url = admin_url( 'admin-ajax.php' );
+			$wpmem_settings_nonce = wp_create_nonce( 'wpmem_settings_nonce' );
 			$translation_array = array(
 				'close_btn' => __( 'Close', 'wp-members' ),
+				'ajax_url'  => $ajax_url,
+				'nonce'     => $wpmem_settings_nonce,
 			);
 			wp_localize_script( 'wpmem-admin', 'wpmem_get_settings_vars', $translation_array );
 			wp_enqueue_script( 'wpmem-admin' );
