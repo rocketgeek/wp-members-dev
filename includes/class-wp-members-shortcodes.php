@@ -974,7 +974,7 @@ class WP_Members_Shortcodes {
 	 * @return string $content
 	 */
 	function login_link( $atts, $content, $tag ) {
-		if ( isset( $atts ) ) {
+		if ( isset( $atts ) && ! empty( $atts ) ) {
 			$args['attributes'] = $atts;
 		}
 		if ( 'wpmem_reg_link' == $tag ) {
@@ -1270,7 +1270,12 @@ class WP_Members_Shortcodes {
 			case 'login':
 
 				$logout = urldecode( $logout );
-				// NOTE: DO NOT EDIT THESE. Use the filter hook below.
+				/*
+				 * NOTE: DO NOT EDIT THESE. Use the filter hook below.
+				 * 
+				 * Don't know how to use filter or action hooks to customize WP?
+				 * See https://wpbitz.com/how-to-use-hooks-in-wordpress/
+				 */
 				$args = array(
 					'wrapper_before' => '<p class="login_status">',
 					'wrapper_after'  => '</p>',
