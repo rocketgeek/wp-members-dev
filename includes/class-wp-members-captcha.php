@@ -117,6 +117,12 @@ class WP_Members_Captcha {
 		 */
 		$wpmem_recaptcha_url = apply_filters( 'wpmem_recaptcha_url', 'https://www.google.com/recaptcha/api.js' );
 		
+		/*
+		 * NOTE: DO NOT EDIT THIS. Use the filter hook found below.
+		 * 
+		 * Don't know how to use filter or action hooks to customize WP?
+		 * See https://wpbitz.com/how-to-use-hooks-in-wordpress/
+		 */
 		if ( 3 == $wpmem->captcha ) {
 			$html = '<script src="' . $wpmem_recaptcha_url . '" async defer></script>
 			<div class="g-recaptcha" data-sitekey="' . $key . '"></div>';
@@ -215,14 +221,13 @@ class WP_Members_Captcha {
 			$size  = $rs_captcha->char_length;
 			$pre   = $rs_captcha_prefix;
 
-			/**
-			 * Filter the RS CAPTCHA HTML.
-			 *
-			 * @since 3.3.5
-			 *
-			 * @param array
+			/*
+			 * NOTE: DO NOT EDIT THIS. Use the filter hook found below.
+			 * 
+			 * Don't know how to use filter or action hooks to customize WP?
+			 * See https://wpbitz.com/how-to-use-hooks-in-wordpress/
 			 */
-			$rows = apply_filters( 'wpmem_rs_captcha_rows', array( 
+			$captcha_rows_args = array( 
 				'label_text' => wpmem_get_text( 'register_rscaptcha' ),
 				'code_size'  => esc_attr( $size ),
 				'prefix'     => $pre,
@@ -233,7 +238,16 @@ class WP_Members_Captcha {
 				'field'      => '<input id="captcha_code" name="captcha_code" size="' . esc_attr( $size ) . '" type="text" class="textbox" required />',
 				'hidden'     => '<input id="captcha_prefix" name="captcha_prefix" type="hidden" value="' . esc_attr( $pre ) . '" />',
 				'img'        => '<img src="' . esc_url( $src ) . '" alt="captcha" width="' . esc_attr( $img_w ) . '" height="' . esc_attr( $img_h ) . '" />',
-			) );
+			);
+
+			/**
+			 * Filter the RS CAPTCHA HTML.
+			 *
+			 * @since 3.3.5
+			 *
+			 * @param array
+			 */
+			$rows = apply_filters( 'wpmem_rs_captcha_rows', $captcha_rows_args );
 			
 			if ( 'array' == $return ) {
 				return $rows;
