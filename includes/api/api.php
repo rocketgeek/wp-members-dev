@@ -279,6 +279,18 @@ function wpmem_current_url( $slash = true, $getq = true ) {
 	return $url;
 }
 
+function wpmem_is_login() {
+	return ( wpmem_login_url() == wpmem_current_url( true, false ) ) ? true : false;
+}
+
+function wpmem_is_register() {
+	return ( wpmem_register_url() == wpmem_current_url( true, false ) ) ? true : false;
+}
+
+function wpmem_is_profile() {
+	return ( wpmem_profile_url() == wpmem_current_url( true, false ) ) ? true : false;
+}
+
 /**
  * Gets post ID of current URL.
  *
