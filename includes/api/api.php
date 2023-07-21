@@ -279,14 +279,35 @@ function wpmem_current_url( $slash = true, $getq = true ) {
 	return $url;
 }
 
+/**
+ * Checks if the current page is the login page.
+ * 
+ * @since 3.5.0
+ * 
+ * @return boolean
+ */
 function wpmem_is_login() {
 	return ( wpmem_login_url() == wpmem_current_url( true, false ) ) ? true : false;
 }
 
+/**
+ * Checks if the current page is the register page.
+ * 
+ * @since 3.5.0
+ * 
+ * @return boolean
+ */
 function wpmem_is_register() {
 	return ( wpmem_register_url() == wpmem_current_url( true, false ) ) ? true : false;
 }
 
+/**
+ * Checks if the current page is the user profile page.
+ * 
+ * @since 3.5.0
+ * 
+ * @return boolean
+ */
 function wpmem_is_profile() {
 	return ( wpmem_profile_url() == wpmem_current_url( true, false ) ) ? true : false;
 }
