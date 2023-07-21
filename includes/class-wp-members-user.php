@@ -609,13 +609,7 @@ class WP_Members_User {
 	 */
 	function password_update( $action ) {
 		if ( isset( $_POST['formsubmit'] ) ) {
-			if ( 'reset' == $action ) {
-				$args = array(
-					'user'  => sanitize_user(  wpmem_get( 'user', false ) ),
-					'email' => sanitize_email( wpmem_get( 'email', false ) ),
-				);
-				return $this->password_reset( $args );
-			} elseif( 'link' == $action ) {
+			if ( 'link' == $action ) {
 				$user = wpmem_get( 'user', false );
 				$user = ( strpos( $user, '@' ) ) ? sanitize_email( $user ) : sanitize_user( $user );
 				$args = array( 'user' => $user );
@@ -676,66 +670,15 @@ class WP_Members_User {
 		do_action( 'wpmem_pwd_change', $user_ID, $args['pass1'] );
 		return "pwdchangesuccess";
 	}
-	
+
 	/**
 	 * Reset a user's password.
+	 * 
+	 * Replaces WP_Members_User::password_reset()
 	 *
-	 * @since 3.1.7
+	 * @since Unknown
 	 *
 	 */
-	function password_reset( $args ) {
-		global $wpmem;
-		/**
-		 * Filter the password reset arguments.
-		 *
-		 * @since 2.7.1
-		 * @since 3.1.7 Moved to user object.
-		 *
-		 * @param array The username and email.
-		 */
-		$arr = apply_filters( 'wpmem_pwdreset_args', $args );
-		if ( ! $arr['user'] || ! $arr['email'] ) { 
-			// There was an empty field.
-			return "pwdreseterr";
-
-		} else {
-
-			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_pwdreset_nonce'], 'wpmem_shortform_nonce' ) ) {
-				return "reg_generic";
-			}
-			if ( username_exists( $arr['user'] ) ) {
-				$user = get_user_by( 'login', $arr['user'] );
-				if ( strtolower( $user->user_email ) !== strtolower( $arr['email'] ) || ( ( $wpmem->mod_reg == 1 ) && ( get_user_meta( $user->ID, 'active', true ) != 1 ) ) ) {
-					// The username was there, but the email did not match OR the user hasn't been activated.
-					return "pwdreseterr";
-				} else {
-					// Generate a new password.
-					$new_pass = wp_generate_password();
-					// Update the users password.
-					wp_set_password( $new_pass, $user->ID );
-					// Send it in an email.
-					wpmem_email_to_user( $user->ID, $new_pass, 3 );
-					/**
-					 * Fires after password reset.
-					 *
-					 * @since 2.9.0
-					 * @since 3.0.5 Added $new_pass to arguments passed.
-					 * @since 3.1.7 Moved to user object.
-					 *
-					 * @param int    $user_ID  The user's numeric ID.
-					 * @param string $new_pass The new plain text password.
-					 */
-					do_action( 'wpmem_pwd_reset', $user->ID, $new_pass );
-					return "pwdresetsuccess";
-				}
-			} else {
-				// Username did not exist.
-				return "pwdreseterr";
-			}
-		}
-		return;
-	}
-
 	function password_link( $args ) {
 		global $wpmem;
 		/**
@@ -751,11 +694,13 @@ class WP_Members_User {
 
 		if ( ! isset( $arr['user'] ) || '' == $arr['user'] ) { 
 			// There was an empty field.
+			$errors->add( 'empty', __( 'User field cannot be empty', 'wp-members' ) );
 			return "pwdreseterr";
 
 		} else {
 
 			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_pwdreset_nonce'], 'wpmem_shortform_nonce' ) ) {
+				$errors->add( 'nonce', __( 'There was an unspecified error', 'wp-members' ) );
 				return "reg_generic";
 			}
 
@@ -769,7 +714,7 @@ class WP_Members_User {
 				$user = false;
 			}
 
-			if ( $user ) {
+			if ( ! is_wp_error( $user ) && false != $user ) {
 
 				$has_error = false;
 

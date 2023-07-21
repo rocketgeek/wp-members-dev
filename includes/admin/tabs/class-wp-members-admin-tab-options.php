@@ -174,31 +174,7 @@ class WP_Members_Admin_Tab_Options {
 								<?php } 
 								}?></ul>
 								<h3><?php _e( 'New Feature Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/new-feature-settings/" target="_blank" title="info" data-tooltip="<?php _e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
-								<?php
-								$reset_link_start = '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/new-feature-settings/" target="_blank">';
-								$reset_link_end   = '</a>';
-								$rows = array(
-									//array(__('Password Reset Link', 'wp-members'),'wpmem_settings_pwd_link',__('Send password reset link instead of new password. (Requires additional configuration)','wp-members'),'pwd_link'),
-									array(__('Legacy Password Reset', 'wp-members'),'wpmem_settings_pwd_link',sprintf(__('Use legacy password reset. %s(Requires additional configuration)%s','wp-members'),$reset_link_start,$reset_link_end),'pwd_link'),
-									//array(__('Enable WP Login Error', 'wp-members' ),'wpmem_settings_login_error',__('Use WP login error object instead of WP-Members default login error','wp-members'),'login_error'),
-									array(__('Legacy Login Error', 'wp-members' ),'wpmem_settings_login_error',__('Use legacy WP-Members login error instead of WP error object.','wp-members'),'login_error'),
-									array(__('Notifications & Diagnostics', 'wp-members' ),'wpmem_settings_optin',__('Opt in to security and updates notifications and non-sensitive diagnostics tracking', 'wp-members'),'optin'),
-								);
-								?><ul><?php
-								foreach ( $rows as $key => $row ) { ?>
-								  <li>
-									<label><?php echo $row[0]; ?></label>
-									<?php $checkbox_value = ( 3 == $key || 4 == $key ) ? $wpmem->woo->{$row[3]} : $wpmem->{$row[3]}; ?>
-									<?php if ( 1 == $key || 0 == $key ) {
-											echo wpmem_form_field( $row[1], 'checkbox', '0', $checkbox_value ); ?>&nbsp;&nbsp;
-									<?php } else {
-											echo wpmem_form_field( $row[1], 'checkbox', '1', $checkbox_value ); ?>&nbsp;&nbsp;
-									<?php } ?>
-									<?php if ( $row[2] ) { ?><span class="description"><?php echo $row[2]; ?></span><?php } ?>
-								  </li>
-								<?php } ?>
-								</ul>
-
+								-->
 								<?php if ( wpmem_is_woo_active() ) { ?>
 								<h3><?php _e( 'WooCommerce Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/woocommerce-settings/" target="_blank" title="info" data-tooltip="<?php _e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<?php
@@ -238,6 +214,7 @@ class WP_Members_Admin_Tab_Options {
 									array(__('Confirmation Link', 'wp-members'),'wpmem_settings_act_link',sprintf(__('Send email confirmation link on new registration. %s(Requires additional configuration)%s','wp-members'),$conf_link_start,$conf_link_end),'act_link'),
 									array(__('Ignore warning messages','wp-members'),'wpmem_settings_ignore_warnings',__('Ignores WP-Members warning messages in the admin panel','wp-members'),'warnings'),
 									//array(__('Enable dropins', 'wp-members'),'wpmem_settings_enable_dropins',sprintf(__('Enables dropins in %s', 'wp-members'), $dropin_dir),'dropins'),
+									array(__('Notifications & Diagnostics', 'wp-members' ),'wpmem_settings_optin',__('Opt in to security and updates notifications and non-sensitive diagnostics tracking', 'wp-members'),'optin'),
 								);
 								foreach ( $rows as $row ) { 
 									if ( $row[0] == __('Clone menus','wp-members') && 1 != $wpmem->clone_menus ) {
@@ -510,8 +487,6 @@ class WP_Members_Admin_Tab_Options {
 				'version' => $wpmem->version,
 				'db_version'      => $wpmem->db_version,
 				'act_link'        => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_act_link',        0 ), 'int' ),
-				'pwd_link'        => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_pwd_link',        1 ), 'int' ),
-				'login_error'     => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_login_error',     1 ), 'int' ),
 				'enable_products' => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_products',        0 ), 'int' ),
 				'clone_menus'     => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_menus',           0 ), 'int' ),
 				'notify'          => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_notify',          0 ), 'int' ),

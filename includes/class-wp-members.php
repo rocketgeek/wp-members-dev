@@ -555,7 +555,11 @@ class WP_Members {
 
 		// Assemble settings.
 		foreach ( $settings as $key => $val ) {
-			$this->$key = $val;
+			// @todo Leaving error message and password reset settings values in for now for rollback backwards compatibility.
+			//       Later, we'll remove those values in the upgrade, so this can be cleaned up.
+			if ( 'pwd_link' != $key || 'login_error' != $key ) {
+				$this->$key = $val;
+			}
 		}
 
 		// Load dependent files.
@@ -575,15 +579,13 @@ class WP_Members {
 		$this->user        = new WP_Members_User( $this ); // Load user functions.
 		$this->menus       = new WP_Members_Menus();
 		$this->dialogs     = new WP_Members_Dialogs();
+		$this->pwd_reset   = new WP_Members_Pwd_Reset;
 		
 		// @deprecated Clone menus are technically deprecated, but kept in the plugin for legacy users.
 		if ( $this->clone_menus ) {
 			$this->menus_clone = new WP_Members_Clone_Menus(); // Load clone menus.
 		}
 
-		if ( 1 == $this->pwd_link ) {
-			$this->pwd_reset  = new WP_Members_Pwd_Reset;
-		}
 		if ( 1 == $this->act_link ) {
 			$this->act_newreg = new WP_Members_Validation_Link;
 		}
@@ -687,8 +689,7 @@ class WP_Members {
 		}
 
 		// Replace login error object, if profile page is set, AND it is not the wp-login.php page.
-		if ( 1 == $this->login_error 
-			&& isset( $this->user_pages['profile'] ) 
+		if ( isset( $this->user_pages['profile'] ) 
 			&& '' != $this->user_pages['profile']
 			&& 'wp-login.php' !== $GLOBALS['pagenow']
 		    && ! wpmem_is_woo_active() ) {
@@ -934,11 +935,7 @@ class WP_Members {
 
 			case 'pwdreset':
 				global $wpmem;
-				if ( 1 == $wpmem->pwd_link ) {
-					$regchk = $this->user->password_update( 'link' );
-				} else {
-					$regchk = $this->user->password_update( 'reset' );
-				}
+				$regchk = $this->user->password_update( 'link' );
 				break;
 			
 			case 'getusername':

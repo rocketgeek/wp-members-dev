@@ -55,6 +55,7 @@ class WP_Members_Pwd_Reset {
 			$this->{$key} = $value;
 		}
 		
+		// Password reset key is generated in add_reset_to_email() using WP's get_password_reset_key()
 		add_filter( 'wpmem_email_filter', array( $this, 'add_reset_key_to_email' ), 10, 3 );
 		add_action( 'template_redirect',  array( $this, 'handle_reset'           ), 20  );
 		//add_filter( 'the_content',        array( $this, 'display_content'        ), 100 );
@@ -172,28 +173,36 @@ class WP_Members_Pwd_Reset {
 			
 			// Get the stored key.
 			$key = get_password_reset_key( $user );
-			$query_args = array(
-				'a'     => $this->action,
-				'key'   => $key,
-				'login' => $user->user_login,
-			);
-			
-			// urlencode, primarily for user_login with a space.
-			$query_args = array_map( 'rawurlencode', $query_args );
-			
-			// Generate reset link.
-			$link = add_query_arg( $query_args, trailingslashit( wpmem_profile_url() ) );
 
-			/**
-			 * Filter the password reset URL in the email.
-			 * 
-			 * @since 3.4.5
-			 * 
-			 * @param  string  $link
-			 * @param  array   $query_args
-			 * @param  object  $user
-			 */
-			$link = apply_filters( 'wpmem_pwd_reset_email_link', $link, $query_args, $user );
+			if ( is_wp_error( $key ) ) {
+				$error_string = $key->get_error_message();
+				$link = "The following error occured generating the password reset key:
+					" . $error_string;
+			} else {
+
+				$query_args = array(
+					'a'     => $this->action,
+					'key'   => $key,
+					'login' => $user->user_login,
+				);
+				
+				// urlencode, primarily for user_login with a space.
+				$query_args = array_map( 'rawurlencode', $query_args );
+				
+				// Generate reset link.
+				$link = add_query_arg( $query_args, trailingslashit( wpmem_profile_url() ) );
+
+				/**
+				 * Filter the password reset URL in the email.
+				 * 
+				 * @since 3.4.5
+				 * 
+				 * @param  string  $link
+				 * @param  array   $query_args
+				 * @param  object  $user
+				 */
+				$link = apply_filters( 'wpmem_pwd_reset_email_link', $link, $query_args, $user );
+			}
 			
 			// Does email body have the [reset_link] shortcode?
 			if ( strpos( $arr['body'], '[reset_link]' ) ) {

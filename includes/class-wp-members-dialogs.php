@@ -174,8 +174,8 @@ class WP_Members_Dialogs {
 			'pwdchangerr'          => __( "Passwords did not match.", 'wp-members' ),
 			'pwdchangesuccess'     => __( "Password successfully changed.", 'wp-members' ),
 			'pwdreseterr'          => __( "Invalid username or email address.", 'wp-members' ),
-			'pwdresetsuccess'      => __( "Password successfully reset! An email containing a new password has been sent to the email address on file for your account.", 'wp-members' ),
-			'pwdresetsuccess_alt'  => __( "Reset request received. An email with instructions to complete the password reset has been sent.", 'wp-members' ),
+			'pwdresetsuccess_alt'  => __( "Password successfully reset! An email containing a new password has been sent to the email address on file for your account.", 'wp-members' ),
+			'pwdresetsuccess'      => __( "Reset request received. An email with instructions to complete the password reset has been sent.", 'wp-members' ),
 			
 			'acct_not_approved'    => __( "Your account request is still pending approval.", 'wp-members' ),
 			'acct_not_validated'   => __( "You have not completed account validation. Check your inbox for the valdation email.", 'wp-members' ),
@@ -246,7 +246,7 @@ class WP_Members_Dialogs {
 			'heading'        => '', //wpmem_get_text( 'login_failed_heading' ),
 			'heading_after'  => '',
 			'p_before'       => '',
-			'message'        => ( $wpmem->error && wpmem_is_enabled( 'login_error' ) ) ? $wpmem->error : wpmem_get_text( 'login_failed' ), // @todo $this->error
+			'message'        => ( $wpmem->error ) ? $wpmem->error : wpmem_get_text( 'login_failed' ), // @todo $this->error
 			'p_after'        => '',
 			//'link'           => '<a href="' . esc_url( $_SERVER['REQUEST_URI'] ) . '">' . wpmem_get_text( 'login_failed_link' ) . '</a>',
 		);

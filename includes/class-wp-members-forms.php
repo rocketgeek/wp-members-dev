@@ -2041,26 +2041,6 @@ class WP_Members_Forms {
 				),
 			),
 		);
-
-		// @todo Temp until 3.5.0 removes old password reset.
-		if ( 1 != $wpmem->pwd_link ) {
-			$input_arrays['resetpassword'] = array(
-				array(
-					'name'   => wpmem_get_text( 'pwdreset_username' ), 
-					'type'   => 'text',
-					'tag'    => 'user', 
-					'class'  => 'username',
-					'div'    => 'div_text',
-				),
-				array( 
-					'name'   => wpmem_get_text( 'pwdreset_email' ), 
-					'type'   => 'text', 
-					'tag'    => 'email', 
-					'class'  => 'textbox',
-					'div'    => 'div_text',
-				),
-			);
-		}
 		
 		/**
 		 * Filter the array of change password form fields.
