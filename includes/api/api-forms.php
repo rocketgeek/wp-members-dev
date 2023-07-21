@@ -645,7 +645,7 @@ function wpmem_woo_reg_validate( $username, $email, $errors ) {
 
 function wpmem_is_reg_form_showing() {
 	global $wpmem;
-	return ( isset( $wpmem->reg_form_showing ) && true == $wpmem->reg_form_showing ) ? true : false;
+	return ( true == $wpmem->forms->is_reg_form_showing() ) ? true : false;
 }
 
 /**
