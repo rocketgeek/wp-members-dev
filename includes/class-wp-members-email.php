@@ -98,11 +98,11 @@ class WP_Members_Email {
 	 * @param  int    $user_ID              The User's ID.
 	 * @param  string $password             Password from the registration process.
 	 * @param  string $tag                  Tag indicating the email being sent (newreg|newmod|appmod|repass|getuser).
-	 * @param  array  $wpmem_fields         Array of the WP-Members fields (defaults to null).
+	 * @param  array  $wpmem_fields         Array of the WP-Members fields (defaults to false).
 	 * @param  array  $fields               Array of the registration data (defaults to null).
 	 * @param  array  $custom               Array of custom email information (defaults to null).
 	 */
-	public function to_user( $user_id, $password, $tag, $wpmem_fields = null, $field_data = null, $custom = null ) {
+	public function to_user( $user_id, $password, $tag, $wpmem_fields = false, $field_data = null, $custom = null ) {
 
 		global $wpmem;
 		
@@ -111,7 +111,7 @@ class WP_Members_Email {
 		$this->load_format();
 
 		// Handle backward compatibility for customizations that may call the email function directly.
-		$wpmem_fields = wpmem_fields();
+		$wpmem_fields = ( false == $wpmem_fields ) ? wpmem_fields( 'all' ) : $wpmem_fields;
 
 		//Determine email to be sent. Stored option is an array with keys 'body' and 'subj'.
 		$tag_array = array( 'newreg', 'newmod', 'appmod', 'repass', 'getuser', 'validated' );
