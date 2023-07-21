@@ -289,22 +289,24 @@ function wpmem_form_label( $args ) {
  * @since 3.1.5 Checks if fields array is set or empty before returning.
  * @since 3.1.7 Added wpmem_form_fields filter.
  * @since 3.3.9 load_fields() moved to forms object class.
+ * @since 3.5.0 Add default for $tag to avoid PHP 8.2 issues.
  *
  * @global object $wpmem  The WP_Members object.
  * @param  string $tag    The action being used (default: null).
  * @param  string $form   The form being generated.
  * @return array  $fields The form fields.
  */
-function wpmem_fields( $tag = '', $form = 'default' ) {
+function wpmem_fields( $tag = 'all', $form = 'default' ) {
 	global $wpmem;
-	// Load fields if none are loaded.
-	if ( ! isset( $wpmem->fields ) || empty( $wpmem->fields ) ) {
-		$wpmem->forms->load_fields( $form );
-	}
-	
+
 	// @todo Review for removal.
 	$tag = $wpmem->convert_tag( $tag );
-	
+
+	// Load fields if none are loaded.
+	if ( ! isset( $wpmem->fields ) || empty( $wpmem->fields ) ) {
+		$wpmem->forms->load_fields( $tag );
+	}
+
 	/**
 	 * Filters the fields array.
 	 *
