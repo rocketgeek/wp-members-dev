@@ -598,6 +598,10 @@ class WP_Members_Shortcodes {
 	 */
 	function fields( $atts, $content, $tag ) {
 
+		if ( is_admin() ) {
+			return;
+		}
+
 		// What field?
 		if ( isset( $atts[0] ) ) {
 			$field = $atts[0];
@@ -651,6 +655,9 @@ class WP_Members_Shortcodes {
 				case 'multiselect':
 				case 'multicheckbox':
 				case 'membership':
+					if ( ! isset( $atts['display'] ) ) {
+						$atts['display'] = '';
+					}
 					if ( isset( $atts['display'] ) && 'raw' == $atts['display'] ) {
 						$result = $user_info_field;
 					} else {
@@ -660,7 +667,7 @@ class WP_Members_Shortcodes {
 							/**
 							 * Filter list multi field list display HTML parts.
 							 * 
-							 * @since 3.4.5
+							 * @since 3.5.0
 							 * 
 							 * @param  array  {
 							 *     The HTML parts (defaults as a bulleted list)
@@ -671,7 +678,7 @@ class WP_Members_Shortcodes {
 							 *     @type string $wrapper_after
 							 * }
 							 * @param  string  $field
-							 * /
+							 */
 							$multi_args = apply_filters( 'wpmem_field_shortcode_multi_args', array(
 								'wrapper_before' => '<ul id="wpmem_sc_field_' . $field . '">',
 								'item_id'        => 'wpmem-sc-multi-' . $field,
@@ -694,11 +701,11 @@ class WP_Members_Shortcodes {
 							/**
 							 * Filter the row parts
 							 * 
-							 * @since 3.4.5
+							 * @since 3.5.0
 							 * 
 							 * @param  array  $rows 
 							 * @param  string $field
-							 * /
+							 */
 							$rows = apply_filters( 'wpmem_field_shortcode_multi_rows', $rows, $field );
 							$row_items = '';
 							foreach ( $rows as $value => $row ) {
@@ -706,7 +713,6 @@ class WP_Members_Shortcodes {
 							}
 
 							$result = $multi_args['wrapper_before'] . $row_items . $multi_args['wrapper_after'];
-						*/
 
 							$args = array(
 								'wrapper' => array(
@@ -730,7 +736,7 @@ class WP_Members_Shortcodes {
 							/**
 							 * Filter list multi field list display HTML parts.
 							 * 
-							 * @since 3.4.5
+							 * @since 3.5.0
 							 * 
 							 * @param  array  {
 							 *     The HTML parts (defaults as a bulleted list)

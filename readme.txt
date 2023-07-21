@@ -139,6 +139,8 @@ WP-Members 3.4.8 is a security update, along with a series of bug fix patches. B
 * Legacy password reset (requiring username & email to send a new password via email) is fully obsolete.  Plugin now only sends a password reset link for the user to then access the site and set a new password (no passwords via email).
 * Legacy login error message is fully obsolete.  Legacy messages still used, in error message, but generation/display is now using the WP Error object class.
 
+* Adds formatting filters (wpmem_field_shortcode_multi_args, wpmem_field_shortcode_multi_rows, wpmem_field_sc_multi_html) for field shortcode to customize HTML when displaying multiple select/multiple checkbox field results.
+
 * Fixes a bug in the login_link shortcode that caused an empty href value.
 
 = 3.4.8 =
