@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WP_Members_Forms {
 
+	public $reg_form_showing = false;
+
 	/**
 	 * Plugin initialization function.
 	 *
@@ -1590,7 +1592,7 @@ class WP_Members_Forms {
 		 */
 		$form = apply_filters( 'wpmem_register_form_before', '', $tag ) . $form;
 
-		$wpmem->reg_form_showing = true;
+		$wpmem->forms->set_reg_form_showing( true );
 		
 		// Return the generated form.
 		return $form;
@@ -2214,5 +2216,13 @@ class WP_Members_Forms {
 	
 	function get_reg_row_keys() {
 		return array( 'meta', 'type', 'value', 'values', 'label_text', 'row_before', 'label', 'field_before', 'field', 'field_after', 'row_after' );
+	}
+
+	function is_reg_form_showing() {
+		return $this->reg_form_showing;
+	}
+
+	function set_reg_form_showing( $value ) {
+		$this->reg_form_showing = $value;
 	}
 } // End of WP_Members_Forms class.
