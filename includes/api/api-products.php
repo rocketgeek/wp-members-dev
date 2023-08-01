@@ -379,3 +379,20 @@ function wpmem_create_membership( $args ) {
 	// wp_insert_post() returns post ID on success, WP_Error on fail.
 	return $post_id;
 }
+
+/**
+ * Sets the expiration date for a membership
+ * 
+ * @since 3.5.0
+ * 
+ * @param  string  $product
+ * @param  int     $user_id
+ * @param  mixed   $set_date
+ * @param  mixed   $prev_value
+ * @param  boolean $renew
+ * @return mixed   $new_value
+ */
+function wpmem_generate_membership_expiration_date( $product, $user_id, $set_date = false, $prev_value = false, $renew = false ) {
+	global $wpmem;
+	return $wpmem->membership->set_product_expiration( $product, $user_id, $set_date, $prev_value, $renew );
+}
