@@ -72,7 +72,7 @@ function wpmem_a_do_warnings( $did_update ) {
 	if ( $warnings_on && $wpmem->captcha > 0 ) {
 		$wpmem_captcha = get_option( 'wpmembers_captcha' );
 		if ( 1 == $wpmem->captcha || 3 == $wpmem->captcha ) {
-			if ( ! $wpmem_captcha['recaptcha']['public'] || ! $wpmem_captcha['recaptcha']['private'] ) {
+			if ( ! isset( $wpmem_captcha['recaptcha']['public'] ) || ! isset( $wpmem_captcha['recaptcha']['private'] ) ) {
 				$active_warnings[] = wpmem_a_warning_msg( 'wpmembers_captcha' );
 			}
 		}

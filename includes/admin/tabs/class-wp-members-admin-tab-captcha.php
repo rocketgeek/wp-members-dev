@@ -116,7 +116,11 @@ class WP_Members_Admin_Tab_Captcha {
 									<tr valign="top">
 										<th scope="row"><?php _e( 'reCAPTCHA Keys', 'wp-members' ); ?></th>
 										<td>
-											<p><?php if ( '' == $wpmem_captcha['recaptcha']['private'] || '' == $wpmem_captcha['recaptcha']['public'] ) {
+											<p><?php if ( 
+												   ! isset( $wpmem_captcha['recaptcha']['private'] )
+												|| ! isset( $wpmem_captcha['recaptcha']['public'] )
+												|| '' == $wpmem_captcha['recaptcha']['private'] 
+												|| '' == $wpmem_captcha['recaptcha']['public'] ) {
 												printf( __( 'reCAPTCHA requires an API key, consisting of a "site" and a "secret" key. You can sign up for a %s free reCAPTCHA key%s', 'wp-members' ), "<a href=\"https://www.google.com/recaptcha/admin#whyrecaptcha\" target=\"_blank\">", '</a>' );
 											} ?></p>
 											<p><label><?php _e( 'Site Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_publickey" size="60" value="<?php echo $public_key; ?>" /></p>
