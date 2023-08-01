@@ -84,10 +84,10 @@ endif;
  * }
  * @param  string $password      Password from the registration process.
  * @param  string $tag           Indicates the email being sent (newreg|newmod|appmod|repass|getuser).
- * @param  array  $wpmem_fields  Array of the WP-Members fields (defaults to null).
- * @param  array  $fields        Array of the registration data (defaults to null).
+ * @param  array  $wpmem_fields  Array of the WP-Members fields (defaults to false).
+ * @param  array  $fields        Array of the registration data (defaults to false).
  * @param  array  $custom {
- *     Array of custom email information (defaults to null).
+ *     Array of custom email information (defaults to false).
  *
  *     @type string $subj The email subject.
  *     @type string $body The email message body.
@@ -102,9 +102,9 @@ function wpmem_email_to_user( $args, $password = null, $tag = null, $wpmem_field
 		$user_id      = $args['user_id'];
 		$tag          = $args['tag'];
 		$password     = ( isset( $args['password']     ) ) ? $args['password']     : '';
-		$wpmem_fields = ( isset( $args['wpmem_fields'] ) ) ? $args['wpmem_fields'] : '';
-		$field_data   = ( isset( $args['field_data']   ) ) ? $args['field_data']   : '';
-		$custom       = ( isset( $args['custom']       ) ) ? $args['custom']       : '';
+		$wpmem_fields = ( isset( $args['wpmem_fields'] ) ) ? $args['wpmem_fields'] : false;
+		$field_data   = ( isset( $args['field_data']   ) ) ? $args['field_data']   : false;
+		$custom       = ( isset( $args['custom']       ) ) ? $args['custom']       : false;
 	} else {
 		$user_id = $args;
 	}
