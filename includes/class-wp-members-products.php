@@ -466,11 +466,11 @@ class WP_Members_Products {
 	 * @param  string  $product
 	 * @param  int     $user_id
 	 * @param  mixed   $set_date
-	 * @param  mixed   $pre_value
+	 * @param  mixed   $prev_value
 	 * @param  boolean $renew
 	 * @return mixed   $new_value
 	 */
-	function set_product_expiration( $product, $user_id, $set_date, $prev_value, $renew ) {
+	function set_product_expiration( $product, $user_id, $set_date = false, $prev_value = false, $renew = false ) {
 		// If this is setting a specific date.
 		if ( $set_date ) {
 			$new_value = strtotime( $set_date );
