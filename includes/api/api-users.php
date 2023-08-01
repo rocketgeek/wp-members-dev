@@ -635,6 +635,10 @@ function wpmem_activate_user( $user_id, $notify = true, $set_pwd = false ) {
 function wpmem_deactivate_user( $user_id ) {
 	update_user_meta( $user_id, 'active', 0 );
 
+	// Destroy sessions.
+	$sessions = WP_Session_Tokens::get_instance( $user_id );
+	$sessions->destroy_all();
+
 	/**
 	 * Fires after the user deactivation process is complete.
 	 *
