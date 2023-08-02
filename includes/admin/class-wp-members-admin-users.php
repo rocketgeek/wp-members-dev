@@ -24,13 +24,23 @@ class WP_Members_Admin_Users {
 		<script type="text/javascript">
 			var $j = jQuery.noConflict();
 			$j(document).ready(function() {
-		<?php if( $wpmem->mod_reg == 1 ) { ?>
+		<?php if ( wpmem_is_enabled( 'act_link' ) ) { ?>
+			$j('<option>').val('resend_welcome').text('<?php _e( 'Resend welcome email', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<option>').val('confirm').text('<?php _e( 'Confirm', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<option>').val('unconfirm').text('<?php _e( 'Unconfirm', 'wp-members' )?>').appendTo("select[name='action']");
+		<?php } ?>
+		<?php if ( wpmem_is_enabled( 'mod_reg' ) ) { ?>
 			$j('<option>').val('activate').text('<?php _e( 'Activate', 'wp-members' )?>').appendTo("select[name='action']");
 			$j('<option>').val('deactivate').text('<?php _e( 'Deactivate', 'wp-members' )?>').appendTo("select[name='action']");
 		<?php } ?>
 			$j('<option>').val('export').text('<?php _e( 'Export', 'wp-members' )?>').appendTo("select[name='action']");
 			$j('<input id="export_all" name="export_all" class="button action" type="submit" value="<?php _e( 'Export All Users', 'wp-members' ); ?>" />').appendTo(".top .bulkactions");
-		<?php if( $wpmem->mod_reg == 1 ) { ?>
+		<?php if ( wpmem_is_enabled( 'act_link' ) ) { ?>
+			$j('<option>').val('resend_welcome').text('<?php _e( 'Resend welcome email', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<option>').val('confirm').text('<?php _e( 'Confirm', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<option>').val('unconfirm').text('<?php _e( 'Unconfirm', 'wp-members' )?>').appendTo("select[name='action2']");
+		<?php } ?>
+		<?php if ( wpmem_is_enabled( 'mod_reg' ) ) { ?>
 			$j('<option>').val('activate').text('<?php _e( 'Activate', 'wp-members' )?>').appendTo("select[name='action2']");
 			$j('<option>').val('deactivate').text('<?php _e( 'Deactivate', 'wp-members' )?>').appendTo("select[name='action2']");
 		<?php } ?>
@@ -52,10 +62,10 @@ class WP_Members_Admin_Users {
 	 * @return array $actions
 	 */
 	static function insert_hover_links( $actions, $user_object ) {
-		global $wpmem;
+
 		if ( $user_object->ID != get_current_user_id() ) {
 			
-			if ( 1 == $wpmem->act_link ) {
+			if ( wpmem_is_enabled( 'act_link' ) ) {
 				if ( false === wpmem_is_user_confirmed( $user_object->ID ) ) {
 					$action = 'confirm';
 					$term   = __( 'Confirm', 'wp-members' );
@@ -68,10 +78,10 @@ class WP_Members_Admin_Users {
 				$actions[ $action ] = '<a href="' . $url . '">' . $term . '</a>';
 				
 				// Resend welcome email (will contain confirmation link if enabled).
-				//$actions['resend_welcome'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'resend_welcome', 'user' => $user_object->ID ), "users.php" ), 'resend-welcome' ) . '">' . __( 'Resend welcome email', 'wp-members' ) . '</a>';
+				$actions['resend_welcome'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'resend-single', 'user' => $user_object->ID ), "users.php" ), 'resend-user' ) . '">' . __( 'Resend welcome email', 'wp-members' ) . '</a>';
 			}
 			
-			if ( 1 == $wpmem->mod_reg ) {
+			if ( wpmem_is_enabled( 'mod_reg' ) ) {
 				$is_active = wpmem_is_user_activated( $user_object->ID );
 
 				if ( false === $is_active ) {
@@ -120,6 +130,9 @@ class WP_Members_Admin_Users {
 
 			case 'activate':
 			case 'deactivate':
+			case 'confirm':
+			case 'unconfirm':
+			case 'resend_welcome':
 
 				// Validate nonce.
 				check_admin_referer( 'bulk-users' );
@@ -136,15 +149,39 @@ class WP_Members_Admin_Users {
 						// Current user cannot activate or deactivate themselves.
 						if ( $user != get_current_user_id() ) {
 							// Check to see if the user is already activated, if not, activate.
-							if ( 'activate' == $action && 1 != get_user_meta( $user, 'active', true ) ) {
+							if ( 'activate' == $action && ! wpmem_is_user_activated( $user ) ) {
 								wpmem_activate_user( $user );
-							} elseif( 'deactivate' == $action ) {
+							} elseif ( 'deactivate' == $action ) {
 								wpmem_deactivate_user( $user );
+							} elseif ( 'confirm' == $action && ! wpmem_is_user_confirmed( $user ) ) {
+								wpmem_set_user_as_confirmed( $user );
+							} elseif ( 'unconfirm' == $action ) {
+								wpmem_set_user_as_unconfirmed( $user );
+							} elseif ( 'resend_welcome' == $action ) {
+								wpmem_email_to_user( $args = array( 
+									'user_id' => $user,
+									'tag' => ( wpmem_is_enabled( 'mod_reg' ) ) ? 'newmod' : 'newreg'
+								));
 							}
 							$x++;
 						}
 					}
-					$msg = ( 'activate' == $action ) ? urlencode( sprintf( __( '%s users activated', 'wp-members' ), $x ) ) : urlencode( sprintf( __( '%s users deactivated', 'wp-members' ), $x ) );
+
+					switch ( $action ) {
+						case 'activate':
+							$msg = urlencode( sprintf( __( '%s users activated', 'wp-members' ), $x ) );
+							break;
+						case 'deactivate':
+							$msg = urlencode( sprintf( __( '%s users deactivated', 'wp-members' ), $x ) );
+						case 'confirm':
+							$msg = urlencode( sprintf( __( '%s users confirmed', 'wp-members' ), $x ) );
+							break;
+						case 'unconfirm':
+							$msg = urlencode( sprintf( __( '%s users unconfirmed', 'wp-members' ), $x ) );
+							break;
+						case 'resend_welcome':
+							$msg = urlencode( sprintf( __( 'Resent welcome to %s users', 'wp-members' ), $x ) );
+					}
 
 				} else {
 					$msg = urlencode( __( 'No users selected', 'wp-members' ) );
@@ -160,7 +197,7 @@ class WP_Members_Admin_Users {
 				// Validate nonce.
 				check_admin_referer( 'activate-user' );
 
-				// Get the users.
+				// Get the user.
 				$user_id = filter_var( $_REQUEST['user'], FILTER_VALIDATE_INT );
 
 				// Check to see if the user is already activated, if not, activate.
@@ -190,7 +227,7 @@ class WP_Members_Admin_Users {
 				// Validate nonce.
 				check_admin_referer( 'confirm-user' );
 
-				// Get the users.
+				// Get the user.
 				$user_id = filter_var( $_REQUEST['user'], FILTER_VALIDATE_INT );
 
 				// Check to see if the user is already activated, if not, activate.
@@ -211,6 +248,26 @@ class WP_Members_Admin_Users {
 					// Set the return message.
 					$msg = urlencode( __( "That user is already confirmed", 'wp-members' ) );
 				}
+				$sendback = add_query_arg( array( 'activated' => $msg ), $sendback );
+				break;
+
+			case 'resend-single':
+				
+				// Validate nonce.
+				check_admin_referer( 'resend-user' );
+
+				// Get the user.
+				$user_id = filter_var( $_REQUEST['user'], FILTER_VALIDATE_INT );
+
+				// Send welcome message.
+				wpmem_email_to_user( array( 
+					'user_id' => $user_id,
+					'tag' => ( wpmem_is_enabled( 'mod_reg' ) ) ? 'newmod' : 'newreg'
+				) );
+
+				// Get user data for admin notice.
+				$user_info = get_userdata( $user_id );
+				$msg = urlencode( sprintf( esc_html__( "Resent welcome message to %s", 'wp-members' ), $user_info->user_email ) );
 				$sendback = add_query_arg( array( 'activated' => $msg ), $sendback );
 				break;
 
