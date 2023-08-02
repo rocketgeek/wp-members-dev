@@ -561,7 +561,13 @@ class WP_Members_User {
 		if ( $this->reg_type['is_wpmem'] ) {
 			// @todo Work out a better method for this so that it is optional and can be turned on/off for native reg
 			// Send a notification email to the user.
-			wpmem_email_to_user( $user_id, $this->post_data['password'], $wpmem->mod_reg, $wpmem->fields, $this->post_data );
+			wpmem_email_to_user( array( 
+				'user_id'      => $user_id, 
+				'password'     => $this->post_data['password'],
+				'tag'          => ( wpmem_is_enabled( 'mod_reg' ) ) ? 'newmod' : 'newreg', 
+				'wpmem_fields' => $wpmem->fields, 
+				'fields'       => $this->post_data 
+			) );
 		}
 	}
 	
@@ -735,7 +741,7 @@ class WP_Members_User {
 			}
 
 			if ( $user ) {
-				wpmem_email_to_user( $user->ID, '', 3 );
+				wpmem_email_to_user( array( 'user_id'=>$user->ID, 'tag'=>'repass' ) );
 				/** This action is documented in /includes/class-wp-members-user.php */
 				do_action( 'wpmem_pwd_reset', $user->ID, '' );
 				return "pwdresetsuccess";
@@ -773,7 +779,7 @@ class WP_Members_User {
 			$user  = ( isset( $_POST['user_email'] ) ) ? get_user_by( 'email', $email ) : false;
 			if ( $user ) {
 				// Send it in an email.
-				wpmem_email_to_user( $user->ID, '', 4 );
+				wpmem_email_to_user( array( 'user_id'=>$user->ID, 'tag'=>'getuser' ) );
 				/**
 				 * Fires after retrieving username.
 				 *

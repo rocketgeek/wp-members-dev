@@ -303,8 +303,8 @@ class WP_Members_Validation_Link {
 	 */
 	public function send_welcome( $user_id ) {
 		if ( $this->send_welcome ) {
-			$email_to_send = ( get_option( 'wpmembers_email_validated' ) ) ? 6 : 2;
-			wpmem_email_to_user( $user_id, '', $email_to_send  );
+			$email_to_send = ( get_option( 'wpmembers_email_validated' ) ) ? 'validated' : 'modreg';
+			wpmem_email_to_user( array( 'user_id'=>$user_id, 'tag'=>$email_to_send ) );
 		}
 	}
 	

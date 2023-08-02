@@ -602,7 +602,7 @@ function wpmem_activate_user( $user_id, $notify = true, $set_pwd = false ) {
 
 	// Generate and send user approved email to user.
 	if ( true === $notify ) {
-		wpmem_email_to_user( $user_id, $new_pass, 2 );
+		wpmem_email_to_user( array( 'user_id'=>$user_id, 'password'=>$new_pass, 'tag'=>'appmod' ) );
 	}
 
 	// Set the active flag in usermeta.
