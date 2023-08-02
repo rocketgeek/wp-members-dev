@@ -113,28 +113,23 @@ class WP_Members_Email {
 		// Handle backward compatibility for customizations that may call the email function directly.
 		$wpmem_fields = ( false == $wpmem_fields ) ? wpmem_fields( 'all' ) : $wpmem_fields;
 
+		// Handle backward compatibility for passing numeric tags.
+		if ( is_numeric( $tag ) ) {
+			if ( 5 != $tag ) {
+				$tag = array_search( $tag, array( 'newreg'=>0, 'newmod'=>1, 'appmod'=>2, 'repass'=>3, 'getuser'=>4, 'validated'=>6 ) );
+			}
+		}
+
 		//Determine email to be sent. Stored option is an array with keys 'body' and 'subj'.
 		$tag_array = array( 'newreg', 'newmod', 'appmod', 'repass', 'getuser', 'validated' );
-		switch ( $tag ) {
-			case 0: 
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-				$tag = $tag_array[ $tag ];
-				$this->settings = get_option( 'wpmembers_email_' . $tag );
-				$this->settings['tag'] = $tag;
-				break;
-			case 6:
-				$this->settings = get_option( 'wpmembers_email_validated' );
-				$this->settings['tag'] = 'validated';
-				break;
-			default: // case 5:
-				// This is a custom email.
-				$this->settings['subj'] = $custom['subj'];
-				$this->settings['body'] = $custom['body'];
-				$this->settings['tag']  = ( isset( $custom['tag'] ) ) ? $custom['tag'] : '';
-				break;
+		if ( in_array( $tag, $tag_array ) ) {
+			$this->settings = get_option( 'wpmembers_email_' . $tag );
+			$this->settings['tag'] = $tag;
+		} else {
+			// This is a custom email.
+			$this->settings['subj'] = $custom['subj'];
+			$this->settings['body'] = $custom['body'];
+			$this->settings['tag']  = ( isset( $custom['tag'] ) ) ? $custom['tag'] : '';
 		}
 		
 		// wpautop() the content if we are doing HTML email.
