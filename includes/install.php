@@ -63,6 +63,10 @@ function wpmem_do_install() {
 
 		// 3.4.7 fixes(?) a db collation issue with the user search CRUD table
 		wpmem_upgrade_user_search_crud_table();
+
+		if ( version_compare( $existing_settings['version'], '3.5.0', '<' ) ) {
+			wpmem_add_profile_to_fields();
+		}
 		
 		// Not 100% certain where we needed to add wpmem_append_email(), but it was likely before 3.1.0.
 		if ( version_compare( $existing_settings['version'], '3.1.1', '<' ) ) {
@@ -557,23 +561,23 @@ function wpmem_install_settings() {
  */
 function wpmem_install_fields() {
 	$fields = array(
-		array( 0,  'Choose a Username', 'username',          'text',     'y', 'y', 'y' ),
-		array( 1,  'First Name',        'first_name',        'text',     'y', 'y', 'y' ),
-		array( 2,  'Last Name',         'last_name',         'text',     'y', 'y', 'y' ),
-		array( 3,  'Address 1',         'billing_address_1', 'text',     'y', 'y', 'n' ),
-		array( 4,  'Address 2',         'billing_address_2', 'text',     'y', 'n', 'n' ),
-		array( 5,  'City',              'billing_city',      'text',     'y', 'y', 'n' ),
-		array( 6,  'State',             'billing_state',     'text',     'y', 'y', 'n' ),
-		array( 7,  'Zip',               'billing_postcode',  'text',     'y', 'y', 'n' ),
-		array( 8,  'Country',           'billing_country',   'text',     'y', 'y', 'n' ),
-		array( 9,  'Phone',             'billing_phone',     'text',     'y', 'y', 'n' ),
-		array( 10, 'Email',             'user_email',        'email',    'y', 'y', 'y' ),
-		array( 11, 'Confirm Email',     'confirm_email',     'email',    'n', 'n', 'n' ),
-		array( 12, 'Website',           'user_url',          'url',      'n', 'n', 'y' ),
-		array( 13, 'Biographical Info', 'description',       'textarea', 'n', 'n', 'y' ),
-		array( 14, 'Password',          'password',          'password', 'n', 'n', 'n' ),
-		array( 15, 'Confirm Password',  'confirm_password',  'password', 'n', 'n', 'n' ),
-		array( 16, 'Terms of Service',  'tos',               'checkbox', 'n', 'n', 'n', 'agree', 'n' ),
+		array( 0,  'Choose a Username', 'username',          'text',     'y', 'y', 'y', 'profile'=>0 ),
+		array( 1,  'First Name',        'first_name',        'text',     'y', 'y', 'y', 'profile'=>1 ),
+		array( 2,  'Last Name',         'last_name',         'text',     'y', 'y', 'y', 'profile'=>1 ),
+		array( 3,  'Address 1',         'billing_address_1', 'text',     'y', 'y', 'n', 'profile'=>1 ),
+		array( 4,  'Address 2',         'billing_address_2', 'text',     'y', 'n', 'n', 'profile'=>1 ),
+		array( 5,  'City',              'billing_city',      'text',     'y', 'y', 'n', 'profile'=>1 ),
+		array( 6,  'State',             'billing_state',     'text',     'y', 'y', 'n', 'profile'=>1 ),
+		array( 7,  'Zip',               'billing_postcode',  'text',     'y', 'y', 'n', 'profile'=>1 ),
+		array( 8,  'Country',           'billing_country',   'text',     'y', 'y', 'n', 'profile'=>1 ),
+		array( 9,  'Phone',             'billing_phone',     'text',     'y', 'y', 'n', 'profile'=>1 ),
+		array( 10, 'Email',             'user_email',        'email',    'y', 'y', 'y', 'profile'=>1 ),
+		array( 11, 'Confirm Email',     'confirm_email',     'email',    'n', 'n', 'n', 'profile'=>1 ),
+		array( 12, 'Website',           'user_url',          'url',      'n', 'n', 'y', 'profile'=>1 ),
+		array( 13, 'Biographical Info', 'description',       'textarea', 'n', 'n', 'y', 'profile'=>1 ),
+		array( 14, 'Password',          'password',          'password', 'n', 'n', 'n', 'profile'=>0 ),
+		array( 15, 'Confirm Password',  'confirm_password',  'password', 'n', 'n', 'n', 'profile'=>0 ),
+		array( 16, 'Terms of Service',  'tos',               'checkbox', 'n', 'n', 'n', 'agree', 'n', 'profile'=>0 ),
 	);
 	update_option( 'wpmembers_fields', $fields, '', 'yes' ); // using update_option to allow for forced update
 	return $fields;
@@ -865,5 +869,16 @@ function wpmem_upgrade_user_search_crud_table() {
 	$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud;" );
 	// If the table does not exist, create the table to store the meta keys.
 	$wpdb->query( "CREATE TABLE IF NOT EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud (meta_key VARCHAR(255) NOT NULL);" );
+}
+
+function wpmem_add_profile_to_fields() {
+	$fields = get_option( 'wpmembers_fields' );
+	$skips = array( 'username', 'user_login', 'password', 'confirm_password', 'tos' );
+	foreach ( $fields as $key => $val ) {
+		if ( ! isset( $val['profile'] ) ) {
+			$fields[ $key ]['profile'] = ( ! in_array( $key, $skips ) ) ? 1 : 0;
+		}
+	}
+	update_option( 'wpmembers_fields', $fields );
 }
 // End of file.

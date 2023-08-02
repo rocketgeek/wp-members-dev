@@ -36,7 +36,7 @@ class WP_Members_Forms {
 	 * @param  string   $tag
 	 * @param  string   $form The form being generated.
 	 */
-	function load_fields( $tag = 'new', $form = 'default' ) {
+	function load_fields( $tag = "all", $form = 'default' ) {
 		
 		global $wpmem;
 	
@@ -48,71 +48,90 @@ class WP_Members_Forms {
 			// Update settings.
 			$fields = array( array( 10, 'Email', 'user_email', 'email', 'y', 'y', 'y', 'profile'=>true ) );
 		}
-		
+
+		// Check woo reg fields.
+		if ( 'woo' == $tag && 1 == $wpmem->woo->add_my_account_fields ) {
+			$woo_reg_fields = get_option( 'wpmembers_wcacct_fields' );
+			$woo_reg_fields = ( $woo_reg_fields ) ? $woo_reg_fields : array();
+		}
+
 		// Add new field array keys
 		foreach ( $fields as $key => $val ) {
+
+			// Start by checking if we need this field or not.
+			if (
+				( 'register' == $tag && 'y' == $val[4] )
+			 || ( 'profile'  == $tag && ( ! isset( $val['profile'] ) || 1 == $val['profile'] ) ) // @todo Currently checking ! isset because some fields don't have $val['profile']. Should probably handle on update to set $val['profile'] for all fields.
+			 || ( 'all'      == $tag )
+			 || ( 'woo' == $tag && 1 == $wpmem->woo->add_my_account_fields && in_array( $val[2], $woo_reg_fields ) )
+			) {
 			
-			// Key fields with meta key.
-			$meta_key = $val[2];
-			
-			// Old format, new key.
-			foreach ( $val as $subkey => $subval ) {
-				$wpmem->fields[ $meta_key ][ $subkey ] = $subval;
-			}
-			
-			// Setup field properties.
-			$wpmem->fields[ $meta_key ]['label']    = $val[1];
-			$wpmem->fields[ $meta_key ]['type']     = $val[3];
-			$wpmem->fields[ $meta_key ]['register'] = ( 'y' == $val[4] ) ? true : false;
-			$wpmem->fields[ $meta_key ]['required'] = ( 'y' == $val[5] ) ? true : false;
-			$wpmem->fields[ $meta_key ]['profile']  = ( 'y' == $val[4] ) ? true : false;// ( isset( $val['profile'] ) ) ? $val['profile'] : true ; // // @todo Wait for profile fix
-			$wpmem->fields[ $meta_key ]['native']   = ( 'y' == $val[6] ) ? true : false;
-			
-			// Certain field types have additional properties.
-			switch ( $val[3] ) {
+				if ( 'woo' == $tag && in_array( $val[2], $woo_reg_fields ) ) {
+					$val[4] = 'y';
+				}
+
+				// Key fields with meta key.
+				$meta_key = $val[2];
+	
+				// Old format, new key.
+				foreach ( $val as $subkey => $subval ) {
+					$wpmem->fields[ $meta_key ][ $subkey ] = $subval;
+				}
 				
-				case 'checkbox':
-					$wpmem->fields[ $meta_key ]['checked_value']   = $val[7];
-					$wpmem->fields[ $meta_key ]['checked_default'] = ( 'y' == $val[8] ) ? true : false;
-					$wpmem->fields[ $meta_key ]['checkbox_label']  = ( isset( $val['checkbox_label'] ) ) ? $val['checkbox_label'] : 0;
-					break;
-
-				case 'select':
-				case 'multiselect':
-				case 'multicheckbox':
-				case 'radio':
-				case 'membership':
-					if ( 'membership' == $val[3] ) {
-						$val[7] = array( __( 'Choose membership', 'wp-members' ) . '|' );
-						foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
-							$val[7][] = $membership_value['title'] . '|' . $membership_key;
-						}
-					}
-					// Correct a malformed value (if last value is empty due to a trailing comma).
-					if ( '' == end( $val[7] ) ) {
-						array_pop( $val[7] );
-						$wpmem->fields[ $meta_key ][7] = $val[7];
-					}
-					$wpmem->fields[ $meta_key ]['values']    = $val[7];
-					$wpmem->fields[ $meta_key ]['delimiter'] = ( isset( $val[8] ) ) ? $val[8] : '|';
-					$wpmem->fields[ $meta_key ]['options']   = array();
-					foreach ( $val[7] as $value ) {
-						$pieces = explode( '|', trim( $value ) );
-						if ( isset( $pieces[1] ) && $pieces[1] != '' ) {
-							$wpmem->fields[ $meta_key ]['options'][ $pieces[1] ] = $pieces[0];
-						}
-					}
-					break;
-
-				case 'file':
-				case 'image':
-					$wpmem->fields[ $meta_key ]['file_types'] = $val[7];
-					break;
-
-				case 'hidden':
-					$wpmem->fields[ $meta_key ]['value'] = $val[7];
-					break;
+				// Setup field properties.
+				$wpmem->fields[ $meta_key ]['label']    = $val[1];
+				$wpmem->fields[ $meta_key ]['type']     = $val[3];
+				$wpmem->fields[ $meta_key ]['register'] = ( 'y' == $val[4] ) ? true : false;
+				$wpmem->fields[ $meta_key ]['required'] = ( 'y' == $val[5] ) ? true : false;
+				$wpmem->fields[ $meta_key ]['profile']  = ( isset( $val['profile'] ) ) ? $val['profile'] : true ; // // @todo Wait for profile fix
+				$wpmem->fields[ $meta_key ]['native']   = ( 'y' == $val[6] ) ? true : false;
+				
+				// Certain field types have additional properties.
+				switch ( $val[3] ) {
 					
+					case 'checkbox':
+						$wpmem->fields[ $meta_key ]['checked_value']   = $val[7];
+						$wpmem->fields[ $meta_key ]['checked_default'] = ( 'y' == $val[8] ) ? true : false;
+						$wpmem->fields[ $meta_key ]['checkbox_label']  = ( isset( $val['checkbox_label'] ) ) ? $val['checkbox_label'] : 0;
+						break;
+
+					case 'select':
+					case 'multiselect':
+					case 'multicheckbox':
+					case 'radio':
+					case 'membership':
+						if ( 'membership' == $val[3] ) {
+							$val[7] = array( __( 'Choose membership', 'wp-members' ) . '|' );
+							foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
+								$val[7][] = $membership_value['title'] . '|' . $membership_key;
+							}
+						}
+						// Correct a malformed value (if last value is empty due to a trailing comma).
+						if ( '' == end( $val[7] ) ) {
+							array_pop( $val[7] );
+							$wpmem->fields[ $meta_key ][7] = $val[7];
+						}
+						$wpmem->fields[ $meta_key ]['values']    = $val[7];
+						$wpmem->fields[ $meta_key ]['delimiter'] = ( isset( $val[8] ) ) ? $val[8] : '|';
+						$wpmem->fields[ $meta_key ]['options']   = array();
+						foreach ( $val[7] as $value ) {
+							$pieces = explode( '|', trim( $value ) );
+							if ( isset( $pieces[1] ) && $pieces[1] != '' ) {
+								$wpmem->fields[ $meta_key ]['options'][ $pieces[1] ] = $pieces[0];
+							}
+						}
+						break;
+
+					case 'file':
+					case 'image':
+						$wpmem->fields[ $meta_key ]['file_types'] = $val[7];
+						break;
+
+					case 'hidden':
+						$wpmem->fields[ $meta_key ]['value'] = $val[7];
+						break;
+						
+				}
 			}
 		}
 	}
@@ -1104,218 +1123,211 @@ class WP_Members_Forms {
 			$val = ''; $label = ''; $input = ''; $field_before = ''; $field_after = '';
 
 			// If the field is set to display and we aren't skipping, construct the row.
-			// if ( ( 'new' == $tag && $field['register'] ) || ( 'edit' == $tag && $field['profile'] ) ) { // @todo Wait for profile fix
-			if ( $field['register'] ) {
-				
-				// Handle hidden fields
-				if ( 'hidden' == $field['type'] ) {
-					$do_row = false;
-					$hidden_rows[ $meta_key ] = wpmem_form_field( array( 
-						'name'     => $meta_key,
-						'type'     => $field['type'],
-						'value'    => $field['value'],
-						'compare'  => $valtochk,
-						'required' => $field['required'],
-					) );
-				}
-
-				// Label for all but TOS and hidden fields.
-				if ( 'tos' != $meta_key && 'hidden' != $field['type'] ) {
-
-					$class = ( $field['type'] == 'password' || $field['type'] == 'email' || $field['type'] == 'url' ) ? 'text' : $field['type'];
-					
-					$label = wpmem_form_label( array(
-						'meta_key' => $meta_key, //( 'username' == $meta_key ) ? 'user_login' : $meta_key, 
-						'label'    => __( $field['label'], 'wp-members' ), 
-						'type'     => $field['type'], 
-						'class'    => $class, 
-						'required' => $field['required'], 
-						'req_mark' => $args['req_mark'] 
-					) );
-
-				} 
-
-				// Gets the field value for edit profile.
-				if ( ( 'edit' == $tag ) && ( '' == $wpmem->regchk ) ) {
-					switch ( $meta_key ) {
-						case( 'description' ):
-						case( 'textarea' == $field['type'] ):
-							$val = ( is_object( $user ) ) ? get_user_meta( $user->ID, $meta_key, 'true' ) : ''; // esc_textarea() is run when field is created.
-							break;
-
-						case 'user_email':
-						case 'confirm_email':
-							$val = ( is_object( $user ) ) ? sanitize_email( $user->user_email ) : '';
-							break;
-
-						case 'user_url':
-							$val = ( is_object( $user ) ) ? $user->user_url : ''; // esc_url() is run when the field is created.
-							break;
-
-						case 'display_name':
-							$val = ( is_object( $user ) ) ? sanitize_text_field( $user->display_name ) : '';
-							break; 
-
-						default:
-							$val = ( is_object( $user ) ) ? sanitize_text_field( get_user_meta( $user->ID, $meta_key, 'true' ) ) : '';
-							break;
-					}
-
-				} else {
-					if ( 'file' == $field['type'] ) {
-						$val = ( isset( $_FILES[ $meta_key ]['name'] ) ) ? sanitize_file_name( $_FILES[ $meta_key ]['name'] ) : '' ;
-					} else {
-						$val = ( isset( $_POST[ $meta_key ] ) ) ? wpmem_sanitize_field( $_POST[ $meta_key ], $field['type'] ) : '';
-					}
-				}
-
-				// Does the tos field.
-				if ( 'tos' == $meta_key ) {
-
-				//	$val = sanitize_text_field( wpmem_get( $meta_key, '' ) ); 
-
-					// Should be checked by default? and only if form hasn't been submitted.
-					$val   = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
-					$input = wpmem_form_field( array(
-						'name'     => $meta_key, 
-						'type'     => $field['type'], 
-						'value'    => $field['checked_value'], 
-						'compare'  => $val,
-						'required' => $field['required'],
-					) );
-
-					$input .= ' ' . $this->get_tos_link( $field, $tag );
-					
-					$input = ( $field['required'] ) ? $input . $args['req_mark'] : $input;
-
-					// In previous versions, the div class would end up being the same as the row before.
-					$field_before = ( $args['wrap_inputs'] ) ? '<div class="div_text">' : '';
-					$field_after  = ( $args['wrap_inputs'] ) ? '</div>' : '';
-
-				} elseif ( 'hidden' != $field['type'] ) {
-
-					// For checkboxes.
-					if ( 'checkbox' == $field['type'] ) { 
-						$valtochk = $val;
-						$val = $field['checked_value']; 
-						// if it should it be checked by default (& only if form not submitted), then override above...
-						if ( $field['checked_default'] && ( ! $_POST && $tag != 'edit' ) ) { 
-							$val = $valtochk = $field['checked_value'];
-						}
-					}
-
-					// For dropdown select.
-					if ( 'select' == $field['type'] || 'radio' == $field['type'] || 'multiselect' == $field['type'] || 'multicheckbox' == $field['type'] || 'membership' == $field['type'] ) {
-						$valtochk = $val;
-						$val = $field['values'];
-					}
-
-					if ( ! isset( $valtochk ) ) {
-						$valtochk = '';
-					}
-
-					if ( ( 'file' == $field['type'] || 'image' == $field['type'] ) ) {
-						
-						$form_has_file = true;
-						
-						// Handle files differently for multisite vs. single install.
-						// @see: https://core.trac.wordpress.org/ticket/32145
-						if ( is_multisite() ) {
-							$attachment = get_post( $val );
-							$attachment_url = $attachment->guid;
-						} else {
-							$attachment_url = wp_get_attachment_url( $val );
-						}
-						
-						$empty_file = '<span class="description">' . __( 'None' ) . '</span>';
-						if ( 'edit' == $tag ) {
-							if ( 'file' == $field['type'] ) {
-								$input = ( $attachment_url ) ? '<a href="' . esc_url( $attachment_url ) . '" id="' . $meta_key . '_file">' . get_the_title( $val ) . '</a>' : $empty_file;
-							} else {
-								$input = ( $attachment_url ) ? '<img src="' . esc_url( $attachment_url ) . '" id="' . $meta_key . '_img" />' : $empty_file;
-							}
-							$input.= '<br />' . wpmem_get_text( 'profile_upload' ) . '<br />';
-						} else {
-							if ( 'image' == $field['type'] ) {
-								$input = '<img src="" id="' . $meta_key . '_img" />';
-							}
-						}
-						$input.= wpmem_form_field( array(
-							'name'       => $meta_key, 
-							'type'       => $field['type'], 
-							'value'      => $val, 
-							'compare'    => $valtochk,
-							'file_types' => $field['file_types'],
-						) );
-
-					} else {
-					
-						// For all other input types.
-						$formfield_args = array( 
-							'name'     => $meta_key, // ( 'username' == $meta_key ) ? 'user_login' : $meta_key,
-							'type'     => $field['type'],
-							'value'    => $val,
-							'compare'  => $valtochk,
-							//'class'    => ( $class ) ? $class : 'textbox',
-							'required' => $field['required'],
-							'placeholder' => ( isset( $field['placeholder'] ) ) ? $field['placeholder'] : '',
-							'pattern'     => ( isset( $field['pattern']     ) ) ? $field['pattern']     : false,
-							'title'       => ( isset( $field['title']       ) ) ? $field['title']       : false,
-							'min'         => ( isset( $field['min']         ) ) ? $field['min']         : false,
-							'max'         => ( isset( $field['max']         ) ) ? $field['max']         : false,
-							'rows'        => ( isset( $field['rows']        ) ) ? $field['rows']        : false,
-							'cols'        => ( isset( $field['cols']        ) ) ? $field['cols']        : false,
-							'file_types'  => ( isset( $field['file_types']  ) ) ? $field['file_types']  : false,
-						);
-						if ( 'multicheckbox' == $field['type'] || 'multiselect' == $field['type'] ) {
-							$formfield_args['delimiter'] = $field['delimiter'];
-						}
-						// Add timestamp support.
-						if ( 'timestamp' == $field['type'] ) {
-							$formfield_args['timestamp_display'] = $field['timestamp_display'];
-						}
-						$input = wpmem_form_field( $formfield_args );
-
-						// If checkbox label option is enabled.
-						// @todo "checkbox_label" should be set already, check why it isn't.
-						if ( 'checkbox' == $field['type'] && isset( $field['checkbox_label'] ) && 1 == $field['checkbox_label'] ) {
-							$input = $input . ' <label for="' . $meta_key . '">' . $label . '</label>';
-							$fields[ $meta_key ]['label'] = $field['label'] = $label = '';
-						}
-					}
-
-					// Determine input wrappers.
-					$field_before = ( $args['wrap_inputs'] ) ? '<div class="div_' . $class . '">' : '';
-					$field_after  = ( $args['wrap_inputs'] ) ? '</div>' : '';
-				}
-
+			// Handle hidden fields
+			if ( 'hidden' == $field['type'] ) {
+				$do_row = false;
+				$hidden_rows[ $meta_key ] = wpmem_form_field( array( 
+					'name'     => $meta_key,
+					'type'     => $field['type'],
+					'value'    => $field['value'],
+					'compare'  => $valtochk,
+					'required' => $field['required'],
+				) );
 			}
 
-			// If the row is set to display, add the row to the form array.
-			if ( ( 'new' == $tag && $field['register'] ) || ( 'edit' == $tag && $field['profile'] ) ) {
-			//if ( $field['register'] && 'hidden' != $field['type'] ) {
-				if ( 'hidden' != $field['type'] ) {
+			// Label for all but TOS and hidden fields.
+			if ( 'tos' != $meta_key && 'hidden' != $field['type'] ) {
 
-					$values = '';
-					if ( 'multicheckbox' == $field['type'] || 'select' == $field['type'] || 'multiselect' == $field['type'] || 'radio' == $field['type'] ) {
-						$values = $val;
-						$val = $valtochk;
-					}
+				$class = ( $field['type'] == 'password' || $field['type'] == 'email' || $field['type'] == 'url' ) ? 'text' : $field['type'];
+				
+				$label = wpmem_form_label( array(
+					'meta_key' => $meta_key, //( 'username' == $meta_key ) ? 'user_login' : $meta_key, 
+					'label'    => __( $field['label'], 'wp-members' ), 
+					'type'     => $field['type'], 
+					'class'    => $class, 
+					'required' => $field['required'], 
+					'req_mark' => $args['req_mark'] 
+				) );
 
-					$rows[ $meta_key ] = array(
-						'meta'         => $meta_key,
-						'type'         => $field['type'],
-						'value'        => $val,
-						'values'       => $values,
-						'label_text'   => __( $field['label'], 'wp-members' ),
-						'row_before'   => $args['row_before'],
-						'label'        => $label,
-						'field_before' => $field_before,
-						'field'        => $input,
-						'field_after'  => $field_after,
-						'row_after'    => $args['row_after'],
-					);
+			} 
+
+			// Gets the field value for edit profile.
+			if ( ( 'edit' == $tag ) && ( '' == wpmem_get_form_state() ) ) {
+				switch ( $meta_key ) {
+					case( 'description' ):
+					case( 'textarea' == $field['type'] ):
+						$val = ( is_object( $user ) ) ? get_user_meta( $user->ID, $meta_key, 'true' ) : ''; // esc_textarea() is run when field is created.
+						break;
+
+					case 'user_email':
+					case 'confirm_email':
+						$val = ( is_object( $user ) ) ? sanitize_email( $user->user_email ) : '';
+						break;
+
+					case 'user_url':
+						$val = ( is_object( $user ) ) ? $user->user_url : ''; // esc_url() is run when the field is created.
+						break;
+
+					case 'display_name':
+						$val = ( is_object( $user ) ) ? sanitize_text_field( $user->display_name ) : '';
+						break; 
+
+					default:
+						$val = ( is_object( $user ) ) ? sanitize_text_field( get_user_meta( $user->ID, $meta_key, 'true' ) ) : '';
+						break;
 				}
+
+			} else {
+				if ( 'file' == $field['type'] ) {
+					$val = ( isset( $_FILES[ $meta_key ]['name'] ) ) ? sanitize_file_name( $_FILES[ $meta_key ]['name'] ) : '' ;
+				} else {
+					$val = ( isset( $_POST[ $meta_key ] ) ) ? wpmem_sanitize_field( $_POST[ $meta_key ], $field['type'] ) : '';
+				}
+			}
+
+			// Does the tos field.
+			if ( 'tos' == $meta_key ) {
+
+			//	$val = sanitize_text_field( wpmem_get( $meta_key, '' ) ); 
+
+				// Should be checked by default? and only if form hasn't been submitted.
+				$val   = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
+				$input = wpmem_form_field( array(
+					'name'     => $meta_key, 
+					'type'     => $field['type'], 
+					'value'    => $field['checked_value'], 
+					'compare'  => $val,
+					'required' => $field['required'],
+				) );
+
+				$input .= ' ' . $this->get_tos_link( $field, $tag );
+				
+				$input = ( $field['required'] ) ? $input . $args['req_mark'] : $input;
+
+				// In previous versions, the div class would end up being the same as the row before.
+				$field_before = ( $args['wrap_inputs'] ) ? '<div class="div_text">' : '';
+				$field_after  = ( $args['wrap_inputs'] ) ? '</div>' : '';
+
+			} elseif ( 'hidden' != $field['type'] ) {
+
+				// For checkboxes.
+				if ( 'checkbox' == $field['type'] ) { 
+					$valtochk = $val;
+					$val = $field['checked_value']; 
+					// if it should it be checked by default (& only if form not submitted), then override above...
+					if ( $field['checked_default'] && ( ! $_POST && $tag != 'edit' ) ) { 
+						$val = $valtochk = $field['checked_value'];
+					}
+				}
+
+				// For dropdown select.
+				if ( 'select' == $field['type'] || 'radio' == $field['type'] || 'multiselect' == $field['type'] || 'multicheckbox' == $field['type'] || 'membership' == $field['type'] ) {
+					$valtochk = $val;
+					$val = $field['values'];
+				}
+
+				if ( ! isset( $valtochk ) ) {
+					$valtochk = '';
+				}
+
+				if ( ( 'file' == $field['type'] || 'image' == $field['type'] ) ) {
+					
+					$form_has_file = true;
+					
+					// Handle files differently for multisite vs. single install.
+					// @see: https://core.trac.wordpress.org/ticket/32145
+					if ( is_multisite() ) {
+						$attachment = get_post( $val );
+						$attachment_url = $attachment->guid;
+					} else {
+						$attachment_url = wp_get_attachment_url( $val );
+					}
+					
+					$empty_file = '<span class="description">' . __( 'None' ) . '</span>';
+					if ( 'edit' == $tag ) {
+						if ( 'file' == $field['type'] ) {
+							$input = ( $attachment_url ) ? '<a href="' . esc_url( $attachment_url ) . '" id="' . $meta_key . '_file">' . get_the_title( $val ) . '</a>' : $empty_file;
+						} else {
+							$input = ( $attachment_url ) ? '<img src="' . esc_url( $attachment_url ) . '" id="' . $meta_key . '_img" />' : $empty_file;
+						}
+						$input.= '<br />' . wpmem_get_text( 'profile_upload' ) . '<br />';
+					} else {
+						if ( 'image' == $field['type'] ) {
+							$input = '<img src="" id="' . $meta_key . '_img" />';
+						}
+					}
+					$input.= wpmem_form_field( array(
+						'name'       => $meta_key, 
+						'type'       => $field['type'], 
+						'value'      => $val, 
+						'compare'    => $valtochk,
+						'file_types' => $field['file_types'],
+					) );
+
+				} else {
+				
+					// For all other input types.
+					$formfield_args = array( 
+						'name'     => $meta_key, // ( 'username' == $meta_key ) ? 'user_login' : $meta_key,
+						'type'     => $field['type'],
+						'value'    => $val,
+						'compare'  => $valtochk,
+						//'class'    => ( $class ) ? $class : 'textbox',
+						'required' => $field['required'],
+						'placeholder' => ( isset( $field['placeholder'] ) ) ? $field['placeholder'] : '',
+						'pattern'     => ( isset( $field['pattern']     ) ) ? $field['pattern']     : false,
+						'title'       => ( isset( $field['title']       ) ) ? $field['title']       : false,
+						'min'         => ( isset( $field['min']         ) ) ? $field['min']         : false,
+						'max'         => ( isset( $field['max']         ) ) ? $field['max']         : false,
+						'rows'        => ( isset( $field['rows']        ) ) ? $field['rows']        : false,
+						'cols'        => ( isset( $field['cols']        ) ) ? $field['cols']        : false,
+						'file_types'  => ( isset( $field['file_types']  ) ) ? $field['file_types']  : false,
+					);
+					if ( 'multicheckbox' == $field['type'] || 'multiselect' == $field['type'] ) {
+						$formfield_args['delimiter'] = $field['delimiter'];
+					}
+					// Add timestamp support.
+					if ( 'timestamp' == $field['type'] ) {
+						$formfield_args['timestamp_display'] = $field['timestamp_display'];
+					}
+					$input = wpmem_form_field( $formfield_args );
+
+					// If checkbox label option is enabled.
+					// @todo "checkbox_label" should be set already, check why it isn't.
+					if ( 'checkbox' == $field['type'] && isset( $field['checkbox_label'] ) && 1 == $field['checkbox_label'] ) {
+						$input = $input . ' <label for="' . $meta_key . '">' . $label . '</label>';
+						$fields[ $meta_key ]['label'] = $field['label'] = $label = '';
+					}
+				}
+
+				// Determine input wrappers.
+				$field_before = ( $args['wrap_inputs'] ) ? '<div class="div_' . $class . '">' : '';
+				$field_after  = ( $args['wrap_inputs'] ) ? '</div>' : '';
+			}
+
+
+			// If the row is set to display, add the row to the form array.
+			if ( 'hidden' != $field['type'] ) {
+
+				$values = '';
+				if ( 'multicheckbox' == $field['type'] || 'select' == $field['type'] || 'multiselect' == $field['type'] || 'radio' == $field['type'] ) {
+					$values = $val;
+					$val = $valtochk;
+				}
+
+				$rows[ $meta_key ] = array(
+					'meta'         => $meta_key,
+					'type'         => $field['type'],
+					'value'        => $val,
+					'values'       => $values,
+					'label_text'   => __( $field['label'], 'wp-members' ),
+					'row_before'   => $args['row_before'],
+					'label'        => $label,
+					'field_before' => $field_before,
+					'field'        => $input,
+					'field_after'  => $field_after,
+					'row_after'    => $args['row_after'],
+				);
 			}
 		}
 
@@ -1369,7 +1381,7 @@ class WP_Members_Forms {
 		 * @param string $tag  Toggle new registration or profile update. new|edit.
 		 */
 		$rows = apply_filters( 'wpmem_register_form_rows', $rows, $tag );
-		
+
 		// Put the rows from the array into $form.
 		$form = ''; $enctype = '';
 		foreach ( $rows as $meta_key => $row_item ) {
@@ -1678,7 +1690,7 @@ class WP_Members_Forms {
 
 						$label = ( 'tos' == $meta_key ) ? $tos_link_text : __( $field['label'], 'wp-members' );
 
-						$val = ( isset( $_POST[ $meta_key ] ) ) ? esc_attr( $_POST[ $meta_key ] ) : ''; // @todo Should this be sanitize_text_field()?
+						$val = ( isset( $_POST[ $meta_key ] ) ) ? esc_attr( $_POST[ $meta_key ] ) : '';
 						$val = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
 
 						$row_before = '<p class="wpmem-checkbox">';
@@ -2122,7 +2134,7 @@ class WP_Members_Forms {
 		
 		$str = '';
 
-		if ( $wpmem->regchk != "success" ) {
+		if ( "success" != wpmem_get_form_state() ) {
 
 			$dialogs = get_option( 'wpmembers_dialogs' );
 

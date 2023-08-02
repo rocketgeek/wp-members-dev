@@ -400,49 +400,47 @@ function wpmem_form_nonce( $nonce, $echo = false ) {
  * @param array $checkout_fields
  */
 function wpmem_woo_checkout_fields( $checkout_fields = false ) {
-	$woo_checkout = array( 
-		'billing_first_name',
-		'billing_last_name',
-		'billing_company',
-		'billing_country',
-		'billing_address_1',
-		'billing_address_2',
-		'billing_city',
-		'billing_state',
-		'billing_postcode',
-		'billing_phone',
-		'billing_email',
-		'account_username',
-		'account_password',
-	);
+
 	$fields = wpmem_fields();
 	
 	if ( ! $checkout_fields ) {
 		$checkout_fields = WC()->checkout()->checkout_fields;
 	}
 
+	// Get saved checkout field settings.
+	$wpmembers_wcchkout = get_option( 'wpmembers_wcchkout_fields' );
+
 	foreach ( $fields as $meta_key => $field ) {
-		
-		if ( 1 != $fields[ $meta_key ]['register'] ) {
-			unset( $fields[ $meta_key ] );
+
+		if ( $wpmembers_wcchkout ) {
+
+			if ( ! in_array( $meta_key, $wpmembers_wcchkout ) ) {
+				unset( $fields[ $meta_key ] );
+			}
+
 		} else {
-			if ( isset( $checkout_fields['billing'][ $meta_key ] ) ) {
-				unset( $fields[ $meta_key ] );
-			}
-			if ( isset( $checkout_fields['shipping'][ $meta_key ] ) ) {
-				unset( $fields[ $meta_key ] );
-			}
-			if ( isset( $checkout_fields['account'][ $meta_key ] ) ) {
-				unset( $fields[ $meta_key ] );
-			}
-			if ( isset( $checkout_fields['order'][ $meta_key ] ) ) {
-				unset( $fields[ $meta_key ] );
-			}
-		}
 		
-		// @todo For now, remove any unsupported field types.
-		if ( 'hidden' == $field['type'] || 'image' == $field['type'] || 'file' == $field['type'] || 'membership' == $field['type'] ) {
-			unset( $fields[ $meta_key ] );
+			if ( 1 != $fields[ $meta_key ]['register'] ) {
+				unset( $fields[ $meta_key ] );
+			} else {
+				if ( isset( $checkout_fields['billing'][ $meta_key ] ) ) {
+					unset( $fields[ $meta_key ] );
+				}
+				if ( isset( $checkout_fields['shipping'][ $meta_key ] ) ) {
+					unset( $fields[ $meta_key ] );
+				}
+				if ( isset( $checkout_fields['account'][ $meta_key ] ) ) {
+					unset( $fields[ $meta_key ] );
+				}
+				if ( isset( $checkout_fields['order'][ $meta_key ] ) ) {
+					unset( $fields[ $meta_key ] );
+				}
+			}
+			
+			// @todo For now, remove any unsupported field types.
+			if ( 'hidden' == $field['type'] || 'image' == $field['type'] || 'file' == $field['type'] || 'membership' == $field['type'] ) {
+				unset( $fields[ $meta_key ] );
+			}
 		}
 	}
 	unset( $fields['username'] );
@@ -553,12 +551,16 @@ function wpmem_woo_edit_account_form() {
 
 function wpmem_woo_edit_account_fields() {
 	$fields = wpmem_fields();
-	foreach ( $fields as $meta => $settings ) {
-		if ( isset( $settings['wcupdate'] ) && true == $settings['wcupdate'] ) {
-			$return_fields[ $meta ] = $settings;
+	// Get saved checkout field settings.
+	$wpmembers_wcupdate = get_option( 'wpmembers_wcupdate_fields' );
+	if ( $wpmembers_wcupdate ) {
+		foreach ( $fields as $meta => $field ) {
+			if ( in_array( $meta, $wpmembers_wcupdate ) ) {
+				$return_fields[ $meta ] = $field;
+			}
 		}
+		return $return_fields;
 	}
-	return $return_fields;
 }
 
 /**

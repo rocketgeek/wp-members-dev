@@ -173,6 +173,7 @@ class WP_Members_Admin_Tab_Options {
 								  </li>
 								<?php } 
 								}?></ul>
+								<!--
 								<h3><?php _e( 'New Feature Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/new-feature-settings/" target="_blank" title="info" data-tooltip="<?php _e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								-->
 								<?php if ( wpmem_is_woo_active() ) { ?>
@@ -180,7 +181,7 @@ class WP_Members_Admin_Tab_Options {
 								<?php
 									$woo_options[] = array(__('WooCommerce Checkout', 'wp-members' ),'wpmem_settings_add_woo_checkout_fields',__('Add WP-Members fields to WooCommerce registration during checkout','wp-members'),'add_checkout_fields');
 									$woo_options[] = array(__('WooCommerce My Account', 'wp-members' ),'wpmem_settings_add_woo_my_account_fields',__('Add WP-Members fields to WooCommerce My Account registration','wp-members'),'add_my_account_fields');
-									//$woo_options[] = array(__('WooCommerce Update', 'wp-members' ),'wpmem_settings_add_woo_update_fields',__('Add WP-Members fields to WooCommerce My Account user profile update','wp-members'),'add_update_fields');
+									$woo_options[] = array(__('WooCommerce Update', 'wp-members' ),'wpmem_settings_add_woo_update_fields',__('Add WP-Members fields to WooCommerce My Account user profile update','wp-members'),'add_update_fields');
 									$woo_options[] = array(__('Restrict Product Purchase', 'wp-members' ),'wpmem_settings_add_restrict_woo_products',__('If a WooCommerce product is restricted, it will not be purchasable','wp-members'),'product_restrict');
 								?>
 								<ul><?php
