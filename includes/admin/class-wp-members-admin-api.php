@@ -174,8 +174,12 @@ class WP_Members_Admin_API {
 			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_activate'   ), 7 );
 			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_expiration' ), 8 );
 			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_ip'         ), 9 );
-			if ( 1 == $wpmem->enable_products ) {
+			if ( wpmem_is_enabled( 'enable_products' ) ) {
 				//add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_product' ), 10 );
+			}
+			if ( wpmem_is_enabled( 'mod_reg' ) || wpmem_is_enabled( 'act_link' ) ) {
+				include_once $wpmem->path . 'includes/admin/class-wp-members-user-utilities.php';
+				add_action( 'admin_menu', array( 'WP_Members_User_Utilities', 'admin_menu' ) );
 			}
 		}
 	

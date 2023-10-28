@@ -677,6 +677,7 @@ function wpmem_set_user_status( $user_id, $status ) {
  * @since 2.9.3 Added validation for multisite.
  * @since 3.0.0 Moved from wp-members-register.php to /inc/register.php.
  * @since 3.3.0 Ported from wpmem_registration in /inc/register.php (now deprecated).
+ * @since 3.5.0 $tag is optional, does registration by default.
  *
  * @todo Review what should be in the API function and what should be moved to object classes.
  *
@@ -685,10 +686,10 @@ function wpmem_set_user_status( $user_id, $status ) {
  * @global string $wpmem_themsg
  * @global array  $userdata
  *
- * @param  string $tag Identifies 'register' or 'update'.
+ * @param  string $tag Identifies 'register' or 'update'.  Optional, default: register
  * @return string $wpmem_themsg|success|editsuccess
  */
-function wpmem_user_register( $tag ) {
+function wpmem_user_register( $tag = "register" ) {
 
 	// Get the globals.
 	global $user_ID, $wpmem, $wpmem_themsg, $userdata;
