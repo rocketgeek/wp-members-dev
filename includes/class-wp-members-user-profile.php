@@ -348,6 +348,7 @@ class WP_Members_User_Profile {
 		do_action( 'wpmem_' . $display . '_pre_user_update', $user_id, $wpmem_fields );
 
 		$fields = array();
+		$chk = false;
 		foreach ( $wpmem_fields as $meta => $field ) {
 			if ( ! $field['native']
 				&& $field['type'] != 'password' 
@@ -360,14 +361,13 @@ class WP_Members_User_Profile {
 				( isset( $_POST[ $meta ] ) && 'password' != $field['type'] ) ? $fields[ $meta ] = sanitize_text_field( $_POST[ $meta ] ) : false;
 				
 				// For user profile (not admin).
-				$chk = false;
 				if ( 'admin' != $display ) {
 					// Check for required fields.
 					if ( ! $field['required'] ) {
-						$chk = 'ok';
+						$chk = true;
 					}
 					if ( $field['required'] && $_POST[ $meta ] != '' ) {
-						$chk = 'ok';
+						$chk = true;
 					}
 				}
 			} elseif ( $field['type'] == 'checkbox' ) {
@@ -396,7 +396,7 @@ class WP_Members_User_Profile {
 		// Handle meta update, skip excluded fields.
 		foreach ( $fields as $key => $val ) {
 			if ( ! in_array( $key, $exclude ) ) {
-				if ( ( 'admin' != $display && 'ok' == $chk ) || 'admin' == $display ) {
+				if ( ( 'admin' != $display && true == $chk ) || 'admin' == $display ) {
 					update_user_meta( $user_id, $key, $val );
 				}
 			}
