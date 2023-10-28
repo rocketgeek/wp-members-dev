@@ -161,11 +161,13 @@ class WP_Members_Products {
 		 * Filter product access by post ID.
 		 *
 		 * @since 3.3.5
+		 * @since 3.5.0 Use wpmem_post_memberships instead.
 		 *
 		 * @param array $post_products
 		 * @param int   $post_id
 		 */
 		$products = apply_filters( 'wpmem_post_products', $products, $post_id );
+		$products = apply_filters( 'wpmem_post_memberships', $products, $post_id );
 		return $products;
 	}
 
@@ -245,6 +247,7 @@ class WP_Members_Products {
 				 * @since 3.3.3
 				 * @since 3.3.4 Added $post_products
 				 * @since 3.4.4 Added $excerpt
+				 * @since 3.5.0 Use wpmem_membership_restricted_args instead.
 				 *
 				 * @param array  $product_restricted {
 				 *     $type string $wrapper_before
@@ -263,6 +266,7 @@ class WP_Members_Products {
 					'message'        => $message,
 					'wrapper_after'  => '</div>',
 				), $post_products );
+				$product_restricted = apply_filters( 'wpmem_membership_restricted_args', $product_restricted );
 				
 				$content = $product_restricted['excerpt'] . $product_restricted['wrapper_before'] . $product_restricted['message'] . $product_restricted['wrapper_after'];
 			
@@ -298,6 +302,7 @@ class WP_Members_Products {
 		 * Filter the product restricted message.
 		 *
 		 * @since 3.2.3
+		 * @since 3.5.0 User wpmem_membership_restricted_msg instead.
 		 *
 		 * @param string                The message.
 		 * @param array  $post_products {
@@ -307,6 +312,7 @@ class WP_Members_Products {
 		 * }
 		 */
 		$message = apply_filters( 'wpmem_product_restricted_msg', $message, $post_products );
+		$message = apply_filters( 'wpmem_membership_restricted_msg', $message, $post_products );
 		return $message;
 	}
 	
@@ -511,12 +517,14 @@ class WP_Members_Products {
 		 * Filter the expiration date.
 		 *
 		 * @since 3.3.2
+		 * @since 3.5.0 Use wpmem_user_membership_set_expiration instead
 		 *
 		 * @param int|boolean  $new_value  Unix timestamp of new expiration, true|false if not an expiry product.
 		 * @param int|boolean  $prev_value The user's current value (prior to updating).
 		 * @param boolean      $renew      Is this a renewal transaction?
 		 */
 		$new_value = apply_filters( 'wpmem_user_product_set_expiration', $new_value, $prev_value, $renew );
+		$new_value = apply_filters( 'wpmem_user_membership_set_expiration', $new_value, $prev_value, $renew );
 		
 		return $new_value;
 	}
