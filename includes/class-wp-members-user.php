@@ -101,7 +101,8 @@ class WP_Members_User {
 		} else {
 			
 			// Make sure current user is set.
-			wpmem_set_as_logged_in( $user->ID );
+			// @todo Verify that removing this resovles 2 sessions issues per https://wordpress.org/support/topic/creating-multiple-same-sessions-on-login/
+			// wpmem_set_as_logged_in( $user->ID );
 			
 			$redirect_to = wpmem_get( 'redirect_to', false );
 			$redirect_to = ( $redirect_to ) ? esc_url_raw( trim( $redirect_to ) ) : esc_url_raw( wpmem_current_url() );
