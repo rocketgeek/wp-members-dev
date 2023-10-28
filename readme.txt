@@ -142,6 +142,10 @@ WP-Members 3.4.8 is a security update, along with a series of bug fix patches. B
 * Adds formatting filters (wpmem_field_shortcode_multi_args, wpmem_field_shortcode_multi_rows, wpmem_field_sc_multi_html) for field shortcode to customize HTML when displaying multiple select/multiple checkbox field results.
 
 * Fixes a bug in the login_link shortcode that caused an empty href value.
+* Fixes a bug in the login that causes double sessions.
+
+* Updates wpmem_email_to_user() to use tags instead of numeric tags, but numeric values are backward compatible.
+* Can resend welcome email (with confirmation link) when confirmation link setting is enabled. This can be via the bulk action menu (multiple users) or hover link (single user).
 
 = 3.4.8 =
 
@@ -152,6 +156,16 @@ WP-Members 3.4.8 is a security update, along with a series of bug fix patches. B
 * Security update in Fields tab reorder processing.
 * Code improvement udpates to RS Captcha validation processing.
 * Adds wpmem_get_form_state() API function (replaces checking $wpmem->regchk directly).
+* Destroy user sessions when deactivating a user.
+
+* Removes the following legacy files originally kept for backward compatibility. However, we have moved far beyond where those versions can be supported any longer.
+** /admin/post.php
+** all legacy translation files (legacy .pot maintained, but use polyglots language packs instead)
+
+* The following are obsolete, scheduled for removal at WP-Members 3.5.4:
+** /inc/dialogs.php
+** /inc/email.php
+** /admin/tab-options.php
 
 = 3.4.7 =
 
