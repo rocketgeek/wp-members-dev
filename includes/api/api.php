@@ -179,6 +179,14 @@ function wpmem_login_url( $redirect_to = false ) {
 	global $wpmem;
 	// If no login page is set, get WP login url.
 	$login_url = ( isset( $wpmem->user_pages['login'] ) ) ? $wpmem->user_pages['login'] : wp_login_url();
+	/**
+	 * Filter the login url.
+	 * 
+	 * @since 3.5.0
+	 * 
+	 * @param string $login_url
+	 */
+	$login_url = apply_filters( 'wpmem_login_url', $login_url );
 	if ( $redirect_to ) {
 		$url = add_query_arg( 'redirect_to', urlencode( $redirect_to ), $login_url );
 	} else {
@@ -197,7 +205,15 @@ function wpmem_login_url( $redirect_to = false ) {
  */
 function wpmem_register_url() {
 	global $wpmem;
-	return $wpmem->user_pages['register'];
+	$reg_url = $wpmem->user_pages['register'];
+	/**
+	 * Filter the register url.
+	 * 
+	 * @since 3.5.0
+	 * 
+	 * @param string $reg_url
+	 */
+	return apply_filters( 'wpmem_register_url', $reg_url );
 }
 
 /**
