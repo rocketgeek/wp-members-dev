@@ -2,7 +2,7 @@
 if ( ! class_exists( 'RocketGeek_Satellite_Beta' ) ) :
 class RocketGeek_Satellite_Beta {
 
-	public $version = "1.0.3";
+	public $sdk_version = "1.0.4";
 	public $api_domain = 'https://rocketgeek.com';
 	public $theme_fields  = array( 'Name','URI','Author','AuthorURI','Version' );
 	public $plugin_fields = array( 'Name','URI','Author','AuthorURI','Version','RequiresWP','RequiresPHP' );
@@ -48,6 +48,10 @@ class RocketGeek_Satellite_Beta {
 		return trailingslashit( trailingslashit( $this->api_domain ) . 'api/v1/product/action' );
 	}
 
+	private function get_sdk_verision() {
+		return $this->sdk_version;
+	}
+
 	private function is_marketing_allowed() {
 		return 1;
 	}
@@ -87,7 +91,7 @@ class RocketGeek_Satellite_Beta {
 	private function check_product() {
 		
 		return array(
-			'sdk_version'    => $this->version,
+			'sdk_version'    => $this->get_sdk_verision(),
 			'license'        => $this->check_license(),
 			'slug'           => $this->get_slug(),
 			'version'        => $this->get_product_version(),
