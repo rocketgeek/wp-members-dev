@@ -668,7 +668,7 @@ class WP_Members_Forms {
 			't'               => "\t",
 			'redirect_to'     => $redirect_to,
 			'login_form_action' => true,
-
+			'novalidate'        => false,
 		);
 
 		/**
@@ -925,6 +925,8 @@ class WP_Members_Forms {
 			}
 		}
 
+		$novalidate = ( $args['novalidate'] ) ? 'novalidate' : '';
+
 		// Apply the heading.
 		$form = $args['heading_before'] . $arr['heading'] . $args['heading_after'] . $args['n'] . $form;
 
@@ -935,7 +937,7 @@ class WP_Members_Forms {
 		$form = wp_nonce_field( 'wpmem_shortform_nonce', '_wpmem_' . $action . '_nonce', true, false ) . $args['n'] . $form;
 
 		// Apply form wrapper.
-		$form = '<form action="' . esc_url( get_permalink() ) . '" method="POST" id="' . wpmem_sanitize_class( $args['form_id'] ) . '" class="' . wpmem_sanitize_class( $args['form_class'] ) . '">' . $args['n'] . $form . '</form>';
+		$form = '<form action="' . esc_url( get_permalink() ) . '" method="POST" id="' . wpmem_sanitize_class( $args['form_id'] ) . '" class="' . wpmem_sanitize_class( $args['form_class'] ) . '"' . $novalidate . '>' . $args['n'] . $form . '</form>';
 
 		// Apply anchor.
 		$form = '<a id="' . esc_attr( $action ) . '"></a>' . $args['n'] . $form;
@@ -1054,11 +1056,9 @@ class WP_Members_Forms {
 			'wrap_inputs'      => true,
 			'n'                => "\n",
 			't'                => "\t",
-			
 			'register_form_action' => true,
-
-			'user'             => $user,
-
+			'user'                 => $user,
+			'novalidate'           => false,
 		);
 
 		/**
@@ -1538,8 +1538,9 @@ class WP_Members_Forms {
 		$form  = wp_nonce_field( 'wpmem_longform_nonce', '_wpmem_' . $nonce . '_nonce', true, false ) . $args['n'] . $form;
 
 		// Apply form wrapper.
+		$novalidate = ( $args['novalidate'] ) ? 'novalidate' : '';
 		$enctype = ( $enctype == 'multipart/form-data' ) ? ' enctype="multipart/form-data"' : '';
-		$form = '<form name="form" method="post"' . $enctype . ' action="' . esc_attr( $args['post_to'] ) . '" id="' . wpmem_sanitize_class( $args['form_id'] ) . '" class="' . wpmem_sanitize_class( $args['form_class'] ) . '">' . $args['n'] . $form . $args['n'] . '</form>';
+		$form = '<form name="form" method="post"' . $enctype . ' action="' . esc_attr( $args['post_to'] ) . '" id="' . wpmem_sanitize_class( $args['form_id'] ) . '" class="' . wpmem_sanitize_class( $args['form_class'] ) . '"' . $novalidate . '>' . $args['n'] . $form . $args['n'] . '</form>';
 
 		// Apply anchor.
 		$form = '<a id="register"></a>' . $args['n'] . $form;
