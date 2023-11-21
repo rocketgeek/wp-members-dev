@@ -143,9 +143,18 @@ WP-Members 3.4.8 is a security update, along with a series of bug fix patches. B
 
 * Fixes a bug in the login_link shortcode that caused an empty href value.
 * Fixes a bug in the login that causes double sessions.
+* Fixes a bug in wpmem_user_has_access() that returns false for checking a specified user ID if the check is run when no user is logged in.
+* Fixes a bug in wpmem_user_is_current() that throws a PHP error if the user does not have access to the requested membership (should return false in this instance).
 
 * Updates wpmem_email_to_user() to use tags instead of numeric tags, but numeric values are backward compatible.
 * Can resend welcome email (with confirmation link) when confirmation link setting is enabled. This can be via the bulk action menu (multiple users) or hover link (single user).
+
+* fixes a bug in the [wpmem_tos] shortcode if no URL is passed.
+* Fixes a bug in membership check if the user doesn't have the membership (look this up in git).
+
+* Adds a "novalidate" option by filter toggle to the reg/login forms (for disabling the default HTML5 validation on required fields).
+
+* Fixes a bug if WooCommerce registration is used and WP-Members fields are set to be included but no specific WP-Members fields are identified for inclusion (empty value).
 
 = 3.4.8 =
 
