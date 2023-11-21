@@ -333,7 +333,7 @@ function wpmem_user_is_current( $membership, $user_id = false ) {
 	global $wpmem;
 	$user_id = ( false === $user_id ) ? get_current_user_id() : $user_id;
 	$memberships = wpmem_get_user_memberships( $user_id );
-	return ( $wpmem->user->is_current( $memberships[ $membership ] ) ) ? true : false;
+	return ( isset( $memberships[ $membership ] ) && $wpmem->user->is_current( $memberships[ $membership ] ) ) ? true : false;
 }
 
 /**

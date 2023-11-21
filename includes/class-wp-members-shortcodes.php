@@ -931,8 +931,11 @@ class WP_Members_Shortcodes {
 	 * @retrun string $content
 	 */
 	function tos( $atts, $content, $tag ) {
-		$url = ( strpos( $atts['url'], 'http://' ) || strpos( $atts['url'], 'https://' ) ) ? $atts['url'] : home_url( $atts['url'] );
-		return esc_url( $url ); 
+		$url = '';
+		if ( isset( $atts['url'] ) ) {
+			$url = ( strpos( $atts['url'], 'http://' ) || strpos( $atts['url'], 'https://' ) ) ? esc_url( $atts['url'] ) : esc_url( home_url( $atts['url'] ) );
+		}
+		return $url; 
 	}
 
 	/**

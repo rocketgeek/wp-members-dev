@@ -501,14 +501,17 @@ class WP_Members_User {
 		if ( $this->reg_type['is_native'] || $this->reg_type['is_add_new'] || $this->reg_type['is_woo'] ) {
 			// Get any excluded meta fields.
 			$exclude = wpmem_get_excluded_meta( 'wp-register' );
-			foreach ( wpmem_fields( 'register_wp' ) as $meta_key => $field ) {
-				$value = wpmem_get( $meta_key, false );
-				if ( false !== $value && ! in_array( $meta_key, $exclude ) && 'file' != $field['type'] && 'image' != $field['type'] ) {
-					if ( 'multiselect' == $field['type'] || 'multicheckbox' == $field['type'] ) {
-						$value = implode( $field['delimiter'], $value );
+			$fields  = wpmem_fields( 'register_wp' );
+			if ( is_array( $fields ) && ! empty( $fields ) ) {
+				foreach ( $fields as $meta_key => $field ) {
+					$value = wpmem_get( $meta_key, false );
+					if ( false !== $value && ! in_array( $meta_key, $exclude ) && 'file' != $field['type'] && 'image' != $field['type'] ) {
+						if ( 'multiselect' == $field['type'] || 'multicheckbox' == $field['type'] ) {
+							$value = implode( $field['delimiter'], $value );
+						}
+						$sanitized_value = sanitize_text_field( $value );
+						update_user_meta( $user_id, $meta_key, $sanitized_value );
 					}
-					$sanitized_value = sanitize_text_field( $value );
-					update_user_meta( $user_id, $meta_key, $sanitized_value );
 				}
 			}
 		}
@@ -938,7 +941,7 @@ class WP_Members_User {
 	 */
 	function has_access( $product, $user_id = false ) {
 		global $wpmem;
-		if ( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() && ! $user_id ) {
 			return false;
 		}
 		

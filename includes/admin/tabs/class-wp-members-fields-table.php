@@ -125,7 +125,7 @@ class WP_Members_Fields_Table extends WP_List_Table {
 	function column_default( $item, $column_name ) {
 		switch( $column_name ) {
 			default:
-	  			return $item[ $column_name ];
+	  			return ( isset( $item[ $column_name ] ) ) ? $item[ $column_name ] : '';
 		}
 	}
 
