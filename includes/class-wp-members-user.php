@@ -565,20 +565,24 @@ class WP_Members_User {
 	 *
 	 * @since 3.3.0
 	 *
-	 * @global object $wpmem
-	 *
 	 * @param int $user_id
 	 */
 	function register_email_to_user( $user_id ) {
-		global $wpmem;
-		if ( $this->reg_type['is_wpmem'] ) {
-			// @todo Work out a better method for this so that it is optional and can be turned on/off for native reg
-			// Send a notification email to the user.
+		$send_notification = ( wpmem_is_reg_type( 'wpmem' ) ) ? true : false;
+		/**
+		 * Filter whether register notification is sent.
+		 * 
+		 * @since 3.5.0
+		 * 
+		 * @param  boolean  $send_notification
+		 */
+		$send_notification = apply_filters( 'wpmem_enable_user_notification', $send_notification, $user_id );
+		if ( $send_notification ) {
 			wpmem_email_to_user( array( 
 				'user_id'      => $user_id, 
 				'password'     => $this->post_data['password'],
 				'tag'          => ( wpmem_is_enabled( 'mod_reg' ) ) ? 'newmod' : 'newreg', 
-				'wpmem_fields' => $wpmem->fields, 
+				'wpmem_fields' => wpmem_fields(), 
 				'fields'       => $this->post_data 
 			) );
 		}
@@ -589,18 +593,21 @@ class WP_Members_User {
 	 *
 	 * @since 3.3.0
 	 *
-	 * @global object $wpmem
-	 *
 	 * @param int $user_id
 	 */
 	function register_email_to_admin( $user_id ) {
-		global $wpmem;
-		if ( $this->reg_type['is_wpmem'] ) {
-			// @todo Work out a better method for this so that it is optional and can be turned on/off for native reg
-			// Notify admin of new reg, if needed.
-			if ( 1 == $wpmem->notify ) { 
-				$wpmem->email->notify_admin( $user_id, $wpmem->fields, $this->post_data );
-			}
+		$allowed_reg_types = array( 'wpmem' ); // @todo
+		$send_notification = ( wpmem_is_reg_type( 'wpmem' ) && wpmem_is_enabled( 'notify' ) ) ? true : false;
+		/**
+		 * Filter whether register notification is sent.
+		 * 
+		 * @since 3.5.0
+		 * 
+		 * @param  boolean  $send_notification
+		 */
+		$send_notification = apply_filters( 'wpmem_enable_admin_notification', $send_notification, $user_id, wpmem_fields(), $this->post_data );
+		if ( $send_notification ) {
+			wpmem_notify_admin( $user_id, wpmem_fields(), $this->post_data );
 		}
 	}
 	
