@@ -28,19 +28,19 @@ class WP_Members_Products_Admin {
 		if ( 1 == $wpmem->enable_products ) {
 			add_filter( 'manage_wpmem_product_posts_columns',       array( $this, 'columns_heading' ) );
 			add_action( 'manage_wpmem_product_posts_custom_column', array( $this, 'columns_content' ), 10, 2 );
-			add_action( 'add_meta_boxes',               array( $this, 'meta_boxes' ) );
+			add_action( 'add_meta_boxes',                  array( $this, 'meta_boxes' ) );
 			add_action( 'page_attributes_misc_attributes', array( $this, 'membership_attributes' ) );
-			add_action( 'save_post',                    array( $this, 'save_details' ) );
-			add_action( 'wpmem_admin_after_block_meta', array( $this, 'add_product_to_post' ), 10, 2 );
-			add_action( 'wpmem_admin_block_meta_save',  array( $this, 'save_product_to_post' ), 10, 3 );
-			add_action( 'admin_footer',                 array( $this, 'enqueue_select2' ) );
-			add_filter( 'manage_users_columns',         array( $this, 'user_columns' ) );
-			add_filter( 'manage_users_custom_column',   array( $this, 'user_columns_content' ), 10, 3 );
-			add_action( 'admin_head',                   array( $this, 'post_columns_width' ) );
-			add_filter( 'manage_posts_columns',         array( $this, 'post_columns' ) );
-			add_action( 'manage_posts_custom_column',   array( $this, 'post_columns_content' ), 10, 2 );
-			add_filter( 'manage_pages_columns',         array( $this, 'post_columns' ) );
-			add_action( 'manage_pages_custom_column',   array( $this, 'post_columns_content' ), 10, 2 );
+			add_action( 'save_post',                       array( $this, 'save_details' ) );
+			add_action( 'wpmem_admin_after_block_meta',    array( $this, 'add_product_to_post' ), 10, 2 );
+			add_action( 'wpmem_admin_block_meta_save',     array( $this, 'save_product_to_post' ), 10, 3 );
+			add_action( 'admin_footer',                    array( $this, 'enqueue_select2' ) );
+			add_filter( 'manage_users_columns',            array( $this, 'user_columns' ) );
+			add_filter( 'manage_users_custom_column',      array( $this, 'user_columns_content' ), 10, 3 );
+			add_action( 'admin_head',                      array( $this, 'post_columns_width' ) );
+			add_filter( 'manage_posts_columns',            array( $this, 'post_columns' ) );
+			add_action( 'manage_posts_custom_column',      array( $this, 'post_columns_content' ), 10, 2 );
+			add_filter( 'manage_pages_columns',            array( $this, 'post_columns' ) );
+			add_action( 'manage_pages_custom_column',      array( $this, 'post_columns_content' ), 10, 2 );
 			foreach( $wpmem->post_types as $key => $val ) {
 				add_filter( 'manage_' . $key . '_posts_columns',       array( $this, 'post_columns' ) );
 				add_action( 'manage_' . $key . '_posts_custom_column', array( $this, 'post_columns_content' ), 10, 2 );
@@ -722,14 +722,18 @@ class WP_Members_Products_Admin {
 		// If product enabled
 		if ( 'memberships' == $key ) {
 			global $pagenow, $wpmem;
+			
+			/** This filter is documented in includes/class-wp-members-user-profile.php */
+			$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
+
 			/*
-			 * If an admin is editing their provile, we need their ID,
+			 * If an admin is editing their profile, we need their ID,
 			 * otherwise, it's the user_id param from the URL. It's a 
 			 * little more complicated than it sounds since you can't just
 			 * check if the user is logged in, because the admin is always
 			 * logged in when checking profiles.
 			 */
-			$user_id = ( 'profile' == $pagenow && current_user_can( 'edit_users' ) ) ? get_current_user_id() : sanitize_text_field( wpmem_get( 'user_id', false, 'get' ) );
+			$user_id = ( 'profile' == $pagenow && current_user_can( $required_capability ) ) ? get_current_user_id() : sanitize_text_field( wpmem_get( 'user_id', false, 'get' ) );
 			$user_products = wpmem_get_user_products( $user_id );
 			echo '<h3>' . __( 'Membership Access', 'wp-members' ) . '</h3>';
 			if ( ! empty( $wpmem->membership->products ) ) {
