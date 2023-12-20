@@ -95,8 +95,17 @@ class WP_Members_User {
 
 		$user = wp_signon( array(), is_ssl() );
 
+		/**
+		 * Adds a hook point to hijack the login process.
+		 * 
+		 * Useful for integration with problematic plugins like miniOrange.
+		 * 
+		 * @since 3.5.0
+		 */
+		$user = apply_filters( 'wpmem_after_wp_signon', $user );
+
 		if ( is_wp_error( $user ) ) {
-			$wpmem->error = $user->get_error_message();
+			$wpmem->error = $user;
 			return "loginfailed";
 		} else {
 			

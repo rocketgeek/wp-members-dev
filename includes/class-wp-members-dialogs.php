@@ -248,7 +248,7 @@ class WP_Members_Dialogs {
 			'heading'        => '', //wpmem_get_text( 'login_failed_heading' ),
 			'heading_after'  => '',
 			'p_before'       => '',
-			'message'        => ( $wpmem->error ) ? $wpmem->error : wpmem_get_text( 'login_failed' ), // @todo $this->error
+			'message'        => ( $wpmem->error ) ? $wpmem->error->get_error_message() : wpmem_get_text( 'login_failed' ), // @todo $this->error
 			'p_after'        => '',
 			//'link'           => '<a href="' . esc_url( $_SERVER['REQUEST_URI'] ) . '">' . wpmem_get_text( 'login_failed_link' ) . '</a>',
 		);
