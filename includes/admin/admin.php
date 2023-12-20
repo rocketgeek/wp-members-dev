@@ -107,6 +107,10 @@ function wpmem_admin_action( $action ) {
 	case 'update_captcha':
 		$did_update = WP_Members_Admin_Tab_Captcha::update();
 		break;
+
+	case 'update_shortcodes':
+		$did_update = WP_Members_Admin_Tab_Shortcodes::update();
+		break;
 	}
 
 	return $did_update;

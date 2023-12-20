@@ -118,8 +118,8 @@ class WP_Members_Admin_API {
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-captcha.php' );
 			// include_once( $wpmem->path . 'admin/tab-about.php' );
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-dialogs.php' );
-			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-dropins.php' );
-			
+			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-dropins.php' );	
+			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php' );		
 			if ( ! class_exists( 'WP_List_Table' ) ) {
 				require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 			}
@@ -146,12 +146,13 @@ class WP_Members_Admin_API {
 		add_action( 'user_new_form',                  array( $wpmem->forms, 'wp_newuser_form' ) );
 		// add_filter( 'wpmem_admin_tabs',              'wpmem_add_about_tab'       );
 		
-		add_action( 'wp_ajax_wpmem_do_field_reorder',  array( 'WP_Members_Admin_Tab_Fields', 'do_field_reorder' ) );
+		add_action( 'wp_ajax_wpmem_do_field_reorder',  array( 'WP_Members_Admin_Tab_Fields',    'do_field_reorder' ) );
 		
-		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Options', 'do_tab' ),  1 );
-		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Fields',  'do_tab' ),  5 );
-		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Dialogs', 'do_tab' ), 10 );
-		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Emails',  'do_tab' ), 15 );
+		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Options',    'do_tab' ),  1 );
+		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Fields',     'do_tab' ),  5 );
+		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Dialogs',    'do_tab' ), 10 );
+		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Emails',     'do_tab' ), 15 );
+		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Shortcodes', 'do_tab' ), 16 );
 		// add_action( 'wpmem_admin_do_tab',            'wpmem_a_about_tab', 999, 1 );
 		
 		// If user has a role that cannot edit users, set profile actions for non-admins.
@@ -376,10 +377,11 @@ class WP_Members_Admin_API {
 	 */
 	function default_tabs() {
 		$this->tabs = array(
-			'options' => 'WP-Members ' . __( 'Options', 'wp-members' ),
-			'fields'  => __( 'Fields', 'wp-members' ),
-			'dialogs' => __( 'Dialogs', 'wp-members' ),
-			'emails'  => __( 'Emails', 'wp-members' ),
+			'options'    => 'WP-Members ' . __( 'Options', 'wp-members' ),
+			'fields'     => __( 'Fields', 'wp-members' ),
+			'dialogs'    => __( 'Dialogs', 'wp-members' ),
+			'emails'     => __( 'Emails', 'wp-members' ),
+			'shortcodes' => __( 'Shortcodes', 'wp-members' ),
 		);
 	}
 
