@@ -99,6 +99,9 @@ class WP_Members_Shortcodes {
 
 		global $wpmem, $wpmem_themsg;
 
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
 		// Defaults.
 		$defaults = array(
 			'form'        => '',
@@ -106,24 +109,24 @@ class WP_Members_Shortcodes {
 			'texturize'   => false,
 			'form_id'     => false,
 		);
-		$atts = wp_parse_args( $atts, $defaults );
+		$args = wp_parse_args( $sanitized_atts, $defaults );
 		
-		$atts['form'] = ( isset( $atts[0] ) ) ? $atts[0] : 'login';
-		unset( $atts[0] );
+		$args['form'] = ( isset( $args[0] ) ) ? $args[0] : 'login';
+		unset( $args[0] );
 		
 		$customizer = ( is_customize_preview() ) ? get_theme_mod( 'wpmem_show_logged_out_state', false ) : false;
 
-		// If $atts is an array, get the tag from the array so we know what form to render.
-		switch ( $atts['form'] ) {
+		// If $args is an array, get the tag from the array so we know what form to render.
+		switch ( $args['form'] ) {
 
 			case 'wp_login':
 				if ( is_user_logged_in() && '1' != $customizer ) {
 					// If the user is logged in, return any nested content (if any) or the default bullet links if no nested content.
 					$content = ( $content ) ? $content : $this->render_links( 'login' );
 				} else {
-					$atts['echo'] = false;
-					$atts['redirect'] = ( isset( $atts['redirect'] ) ) ? $atts['redirect'] : ( ( isset( $atts['redirect_to'] ) ) ? $atts['redirect_to'] : wpmem_current_url() );
-					$content = wpmem_wp_login_form( $atts );
+					$args['echo'] = false;
+					$args['redirect'] = ( isset( $args['redirect'] ) ) ? $args['redirect'] : ( ( isset( $args['redirect_to'] ) ) ? $args['redirect_to'] : wpmem_current_url() );
+					$content = wpmem_wp_login_form( $args );
 				}
 				break;
 
@@ -165,7 +168,7 @@ class WP_Members_Shortcodes {
 				break;
 
 			case 'user_edit':
-				$content = $this->render_user_edit( $wpmem->regchk, $content, $atts );
+				$content = $this->render_user_edit( $wpmem->regchk, $content, $args );
 				break;
 
 			case 'forgot_username':
@@ -192,8 +195,8 @@ class WP_Members_Shortcodes {
 					if ( $wpmem->regchk == 'loginfailed' || ( is_customize_preview() && get_theme_mod( 'wpmem_show_form_message_dialog', false ) ) ) {
 						$content = wpmem_get_display_message( 'loginfailed' );
 					}
-					$form_id = ( $atts['form_id'] ) ? $atts['form_id'] : 'wpmem_login_form';
-					$content .= wpmem_login_form( array( 'redirect_to'=>$atts['redirect_to'], 'form_id'=>$form_id ) );
+					$form_id = ( $args['form_id'] ) ? $args['form_id'] : 'wpmem_login_form';
+					$content .= wpmem_login_form( array( 'redirect_to'=>$args['redirect_to'], 'form_id'=>$form_id ) );
 				}
 				break;
 
@@ -241,13 +244,16 @@ class WP_Members_Shortcodes {
 
 		global $wpmem;
 
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
 		// Handles the 'status' attribute.
-		if ( ( isset( $atts['status'] ) ) || $tag == 'wpmem_logged_in' ) {
+		if ( ( isset( $sanitized_atts['status'] ) ) || $tag == 'wpmem_logged_in' ) {
 
 			$do_return = false;
 
 			// If there is a status attribute of "out" and the user is not logged in.
-			$do_return = ( isset( $atts['status'] ) && $atts['status'] == 'out' && ! is_user_logged_in() ) ? true : $do_return;
+			$do_return = ( isset( $sanitized_atts['status'] ) && $sanitized_atts['status'] == 'out' && ! is_user_logged_in() ) ? true : $do_return;
 
 			if ( is_user_logged_in() ) {
 
@@ -255,14 +261,14 @@ class WP_Members_Shortcodes {
 				$current_user = wp_get_current_user();
 
 				// If there is a status attribute of "in" and the user is logged in.
-				$do_return = ( isset( $atts['status'] ) && $atts['status'] == 'in' ) ? true : $do_return;
+				$do_return = ( isset( $sanitized_atts['status'] ) && $sanitized_atts['status'] == 'in' ) ? true : $do_return;
 
 				// If using the wpmem_logged_in tag with no attributes & the user is logged in.
-				$do_return = ( $tag == 'wpmem_logged_in' && ( ! $atts ) ) ? true : $do_return;
+				$do_return = ( $tag == 'wpmem_logged_in' && ( ! $sanitized_atts ) ) ? true : $do_return;
 
 				// If there is an "id" attribute and the user ID is in it.
-				if ( isset( $atts['id'] ) ) {
-					$ids = explode( ',', $atts['id'] );
+				if ( isset( $sanitized_atts['id'] ) ) {
+					$ids = explode( ',', $sanitized_atts['id'] );
 					foreach ( $ids as $id ) {
 						if ( trim( $id ) == $current_user->ID ) {
 							$do_return = true;
@@ -271,19 +277,19 @@ class WP_Members_Shortcodes {
 				}
 
 				// If there is a "role" attribute and the user has a matching role.
-				if ( isset( $atts['role'] ) ) {
-					$roles = explode( ',', $atts['role'] );
+				if ( isset( $sanitized_atts['role'] ) ) {
+					$roles = explode( ',', $sanitized_atts['role'] );
 					if ( wpmem_user_has_role( $roles ) ) {
 						$do_return = true;
 					}
 				}
 
 				// If there is a status attribute of "sub" and the user is logged in.
-				if ( ( isset( $atts['status'] ) ) && $atts['status'] == 'sub' ) {
+				if ( ( isset( $sanitized_atts['status'] ) ) && $sanitized_atts['status'] == 'sub' ) {
 					if ( defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 ) {	
 						if ( ! wpmem_is_user_current() ) {
 							$do_return = true;
-						} elseif ( $atts['msg'] == "true" ) {
+						} elseif ( $sanitized_atts['msg'] == "true" ) {
 							$do_return = true;
 							$content = wpmem_sc_expmessage();
 						}
@@ -291,27 +297,27 @@ class WP_Members_Shortcodes {
 				}
 
 				// If there is a meta key attribute.
-				if ( isset( $atts['meta_key'] ) ) {
+				if ( isset( $sanitized_atts['meta_key'] ) ) {
 					$do_return = false;
-					$value = ( isset( $atts['meta_value'] ) ) ? $atts['meta_value'] : false;
-					if ( ! isset( $atts['compare'] ) || "=" == $atts['compare'] ) {
-						if ( wpmem_user_has_meta( $atts['meta_key'], $value ) ) {
+					$value = ( isset( $sanitized_atts['meta_value'] ) ) ? $sanitized_atts['meta_value'] : false;
+					if ( ! isset( $sanitized_atts['compare'] ) || "=" == $sanitized_atts['compare'] ) {
+						if ( wpmem_user_has_meta( $sanitized_atts['meta_key'], $value ) ) {
 							$do_return = true;
 						}
 					}
-					if ( isset( $atts['compare'] ) && "!=" == $atts['compare'] ) {
-						if ( ! wpmem_user_has_meta( $atts['meta_key'], $value ) ) {
+					if ( isset( $sanitized_atts['compare'] ) && "!=" == $sanitized_atts['compare'] ) {
+						if ( ! wpmem_user_has_meta( $sanitized_atts['meta_key'], $value ) ) {
 							$do_return = true;
 						}						
 					}
 				}
 				
 				// If there is a product attribute.
-				if ( isset( $atts['product'] ) || isset( $atts['membership'] ) ) {
+				if ( isset( $sanitized_atts['product'] ) || isset( $sanitized_atts['membership'] ) ) {
 					// @todo What if attribute is comma separated/multiple?
-					$membership = ( isset( $atts['membership'] ) ) ? $atts['membership'] : $atts['product'];
-					$message    = ( isset( $atts['msg'] ) && ( true === $atts['msg'] || "true" === strtolower( $atts['msg'] ) ) ) ? true : false;
-					$not_in     = ( isset( $atts['not_in'] ) && "false" != $atts['not_in'] ) ? true : false;
+					$membership = ( isset( $sanitized_atts['membership'] ) ) ? $sanitized_atts['membership'] : $sanitized_atts['product'];
+					$message    = ( isset( $sanitized_atts['msg'] ) && ( true === $sanitized_atts['msg'] || "true" === strtolower( $sanitized_atts['msg'] ) ) ) ? true : false;
+					$not_in     = ( isset( $sanitized_atts['not_in'] ) && "false" != $sanitized_atts['not_in'] ) ? true : false;
 					if ( true == $not_in ) {
 						$do_return = ( wpmem_user_has_access( $membership ) || ! is_user_logged_in() ) ? false : true;
 					} else {
@@ -344,13 +350,13 @@ class WP_Members_Shortcodes {
 				}
 
 				// Adds optional wrapper.
-				if ( isset( $atts['wrap_id'] ) || isset( $atts['wrap_class'] ) ) {
-					$tag = ( isset( $atts['wrap_tag'] ) ) ? $atts['wrap_tag'] : 'div';
-					$wrapper  = '<' . $tag;
-					$wrapper .= ( isset( $atts['wrap_id']    ) ) ? ' id="'    . $atts['wrap_id']    . '"' : '';
-					$wrapper .= ( isset( $atts['wrap_class'] ) ) ? ' class="' . $atts['wrap_class'] . '"' : '';
+				if ( isset( $sanitized_atts['wrap_id'] ) || isset( $sanitized_atts['wrap_class'] ) ) {
+					$tag = ( isset( $sanitized_atts['wrap_tag'] ) ) ? $sanitized_atts['wrap_tag'] : 'div';
+					$wrapper  = '<' . esc_attr( $tag );
+					$wrapper .= ( isset( $sanitized_atts['wrap_id']    ) ) ? ' id="'    . esc_attr( $sanitized_atts['wrap_id'] )    . '"' : '';
+					$wrapper .= ( isset( $sanitized_atts['wrap_class'] ) ) ? ' class="' . esc_attr( $sanitized_atts['wrap_class'] ) . '"' : '';
 					$wrapper .= '>';
-					$content = $wrapper . $content . '</' . $tag . '>';
+					$content = $wrapper . $content . '</' . esc_attr( $tag ) . '>';
 				}
 
 			}
@@ -401,22 +407,26 @@ class WP_Members_Shortcodes {
 	 * @return string $content The user count.
 	 */
 	function user_count( $atts, $content, $tag ) {
-		if ( isset( $atts['key'] ) && isset( $atts['value'] ) ) {
+		
+		// Sanitize the user input.
+		$sanitized_args = wpmem_sanitize_array( $atts );
+
+		if ( isset( $sanitized_args['key'] ) && isset( $sanitized_args['value'] ) ) {
 			// If by meta key.
 			global $wpdb;
 			$user_count = $wpdb->get_var( $wpdb->prepare(
 				"SELECT COUNT(*) FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value = %s",
-				$atts['key'],
-				$atts['value']
+				$sanitized_args['key'],
+				$sanitized_args['value']
 			) );
 		} else {
 			// If no meta, it's a total count.
 			$users = count_users();
-			$user_count = ( isset( $atts['role'] ) ) ? $users['avail_roles'][ $atts['role'] ] : $users['total_users'];
+			$user_count = ( isset( $sanitized_args['role'] ) ) ? $users['avail_roles'][ $sanitized_args['role'] ] : $users['total_users'];
 		}
 
 		// Assemble the output and return.
-		$content = ( isset( $atts['label'] ) ) ? $atts['label'] . ' ' . $user_count : $content . ' ' . $user_count;
+		$content = ( isset( $sanitized_args['label'] ) ) ? $sanitized_args['label'] . ' ' . $user_count : $content . ' ' . $user_count;
 		return do_shortcode( $content );
 	}
 
@@ -443,12 +453,15 @@ class WP_Members_Shortcodes {
 
 		global $wpmem, $wpmem_themsg;
 
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
 		$pairs = array(
 			'register'    => 'show',
 			'redirect_to' => '',
 		);
 
-		$args = shortcode_atts( $pairs, $atts, $tag );
+		$args = shortcode_atts( $pairs, $sanitized_atts, $tag );
 
 		// @todo $redirect_to is not currently used in the user profile.
 		$redirect_to   = $args['redirect_to'];
@@ -548,7 +561,8 @@ class WP_Members_Shortcodes {
 	 * @return string $content
 	 */
 	function loginout( $atts, $content, $tag ) {
-		$link = wpmem_loginout( $atts );
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+		$link = wpmem_loginout( $sanitized_atts );
 		return do_shortcode( $link );
 	}
 
@@ -571,6 +585,9 @@ class WP_Members_Shortcodes {
 	 * - label
 	 *
 	 * Filter the end result with `wpmem_field_shortcode`.
+	 * 
+	 * User input is sanitized with wpmem_sanitize_array().
+	 * @todo Output should be reviewed for escape.
 	 *
 	 * @since 3.1.2
 	 * @since 3.1.4 Changed to display value rather than stored value for dropdown/multicheck/radio.
@@ -602,25 +619,33 @@ class WP_Members_Shortcodes {
 			return;
 		}
 
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
 		// What field?
-		if ( isset( $atts[0] ) ) {
-			$field = $atts[0];
-		} elseif ( isset( $atts['field'] ) ) {
-			$field = $atts['field'];
+		if ( isset( $sanitized_atts[0] ) ) {
+			$field = $sanitized_atts[0];
+		} elseif ( isset( $sanitized_atts['field'] ) ) {
+			$field = $sanitized_atts['field'];
 		} else {
 			return; // If the field is not directly set in the attributes array, or keyed as "field", then it's not used correctly so return void.
 		}
 
+		// Exit if it's an excluded field, just return.
+		if ( in_array( $field, array( 'user_pass', 'user_activation_key', 'user_status', 'cap_key', 'filter', 'password', 'confirm_password', 'confirm_email' ) ) ) {
+			return;
+		}
+
 		// What user?
-		if ( isset( $atts['id'] ) ) {
-			if ( 'author' == $atts['id'] ) {
+		if ( isset( $sanitized_atts['id'] ) ) {
+			if ( 'author' == $sanitized_atts['id'] ) {
 				global $post;
 				$field_user_id = get_post_field( 'post_author', $post->ID );
 
 				// Alternate method:
 				// $field_user_id = get_the_author_meta( 'ID' );
 			} else {
-				$field_user_id = ( $atts['id'] == 'get' ) ? wpmem_get( 'uid', '', 'get' ) : $atts['id'];
+				$field_user_id = ( $sanitized_atts['id'] == 'get' ) ? wpmem_get( 'uid', '', 'get' ) : $sanitized_atts['id'];
 			}
 		} else {
 			$field_user_id = get_current_user_id();
@@ -632,11 +657,28 @@ class WP_Members_Shortcodes {
 		// Get the user data.
 		$user_info = get_userdata( $sanitized_user_id );
 
-		// If there is userdata.
-		if ( $user_info && isset( $user_info->{$field} ) ) {
+		// Get the meta keys in WP-Members.
+		$fields = wpmem_fields();
 
-			global $wpmem;
-			$fields = wpmem_fields();
+		// Additional fields from $user_info that are allowed by default.
+		$allowed_fields = array_merge( array( 'ID', 'user_registered', 'user_url', 'description', 'display_name' ), array_keys( $fields ) );
+
+		// Remove some (it won't ever get here for these, but just so they don't show up in the filter array to confuse someone).
+		unset( $allowed_fields['password'] );
+		unset( $allowed_fields['confirm_password'] );
+		unset( $allowed_fields['confirm_email'] );
+
+		/**
+		 * Filter meta keys allowed to be displayed.
+		 * 
+		 * @since 3.4.9
+		 * 
+		 * @param  array  $fields
+		 */
+		$allowed_fields = apply_filters( 'wpmem_field_sc_meta_keys', $allowed_fields );
+
+		// If there is userdata.
+		if ( in_array( $field, $allowed_fields ) && $user_info && isset( $user_info->{$field} ) && ! is_object( $user_info->{$field} ) && ! is_array( $user_info->{$field} ) ) {
 			
 			$field_type = ( 'user_login' == $field || ! isset( $fields[ $field ] ) ) ? 'text' : $fields[ $field ]['type'];
 			$user_info_field = ( isset( $field ) && is_object( $user_info ) ) ? $user_info->{$field} : '';
@@ -648,22 +690,22 @@ class WP_Members_Shortcodes {
 				// Select and radio groups have single selections.
 				case 'select':
 				case 'radio':
-					$result = ( isset( $atts['display'] ) && 'raw' == $atts['display'] ) ? $user_info_field : wpmem_select_field_display( $field, $user_info_field );
+					$result = ( isset( $sanitized_atts['display'] ) && 'raw' == $sanitized_atts['display'] ) ? $user_info_field : wpmem_select_field_display( $field, $user_info_field );
 					break;
 					
 				// Multiple select and multiple checkbox have multiple selections.
 				case 'multiselect':
 				case 'multicheckbox':
 				case 'membership':
-					if ( ! isset( $atts['display'] ) ) {
-						$atts['display'] = '';
+					if ( ! isset( $sanitized_atts['display'] ) ) {
+						$sanitized_atts['display'] = '';
 					}
-					if ( isset( $atts['display'] ) && 'raw' == $atts['display'] ) {
+					if ( isset( $sanitized_atts['display'] ) && 'raw' == $sanitized_atts['display'] ) {
 						$result = $user_info_field;
 					} else {
 						$saved_vals = explode( $fields[ $field ]['delimiter'], $user_info_field );
 						$result = ''; $x = 1;
-						if ( 'list' == $atts['display'] ) {
+						if ( 'list' == $sanitized_atts['display'] ) {
 							/**
 							 * Filter list multi field list display HTML parts.
 							 * 
@@ -716,16 +758,16 @@ class WP_Members_Shortcodes {
 
 							$args = array(
 								'wrapper' => array(
-									'tag'  => ( isset( $atts['wrapper_tag'] ) ) ? $atts['wrapper_tag'] : 'ul',
+									'tag'  => ( isset( $sanitized_atts['wrapper_tag'] ) ) ? $sanitized_atts['wrapper_tag'] : 'ul',
 									'atts' => array(
-										'id'    => ( isset( $atts['wrapper_id']    ) ) ? $atts['wrapper_id']    : 'wpmem_field_' . $field,
-										'class' => ( isset( $atts['wrapper_class'] ) ) ? $atts['wrapper_class'] : 'wpmem-field-multi-list',
+										'id'    => ( isset( $sanitized_atts['wrapper_id']    ) ) ? $sanitized_atts['wrapper_id']    : 'wpmem_field_' . $field,
+										'class' => ( isset( $sanitized_atts['wrapper_class'] ) ) ? $sanitized_atts['wrapper_class'] : 'wpmem-field-multi-list',
 									),
 								),
 							);
 							foreach ( $saved_vals as $value ) {
 								$args['item'][ $value ] = array(
-									'tag'  => ( isset( $atts['item_tag'] ) ) ? $atts['item_tag'] : 'li',
+									'tag'  => ( isset( $sanitized_atts['item_tag'] ) ) ? $sanitized_atts['item_tag'] : 'li',
 									'atts' => array(
 										'id' => 'wpmem_field_' . $field . '_' . $value,
 										'class' => 'wpmem-field-' . $field . '-item-' . $value,
@@ -744,16 +786,16 @@ class WP_Members_Shortcodes {
 							 *     @type array  $wrapper {
 							 *          The wrapper parts.
 							 * 
-							 *          @type string $tag     The HTML tag (default: ul)
-							 *          @type array  $atts    The HTML tag attributes
-							 *          @type string $content The content wrapped by the tag (default: list items)
+							 *          @type string $tag            The HTML tag (default: ul)
+							 *          @type array  $sanitized_atts The HTML tag attributes
+							 *          @type string $content        The content wrapped by the tag (default: list items)
 							 *     }
 							 *     @type array  $item {
 							 *          An item for each list item.
 							 * 
-							 *          @type string $tag     The HTML tag (default: li)
-							 *          @type array  $atts    The HTML tag attributes
-							 *          @type string $content The list item value
+							 *          @type string $tag            The HTML tag (default: li)
+							 *          @type array  $sanitized_atts The HTML tag attributes
+							 *          @type string $content        The list item value
 							 *     }
 							 * }
 							 * @param  string  $field
@@ -778,8 +820,8 @@ class WP_Members_Shortcodes {
 					
 				case 'file':
 				case 'image':
-					if ( isset( $atts['display'] ) ) {
-						switch ( $atts['display'] ) {
+					if ( isset( $sanitized_atts['display'] ) ) {
+						switch ( $sanitized_atts['display'] ) {
 							case "url":
 								$result = wp_get_attachment_url( $user_info_field );
 								break;
@@ -804,17 +846,17 @@ class WP_Members_Shortcodes {
 								'tag'  => 'a',
 								'atts' => array(
 									'href'  => esc_url( $attachment_url ),
-									'id'    => ( isset( $atts['id']    ) ) ? esc_attr( $atts['id']    ) : esc_attr( 'wpmem_field_file_' . $field ),
-									'class' => ( isset( $atts['class'] ) ) ? esc_attr( $atts['class'] ) : esc_attr( 'wpmem-field-file-' . $field ),
+									'id'    => ( isset( $sanitized_atts['id']    ) ) ? esc_attr( $sanitized_atts['id']    ) : esc_attr( 'wpmem_field_file_' . $field ),
+									'class' => ( isset( $sanitized_atts['class'] ) ) ? esc_attr( $sanitized_atts['class'] ) : esc_attr( 'wpmem-field-file-' . $field ),
 								),
 								'content' => get_the_title( $user_info_field ),
 							), $field );
 							$result = ( $attachment_url ) ? rktgk_build_html_tag( $html_args ) : '';
 						} else {
 							$size = 'thumbnail';
-							if ( isset( $atts['size'] ) ) {
+							if ( isset( $sanitized_atts['size'] ) ) {
 								$sizes = array( 'thumbnail', 'medium', 'large', 'full' );
-								$size  = ( ! in_array( $atts['size'], $sizes ) ) ? explode( ",", $atts['size'] ) : $atts['size'];
+								$size  = ( ! in_array( $sanitized_atts['size'], $sizes ) ) ? explode( ",", $sanitized_atts['size'] ) : $sanitized_atts['size'];
 							}
 							$image = wp_get_attachment_image_src( $user_info_field, $size );
 							/**
@@ -831,8 +873,8 @@ class WP_Members_Shortcodes {
 									'src'    => esc_url( $image[0] ),
 									'width'  => esc_attr( $image[1] ),
 									'height' => esc_attr( $image[2] ),
-									'id'     => ( isset( $atts['id']    ) ) ? esc_attr( $atts['id']    ) : esc_attr( 'wpmem_field_img_' . $field ),
-									'class'  => ( isset( $atts['class'] ) ) ? esc_attr( $atts['class'] ) : esc_attr( 'wpmem-field-img-' . $field )
+									'id'     => ( isset( $sanitized_atts['id']    ) ) ? esc_attr( $sanitized_atts['id']    ) : esc_attr( 'wpmem_field_img_' . $field ),
+									'class'  => ( isset( $sanitized_atts['class'] ) ) ? esc_attr( $sanitized_atts['class'] ) : esc_attr( 'wpmem-field-img-' . $field )
 								),
 							), $field );
 							$result = ( $image ) ? rktgk_build_html_tag( $html_args ) : '';
@@ -842,13 +884,13 @@ class WP_Members_Shortcodes {
 					
 				case 'textarea':
 					// Handle line breaks for textarea fields
-					$result = ( isset( $atts['display'] ) && 'raw' == $atts['display'] ) ? $user_info_field : nl2br( $user_info_field );
+					$result = ( isset( $sanitized_atts['display'] ) && 'raw' == $sanitized_atts['display'] ) ? $user_info_field : nl2br( $user_info_field );
 					break;
 					
 				case 'date':
-					if ( isset( $atts['format'] ) ) {
+					if ( isset( $sanitized_atts['format'] ) ) {
 						// Formats date: https://secure.php.net/manual/en/function.date.php
-						$result = ( '' != $user_info_field ) ? date( $atts['format'], strtotime( $user_info_field ) ) : '';
+						$result = ( '' != $user_info_field ) ? date( $sanitized_atts['format'], strtotime( $user_info_field ) ) : '';
 					} else {
 						// Formats date to whatever the WP setting is.
 						$result = ( '' != $user_info_field ) ? date_i18n( get_option( 'date_format' ), strtotime( $user_info_field ) ) : '';
@@ -862,17 +904,17 @@ class WP_Members_Shortcodes {
 			}
 
 			// Remove underscores from value if requested (default: on).
-			if ( isset( $atts['underscores'] ) && 'off' == $atts['underscores'] && $user_info ) {
+			if ( isset( $sanitized_atts['underscores'] ) && 'off' == $sanitized_atts['underscores'] && $user_info ) {
 				$result = str_replace( '_', ' ', $result );
 			}
 
 			$content = ( $content ) ? $result . $content : $result;
 			
 			// Make it clickable?
-			$content = ( isset( $atts['clickable'] ) && ( true == $atts['clickable'] || 'true' == $atts['clickable'] ) ) ? make_clickable( $content ) : $content;
+			$content = ( isset( $sanitized_atts['clickable'] ) && ( true == $sanitized_atts['clickable'] || 'true' == $sanitized_atts['clickable'] ) ) ? make_clickable( $content ) : $content;
 		
 			// Display field label?
-			$content = ( isset( $fields[ $field ] ) && isset( $atts['label'] ) && ( true == $atts['label'] ) ) ? $fields[ $field ]['label'] . ": " . $content : $content;
+			$content = ( isset( $fields[ $field ] ) && isset( $sanitized_atts['label'] ) && ( true == $sanitized_atts['label'] ) ) ? $fields[ $field ]['label'] . ": " . $content : $content;
 		}
 		
 		/**
@@ -882,10 +924,10 @@ class WP_Members_Shortcodes {
 		 * @since 3.4.5 Added $field
 		 *
 		 * @param string $content
-		 * @param array  $atts
+		 * @param array  $sanitized_atts
 		 * @param string $field
 		 */
-		$content = apply_filters( 'wpmem_field_shortcode', $content, $atts, $field );
+		$content = apply_filters( 'wpmem_field_shortcode', $content, $sanitized_atts, $field );
 
 		return do_shortcode( $content );
 	}
@@ -906,9 +948,13 @@ class WP_Members_Shortcodes {
 	 * @retrun string $content
 	 */
 	function logout( $atts, $content, $tag ) {
-			// Logout link shortcode.
+
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
+		// Logout link shortcode.
 		if ( is_user_logged_in() && $tag == 'wpmem_logout' ) {
-			$link = ( isset( $atts['url'] ) ) ? add_query_arg( array( 'a'=>'logout', 'redirect_to'=>$atts['url'] ) ) : add_query_arg( 'a', 'logout' );
+			$link = ( isset( $sanitized_atts['url'] ) ) ? add_query_arg( array( 'a'=>'logout', 'redirect_to'=>$sanitized_atts['url'] ) ) : add_query_arg( 'a', 'logout' );
 			$text = ( $content ) ? $content : __( 'Click here to log out.', 'wp-members' );
 			return do_shortcode( '<a href="' . esc_url( $link ) . '">' . $text . '</a>' );
 		}
@@ -928,14 +974,20 @@ class WP_Members_Shortcodes {
 	 * }
 	 * @param  string $content
 	 * @param  string $tag
-	 * @retrun string $content
+	 * @return string $content
 	 */
 	function tos( $atts, $content, $tag ) {
+
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
 		$url = '';
-		if ( isset( $atts['url'] ) ) {
-			$url = ( strpos( $atts['url'], 'http://' ) || strpos( $atts['url'], 'https://' ) ) ? esc_url( $atts['url'] ) : esc_url( home_url( $atts['url'] ) );
+		if ( isset( $sanitized_atts['url'] ) ) {
+			$url = ( strpos( $sanitized_atts['url'], 'http://' ) || strpos( $sanitized_atts['url'], 'https://' ) ) ? $sanitized_atts['url'] : home_url( $sanitized_atts['url'] );
+			return esc_url( $url );
+		} else {
+			return;
 		}
-		return $url; 
 	}
 
 	/**
@@ -955,10 +1007,14 @@ class WP_Members_Shortcodes {
 	 * @retrun string $content
 	 */
 	function avatar( $atts, $content, $tag ) {
+
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
 		$content = '';
-		$size = ( isset( $atts['size'] ) ) ? $atts['size'] : '';
-		if ( isset( $atts['id'] ) ) {
-			$content = get_avatar( $atts['id'], $size );
+		$size = ( isset( $sanitized_atts['size'] ) ) ? $sanitized_atts['size'] : '';
+		if ( isset( $sanitized_atts['id'] ) ) {
+			$content = get_avatar( $sanitized_atts['id'], $size );
 		} elseif ( is_user_logged_in() ) {
 			// If the user is logged in and this isn't specifying a user ID, return the current user avatar.
 			global $current_user;
@@ -983,8 +1039,12 @@ class WP_Members_Shortcodes {
 	 * @return string $content
 	 */
 	function login_link( $atts, $content, $tag ) {
-		if ( isset( $atts ) && ! empty( $atts ) ) {
-			$args['attributes'] = $atts;
+
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+
+		if ( isset( $sanitized_atts ) && ! empty( $sanitized_atts ) ) {
+			$args['attributes'] = $sanitized_atts;
 		}
 		if ( 'wpmem_reg_link' == $tag ) {
 			$args['content'] = ( isset( $content ) && '' != $content ) ? $content : __( 'Register' );
@@ -1030,7 +1090,9 @@ class WP_Members_Shortcodes {
 	 * @return string $content
 	 */
 	function form_nonce( $atts, $content, $tag ) {
-		$nonce = ( isset( $atts['form'] ) ) ? $atts['form'] : 'register';
+		// Sanitize the user input.
+		$sanitized_atts = wpmem_sanitize_array( $atts );
+		$nonce = ( isset( $sanitized_atts['form'] ) ) ? esc_attr( $sanitized_atts['form'] ) : 'register';
 		$content = wpmem_form_nonce( $nonce, false );
 		return do_shortcode( $content );
 	}
@@ -1133,7 +1195,7 @@ class WP_Members_Shortcodes {
 	 */
 	function render_user_edit( $wpmem_regchk, $content, $atts = false ) {
 
-		global $wpmem, $wpmem_a, $wpmem_themsg;
+		global $wpmem_a, $wpmem_themsg;
 		/**
 		 * Filter the default User Edit heading for shortcode.
 		 *
