@@ -24,7 +24,15 @@ class WP_Members_User_Profile {
 	 */
 	static function get_fields( $tag ) {
 		$fields = wpmem_fields( $tag );
-		if ( 'profile_dashboard' == $tag && false == current_user_can( 'edit_users' ) ) {
+		/**
+		 * Filters the required capability for dashboard profile.
+		 * 
+		 * @since 3.5.0
+		 * 
+		 * @param  string  $required_capability
+		 */
+		$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
+		if ( 'profile_dashboard' == $tag && false == current_user_can( $required_capability ) ) {
 			foreach( $fields as $key => $field ) {
 				if ( false == $field['profile'] ) {
 					unset( $fields[ $key ] );
@@ -50,9 +58,13 @@ class WP_Members_User_Profile {
 	static function profile( $user_obj ) {
 	
 		global $current_screen, $user_ID, $wpmem;
+
+		/** This filter is documented in includes/class-wp-members-user-profile.php */
+		$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
+
 		$user_id = ( 'profile' == $current_screen->id ) ? $user_ID : filter_var( $_REQUEST['user_id'], FILTER_SANITIZE_NUMBER_INT ); 
 		$display = ( 'profile' == $current_screen->base ) ? 'user' : 'admin'; 
-		$display = ( current_user_can( 'edit_users' ) ) ? 'admin' : $display; ?>
+		$display = ( current_user_can( $required_capability ) ) ? 'admin' : $display; ?>
 
 		<h3><?php
 		$heading = ( 'admin' == $display ) ? __( 'WP-Members Additional Fields', 'wp-members' ) : __( 'Additional Information', 'wp-members' );
@@ -406,7 +418,10 @@ class WP_Members_User_Profile {
 			$wpmem->user->upload_user_files( $user_id, $wpmem->fields );
 		}	
 
-		if ( 'admin' == $display || current_user_can( 'edit_users' ) ) {
+		/** This filter is documented in includes/class-wp-members-user-profile.php */
+		$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
+
+		if ( 'admin' == $display || current_user_can( $required_capability ) ) {
 			if ( $wpmem->mod_reg == 1 ) {
 
 				$wpmem_activate_user = ( isset( $_POST['activate_user'] ) == '' ) ? -1 : intval( $_POST['activate_user'] );
@@ -497,10 +512,14 @@ class WP_Members_User_Profile {
 	 */
 	public static function _show_activate( $user_id ) {
 		global $wpmem;
+
+		/** This filter is documented in includes/class-wp-members-user-profile.php */
+		$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
+		
 		// See if reg is moderated, and if the user has been activated.
 		if ( $wpmem->mod_reg == 1 ) {
 			// Make sure this isn't an admin looking at their own profile.
-			if ( current_user_can( 'edit_users' ) && $user_id != get_current_user_id() ) {
+			if ( current_user_can( $required_capability ) && $user_id != get_current_user_id() ) {
 				$user_active_flag = get_user_meta( $user_id, 'active', true );
 				switch( $user_active_flag ) {
 
@@ -578,8 +597,11 @@ class WP_Members_User_Profile {
 	 * @param int $user_id
 	 */
 	static function _profile_tabs( $user_id ) {
+
+		/** This filter is documented in includes/class-wp-members-user-profile.php */
+		$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
 		
-		if ( current_user_can( 'edit_users' ) ) {
+		if ( current_user_can( $required_capability ) ) {
 
 			/**
 			 * Add tabs to user profile tabs.
