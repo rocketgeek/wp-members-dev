@@ -40,7 +40,7 @@ class WP_Members_Fields_Table extends WP_List_Table {
 		if ( in_array( $item['meta'], $this->no_delete ) || in_array( $item['meta'], $this->excludes ) ) {
 			return;
 		} else {
-			return sprintf( '<input type="checkbox" name="delete[]" value="%s" title="%s" />', $item['meta'], __( 'delete', 'wp-members' ) );
+			return sprintf( '<input type="checkbox" name="delete[]" value="%s" title="%s" />', $item['meta'], esc_html__( 'delete', 'wp-members' ) );
 		}
 	}
 
@@ -55,7 +55,7 @@ class WP_Members_Fields_Table extends WP_List_Table {
 				'edit'  => 'field',
 				'field' => $item['meta'],
 			), admin_url( 'options-general.php' ) );
-			return '<a href="' . $link . '"><span class="dashicons dashicons-edit"></span></a> <a href="' . $link . '" data-tooltip="' . __( 'Edit this field', 'wp-members' ) . '">' . $item['meta'] . '</a>';
+			return '<a href="' . $link . '"><span class="dashicons dashicons-edit"></span></a> <a href="' . $link . '" data-tooltip="' . esc_html__( 'Edit this field', 'wp-members' ) . '">' . $item['meta'] . '</a>';
 		}
 	}
 
@@ -68,33 +68,33 @@ class WP_Members_Fields_Table extends WP_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'cb'   =>  '<input type="checkbox"  data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '" />',
-			'label'    => __( 'Display Label', 'wp-members' ),
-			'meta'     => __( 'Meta Key',      'wp-members' ),
-			'type'     => __( 'Field Type',    'wp-members' ),
-			'display'  => '<input name="wpmem_all_fields_display" type="checkbox" id="wpmem_all_fields_display" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> '   . __( 'Registration', 'wp-members' ), // __( 'Registration',  'wp-members' ), @todo Wait until fix
-			'req'      => '<input name="wpmem_all_fields_required" type="checkbox" id="wpmem_all_fields_required" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> ' . __( 'Required',     'wp-members' ),
-			'profile'  => '<input name="wpmem_all_fields_profile" type="checkbox" id="wpmem_all_fields_profile" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> '   . __( 'Profile',      'wp-members' ),
+			'cb'   =>  '<input type="checkbox"  data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '" />',
+			'label'    => esc_html__( 'Display Label', 'wp-members' ),
+			'meta'     => esc_html__( 'Meta Key',      'wp-members' ),
+			'type'     => esc_html__( 'Field Type',    'wp-members' ),
+			'display'  => '<input name="wpmem_all_fields_display" type="checkbox" id="wpmem_all_fields_display" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> '   . esc_html__( 'Registration', 'wp-members' ), // esc_html__( 'Registration',  'wp-members' ), @todo Wait until fix
+			'req'      => '<input name="wpmem_all_fields_required" type="checkbox" id="wpmem_all_fields_required" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> ' . esc_html__( 'Required',     'wp-members' ),
+			'profile'  => '<input name="wpmem_all_fields_profile" type="checkbox" id="wpmem_all_fields_profile" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> '   . esc_html__( 'Profile',      'wp-members' ),
 		);
 
 		if ( wpmem_is_woo_active() ) {
 			global $wpmem;
 			//if ( wpmem_is_enabled( 'woo/add_checkout_fields' ) ) {
 			if ( 1 == $wpmem->woo->add_checkout_fields ) {
-				$columns['wcchkout'] = '<input name="wpmem_all_fields_wcchkout" type="checkbox" id="wpmem_all_fields_wcchkout" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> ' . __( 'WC Chkout', 'wp-members' );
+				$columns['wcchkout'] = '<input name="wpmem_all_fields_wcchkout" type="checkbox" id="wpmem_all_fields_wcchkout" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> ' . esc_html__( 'WC Chkout', 'wp-members' );
 			}
 			//if ( wpmem_is_enabled( 'woo/add_my_account_fields' ) ) {
 			if ( 1 == $wpmem->woo->add_my_account_fields ) {
-				$columns['wcaccount'] = '<input name="wpmem_all_fields_wcaccount" type="checkbox" id="wpmem_all_fields_wcaccount" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> ' . __( 'WC My Acct', 'wp-members' );
+				$columns['wcaccount'] = '<input name="wpmem_all_fields_wcaccount" type="checkbox" id="wpmem_all_fields_wcaccount" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> ' . esc_html__( 'WC My Acct', 'wp-members' );
 			}
 			//if ( wpmem_is_enabled( 'woo/add_update_fields' ) ) {
 			if ( 1 == $wpmem->woo->add_update_fields ) {
-				$columns['wcupdate'] = '<input name="wpmem_all_fields_wcupdate" type="checkbox" id="wpmem_all_fields_wcupdate" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> ' . __( 'WC Update', 'wp-members' );
+				$columns['wcupdate'] = '<input name="wpmem_all_fields_wcupdate" type="checkbox" id="wpmem_all_fields_wcupdate" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> ' . esc_html__( 'WC Update', 'wp-members' );
 			}
 		}
 
-		$columns['userscrn'] = '<input name="wpmem_all_fields_uscreen" type="checkbox" id="wpmem_all_fields_uscreen" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> '   . __( 'Users',        'wp-members' );
-		$columns['usearch']  = '<input name="wpmem_all_fields_usearch" type="checkbox" id="wpmem_all_fields_usearch" value="1" data-tooltip="' . __( 'Click to check all', 'wp-members' ) . '"> '   . __( 'Search',       'wp-members' );
+		$columns['userscrn'] = '<input name="wpmem_all_fields_uscreen" type="checkbox" id="wpmem_all_fields_uscreen" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> '   . esc_html__( 'Users',        'wp-members' );
+		$columns['usearch']  = '<input name="wpmem_all_fields_usearch" type="checkbox" id="wpmem_all_fields_usearch" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> '   . esc_html__( 'Search',       'wp-members' );
 		
 		$columns['edit'] = '';
 
@@ -138,8 +138,8 @@ class WP_Members_Fields_Table extends WP_List_Table {
 	 */
 	function get_bulk_actions() {
 		$actions = array(
-			'delete' => __( 'Delete Selected', 'wp-members' ),
-			'save'   => __( 'Save Settings', 'wp-members' ),
+			'delete' => esc_html__( 'Delete Selected', 'wp-members' ),
+			'save'   => esc_html__( 'Save Settings', 'wp-members' ),
 		);
 		return $actions;
 	}

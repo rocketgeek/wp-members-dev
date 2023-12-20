@@ -64,14 +64,14 @@ class WP_Members_Admin_Tab_Captcha {
 
 		$wpmem_captcha = get_option( 'wpmembers_captcha' );
 		$url           = home_url();
-		$help_link     = sprintf( __( 'See the %sUsers Guide on CAPTCHA%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/registration/using-captcha/" target="_blank">', '</a>' );	
+		$help_link     = sprintf( esc_html__( 'See the %sUsers Guide on CAPTCHA%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/registration/using-captcha/" target="_blank">', '</a>' );	
 		?>
 		<div class="metabox-holder has-right-sidebar">
 
 			<div class="inner-sidebar">
 				<?php wpmem_a_meta_box(); ?>
 				<div class="postbox">
-					<h3><span><?php _e( 'Need help?', 'wp-members' ); ?></span></h3>
+					<h3><span><?php esc_html_e( 'Need help?', 'wp-members' ); ?></span></h3>
 					<div class="inside">
 						<strong><i><?php echo $help_link; ?></i></strong>
 					</div>
@@ -82,28 +82,28 @@ class WP_Members_Admin_Tab_Captcha {
 				<div id="post-body-content">
 					<div class="postbox">
 
-						<h3><?php _e( 'Manage CAPTCHA Options', 'wp-members' ); ?></h3>
+						<h3><?php esc_html_e( 'Manage CAPTCHA Options', 'wp-members' ); ?></h3>
 						<div class="inside">
 							<form name="updatecaptchaform" id="updatecaptchaform" method="post" action="<?php echo wpmem_admin_form_post_url(); ?>">
 							<?php wp_nonce_field( 'wpmem-update-captcha' ); ?>
 								<table class="form-table">
 									<tr valign="top">
-										<th><?php _e( 'CAPTCHA Type', 'wp-members' ); ?></th>
+										<th><?php esc_html_e( 'CAPTCHA Type', 'wp-members' ); ?></th>
 										<td><?php
 											if ( 1 == $wpmem->captcha ) {
 												$wpmem->captcha = 3; // reCAPTCHA v1 is fully obsolete. Change it to v2.
 											}
-											$captcha[] = __( 'reCAPTCHA v2', 'wp-members' ) . '|3';
-											$captcha[] = __( 'reCAPTCHA v3', 'wp-members' ) . '|4';
-											$captcha[] = __( 'Really Simple CAPTCHA', 'wp-members' ) . '|2';
-											$captcha[] = __( 'hCaptcha', 'wp-members' ) . '|5';
+											$captcha[] = esc_html__( 'reCAPTCHA v2', 'wp-members' ) . '|3';
+											$captcha[] = esc_html__( 'reCAPTCHA v3', 'wp-members' ) . '|4';
+											$captcha[] = esc_html__( 'Really Simple CAPTCHA', 'wp-members' ) . '|2';
+											$captcha[] = esc_html__( 'hCaptcha', 'wp-members' ) . '|5';
 											echo wpmem_form_field( 'wpmem_settings_captcha', 'select', $captcha, $wpmem->captcha ); ?>
 										</td>
 									</tr>
 									<?php if ( isset( $updated_captcha_type ) ) { ?>
 									<tr>
 										<td colspan="2">
-											<p><?php _e( 'CAPTCHA type was changed. Please verify and update the settings below for the new CAPTCHA type.', 'wp-members' ); ?></p>
+											<p><?php esc_html_e( 'CAPTCHA type was changed. Please verify and update the settings below for the new CAPTCHA type.', 'wp-members' ); ?></p>
 										</td>
 									</tr>
 									<?php } ?>
@@ -114,17 +114,17 @@ class WP_Members_Admin_Tab_Captcha {
 									$public_key  = ( isset( $wpmem_captcha['recaptcha'] ) ) ? $wpmem_captcha['recaptcha']['public']  : '';
 									?>
 									<tr valign="top">
-										<th scope="row"><?php _e( 'reCAPTCHA Keys', 'wp-members' ); ?></th>
+										<th scope="row"><?php esc_html_e( 'reCAPTCHA Keys', 'wp-members' ); ?></th>
 										<td>
 											<p><?php if ( 
 												   ! isset( $wpmem_captcha['recaptcha']['private'] )
 												|| ! isset( $wpmem_captcha['recaptcha']['public'] )
 												|| '' == $wpmem_captcha['recaptcha']['private'] 
 												|| '' == $wpmem_captcha['recaptcha']['public'] ) {
-												printf( __( 'reCAPTCHA requires an API key, consisting of a "site" and a "secret" key. You can sign up for a %s free reCAPTCHA key%s', 'wp-members' ), "<a href=\"https://www.google.com/recaptcha/admin#whyrecaptcha\" target=\"_blank\">", '</a>' );
+												printf( esc_html__( 'reCAPTCHA requires an API key, consisting of a "site" and a "secret" key. You can sign up for a %s free reCAPTCHA key%s', 'wp-members' ), "<a href=\"https://www.google.com/recaptcha/admin#whyrecaptcha\" target=\"_blank\">", '</a>' );
 											} ?></p>
-											<p><label><?php _e( 'Site Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_publickey" size="60" value="<?php echo $public_key; ?>" /></p>
-											<p><label><?php _e( 'Secret Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_privatekey" size="60" value="<?php echo $private_key; ?>" /></p>
+											<p><label><?php esc_html_e( 'Site Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_publickey" size="60" value="<?php echo $public_key; ?>" /></p>
+											<p><label><?php esc_html_e( 'Secret Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_privatekey" size="60" value="<?php echo $private_key; ?>" /></p>
 										 </td>
 									</tr>
 								<?php 
@@ -134,13 +134,13 @@ class WP_Members_Admin_Tab_Captcha {
 									$public_key  = ( isset( $wpmem_captcha['hcaptcha'] ) ) ? $wpmem_captcha['hcaptcha']['api_key']  : '';
 									?>
 									<tr valign="top">
-										<th scope="row"><?php _e( 'hCaptcha Keys', 'wp-members' ); ?></th>
+										<th scope="row"><?php esc_html_e( 'hCaptcha Keys', 'wp-members' ); ?></th>
 										<td>
 											<p><?php if ( '' == $private_key || '' == $public_key ) {
-												printf( __( 'hCaptcha requires an API key. You can sign up for %s an hCaptcha API key here %s', 'wp-members' ), "<a href=\"https://hcaptcha.com/\" target=\"_blank\">", '</a>' );
+												printf( esc_html__( 'hCaptcha requires an API key. You can sign up for %s an hCaptcha API key here %s', 'wp-members' ), "<a href=\"https://hcaptcha.com/\" target=\"_blank\">", '</a>' );
 											} ?></p>
-											<p><label><?php _e( 'API Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_publickey" size="60" value="<?php echo $public_key; ?>" /></p>
-											<p><label><?php _e( 'Secret Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_privatekey" size="60" value="<?php echo $private_key; ?>" /></p>
+											<p><label><?php esc_html_e( 'API Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_publickey" size="60" value="<?php echo $public_key; ?>" /></p>
+											<p><label><?php esc_html_e( 'Secret Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_privatekey" size="60" value="<?php echo $private_key; ?>" /></p>
 										 </td>
 									</tr>
 								<?php
@@ -171,35 +171,35 @@ class WP_Members_Admin_Tab_Captcha {
 									$show_update_button = true;
 									if ( is_plugin_active( 'really-simple-captcha/really-simple-captcha.php' ) ) { ?>
 										<tr>
-											<th scope="row"><?php _e( 'Characters for image', 'wp-members' ); ?></th>
+											<th scope="row"><?php esc_html_e( 'Characters for image', 'wp-members' ); ?></th>
 											<td><input name="characters" type="text" size="34" value="<?php echo $args['characters']; ?>" /></td>
 										</tr>
 										<tr>
-											<th scope="row"><?php _e( 'Number of characters', 'wp-members' ); ?></th>
+											<th scope="row"><?php esc_html_e( 'Number of characters', 'wp-members' ); ?></th>
 											<td><input name="num_char" type="text" size="2" value="<?php echo $args['num_char']; ?>" /></td>
 										</tr>
 										<tr>
-											<th scope="row"><?php _e( 'Image dimensions', 'wp-members' ); ?></th>
-											<td><?php _e( 'Width' ); ?> <input name="dim_w" type="text" size="2" value="<?php echo $args['dim_w']; ?>" /> <?php _e( 'Height' ); ?> <input name="dim_h" type="text" size="2" value="<?php echo $args['dim_h']; ?>" /></td>
+											<th scope="row"><?php esc_html_e( 'Image dimensions', 'wp-members' ); ?></th>
+											<td><?php esc_html_e( 'Width' ); ?> <input name="dim_w" type="text" size="2" value="<?php echo $args['dim_w']; ?>" /> <?php esc_html_e( 'Height' ); ?> <input name="dim_h" type="text" size="2" value="<?php echo $args['dim_h']; ?>" /></td>
 										</tr>
 										<tr>
-											<th scope="row"><?php _e( 'Font color of characters', 'wp-members' ); ?></th>
+											<th scope="row"><?php esc_html_e( 'Font color of characters', 'wp-members' ); ?></th>
 											<td>R:<input name="font_color_r" type="text" size="2" value="<?php echo $font_color[0]; ?>" /> G:<input name="font_color_g" type="text" size="2" value="<?php echo $font_color[1]; ?>" /> B:<input name="font_color_b" type="text" size="2" value="<?php echo $font_color[2]; ?>" /></td>
 										</tr>
 										<tr>
-											<th scope="row"><?php _e( 'Background color of image', 'wp-members' ); ?></th>
+											<th scope="row"><?php esc_html_e( 'Background color of image', 'wp-members' ); ?></th>
 											<td>R:<input name="bg_color_r" type="text" size="2" value="<?php echo $bg_color[0]; ?>" /> G:<input name="bg_color_g" type="text" size="2" value="<?php echo $bg_color[1]; ?>" /> B:<input name="bg_color_b" type="text" size="2" value="<?php echo $bg_color[2]; ?>" /></td>
 										</tr>
 										<tr>
-											<th scope="row"><?php _e( 'Font size', 'wp-members' ); ?></th>
+											<th scope="row"><?php esc_html_e( 'Font size', 'wp-members' ); ?></th>
 											<td><input name="font_size" type="text" value="<?php echo $args['font_size']; ?>" /></td>
 										</tr>
 										<tr>
-											<th scope="row"><?php _e( 'Width between characters', 'wp-members' ); ?></th>
+											<th scope="row"><?php esc_html_e( 'Width between characters', 'wp-members' ); ?></th>
 											<td><input name="kerning" type="text" value="<?php echo $args['kerning']; ?>" /></td>
 										</tr>
 										<tr>
-											<th scope="row"><?php _e( 'Image type', 'wp-members' ); ?></th>
+											<th scope="row"><?php esc_html_e( 'Image type', 'wp-members' ); ?></th>
 											<td><select name="img_type">
 												<option<?php echo ( $args['img_type'] == 'png' ) ? ' selected' : ''; ?>>png</option>
 												<option<?php echo ( $args['img_type'] == 'gif' ) ? ' selected' : ''; ?>>gif</option>
@@ -214,8 +214,8 @@ class WP_Members_Admin_Tab_Captcha {
 																	//       Could remove that logic altogether? ?>
 										<tr>
 											<td colspan="2">
-												<p><?php _e( 'To use Really Simple CAPTCHA, you must have the Really Simple CAPTCHA plugin installed and activated.', 'wp-members' ); ?></p>
-												<p><?php _e( sprintf( 'You can download Really Simple CAPTCHA from the %swordpress.org plugin repository%s.', '<a href="http://wordpress.org/plugins/really-simple-captcha/">', '</a>' ), 'wp-members' ); ?></p>
+												<p><?php esc_html_e( 'To use Really Simple CAPTCHA, you must have the Really Simple CAPTCHA plugin installed and activated.', 'wp-members' ); ?></p>
+												<p><?php esc_html_e( sprintf( 'You can download Really Simple CAPTCHA from the %swordpress.org plugin repository%s.', '<a href="http://wordpress.org/plugins/really-simple-captcha/">', '</a>' ), 'wp-members' ); ?></p>
 											</td>
 										</tr><?php
 									}
@@ -242,7 +242,7 @@ class WP_Members_Admin_Tab_Captcha {
 										<td>
 											<input type="hidden" name="wpmem_recaptcha_type" value="<?php echo $captcha_type ?>" />
 											<input type="hidden" name="wpmem_admin_a" value="update_captcha" />
-											<?php submit_button( __( 'Update CAPTCHA Settings', 'wp-members' ) ); ?>
+											<?php submit_button( esc_html__( 'Update CAPTCHA Settings', 'wp-members' ) ); ?>
 										</td>
 									</tr>
 								<?php } ?>
@@ -320,6 +320,6 @@ class WP_Members_Admin_Tab_Captcha {
 		}
 
 		update_option( 'wpmembers_captcha', $settings );
-		return __( 'CAPTCHA was updated for WP-Members', 'wp-members' );
+		return esc_html__( 'CAPTCHA was updated for WP-Members', 'wp-members' );
 	}
 }

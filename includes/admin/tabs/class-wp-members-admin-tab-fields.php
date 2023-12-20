@@ -99,7 +99,7 @@ class WP_Members_Admin_Tab_Fields {
 					}
 				}
 				update_option( 'wpmembers_fields', $wpmem_new_fields );
-				$did_update = __( 'Fields deleted', 'wp-members' );
+				$did_update = esc_html__( 'Fields deleted', 'wp-members' );
 			}
 
 			if ( $did_update ) { ?>
@@ -140,8 +140,8 @@ class WP_Members_Admin_Tab_Fields {
 			$field['checkbox_label'] = ''; // fixes unset variable at 308/309 since $field would not be set.
 		}
 		$form_action = ( $mode == 'edit' ) ? 'editfieldform' : 'addfieldform'; 
-		$span_optional = '<span class="description">' . __( '(optional)', 'wp-members' ) . '</span>';
-		$span_required = '<span class="req">' . __( '(required)', 'wp-members' ) . '</span>'; 
+		$span_optional = '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>';
+		$span_required = '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; 
 		$form_submit = array( 'mode' => $mode ); 
 		if ( isset( $_GET['field'] ) ) {
 			$form_submit['field'] = $meta_key; 
@@ -386,7 +386,7 @@ Last Row|last_row<?php } } ?></textarea>
 				} ?>
 			<input type="hidden" name="add_order_id" value="<?php echo $field_order_id; ?>" />
 			<input type="hidden" name="wpmem_admin_a" value="<?php echo ( $mode == 'edit' ) ? 'edit_field' : 'add_field'; ?>" />
-			<?php $text = ( $mode == 'edit' ) ? __( 'Save Changes', 'wp-members' ) : __( 'Add Field', 'wp-members' ); ?>
+			<?php $text = ( $mode == 'edit' ) ? esc_html__( 'Save Changes', 'wp-members' ) : esc_html__( 'Add Field', 'wp-members' ); ?>
 			<?php submit_button( $text ); ?>
 			<p><a href="<?php echo add_query_arg( array( 'page' => 'wpmem-settings', 'tab' => 'fields' ), get_admin_url() . 'options-general.php' ); ?>">&laquo; <?php _e( 'Return to Fields Table', 'wp-members' ); ?></a></p>
 		</form><?php
@@ -516,20 +516,20 @@ Last Row|last_row<?php } } ?></textarea>
 					}
 				}
 
-				$item['edit'] = '<span class="dashicons dashicons-move" title="' . __( 'Drag and drop to reorder fields', 'wp-members' ) . '"></span>';
+				$item['edit'] = '<span class="dashicons dashicons-move" title="' . esc_html__( 'Drag and drop to reorder fields', 'wp-members' ) . '"></span>';
 
 				$field_items[] = $item;
 			}
 		}
 
 		$extra_user_screen_items = array(
-			'user_registered'       => __( 'Registration Date', 'wp-members' ),
-			'_wpmem_user_confirmed' => __( 'Confirmed',         'wp-members' ),
-			'active'                => __( 'Activated',         'wp-members' ),
-			'wpmem_reg_ip'          => __( 'Registration IP',   'wp-members' ),
-			'exp_type'              => __( 'Subscription Type', 'wp-members' ),
-			'expires'               => __( 'Expires',           'wp-members' ),
-			'user_id'               => __( 'User ID',           'wp-members' ),
+			'user_registered'       => esc_html__( 'Registration Date', 'wp-members' ),
+			'_wpmem_user_confirmed' => esc_html__( 'Confirmed',         'wp-members' ),
+			'active'                => esc_html__( 'Activated',         'wp-members' ),
+			'wpmem_reg_ip'          => esc_html__( 'Registration IP',   'wp-members' ),
+			'exp_type'              => esc_html__( 'Subscription Type', 'wp-members' ),
+			'expires'               => esc_html__( 'Expires',           'wp-members' ),
+			'user_id'               => esc_html__( 'User ID',           'wp-members' ),
 		);
 
 		foreach ( $extra_user_screen_items as $key => $item ) {
@@ -540,7 +540,7 @@ Last Row|last_row<?php } } ?></textarea>
 				|| ( '_wpmem_user_confirmed' == $key && 1 == $wpmem->act_link ) 
 				|| ( 'active' == $key && 1 == $wpmem->mod_reg ) 
 				|| defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 && ( 'exp_type' == $key || 'expires' == $key ) ) {
-				$user_screen_items[ $key ] = array( 'label' => __( $item, 'wp-members' ), 'meta' => $key,
+				$user_screen_items[ $key ] = array( 'label' => esc_html__( $item, 'wp-members' ), 'meta' => $key,
 					'userscrn' => wpmem_form_field( "wpmem_fields_uscreen[{$key}]", 'checkbox', $item, $ut_checked ),
 				);
 			}
@@ -563,8 +563,8 @@ Last Row|last_row<?php } } ?></textarea>
 
 		$table = new WP_Members_Fields_Table();
 
-		$heading     = __( 'Manage Fields', 'wp-members' );
-		//$description = __( 'Displaying fields for:', 'wp-members' );
+		$heading     = esc_html__( 'Manage Fields', 'wp-members' );
+		//$description = esc_html__( 'Displaying fields for:', 'wp-members' );
 		//$which_form  = $wpmem->form_tags[ $wpmem->admin->current_form ];
 
 		echo '<div class="wrap">';
@@ -676,7 +676,7 @@ Last Row|last_row<?php } } ?></textarea>
 				$wpmem->forms->load_fields();
 				
 				// Set update message.
-				$did_update = __( 'WP-Members fields were updated', 'wp-members' );
+				$did_update = esc_html__( 'WP-Members fields were updated', 'wp-members' );
 				
 				// Return.
 				return $did_update;
@@ -700,22 +700,22 @@ Last Row|last_row<?php } } ?></textarea>
 				$add_option = sanitize_text_field( wpmem_get( 'add_option' ) );
 
 				// Error check that field label and option name are included and unique.
-				$add_field_err_msg = ( ! $add_name   ) ? __( 'Field Label is required. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
-				$add_field_err_msg = ( ! $add_option ) ? __( 'Meta Key is required. Nothing was updated.',    'wp-members' ) : $add_field_err_msg;
+				$add_field_err_msg = ( ! $add_name   ) ? esc_html__( 'Field Label is required. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
+				$add_field_err_msg = ( ! $add_option ) ? esc_html__( 'Meta Key is required. Nothing was updated.',    'wp-members' ) : $add_field_err_msg;
 
-				$add_field_err_msg = ( ! preg_match("/^[A-Za-z0-9_]*$/", $add_option ) ) ? __( 'Meta Key must contain only letters, numbers, and underscores', 'wp-members' ) : $add_field_err_msg;
+				$add_field_err_msg = ( ! preg_match("/^[A-Za-z0-9_]*$/", $add_option ) ) ? esc_html__( 'Meta Key must contain only letters, numbers, and underscores', 'wp-members' ) : $add_field_err_msg;
 
 				// Check for duplicate field names.
 				$chk_fields = array();
 				foreach ( $wpmem_fields as $field ) {
 					$chk_fields[] = $field[2];
 				}
-				$add_field_err_msg = ( in_array( $add_option, $chk_fields ) ) ? __( 'A field with that meta key already exists', 'wp-members' ) : $add_field_err_msg;
+				$add_field_err_msg = ( in_array( $add_option, $chk_fields ) ) ? esc_html__( 'A field with that meta key already exists', 'wp-members' ) : $add_field_err_msg;
 
 				// Error check for reserved terms.
 				$reserved_terms = wpmem_wp_reserved_terms();
 				if ( in_array( strtolower( $add_option ), $reserved_terms ) ) {
-					$add_field_err_msg = sprintf( __( 'Sorry, "%s" is a <a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">reserved term</a>. Field was not added.', 'wp-members' ), $add_option );
+					$add_field_err_msg = sprintf( esc_html__( 'Sorry, "%s" is a <a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">reserved term</a>. Field was not added.', 'wp-members' ), $add_option );
 				}
 
 				// Error check option name for spaces and replace with underscores.
@@ -756,7 +756,7 @@ Last Row|last_row<?php } } ?></textarea>
 				}
 
 				if ( $type == 'checkbox' ) {
-					$add_field_err_msg = ( ! $_POST['add_checked_value'] ) ? __( 'Checked value is required for checkboxes. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
+					$add_field_err_msg = ( ! $_POST['add_checked_value'] ) ? esc_html__( 'Checked value is required for checkboxes. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
 					$arr[7] = sanitize_text_field( wpmem_get( 'add_checked_value', false ) );
 					$arr[8] = ( 'y' == wpmem_get( 'add_checked_default', 'n'  ) ) ? 'y' : 'n';
 					$arr['checkbox_label'] = intval( wpmem_get( 'add_checkbox_label', 0 ) );
@@ -788,7 +788,7 @@ Last Row|last_row<?php } } ?></textarea>
 				}
 
 				if ( wpmem_get( 'add_type' ) == 'hidden' ) { 
-					$add_field_err_msg = ( ! $_POST['add_hidden_value'] ) ? __( 'A value is required for hidden fields. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
+					$add_field_err_msg = ( ! $_POST['add_hidden_value'] ) ? esc_html__( 'A value is required for hidden fields. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
 					$arr[7] = ( isset( $_POST['add_hidden_value'] ) ) ? sanitize_text_field( stripslashes( $_POST['add_hidden_value'] ) ) : '';
 				}
 
@@ -799,7 +799,7 @@ Last Row|last_row<?php } } ?></textarea>
 				if ( $action == 'add_field' ) {
 					if ( ! $add_field_err_msg ) {
 						array_push( $wpmem_fields, $arr );
-						$did_update = sprintf( __( '%s was added', 'wp-members' ), esc_html( $_POST['add_name'] ) );
+						$did_update = sprintf( esc_html__( '%s was added', 'wp-members' ), esc_html( $_POST['add_name'] ) );
 					} else {
 						$did_update = $add_field_err_msg;
 					}
@@ -812,8 +812,8 @@ Last Row|last_row<?php } } ?></textarea>
 							}
 						}
 					}
-					$did_update =  sprintf( __( '%s was updated', 'wp-members' ), esc_html( stripslashes( $add_name ) ) );
-					$did_update.= '<p><a href="' . esc_url( add_query_arg( array( 'page' => 'wpmem-settings', 'tab' => 'fields' ), get_admin_url() . 'options-general.php' ) ) . '">&laquo; ' . __( 'Return to Fields Table', 'wp-members' ) . '</a></p>';
+					$did_update =  sprintf( esc_html__( '%s was updated', 'wp-members' ), esc_html( stripslashes( $add_name ) ) );
+					$did_update.= '<p><a href="' . esc_url( add_query_arg( array( 'page' => 'wpmem-settings', 'tab' => 'fields' ), get_admin_url() . 'options-general.php' ) ) . '">&laquo; ' . esc_html__( 'Return to Fields Table', 'wp-members' ) . '</a></p>';
 				}
 
 				$wpmem_newfields = $wpmem_fields;

@@ -54,24 +54,24 @@ class WP_Members_Admin_Tab_Emails {
 			<div id="post-body">
 				<div id="post-body-content">
 					<div class="postbox">
-						<h3><span>WP-Members <?php _e( 'Email Messages', 'wp-members' ); ?></span></h3>
+						<h3><span>WP-Members <?php esc_html_e( 'Email Messages', 'wp-members' ); ?></span></h3>
 						<div class="inside">
 							<p>
-							<?php _e( 'You can customize the content of the emails sent by the plugin.', 'wp-members' ); ?><br />
+							<?php esc_html_e( 'You can customize the content of the emails sent by the plugin.', 'wp-members' ); ?><br />
 							<a href="https://rocketgeek.com/plugins/wp-members/docs/customizing-emails/" target="_blank">
-							<?php _e( 'A list of shortcodes is available here.', 'wp-members' ); ?></a>
+							<?php esc_html_e( 'A list of shortcodes is available here.', 'wp-members' ); ?></a>
 							</p>
 							<hr />
 							<form name="updateemailform" id="updateemailform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 							<?php wp_nonce_field( 'wpmem-update-emails' ); ?>
 								<table class="form-table"> 
 									<tr valign="top"> 
-										<th scope="row"><?php _e( 'Set a custom email address', 'wp-members' ); ?></th> 
-										<td><input type="text" name="wp_mail_from" size="40" value="<?php echo esc_attr( $wpmem->email->from ); ?>" />&nbsp;<span class="description"><?php _e( '(optional)', 'wp-members' ); ?> email@yourdomain.com</span></td> 
+										<th scope="row"><?php esc_html_e( 'Set a custom email address', 'wp-members' ); ?></th> 
+										<td><input type="text" name="wp_mail_from" size="40" value="<?php echo esc_attr( $wpmem->email->from ); ?>" />&nbsp;<span class="description"><?php esc_html_e( '(optional)', 'wp-members' ); ?> email@yourdomain.com</span></td> 
 									</tr>
 									<tr valign="top"> 
-										<th scope="row"><?php _e( 'Set a custom email name', 'wp-members' ); ?></th> 
-										<td><input type="text" name="wp_mail_from_name" size="40" value="<?php echo esc_attr( stripslashes( $wpmem->email->from_name ) ); ?>" />&nbsp;<span class="description"><?php _e( '(optional)', 'wp-members' ); ?> John Smith</span></td>
+										<th scope="row"><?php esc_html_e( 'Set a custom email name', 'wp-members' ); ?></th> 
+										<td><input type="text" name="wp_mail_from_name" size="40" value="<?php echo esc_attr( stripslashes( $wpmem->email->from_name ) ); ?>" />&nbsp;<span class="description"><?php esc_html_e( '(optional)', 'wp-members' ); ?> John Smith</span></td>
 									</tr>
 									<tr valign="top">
 										<th scope="row"><?php _e( 'Send HTML email', 'wp-members' ); ?></th>
@@ -90,7 +90,7 @@ class WP_Members_Admin_Tab_Emails {
 										'body_value' => $arr,
 									); ?>
 									<tr valign="top">
-										<th scope="row"><strong><?php echo __( "Email Signature", 'wp-members' ); ?></strong> <span class="description"><?php _e( '(optional)', 'wp-members' ); ?></span></th>
+										<th scope="row"><strong><?php echo esc_html__( "Email Signature", 'wp-members' ); ?></strong> <span class="description"><?php _e( '(optional)', 'wp-members' ); ?></span></th>
 										<td><?php self::do_email_editor( $footer_args ); ?></td>
 									</tr>
 									<tr><td colspan="2"><hr /></td></tr>
@@ -98,7 +98,7 @@ class WP_Members_Admin_Tab_Emails {
 										<th scope="row">&nbsp;</th>
 										<td>
 											<input type="hidden" name="wpmem_admin_a" value="update_emails" />
-											<?php submit_button( __( 'Update Emails', 'wp-members' ) ); ?>
+											<?php submit_button( esc_html__( 'Update Emails', 'wp-members' ) ); ?>
 										</td>
 									</tr>
 								</table>
@@ -106,7 +106,7 @@ class WP_Members_Admin_Tab_Emails {
 						</div><!-- .inside -->
 					</div><!-- #post-box -->
 					<div class="postbox">
-						<h3><span><?php _e( 'Need help?', 'wp-members' ); ?></span></h3>
+						<h3><span><?php esc_html_e( 'Need help?', 'wp-members' ); ?></span></h3>
 						<div class="inside">
 							<strong><i>See the <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/emails/" target="_blank">Users Guide on email options</a>.</i></strong>
 						</div>
@@ -169,7 +169,7 @@ class WP_Members_Admin_Tab_Emails {
 			}
 		}
 
-		return __( 'WP-Members emails were updated', 'wp-members' );
+		return esc_html__( 'WP-Members emails were updated', 'wp-members' );
 
 	}
 
