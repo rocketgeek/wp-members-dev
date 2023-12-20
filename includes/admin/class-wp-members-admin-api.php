@@ -49,6 +49,9 @@ class WP_Members_Admin_API {
 	 */
 	public $user_search;
 
+	public $current_form;
+	public $current_form_fields;
+
 	/**
 	 * Plugin initialization function.
 	 *
@@ -219,7 +222,6 @@ class WP_Members_Admin_API {
 	 * @since 3.4.4 Moved from wp-members.php/wpmem_admin_options() to main admin object.
 	 */
 	function add_options_page() {
-		global $wpmem;
 		if ( ! is_multisite() || ( is_multisite() && current_user_can( 'edit_theme_options' ) ) ) {
 			$plugin_page = add_options_page( 'WP-Members', 'WP-Members', 'manage_options', 'wpmem-settings', 'wpmem_admin' );
 		}
@@ -519,7 +521,7 @@ class WP_Members_Admin_API {
 		$this->current_form_fields = $fields;
 		*/
 		$this->current_form = sanitize_text_field( wpmem_get( 'form', $form, 'get' ) ); //( isset( $_GET['form'] ) ) ? $_GET['form'] : $form;
-		global $wpmem;
+		//global $wpmem;
 		// Add numeric array form fields as associative
 		//foreach( $wpmem->fields as $field ) {
 		//	$wpmem->fields[ $field[2] ] = $field;

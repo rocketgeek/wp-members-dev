@@ -88,8 +88,10 @@ class WP_Members_Dialogs {
 			
 			// Password reset form.
 			'pwdreset_heading'     => __( 'Reset Forgotten Password', 'wp-members' ),
-			'pwdreset_username'    => __( 'Username', 'wp-members' ),
-			'pwdreset_email'       => __( 'Email', 'wp-members' ),
+			// @note As of version 3.5.0, old password reset is obsolete.
+			//       The field label used is "login_username" (see above).
+			//'pwdreset_username'    => __( 'Username', 'wp-members' ),
+			//'pwdreset_email'       => __( 'Email', 'wp-members' ),
 			'pwdreset_button'      => __( 'Reset Password' ),
 			'username_link_before' => __( 'Forgot username?', 'wp-members' ) . '&nbsp;',
 			'username_link'        => __( 'Click here', 'wp-members' ),

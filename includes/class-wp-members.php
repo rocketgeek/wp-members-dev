@@ -337,28 +337,6 @@ class WP_Members {
 	public $act_link = 0;
 	
 	/**
-	 * Temporary setting for password reset.
-	 * 
-	 * @todo Will default to 0 until 3.4.0, then 1 until 3.5.0 at which point we'll remove the old process.
-	 *
-	 * @since 3.3.5
-	 * @access public
-	 * @var string
-	 */
-	public $pwd_link = 1;
-	
-	/**
-	 * Setting for login error option.
-	 * 
-	 * @todo Will be deprecated in 3.5.0 when the WP login error is the only error.
-	 *
-	 * @since 3.3.5
-	 * @access public
-	 * @var string
-	 */
-	public $login_error = 1;
-	
-	/**
 	 * Default file upload directory.
 	 *
 	 * @since 3.3.8

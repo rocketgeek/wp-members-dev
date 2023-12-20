@@ -1029,7 +1029,7 @@ function wpmem_get_user_obj( $user ) {
  *
  * @since 3.3.5
  *
- * @param   string  $meta   The meta key to search fo.
+ * @param   string  $meta   The meta key to search for.
  * @param   string  $value  The meta value to search for (defaul:false).
  * @return  array   $users  An array of user IDs who have the requested meta.
  */

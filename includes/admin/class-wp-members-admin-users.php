@@ -204,7 +204,7 @@ class WP_Members_Admin_Users {
 				if ( $user_id == get_current_user_id() ) {
 					$msg = urlencode( sprintf( esc_html__( 'You cannot activate or deactivate yourself', 'wp-members' ) ) );
 
-				} elseif ( 'activate-single' == $action && false === wpmem_is_user_activated( $user_id ) ) {
+				} elseif ( 'activate-single' == $action && false == wpmem_is_user_activated( $user_id ) ) {
 					wpmem_activate_user( $user_id );
 					$user_info = get_userdata( $user_id );
 					$msg = urlencode( sprintf( esc_html__( "%s activated", 'wp-members' ), $user_info->user_login ) );

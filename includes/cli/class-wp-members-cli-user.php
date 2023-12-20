@@ -29,7 +29,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$notify  = ( isset( $assoc_args['notify'] ) && 'false' == $assoc_args['notify'] ) ? false : true;
 
 				// Is the user already activated?
-				if ( false === wpmem_is_user_activated( $assoc_args['id'] ) ) {
+				if ( false == wpmem_is_user_activated( $assoc_args['id'] ) ) {
 
 					wpmem_activate_user( $assoc_args['id'], $notify );
 					WP_CLI::success( __( 'User activated.', 'wp-members' ) );
