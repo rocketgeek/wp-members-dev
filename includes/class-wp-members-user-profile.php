@@ -67,7 +67,7 @@ class WP_Members_User_Profile {
 		$display = ( current_user_can( $required_capability ) ) ? 'admin' : $display; ?>
 
 		<h3><?php
-		$heading = ( 'admin' == $display ) ? __( 'WP-Members Additional Fields', 'wp-members' ) : __( 'Additional Information', 'wp-members' );
+		$heading = ( 'admin' == $display ) ? esc_html__( 'WP-Members Additional Fields', 'wp-members' ) : esc_html__( 'Additional Information', 'wp-members' );
 		/**
 		 * Filter the heading for additional profile fields.
 		 *
@@ -142,7 +142,7 @@ class WP_Members_User_Profile {
 
 					// Is this an image or a file?
 					if ( 'file' == $field['type'] || 'image' == $field['type'] ) {
-						$empty_file = '<span class="description">' . __( 'None' ) . '</span>';
+						$empty_file = '<span class="description">' . esc_html__( 'None' ) . '</span>';
 						if ( 'file' == $field['type'] ) {
 							$attachment_url = wp_get_attachment_url( $val );
 							$input = ( $attachment_url ) ? '<a href="' . $attachment_url . '">' . $attachment_url . '</a>' : $empty_file;
@@ -191,8 +191,8 @@ class WP_Members_User_Profile {
 					}
 
 					// Is the field required?
-					$req = ( $field['required'] ) ? ' <span class="description">' . __( '(required)' ) . '</span>' : '';
-					$label = '<label>' . __( $field['label'], 'wp-members' ) . $req . '</label>';
+					$req = ( $field['required'] ) ? ' <span class="description">' . esc_html__( '(required)' ) . '</span>' : '';
+					$label = '<label>' . esc_html__( $field['label'], 'wp-members' ) . $req . '</label>';
 
 					// Build the form rows for filtering.
 					$rows[ $meta ] = array(
@@ -200,7 +200,7 @@ class WP_Members_User_Profile {
 						'type'         => $field['type'],
 						'value'        => $val,
 						'values'       => $values,
-						'label_text'   => __( $field['label'], 'wp-members' ),
+						'label_text'   => esc_html__( $field['label'], 'wp-members' ),
 						'row_before'   => '<tr>',
 						'label'        => '<th>' . $label . '</th>',
 						'field_before' => '<td>',
@@ -524,17 +524,17 @@ class WP_Members_User_Profile {
 				switch( $user_active_flag ) {
 
 					case "0":
-						$label  = __( 'Reactivate this user?', 'wp-members' );
+						$label  = esc_html__( 'Reactivate this user?', 'wp-members' );
 						$action = 1;
 						break;
 
 					case "1":
-						$label  = __( 'Deactivate this user?', 'wp-members' );
+						$label  = esc_html__( 'Deactivate this user?', 'wp-members' );
 						$action = 0;
 						break;
 
 					default:
-						$label  = __( 'Activate this user?', 'wp-members' );
+						$label  = esc_html__( 'Activate this user?', 'wp-members' );
 						$action = 1;
 						break;
 				} ?>

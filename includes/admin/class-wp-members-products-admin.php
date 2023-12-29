@@ -66,13 +66,13 @@ class WP_Members_Products_Admin {
 	 */
 	function columns_heading( $columns ) {
 		unset( $columns['date'] );
-		$columns['slug']         = __( 'Slug', 'wp-members' );
-		$columns['role']         = __( 'Role', 'wp-members' );
-		$columns['expires']      = __( 'Expires', 'wp-members' );
+		$columns['slug']         = esc_html__( 'Slug', 'wp-members' );
+		$columns['role']         = esc_html__( 'Role', 'wp-members' );
+		$columns['expires']      = esc_html__( 'Expires', 'wp-members' );
 		if ( $this->default_products ) {
-			$columns['default_products'] = __( 'Default', 'wp-members' );
+			$columns['default_products'] = esc_html__( 'Default', 'wp-members' );
 		}
-		$columns['last_updated'] = __( 'Last updated', 'wp-members' );
+		$columns['last_updated'] = esc_html__( 'Last updated', 'wp-members' );
 		return $columns;
 	}
 
@@ -96,7 +96,7 @@ class WP_Members_Products_Admin {
 					$wp_roles  = new WP_Roles;
 					$names     = $wp_roles->get_names();
 
-					$role      = $names[ $role_slug ] . ' (' . __( 'slug:', 'wp-members' ) . ' ' . $role_slug . ')';
+					$role      = $names[ $role_slug ] . ' (' . esc_html__( 'slug:', 'wp-members' ) . ' ' . $role_slug . ')';
 					echo esc_html( $role );
 				} else {
 					__( 'No role required', 'wp-members' );
@@ -104,11 +104,11 @@ class WP_Members_Products_Admin {
 				break;
 			case 'expires':
 				$expires = $this->get_meta( 'wpmem_product_expires' );
-				$period = ( false !== $expires ) ? explode( "|", $expires[0] ) : __( 'Does not expire', 'wp-members' );
+				$period = ( false !== $expires ) ? explode( "|", $expires[0] ) : esc_html__( 'Does not expire', 'wp-members' );
 				echo ( is_array( $period ) ) ? esc_html( $period[0] . ' ' . $period[1] ) : esc_html( $period );
 				break;
 			case 'default_products':
-				echo ( in_array( $post->post_name, $this->default_products ) ) ? __( 'Yes', 'wp-members' ) : '';
+				echo ( in_array( $post->post_name, $this->default_products ) ) ? esc_html__( 'Yes', 'wp-members' ) : '';
 				break;
 			case 'last_updated':
 				echo date_i18n( get_option( 'date_format' ), strtotime( esc_attr( $post->post_modified ) ) );
@@ -168,7 +168,7 @@ class WP_Members_Products_Admin {
 			$checked = get_post_meta( $post->ID, 'wpmem_product_child_access', true );
 			echo '<p class="post-attributes-label-wrapper">
 				<input name="wpmem_product_child_access" type="checkbox" value="1" ' .  checked( $checked, 1, false ) . ' />
-				<label>' . __( 'Access by child membership', 'wp-members' ) . '</label><br />
+				<label>' . esc_html__( 'Access by child membership', 'wp-members' ) . '</label><br />
 			</p>';
 		}
 	}
@@ -184,8 +184,8 @@ class WP_Members_Products_Admin {
 		global $wpmem;
 		// @todo This comes from option tab. Should consider it being an api function.
 		$post_arr = array(
-			'post' => __( 'Posts' ),
-			'page' => __( 'Pages' ),
+			'post' => esc_html__( 'Posts' ),
+			'page' => esc_html__( 'Pages' ),
 		);
 		if ( ! empty( $wpmem->post_types ) ) {
 			foreach ( $wpmem->post_types as $key => $post_type ) {
@@ -212,7 +212,7 @@ class WP_Members_Products_Admin {
 
 		$product_expires = ( false !== $product_expires ) ? $product_expires[0] : $product_expires;
 		
-		$periods = array( __( 'Period', 'wp-members' ) . '|', __( 'Day', 'wp-members' ) . '|day', __( 'Week', 'wp-members' ) . '|week', __( 'Month', 'wp-members' ) . '|month', __( 'Year', 'wp-members' ) . '|year' ); 
+		$periods = array( esc_html__( 'Period', 'wp-members' ) . '|', esc_html__( 'Day', 'wp-members' ) . '|day', esc_html__( 'Week', 'wp-members' ) . '|week', esc_html__( 'Month', 'wp-members' ) . '|month', esc_html__( 'Year', 'wp-members' ) . '|year' ); 
 		$show_role_detail = ( false !== $product_role    ) ? 'show' : 'hide';
 		$show_exp_detail  = ( false !== $product_expires ) ? 'show' : 'hide';
 		$show_exp_fixed   = ( false !== $product_fixed_period ) ? 'show' : 'hide';
@@ -375,7 +375,7 @@ class WP_Members_Products_Admin {
 		 */
 		do_action( 'wpmem_membership_product_message_meta_before' );
 		
-		echo '<p>' . __( 'Restricted Message (displays when a user does not have access to a membership)', 'wp-members' ) . '</p>';
+		echo '<p>' . esc_html__( 'Restricted Message (displays when a user does not have access to a membership)', 'wp-members' ) . '</p>';
 		
 		$args = array(
 			'media_buttons' => false,
@@ -501,7 +501,7 @@ class WP_Members_Products_Admin {
 		
 		$product  = $wpmem->membership->get_post_products( $post->ID ); //get_post_meta( $post->ID, $wpmem->membership->post_meta, true );
 		$product  = ( $product ) ? $product : array();
-		$values[] = __( 'None', 'wp-members' ) . '|';
+		$values[] = esc_html__( 'None', 'wp-members' ) . '|';
 		
 		foreach ( $wpmem->membership->products as $key => $value ) {
 			
@@ -597,7 +597,7 @@ class WP_Members_Products_Admin {
 		global $wpmem;
 		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( $_REQUEST['post_type'] ) : 'post';
 		if ( $post_type == 'page' || $post_type == 'post' || array_key_exists( $post_type, $wpmem->post_types ) ) {
-			$product = array( 'wpmem_product' => __( 'Required Membership', 'wp-members' ) );
+			$product = array( 'wpmem_product' => esc_html__( 'Required Membership', 'wp-members' ) );
 			$columns = wpmem_array_insert( $columns, $product, 'wpmem_block', 'before' );
 		}
 		return $columns;	
@@ -641,7 +641,7 @@ class WP_Members_Products_Admin {
 		 *
 		 * @param string $column_name
 		 */
-		$columns['wpmem_product'] = apply_filters( 'wpmem_user_columns_membership_title', __( 'Membership', 'wp-members' ) );
+		$columns['wpmem_product'] = apply_filters( 'wpmem_user_columns_membership_title', esc_html__( 'Membership', 'wp-members' ) );
 		return $columns;	
 	}
 	
@@ -676,7 +676,7 @@ class WP_Members_Products_Admin {
 			$user_products = $wpmem->user->get_user_products( $user_id );
 			if ( $user_products ) {
 				foreach ( $user_products as $meta => $value ) {
-					$expires = ( $user_products[ $meta ] > 1 ) ? '<br />' . __( 'expires:', 'wp-members' ) . ' ' . date_i18n( get_option( 'date_format' ), $user_products[ $meta ] ) : '';
+					$expires = ( $user_products[ $meta ] > 1 ) ? '<br />' . esc_html__( 'expires:', 'wp-members' ) . ' ' . date_i18n( get_option( 'date_format' ), $user_products[ $meta ] ) : '';
 					$display[] = $defaults['item_wrap_before'] . wpmem_get_membership_name( $meta ) . $expires . $defaults['item_wrap_after'];
 				}
 			}
@@ -704,7 +704,7 @@ class WP_Members_Products_Admin {
 	 */
 	function user_profile_tabs( $tabs ) {
 		$tabs['memberships'] = array(
-			'tab' => __( 'Memberships', 'wp-members' ),
+			'tab' => esc_html__( 'Memberships', 'wp-members' ),
 		);
 		return $tabs;
 	}
@@ -735,17 +735,17 @@ class WP_Members_Products_Admin {
 			 */
 			$user_id = ( 'profile' == $pagenow && current_user_can( $required_capability ) ) ? get_current_user_id() : sanitize_text_field( wpmem_get( 'user_id', false, 'get' ) );
 			$user_products = wpmem_get_user_products( $user_id );
-			echo '<h3>' . __( 'Membership Access', 'wp-members' ) . '</h3>';
+			echo '<h3>' . esc_html__( 'Membership Access', 'wp-members' ) . '</h3>';
 			if ( ! empty( $wpmem->membership->products ) ) {
 				$expires_heading = "&nbsp;";
 				foreach( $wpmem->membership->products as $key => $value ) {
-					$expires_heading = ( ! empty( $value['expires'] ) ) ? __( 'Expires', 'wp-members' ) : $expires_heading;
+					$expires_heading = ( ! empty( $value['expires'] ) ) ? esc_html__( 'Expires', 'wp-members' ) : $expires_heading;
 				}
 				echo '<table>
 					<tr>
-						<th>' . __( 'Action',     'wp-members' ) . '</th>
-						<th>' . __( 'Membership', 'wp-members' ) . '</th>
-						<th>' . __( 'Enabled?',   'wp-members' ) . '</th>
+						<th>' . esc_html__( 'Action',     'wp-members' ) . '</th>
+						<th>' . esc_html__( 'Membership', 'wp-members' ) . '</th>
+						<th>' . esc_html__( 'Enabled?',   'wp-members' ) . '</th>
 						<th>' . $expires_heading . '</th>
 					</tr>'; ?>	
 				<?php
@@ -756,14 +756,14 @@ class WP_Members_Products_Admin {
 					echo '<td style="padding:5px 5px;">
 					<select name="_wpmem_membership_product[' . $key . ']">
 						<option value="">----</option>
-						<option value="enable">'  . __( 'Enable',  'wp-members' ) . '</option>
-						<option value="disable">' . __( 'Disable', 'wp-members' ) . '</option>
-						<option value="enable">'  . __( 'Update',  'wp-members' ) . '</option>
+						<option value="enable">'  . esc_html__( 'Enable',  'wp-members' ) . '</option>
+						<option value="disable">' . esc_html__( 'Disable', 'wp-members' ) . '</option>
+						<option value="enable">'  . esc_html__( 'Update',  'wp-members' ) . '</option>
 					</select></td><td style="padding:0px 0px;">' . $value['title'] . '</td>';
 
 					// If user has date, display that; otherwise placeholder
 					$date_value  = ( isset( $user_products[ $key ] ) && 1 != $user_products[ $key ] && 0 != $user_products[ $key ] && '' != $user_products[ $key ] ) ? date( 'Y-m-d', $user_products[ $key ] ) : "";
-					$placeholder = ( ! isset( $user_products[ $key ] ) ) ? 'placeholder="' . __( 'Expiration date (optional)', 'wp-members' ) . '" ' : '';
+					$placeholder = ( ! isset( $user_products[ $key ] ) ) ? 'placeholder="' . esc_html__( 'Expiration date (optional)', 'wp-members' ) . '" ' : '';
 					$product_date_field = ' <input type="text" name="_wpmem_membership_expiration_' . $key . '" value="' . $date_value . '" class="wpmem_datepicker" ' . $placeholder . ' />';
 
 					if ( isset( $user_products[ $key ] ) ) {
@@ -794,7 +794,7 @@ class WP_Members_Products_Admin {
 				</script>
 				<?php
 			} else {
-				echo '<p>' . sprintf( __( 'No memberships have been created. %sCreate new memberships here%s', 'wp-members' ), '<a href="' . admin_url() . 'edit.php?post_type=wpmem_product">', '</a>' );
+				echo '<p>' . sprintf( esc_html__( 'No memberships have been created. %sCreate new memberships here%s', 'wp-members' ), '<a href="' . admin_url() . 'edit.php?post_type=wpmem_product">', '</a>' );
 			}
 		}
 	}

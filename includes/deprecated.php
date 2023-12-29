@@ -369,35 +369,35 @@ function wpmem_get_captcha_err( $wpmem_captcha_err ) {
 	switch ( $wpmem_captcha_err ) {
 
 	case "invalid-site-public-key":
-		$wpmem_captcha_err = __( 'We were unable to validate the public key.', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'We were unable to validate the public key.', 'wp-members' );
 		break;
 
 	case "invalid-site-public-key":
-		$wpmem_captcha_err = __( 'We were unable to validate the private key.', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'We were unable to validate the private key.', 'wp-members' );
 		break;
 
 	case "invalid-request-cookie":
-		$wpmem_captcha_err = __( 'The challenge parameter of the verify script was incorrect.', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'The challenge parameter of the verify script was incorrect.', 'wp-members' );
 		break;
 
 	case "incorrect-captcha-sol":
-		$wpmem_captcha_err = __( 'The CAPTCHA solution was incorrect.', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'The CAPTCHA solution was incorrect.', 'wp-members' );
 		break;
 
 	case "verify-params-incorrect":
-		$wpmem_captcha_err = __( 'The parameters to verify were incorrect', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'The parameters to verify were incorrect', 'wp-members' );
 		break;
 
 	case "invalid-referrer":
-		$wpmem_captcha_err = __( 'reCAPTCHA API keys are tied to a specific domain name for security reasons.', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'reCAPTCHA API keys are tied to a specific domain name for security reasons.', 'wp-members' );
 		break;
 
 	case "recaptcha-not-reachable":
-		$wpmem_captcha_err = __( 'The reCAPTCHA server was not reached.  Please try to resubmit.', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'The reCAPTCHA server was not reached.  Please try to resubmit.', 'wp-members' );
 		break;
 
 	case 'really-simple':
-		$wpmem_captcha_err = __( 'You have entered an incorrect code value. Please try again.', 'wp-members' );
+		$wpmem_captcha_err = esc_html__( 'You have entered an incorrect code value. Please try again.', 'wp-members' );
 		break;
 	}
 

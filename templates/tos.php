@@ -29,9 +29,9 @@ $wpmem_tos = get_option( 'wpmembers_tos' );
 echo stripslashes( $wpmem_tos );
 
 print ( '<br /><br />' );
-printf( __('%sclose%s', 'wp-members'), '[<a href="javascript:self.close()">', '</a>]' );
+printf( esc_html__('%sclose%s', 'wp-members'), '[<a href="javascript:self.close()">', '</a>]' );
 print ( '&nbsp;&nbsp;' );
-printf( __('%sprint%s', 'wp-members'), '[<a href="javascript:window.print()">', '</a>]' );
+printf( esc_html__('%sprint%s', 'wp-members'), '[<a href="javascript:window.print()">', '</a>]' );
 
 ?>
 

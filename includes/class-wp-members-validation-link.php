@@ -34,10 +34,10 @@ class WP_Members_Validation_Link {
 	public function __construct() {
 		
 		$defaults = array(
-			'email_text'        => __( 'Click to validate your account: ',       'wp-members' ),
-			'success_message'   => __( 'Thank you for validating your account.', 'wp-members' ),
-			'invalid_message'   => __( 'Validation key was expired or invalid',  'wp-members' ),
-			'moderated_message' => __( 'Your account is now pending approval',   'wp-members' ),
+			'email_text'        => esc_html__( 'Click to validate your account: ',       'wp-members' ),
+			'success_message'   => esc_html__( 'Thank you for validating your account.', 'wp-members' ),
+			'invalid_message'   => esc_html__( 'Validation key was expired or invalid',  'wp-members' ),
+			'moderated_message' => esc_html__( 'Your account is now pending approval',   'wp-members' ),
 		);
 		
 		/**
@@ -279,7 +279,7 @@ class WP_Members_Validation_Link {
 	 */ 
 	function check_validated( $user, $username, $password ) {
 		if ( ! is_wp_error( $user ) && ! is_null( $user ) && false == wpmem_is_user_confirmed( $user->ID ) ) {
-			$user = new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: User has not confirmed their account.', 'wp-members' ) );
+			$user = new WP_Error( 'authentication_failed', esc_html__( '<strong>ERROR</strong>: User has not confirmed their account.', 'wp-members' ) );
 		}
 		/**
 		 * Filters the check_validated result.

@@ -802,14 +802,14 @@ function wpmem_onboarding_init( $action ) {
 		'notice_template' => $wpmem->path . 'includes/admin/partials/onboarding_notice.php',
 
 		'new_install_notice_args' => array(
-			'notice_heading' => __( 'Thank you for installing WP-Members, the original WordPress membership plugin.', 'wp-members' ),
-			'notice_button'  => __( 'Complete plugin setup', 'wp-members' ),
+			'notice_heading' => esc_html__( 'Thank you for installing WP-Members, the original WordPress membership plugin.', 'wp-members' ),
+			'notice_button'  => esc_html__( 'Complete plugin setup', 'wp-members' ),
 			'show_release_notes' => false,
 			'release_notes_link' => "",
 		),
 		'update_pending_notice_args' => array(
-			'notice_heading' => __( 'Thank you for updating WP-Members, the original WordPress membership plugin.', 'wp-members' ),
-			'notice_button'  => __( 'Complete the update', 'wp-members' ),
+			'notice_heading' => esc_html__( 'Thank you for updating WP-Members, the original WordPress membership plugin.', 'wp-members' ),
+			'notice_button'  => esc_html__( 'Complete the update', 'wp-members' ),
 			'show_release_notes' => true,
 			'release_notes_link' => "https://rocketgeek.com/release-announcements/wp-members-3-4-8/",
 		),
@@ -829,9 +829,9 @@ function wpmem_onboarding_pending_update( $path, $version ) {
 
 function wpmem_onboarding_opt_in() {
     global $wpmem, $wpmem_onboarding;
-    // $onboarding_title = ( 'upgrade' == $args['param1'] ) ? __( 'WP-Members Upgrade', 'wp-members' ) : __( "WP-Members New Install", 'wp-members' );
+    // $onboarding_title = ( 'upgrade' == $args['param1'] ) ? esc_html__( 'WP-Members Upgrade', 'wp-members' ) : esc_html__( "WP-Members New Install", 'wp-members' );
 	$install_state = get_option( 'wpmembers_install_state' );
-	$onboarding_title = ( 'update_pending' == $install_state ) ? __( 'WP-Members Upgrade', 'wp-members' ) : __( "WP-Members New Install", 'wp-members' );
+	$onboarding_title = ( 'update_pending' == $install_state ) ? esc_html__( 'WP-Members Upgrade', 'wp-members' ) : esc_html__( "WP-Members New Install", 'wp-members' );
     $onboarding_release_notes = "https://rocketgeek.com/release-announcements/wp-members-3-4-8/";
     $onboarding_version = $wpmem->version;
 

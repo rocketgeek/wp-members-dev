@@ -198,7 +198,7 @@ class WP_Members_User_Export {
 							$row['password'] = $user_info->user_pass;
 							break;
 						case 'active':
-							$row['active'] = wpmem_get_user_meta( $user, 'active' ) ? __( 'Yes' ) : __( 'No' );
+							$row['active'] = wpmem_get_user_meta( $user, 'active' ) ? esc_html__( 'Yes' ) : esc_html__( 'No' );
 							break;
 						case 'exp_type':
 							$exp_type = wpmem_get_user_meta( $user, 'exp_type' );
@@ -263,7 +263,7 @@ class WP_Members_User_Export {
 
 			exit();
 		} else {
-			wp_die( __( 'You do not have the required user capabilities to export users.', 'wp-members' ) );
+			wp_die( esc_html__( 'You do not have the required user capabilities to export users.', 'wp-members' ) );
 		}
 	}
 
@@ -276,27 +276,27 @@ class WP_Members_User_Export {
 		
 		// Prepare fields, add additional "special" fields.
 		$export_fields = array(
-			'ID' => __( 'User ID', 'wp-members' ),
+			'ID' => esc_html__( 'User ID', 'wp-members' ),
 		);
 		foreach( $wpmem_fields as $meta_key => $value ) {
 			if ( ! in_array( $meta_key, $exclude_fields ) ) {
 				$export_fields[ $meta_key ] = $value['label'];
 			}
 		}
-		$export_fields['username'] = __( 'Username', 'wp-members' );
+		$export_fields['username'] = esc_html__( 'Username', 'wp-members' );
 		if ( wpmem_is_enabled( 'mod_reg' ) ) {
-			$export_fields['active'] = __( 'Activated?', 'wp-members' );
+			$export_fields['active'] = esc_html__( 'Activated?', 'wp-members' );
 		}
 		if ( wpmem_is_enabled( 'act_link' ) ) {
-			$export_fields['_wpmem_user_confirmed'] = __( 'Confirmed?', 'wp-members' );
+			$export_fields['_wpmem_user_confirmed'] = esc_html__( 'Confirmed?', 'wp-members' );
 		}
 		if ( defined( 'WPMEM_EXP_MODULE' ) && wpmem_is_enabled( 'use_exp' ) ) {
-			$export_fields['exp_type'] = __( 'Subscription', 'wp-members' );
-			$export_fields['expires']  = __( 'Expires', 'wp-members' );
+			$export_fields['exp_type'] = esc_html__( 'Subscription', 'wp-members' );
+			$export_fields['expires']  = esc_html__( 'Expires', 'wp-members' );
 		}
-		$export_fields['user_registered'] = __( 'Registered', 'wp-members' );
-		$export_fields['wpmem_reg_ip']    = __( 'IP', 'wp-members' );
-		$export_fields['role']            = __( 'Role', 'wp-members' );
+		$export_fields['user_registered'] = esc_html__( 'Registered', 'wp-members' );
+		$export_fields['wpmem_reg_ip']    = esc_html__( 'IP', 'wp-members' );
+		$export_fields['role']            = esc_html__( 'Role', 'wp-members' );
 		if ( wpmem_is_enabled( 'enable_products' ) ) {
 			$membership_products = wpmem_get_memberships();
 			foreach( $membership_products as $product_key => $product ) {

@@ -107,7 +107,7 @@ function wpmem_get_login_link( $args = array() ) {
 			'class' => 'wpmem-login-link',
 			'href'  => wpmem_login_url( wpmem_current_url() ),
 		),
-		'content' => __( 'Log In' )
+		'content' => esc_html__( 'Log In' )
 	);
 	$args = rktgk_wp_parse_args( $args, $defaults );
 	return rktgk_build_html_tag( $args );
@@ -149,7 +149,7 @@ function wpmem_get_reg_link( $args = array() ) {
 			'class' => 'wpmem-reg-link',
 			'href'  => add_query_arg( 'redirect_to', wpmem_current_url(), wpmem_register_url() ),
 		),
-		'content' => __( 'Register' )
+		'content' => esc_html__( 'Register' )
 	);
 	$args = rktgk_wp_parse_args( $args, $defaults );
 	return rktgk_build_html_tag( $args );
@@ -554,7 +554,7 @@ function wpmem_display_message( $tag, $custom = false ) {
  */
 function wpmem_use_custom_dialog( $defaults, $tag, $dialogs ) {
 	$msg_string = ( is_array( $dialogs[ $tag ] ) ) ? $dialogs[ $tag ]['value'] : $dialogs[ $tag ];
-	$defaults['msg'] = __( $msg_string, 'wp-members' );
+	$defaults['msg'] = esc_html__( $msg_string, 'wp-members' );
 	return $defaults;
 }
 

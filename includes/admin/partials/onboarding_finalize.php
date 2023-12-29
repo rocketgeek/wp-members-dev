@@ -5,7 +5,7 @@ $utms = array(
     'utm_campaign' => 'plugin-install',
 );
 
-$action_complete = ( 'update_pending' == $install_state ) ? __( 'Plugin update complete', 'wp-members' ) : __( 'Plugin installation complete', 'wp-members' );
+$action_complete = ( 'update_pending' == $install_state ) ? esc_html__( 'Plugin update complete', 'wp-members' ) : esc_html__( 'Plugin installation complete', 'wp-members' );
 ?>
 <div id="wpmem_onboarding">
     <div class="wrapper">
@@ -14,14 +14,14 @@ $action_complete = ( 'update_pending' == $install_state ) ? __( 'Plugin update c
 
         <?php if ( 'update_pending' == $install_state ) { ?>
             <ul>
-                <li>&raquo; <a href="<?php echo $onboarding_release_notes . "?" . http_build_query( $utms ); ?>" target="_blank"><?php printf( __( 'WP-Members version %s release notes', 'wp-members' ), $onboarding_version ); ?></a></li>
+                <li>&raquo; <a href="<?php echo $onboarding_release_notes . "?" . http_build_query( $utms ); ?>" target="_blank"><?php printf( esc_html__( 'WP-Members version %s release notes', 'wp-members' ), $onboarding_version ); ?></a></li>
                 <li>&raquo; <a href="https://rocketgeek.com/plugins/wp-members/docs/?<?php echo http_build_query( $utms ); ?>" target="_blank"><?php _e( 'WP-Members documentation', 'wp-members' ); ?></a></li>
             </ul>
         <?php } else { ?>
             <p>WP-Members installs some basic defaults to get you started. Be sure to review <a href="<?php echo admin_url(); ?>options-general.php?page=wpmem-settings">the plugin's default setup here</a>.
             There are links to related documentation in the plugin settings.  There are also some helpful links below.</p>
             <ul>
-                <li>&raquo; <a href="<?php echo $onboarding_release_notes . "?" . http_build_query( $utms ); ?>" target="_blank"><?php printf( __( 'WP-Members version %s release notes', 'wp-members' ), $onboarding_version ); ?></a></li>
+                <li>&raquo; <a href="<?php echo $onboarding_release_notes . "?" . http_build_query( $utms ); ?>" target="_blank"><?php printf( esc_html__( 'WP-Members version %s release notes', 'wp-members' ), $onboarding_version ); ?></a></li>
                 <li>&raquo; <a href="https://rocketgeek.com/plugins/wp-members/docs/?<?php echo http_build_query( $utms ); ?>" target="_blank"><?php _e( 'WP-Members documentation', 'wp-members' ); ?></a></li>
             </ul>       
         <?php } ?>

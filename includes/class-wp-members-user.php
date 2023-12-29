@@ -193,7 +193,7 @@ class WP_Members_User {
 		// Is this a WP-Members registration?
 		$this->reg_type['is_wpmem']   = ( 'register' == wpmem_get( 'a' ) ) ? true : false;
 		// Is this WP's native registration? Checks the native submit button.
-		$this->reg_type['is_native']  = ( __( 'Register' ) == wpmem_get( 'wp-submit' ) ) ? true : false;
+		$this->reg_type['is_native']  = ( esc_html__( 'Register' ) == wpmem_get( 'wp-submit' ) ) ? true : false;
 		// Is this a Users > Add New process? Checks the post action.
 		$this->reg_type['is_add_new'] = ( 'createuser' == wpmem_get( 'action' ) ) ? true : false;
 		// Is this a WooCommerce my account registration? Checks for WC fields.
@@ -325,14 +325,14 @@ class WP_Members_User {
 					if ( 'register' == $tag ) {
 						// If the required field is a file type.
 						if ( empty( $_FILES[ $meta_key ]['name'] ) ) {
-							$wpmem_themsg = sprintf( wpmem_get_text( 'reg_empty_field' ), __( $field['label'], 'wp-members' ) );
+							$wpmem_themsg = sprintf( wpmem_get_text( 'reg_empty_field' ), esc_html__( $field['label'], 'wp-members' ) );
 						}
 					}
 				} else {
 					// If the required field is any other field type.
 					if ( ( 'register' == $tag && true == $field['register'] ) || ( 'update' == $tag && true == $field['profile'] ) ) {
 						if ( null == $this->post_data[ $meta_key ] ) {
-							$wpmem_themsg = sprintf( wpmem_get_text( 'reg_empty_field' ), __( $field['label'], 'wp-members' ) );
+							$wpmem_themsg = sprintf( wpmem_get_text( 'reg_empty_field' ), esc_html__( $field['label'], 'wp-members' ) );
 						}
 					}
 				}
@@ -348,7 +348,7 @@ class WP_Members_User {
 				if ( ! empty( $_FILES[ $meta_key ]['name'] ) ) {
 					$extension = pathinfo( $_FILES[ $meta_key ]['name'], PATHINFO_EXTENSION );
 					if ( ! in_array( $extension, $allowed_file_types ) ) {
-						$wpmem_themsg = sprintf( wpmem_get_text( 'reg_file_type' ), __( $field['label'], 'wp-members' ), str_replace( '|', ',', $msg_types ) );
+						$wpmem_themsg = sprintf( wpmem_get_text( 'reg_file_type' ), esc_html__( $field['label'], 'wp-members' ), str_replace( '|', ',', $msg_types ) );
 					}
 				}
 			}
@@ -446,7 +446,7 @@ class WP_Members_User {
 					$is_error = true;
 				}
 				if ( $is_error ) {
-					$errors->add( 'wpmem_error', sprintf( wpmem_get_text( 'reg_empty_field' ), __( $field['label'], 'wp-members' ) ) ); 
+					$errors->add( 'wpmem_error', sprintf( wpmem_get_text( 'reg_empty_field' ), esc_html__( $field['label'], 'wp-members' ) ) ); 
 				}
 			}
 		}
@@ -455,7 +455,7 @@ class WP_Members_User {
 		if ( $wpmem->captcha > 0 ) {
 			$check_captcha = WP_Members_Captcha::validate();
 			if ( false === $check_captcha ) {
-				$errors->add( 'wpmem_captcha_error', sprintf( wpmem_get_text( 'reg_captcha_err' ), __( $field['label'], 'wp-members' ) ) ); 
+				$errors->add( 'wpmem_captcha_error', sprintf( wpmem_get_text( 'reg_captcha_err' ), esc_html__( $field['label'], 'wp-members' ) ) ); 
 			}
 		}
 
@@ -720,13 +720,13 @@ class WP_Members_User {
 
 		if ( ! isset( $arr['user'] ) || '' == $arr['user'] ) { 
 			// There was an empty field.
-			$errors->add( 'empty', __( 'User field cannot be empty', 'wp-members' ) );
+			$errors->add( 'empty', esc_html__( 'User field cannot be empty', 'wp-members' ) );
 			return "pwdreseterr";
 
 		} else {
 
 			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_pwdreset_nonce'], 'wpmem_shortform_nonce' ) ) {
-				$errors->add( 'nonce', __( 'There was an unspecified error', 'wp-members' ) );
+				$errors->add( 'nonce', esc_html__( 'There was an unspecified error', 'wp-members' ) );
 				return "reg_generic";
 			}
 
@@ -1232,7 +1232,7 @@ class WP_Members_User {
 	 */ 
 	function check_activated( $user, $username, $password ) {
 		if ( ! is_wp_error( $user ) && ! is_null( $user ) && false == $this->is_user_activated( $user->ID ) ) {
-			$user = new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: User has not been activated.', 'wp-members' ) );
+			$user = new WP_Error( 'authentication_failed', esc_html__( '<strong>ERROR</strong>: User has not been activated.', 'wp-members' ) );
 		}
 		/**
 		 * Filters the check_validated result.

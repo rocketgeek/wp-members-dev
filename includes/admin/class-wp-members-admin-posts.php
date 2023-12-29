@@ -122,7 +122,7 @@ class WP_Members_Admin_Posts {
 
 		global $pagenow, $post_type;
 		if ( $pagenow == 'edit.php' && isset( $_REQUEST['a'] ) ) {
-			$msg = ( $_REQUEST['a'] == 'block' ) ? sprintf( __( '%s restricted', 'wp-members' ), $post_type ) : sprintf( __( '%s unrestricted', 'wp-members' ), $post_type );
+			$msg = ( $_REQUEST['a'] == 'block' ) ? sprintf( esc_html__( '%s restricted', 'wp-members' ), $post_type ) : sprintf( esc_html__( '%s unrestricted', 'wp-members' ), $post_type );
 			echo '<div class="updated"><p>' . esc_html( $_REQUEST['n'] ) . ' ' . esc_html( $msg ) . '</p></div>';
 		}
 	}
@@ -162,7 +162,7 @@ class WP_Members_Admin_Posts {
 				 *
 				 * @param Post restriction title.
 				 */
-				$post_title = apply_filters( 'wpmem_admin_' . $key . '_meta_title', sprintf( __( '%s Restriction', 'wp-members' ), $post_type->labels->singular_name ) );
+				$post_title = apply_filters( 'wpmem_admin_' . $key . '_meta_title', sprintf( esc_html__( '%s Restriction', 'wp-members' ), $post_type->labels->singular_name ) );
 
 				add_meta_box( 'wpmem-block-meta-id', $post_title, array( 'WP_Members_Admin_Posts', 'block_meta' ), $key, 'side', 'high'
 					// ,array( '__back_compat_meta_box' => true, ) // @todo Convert to Block and declare this for backwards compat ONLY!
@@ -192,9 +192,9 @@ class WP_Members_Admin_Posts {
 		$post_meta_value = get_post_meta( $post->ID, '_wpmem_block', true );
 		$post_meta_value = ( null == $post_meta_value ) ? $wpmem->block[ $post->post_type ] : $post_meta_value;
 		$post_meta_settings = array(
-			'0' => array( 'text' => __( 'Unrestricted', 'wp-members' ), 'icon' => '<span id="wpmem_post_icon_0" class="dashicons dashicons-unlock" ' . ( ( 0 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
-			'1' => array( 'text' => __( 'Restricted',   'wp-members' ), 'icon' => '<span id="wpmem_post_icon_1" class="dashicons dashicons-lock" '   . ( ( 1 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
-			'2' => array( 'text' => __( 'Hidden',       'wp-members' ), 'icon' => '<span id="wpmem_post_icon_2" class="dashicons dashicons-hidden" ' . ( ( 2 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
+			'0' => array( 'text' => esc_html__( 'Unrestricted', 'wp-members' ), 'icon' => '<span id="wpmem_post_icon_0" class="dashicons dashicons-unlock" ' . ( ( 0 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
+			'1' => array( 'text' => esc_html__( 'Restricted',   'wp-members' ), 'icon' => '<span id="wpmem_post_icon_1" class="dashicons dashicons-lock" '   . ( ( 1 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
+			'2' => array( 'text' => esc_html__( 'Hidden',       'wp-members' ), 'icon' => '<span id="wpmem_post_icon_2" class="dashicons dashicons-hidden" ' . ( ( 2 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
 		); ?>
 		<p><?php
 			foreach ( $post_meta_settings as $key => $value ) {
@@ -302,7 +302,7 @@ class WP_Members_Admin_Posts {
 		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( $_REQUEST['post_type'] ) : 'post';
 
 		if ( $post_type == 'page' || $post_type == 'post' || array_key_exists( $post_type, $wpmem->post_types ) ) {
-			$columns['wpmem_block'] = __( 'Status', 'wp-members' );
+			$columns['wpmem_block'] = esc_html__( 'Status', 'wp-members' );
 		}
 		return $columns;
 	}
@@ -336,17 +336,17 @@ class WP_Members_Admin_Posts {
 			}
 
 			if ( $wpmem->block[ $post_type ] == 1 ) {
-				$block_span = array( 'lock', 'green', __( 'Restricted', 'wp-members' ) );
+				$block_span = array( 'lock', 'green', esc_html__( 'Restricted', 'wp-members' ) );
 			}
 			if ( $wpmem->block[ $post_type ] == 0 ) {
-				$block_span =  array( 'unlock', 'red', __( 'Unrestricted', 'wp-members' ) );
+				$block_span =  array( 'unlock', 'red', esc_html__( 'Unrestricted', 'wp-members' ) );
 			}
 			if ( $wpmem->block[ $post_type ] == 1 && $block_meta == '0' ) {
-				$block_span = array( 'unlock', 'red', __( 'Unrestricted', 'wp-members' ) );
+				$block_span = array( 'unlock', 'red', esc_html__( 'Unrestricted', 'wp-members' ) );
 			} elseif ( $wpmem->block[ $post_type ] == 0 && $block_meta == '1' ) {
-				$block_span = array( 'lock', 'green', __( 'Restricted', 'wp-members' ) );
+				$block_span = array( 'lock', 'green', esc_html__( 'Restricted', 'wp-members' ) );
 			} elseif ( 2 == $block_meta ) {
-				$block_span = array( 'hidden', '', __( 'Hidden', 'wp-members' ) );
+				$block_span = array( 'hidden', '', esc_html__( 'Hidden', 'wp-members' ) );
 			}
 			echo '<span class="dashicons dashicons-' . $block_span[0] . '" style="color:' . $block_span[1] . '" title="' . $block_span[2] . '"></span>';
 		}

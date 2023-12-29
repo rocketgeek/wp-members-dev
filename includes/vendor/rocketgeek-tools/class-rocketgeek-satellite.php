@@ -253,7 +253,7 @@ class RocketGeek_Satellite_Beta {
 				)
 			) .
 			' ' .
-			sprintf( __( 'Once you are done, deactivate the %s and activate it again.', 'text-domain' ), $this->get_module_type() ) 
+			sprintf( esc_html__( 'Once you are done, deactivate the %s and activate it again.', 'text-domain' ), $this->get_module_type() ) 
 		);
 	}
 }

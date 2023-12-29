@@ -145,7 +145,7 @@ class WP_Members_Shortcodes {
 					 */
 					$content = ( $content ) ? $content : $this->render_links( 'register' );
 				} elseif ( is_user_logged_in() && is_customize_preview() && get_theme_mod( 'wpmem_show_form_message_dialog', false ) ) {
-					$wpmem_themsg = __( "This is a generic message to display the form message dialog in the Customizer.", 'wp-members' );
+					$wpmem_themsg = esc_html__( "This is a generic message to display the form message dialog in the Customizer.", 'wp-members' );
 					$content  = wpmem_get_display_message( $wpmem->regchk, $wpmem_themsg );
 					$content .= wpmem_register_form( $reg_form_args );
 				} else {
@@ -955,7 +955,7 @@ class WP_Members_Shortcodes {
 		// Logout link shortcode.
 		if ( is_user_logged_in() && $tag == 'wpmem_logout' ) {
 			$link = ( isset( $sanitized_atts['url'] ) ) ? add_query_arg( array( 'a'=>'logout', 'redirect_to'=>$sanitized_atts['url'] ) ) : add_query_arg( 'a', 'logout' );
-			$text = ( $content ) ? $content : __( 'Click here to log out.', 'wp-members' );
+			$text = ( $content ) ? $content : esc_html__( 'Click here to log out.', 'wp-members' );
 			return do_shortcode( '<a href="' . esc_url( $link ) . '">' . $text . '</a>' );
 		}
 	}
@@ -1047,10 +1047,10 @@ class WP_Members_Shortcodes {
 			$args['attributes'] = $sanitized_atts;
 		}
 		if ( 'wpmem_reg_link' == $tag ) {
-			$args['content'] = ( isset( $content ) && '' != $content ) ? $content : __( 'Register' );
+			$args['content'] = ( isset( $content ) && '' != $content ) ? $content : esc_html__( 'Register' );
 			return do_shortcode( wpmem_get_reg_link( $args ) );
 		} else {
-			$args['content'] = ( isset( $content ) && '' != $content ) ? $content : __( 'Log In' );
+			$args['content'] = ( isset( $content ) && '' != $content ) ? $content : esc_html__( 'Log In' );
 			return do_shortcode( wpmem_get_login_link( $args ) );
 		}
 	}

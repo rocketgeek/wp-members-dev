@@ -371,31 +371,31 @@ class WP_Members_Products {
 		 */
 		$args = apply_filters( 'wpmem_membership_cpt_args', $args );
 		
-		$singular = __( 'Membership', 'wp-members' );
-		$plural   = __( 'Memberships', 'wp-members' );
+		$singular = esc_html__( 'Membership', 'wp-members' );
+		$plural   = esc_html__( 'Memberships', 'wp-members' );
 
 		$labels = array(
 			'name'                  => $plural,
 			'singular_name'         => $singular,
-			'menu_name'             => __( 'Memberships', 'wp-members' ),
-			'all_items'             => sprintf( __( 'All %s', 'wp-members' ), $plural ),
-			'add_new_item'          => sprintf( __( 'Add New %s', 'wp-members' ), $singular ),
-			'add_new'               => __( 'Add New', 'wp-members' ),
-			'new_item'              => sprintf( __( 'New %s', 'wp-members' ), $singular ),
-			'edit_item'             => sprintf( __( 'Edit %s', 'wp-members' ), $singular ),
-			'update_item'           => sprintf( __( 'Update %s', 'wp-members' ), $singular ),
-			'view_item'             => sprintf( __( 'View %s', 'wp-members' ), $singular ),
-			'view_items'            => sprintf( __( 'View %s', 'wp-members' ), $plural ),
-			'search_items'          => sprintf( __( 'Search %s', 'wp-members' ), $plural ),
-			'not_found'             => __( 'Not found', 'wp-members' ),
-			'not_found_in_trash'    => __( 'Not found in Trash', 'wp-members' ),
-			'insert_into_item'      => __( 'Insert into item', 'wp-members' ),
-			'publish'               => sprintf( __( 'Save %s Details', 'wp-members' ), $singular ),
-			'attributes'            => __( 'Membership Attributes', 'wp-members' ),
+			'menu_name'             => esc_html__( 'Memberships', 'wp-members' ),
+			'all_items'             => sprintf( esc_html__( 'All %s', 'wp-members' ), $plural ),
+			'add_new_item'          => sprintf( esc_html__( 'Add New %s', 'wp-members' ), $singular ),
+			'add_new'               => esc_html__( 'Add New', 'wp-members' ),
+			'new_item'              => sprintf( esc_html__( 'New %s', 'wp-members' ), $singular ),
+			'edit_item'             => sprintf( esc_html__( 'Edit %s', 'wp-members' ), $singular ),
+			'update_item'           => sprintf( esc_html__( 'Update %s', 'wp-members' ), $singular ),
+			'view_item'             => sprintf( esc_html__( 'View %s', 'wp-members' ), $singular ),
+			'view_items'            => sprintf( esc_html__( 'View %s', 'wp-members' ), $plural ),
+			'search_items'          => sprintf( esc_html__( 'Search %s', 'wp-members' ), $plural ),
+			'not_found'             => esc_html__( 'Not found', 'wp-members' ),
+			'not_found_in_trash'    => esc_html__( 'Not found in Trash', 'wp-members' ),
+			'insert_into_item'      => esc_html__( 'Insert into item', 'wp-members' ),
+			'publish'               => sprintf( esc_html__( 'Save %s Details', 'wp-members' ), $singular ),
+			'attributes'            => esc_html__( 'Membership Attributes', 'wp-members' ),
 		);
 		$args = array(
-			'label'                 => __( 'Membership Product', 'wp-members' ),
-			'description'           => __( 'WP-Members Membership Products', 'wp-members' ),
+			'label'                 => esc_html__( 'Membership Product', 'wp-members' ),
+			'description'           => esc_html__( 'WP-Members Membership Products', 'wp-members' ),
 			'labels'                => $labels,
 			'supports'              => array( 'title', 'page-attributes' ),
 			'hierarchical'          => true,
@@ -612,13 +612,13 @@ class WP_Members_Products {
 		$pairs = array(
 			'title_before' => '<h2>',
 			'title_after'  => '</h2>',
-			'title'        => __( 'Memberships', 'wp-members' ),
+			'title'        => esc_html__( 'Memberships', 'wp-members' ),
 			'list_before'  => '<ul>',
 			'list_after'   => '</ul>',
 			'item_before'  => '<li>',
 			'item_after'   => '</li>',
 			'date_format'  => 'default',
-			'no_expire'    => __( 'Does not expire', 'wp-members' ),
+			'no_expire'    => esc_html__( 'Does not expire', 'wp-members' ),
 		);
 
 		$args = shortcode_atts( $pairs, $atts, $tag );

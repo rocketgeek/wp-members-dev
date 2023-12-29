@@ -388,7 +388,7 @@ class WP_Members_Email {
 						} else {
 							$val = ( is_array( $field_data ) ) ? esc_html( $field_data[ $meta_key ] ) : esc_html( get_user_meta( $user_id, $meta_key, true ) );
 						}
-						$field_arr[ __( $field['label'], 'wp-members' ) ] = $val;
+						$field_arr[ esc_html__( $field['label'], 'wp-members' ) ] = $val;
 					}
 				}
 			}

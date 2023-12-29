@@ -38,22 +38,22 @@ class WP_Members_Dialogs {
 		
 		// Default Form Fields.
 		$default_form_fields = array(
-			'first_name'       => __( 'First Name', 'wp-members' ),
-			'last_name'        => __( 'Last Name', 'wp-members' ),
-			'addr1'            => __( 'Address 1', 'wp-members' ),
-			'addr2'            => __( 'Address 2', 'wp-members' ),
-			'city'             => __( 'City', 'wp-members' ),
-			'thestate'         => __( 'State', 'wp-members' ),
-			'zip'              => __( 'Zip', 'wp-members' ),
-			'country'          => __( 'Country', 'wp-members' ),
-			'phone1'           => __( 'Day Phone', 'wp-members' ),
-			'user_email'       => __( 'Email', 'wp-members' ),
-			'confirm_email'    => __( 'Confirm Email', 'wp-members' ),
-			'user_url'         => __( 'Website', 'wp-members' ),
-			'description'      => __( 'Biographical Info', 'wp-members' ),
-			'password'         => __( 'Password', 'wp-members' ),
-			'confirm_password' => __( 'Confirm Password', 'wp-members' ),
-			'tos'              => __( 'TOS', 'wp-members' ),
+			'first_name'       => esc_html__( 'First Name', 'wp-members' ),
+			'last_name'        => esc_html__( 'Last Name', 'wp-members' ),
+			'addr1'            => esc_html__( 'Address 1', 'wp-members' ),
+			'addr2'            => esc_html__( 'Address 2', 'wp-members' ),
+			'city'             => esc_html__( 'City', 'wp-members' ),
+			'thestate'         => esc_html__( 'State', 'wp-members' ),
+			'zip'              => esc_html__( 'Zip', 'wp-members' ),
+			'country'          => esc_html__( 'Country', 'wp-members' ),
+			'phone1'           => esc_html__( 'Day Phone', 'wp-members' ),
+			'user_email'       => esc_html__( 'Email', 'wp-members' ),
+			'confirm_email'    => esc_html__( 'Confirm Email', 'wp-members' ),
+			'user_url'         => esc_html__( 'Website', 'wp-members' ),
+			'description'      => esc_html__( 'Biographical Info', 'wp-members' ),
+			'password'         => esc_html__( 'Password', 'wp-members' ),
+			'confirm_password' => esc_html__( 'Confirm Password', 'wp-members' ),
+			'tos'              => esc_html__( 'TOS', 'wp-members' ),
 		);
 		
 		/*
@@ -69,121 +69,121 @@ class WP_Members_Dialogs {
 		$defaults = array(
 			
 			// Login form.
-			'login_heading'        => __( 'Existing Users Log In', 'wp-members' ),
-			'login_username'       => __( 'Username or Email', 'wp-members' ),
-			'login_password'       => __( 'Password', 'wp-members' ),
-			'login_button'         => __( 'Log In', 'wp-members' ),
-			'remember_me'          => __( 'Remember Me', 'wp-members' ),
-			'forgot_link_before'   => __( 'Forgot password?', 'wp-members' ) . '&nbsp;',
-			'forgot_link'          => __( 'Click here to reset', 'wp-members' ),
-			'register_link_before' => __( 'New User?', 'wp-members' ) . '&nbsp;',
-			'register_link'        => __( 'Click here to register', 'wp-members' ),
+			'login_heading'        => esc_html__( 'Existing Users Log In', 'wp-members' ),
+			'login_username'       => esc_html__( 'Username or Email', 'wp-members' ),
+			'login_password'       => esc_html__( 'Password', 'wp-members' ),
+			'login_button'         => esc_html__( 'Log In', 'wp-members' ),
+			'remember_me'          => esc_html__( 'Remember Me', 'wp-members' ),
+			'forgot_link_before'   => esc_html__( 'Forgot password?', 'wp-members' ) . '&nbsp;',
+			'forgot_link'          => esc_html__( 'Click here to reset', 'wp-members' ),
+			'register_link_before' => esc_html__( 'New User?', 'wp-members' ) . '&nbsp;',
+			'register_link'        => esc_html__( 'Click here to register', 'wp-members' ),
 			
 			// Password change form.
-			'pwdchg_heading'       => __( 'Change Password', 'wp-members' ),
-			'pwdchg_password1'     => __( 'New password', 'wp-members' ),
-			'pwdchg_password2'     => __( 'Confirm new password', 'wp-members' ),
-			'pwdchg_button'        => __( 'Update Password', 'wp-members' ),
-			'pwdchg_update'        => __( 'Password successfully changed!', 'wp-members' ),
+			'pwdchg_heading'       => esc_html__( 'Change Password', 'wp-members' ),
+			'pwdchg_password1'     => esc_html__( 'New password', 'wp-members' ),
+			'pwdchg_password2'     => esc_html__( 'Confirm new password', 'wp-members' ),
+			'pwdchg_button'        => esc_html__( 'Update Password', 'wp-members' ),
+			'pwdchg_update'        => esc_html__( 'Password successfully changed!', 'wp-members' ),
 			
 			// Password reset form.
-			'pwdreset_heading'     => __( 'Reset Forgotten Password', 'wp-members' ),
+			'pwdreset_heading'     => esc_html__( 'Reset Forgotten Password', 'wp-members' ),
 			// @note As of version 3.5.0, old password reset is obsolete.
 			//       The field label used is "login_username" (see above).
-			//'pwdreset_username'    => __( 'Username', 'wp-members' ),
-			//'pwdreset_email'       => __( 'Email', 'wp-members' ),
-			'pwdreset_button'      => __( 'Reset Password' ),
-			'username_link_before' => __( 'Forgot username?', 'wp-members' ) . '&nbsp;',
-			'username_link'        => __( 'Click here', 'wp-members' ),
+			//'pwdreset_username'    => esc_html__( 'Username', 'wp-members' ),
+			//'pwdreset_email'       => esc_html__( 'Email', 'wp-members' ),
+			'pwdreset_button'      => esc_html__( 'Reset Password' ),
+			'username_link_before' => esc_html__( 'Forgot username?', 'wp-members' ) . '&nbsp;',
+			'username_link'        => esc_html__( 'Click here', 'wp-members' ),
 			
 			// Retrieve username form.
-			'username_heading'     => __( 'Retrieve username', 'wp-members' ),
-			'username_email'       => __( 'Email Address', 'wp-members' ),
-			'username_button'      => __( 'Retrieve username', 'wp-members' ),
+			'username_heading'     => esc_html__( 'Retrieve username', 'wp-members' ),
+			'username_email'       => esc_html__( 'Email Address', 'wp-members' ),
+			'username_button'      => esc_html__( 'Retrieve username', 'wp-members' ),
 			
 			// Register form.
-			'register_heading'     => __( 'New User Registration', 'wp-members' ),
-			'register_username'    => __( 'Choose a Username', 'wp-members' ),
-			'register_rscaptcha'   => __( 'Input the code:', 'wp-members' ),
-			'register_tos'         => __( 'Please indicate that you agree to the %s Terms of Service %s', 'wp-members' ), // @note: if default changes, default check after wpmem_tos_link_txt must change.
-			'register_clear'       => __( 'Reset Form', 'wp-members' ),
-			'register_submit'      => __( 'Register', 'wp-members' ),
+			'register_heading'     => esc_html__( 'New User Registration', 'wp-members' ),
+			'register_username'    => esc_html__( 'Choose a Username', 'wp-members' ),
+			'register_rscaptcha'   => esc_html__( 'Input the code:', 'wp-members' ),
+			'register_tos'         => esc_html__( 'Please indicate that you agree to the %s Terms of Service %s', 'wp-members' ), // @note: if default changes, default check after wpmem_tos_link_txt must change.
+			'register_clear'       => esc_html__( 'Reset Form', 'wp-members' ),
+			'register_submit'      => esc_html__( 'Register', 'wp-members' ),
 			'register_req_mark'    => '<span class="req">*</span>',
-			'register_required'    => '<span class="req">*</span>' . __( 'Required field', 'wp-members' ),
+			'register_required'    => '<span class="req">*</span>' . esc_html__( 'Required field', 'wp-members' ),
 			
 			// User profile update form.
-			'profile_heading'      => __( 'Edit Your Information', 'wp-members' ),
-			'profile_username'     => __( 'Username', 'wp-members' ),
-			'profile_submit'       => __( 'Update Profile', 'wp-members' ),
-			'profile_upload'       => __( 'Update this file', 'wp-members' ),
+			'profile_heading'      => esc_html__( 'Edit Your Information', 'wp-members' ),
+			'profile_username'     => esc_html__( 'Username', 'wp-members' ),
+			'profile_submit'       => esc_html__( 'Update Profile', 'wp-members' ),
+			'profile_upload'       => esc_html__( 'Update this file', 'wp-members' ),
 			
 			// Error messages and dialogs.
-			'login_failed_heading' => __( 'Login Failed!', 'wp-members' ), // @deprecated 3.4.0
-			'login_failed'         => __( 'You entered an invalid username or password.', 'wp-members' ),
-			'login_failed_link'    => __( 'Click here to continue.', 'wp-members' ), // @deprecated 3.4.0
-			'pwdchangempty'        => __( 'Password fields cannot be empty', 'wp-members' ),
-			'usernamefailed'       => __( 'Sorry, that email address was not found.', 'wp-members' ),
-			'usernamesuccess'      => __( 'An email was sent to %s with your username.', 'wp-members' ),
-			'reg_empty_field'      => __( 'Sorry, %s is a required field.', 'wp-members' ),
-			'reg_valid_email'      => __( 'You must enter a valid email address.', 'wp-members' ),
-			'reg_non_alphanumeric' => __( 'The username cannot include non-alphanumeric characters.', 'wp-members' ),
-			'reg_empty_username'   => __( 'Sorry, username is a required field', 'wp-members' ),
-			'reg_username_taken'   => __( 'Sorry, that username is taken, Please try another.', 'wp-members' ),
-			'reg_email_taken'      => __( 'Sorry, that email address already has an account. Please try another.', 'wp-members' ),
-			'reg_password_match'   => __( 'Passwords did not match.', 'wp-members' ),
-			'reg_email_match'      => __( 'Emails did not match.', 'wp-members' ),
-			'reg_empty_captcha'    => __( 'You must complete the CAPTCHA form.', 'wp-members' ),
-			'reg_invalid_captcha'  => __( 'CAPTCHA was not valid.', 'wp-members' ),
-			'reg_generic'          => __( 'There was an error processing the form.', 'wp-members' ),
-			'reg_captcha_err'      => __( 'There was an error with the CAPTCHA form.', 'wp-members' ),
-			'reg_file_type'        => __( 'Sorry, you can only upload the following file types for the %s field: %s.', 'wp-members' ),
-			'profile_update'       => __( 'Your information was updated!', 'wp-members' ),
+			'login_failed_heading' => esc_html__( 'Login Failed!', 'wp-members' ), // @deprecated 3.4.0
+			'login_failed'         => esc_html__( 'You entered an invalid username or password.', 'wp-members' ),
+			'login_failed_link'    => esc_html__( 'Click here to continue.', 'wp-members' ), // @deprecated 3.4.0
+			'pwdchangempty'        => esc_html__( 'Password fields cannot be empty', 'wp-members' ),
+			'usernamefailed'       => esc_html__( 'Sorry, that email address was not found.', 'wp-members' ),
+			'usernamesuccess'      => esc_html__( 'An email was sent to %s with your username.', 'wp-members' ),
+			'reg_empty_field'      => esc_html__( 'Sorry, %s is a required field.', 'wp-members' ),
+			'reg_valid_email'      => esc_html__( 'You must enter a valid email address.', 'wp-members' ),
+			'reg_non_alphanumeric' => esc_html__( 'The username cannot include non-alphanumeric characters.', 'wp-members' ),
+			'reg_empty_username'   => esc_html__( 'Sorry, username is a required field', 'wp-members' ),
+			'reg_username_taken'   => esc_html__( 'Sorry, that username is taken, Please try another.', 'wp-members' ),
+			'reg_email_taken'      => esc_html__( 'Sorry, that email address already has an account. Please try another.', 'wp-members' ),
+			'reg_password_match'   => esc_html__( 'Passwords did not match.', 'wp-members' ),
+			'reg_email_match'      => esc_html__( 'Emails did not match.', 'wp-members' ),
+			'reg_empty_captcha'    => esc_html__( 'You must complete the CAPTCHA form.', 'wp-members' ),
+			'reg_invalid_captcha'  => esc_html__( 'CAPTCHA was not valid.', 'wp-members' ),
+			'reg_generic'          => esc_html__( 'There was an error processing the form.', 'wp-members' ),
+			'reg_captcha_err'      => esc_html__( 'There was an error with the CAPTCHA form.', 'wp-members' ),
+			'reg_file_type'        => esc_html__( 'Sorry, you can only upload the following file types for the %s field: %s.', 'wp-members' ),
+			'profile_update'       => esc_html__( 'Your information was updated!', 'wp-members' ),
 			
 			// Links.
-			'profile_edit'         => __( 'Edit My Information', 'wp-members' ),
-			'profile_password'     => __( 'Change Password', 'wp-members' ),
-			'register_status'      => __( 'You are logged in as %s', 'wp-members' ),
-			'register_logout'      => __( 'Log out', 'wp-members' ),
-			'register_continue'    => ( isset( $wpmem->user_pages['profile'] ) && '' != $wpmem->user_pages['profile'] ) ? __( 'Edit profile', 'wp-members' ) : __( 'Begin using the site.', 'wp-members' ),
-			'login_welcome'        => __( 'You are logged in as %s', 'wp-members' ),
-			'login_logout'         => __( 'Click to log out', 'wp-members' ),
-			'status_welcome'       => __( 'You are logged in as %s', 'wp-members' ),
-			'status_logout'        => __( 'click to log out', 'wp-members' ),
-			'menu_logout'          => __( 'Log Out', 'wp-members' ),
+			'profile_edit'         => esc_html__( 'Edit My Information', 'wp-members' ),
+			'profile_password'     => esc_html__( 'Change Password', 'wp-members' ),
+			'register_status'      => esc_html__( 'You are logged in as %s', 'wp-members' ),
+			'register_logout'      => esc_html__( 'Log out', 'wp-members' ),
+			'register_continue'    => ( isset( $wpmem->user_pages['profile'] ) && '' != $wpmem->user_pages['profile'] ) ? esc_html__( 'Edit profile', 'wp-members' ) : esc_html__( 'Begin using the site.', 'wp-members' ),
+			'login_welcome'        => esc_html__( 'You are logged in as %s', 'wp-members' ),
+			'login_logout'         => esc_html__( 'Click to log out', 'wp-members' ),
+			'status_welcome'       => esc_html__( 'You are logged in as %s', 'wp-members' ),
+			'status_logout'        => esc_html__( 'click to log out', 'wp-members' ),
+			'menu_logout'          => esc_html__( 'Log Out', 'wp-members' ),
 			
 			// Widget.
-			'widget_status'         => __( 'You are logged in as %s', 'wp-members' ),
-			'widget_logout'         => __( 'click here to log out', 'wp-members' ),
-			'widget_login_failed'   => __( 'Login Failed!<br />You entered an invalid username or password.', 'wp-members' ),
-			'widget_login_failed_new' => __( 'Invalid username or password.', 'wp-members' ), // @todo New string replacement. Replace widget_login_failed when translated.
+			'widget_status'         => esc_html__( 'You are logged in as %s', 'wp-members' ),
+			'widget_logout'         => esc_html__( 'click here to log out', 'wp-members' ),
+			'widget_login_failed'   => esc_html__( 'Login Failed!<br />You entered an invalid username or password.', 'wp-members' ),
+			'widget_login_failed_new' => esc_html__( 'Invalid username or password.', 'wp-members' ), // @todo New string replacement. Replace widget_login_failed when translated.
 			'widget_not_logged_in'  => '',
-			'widget_login_username' => __( 'Username or Email', 'wp-members' ),
-			'widget_login_password' => __( 'Password', 'wp-members' ),
-			'widget_login_button'   => __( 'log in', 'wp-members' ),
-			'widget_login_forgot'   => __( 'Forgot?', 'wp-members' ),
-			'widget_login_register' => __( 'Register', 'wp-members' ),
+			'widget_login_username' => esc_html__( 'Username or Email', 'wp-members' ),
+			'widget_login_password' => esc_html__( 'Password', 'wp-members' ),
+			'widget_login_button'   => esc_html__( 'log in', 'wp-members' ),
+			'widget_login_forgot'   => esc_html__( 'Forgot?', 'wp-members' ),
+			'widget_login_register' => esc_html__( 'Register', 'wp-members' ),
 			
 			// Default Dialogs.
-			'restricted_msg'       => __( "This content is restricted to site members.  If you are an existing user, please log in.  New users may register below.", 'wp-members' ),
-			'success'              => __( "Congratulations! Your registration was successful.<br /><br />You may now log in using the password that was emailed to you.", 'wp-members' ),
+			'restricted_msg'       => esc_html__( "This content is restricted to site members.  If you are an existing user, please log in.  New users may register below.", 'wp-members' ),
+			'success'              => esc_html__( "Congratulations! Your registration was successful.<br /><br />You may now log in using the password that was emailed to you.", 'wp-members' ),
 			
 			// @todo Under consideration for removal from the Dialogs tab.
-			'user'                 => __( "Sorry, that username is taken, please try another.", 'wp-members' ),
-			'email'                => __( "Sorry, that email address already has an account.<br />Please try another.", 'wp-members' ),
-			'editsuccess'          => __( "Your information was updated!", 'wp-members' ),
+			'user'                 => esc_html__( "Sorry, that username is taken, please try another.", 'wp-members' ),
+			'email'                => esc_html__( "Sorry, that email address already has an account.<br />Please try another.", 'wp-members' ),
+			'editsuccess'          => esc_html__( "Your information was updated!", 'wp-members' ),
 			
 			// @todo These are defaults and are under consideration for removal from the dialogs tab, possibly as we change the password reset to a link based process.
-			'pwdchangerr'          => __( "Passwords did not match.", 'wp-members' ),
-			'pwdchangesuccess'     => __( "Password successfully changed.", 'wp-members' ),
-			'pwdreseterr'          => __( "Invalid username or email address.", 'wp-members' ),
-			'pwdresetsuccess_alt'  => __( "Password successfully reset! An email containing a new password has been sent to the email address on file for your account.", 'wp-members' ),
-			'pwdresetsuccess'      => __( "Reset request received. An email with instructions to complete the password reset has been sent.", 'wp-members' ),
+			'pwdchangerr'          => esc_html__( "Passwords did not match.", 'wp-members' ),
+			'pwdchangesuccess'     => esc_html__( "Password successfully changed.", 'wp-members' ),
+			'pwdreseterr'          => esc_html__( "Invalid username or email address.", 'wp-members' ),
+			'pwdresetsuccess_alt'  => esc_html__( "Password successfully reset! An email containing a new password has been sent to the email address on file for your account.", 'wp-members' ),
+			'pwdresetsuccess'      => esc_html__( "Reset request received. An email with instructions to complete the password reset has been sent.", 'wp-members' ),
 			
-			'acct_not_approved'    => __( "Your account request is still pending approval.", 'wp-members' ),
-			'acct_not_validated'   => __( "You have not completed account validation. Check your inbox for the valdation email.", 'wp-members' ),
+			'acct_not_approved'    => esc_html__( "Your account request is still pending approval.", 'wp-members' ),
+			'acct_not_validated'   => esc_html__( "You have not completed account validation. Check your inbox for the valdation email.", 'wp-members' ),
 			
-			'product_restricted_single'    => __( "This content requires the following membership: ", 'wp-members' ),
-			'product_restricted_multiple'  => __( "This content requires one of the following memberships: ", 'wp-members' ),
+			'product_restricted_single'    => esc_html__( "This content requires the following membership: ", 'wp-members' ),
+			'product_restricted_multiple'  => esc_html__( "This content requires one of the following memberships: ", 'wp-members' ),
 		
 		); // End of $defaults array.
 		
@@ -338,7 +338,7 @@ class WP_Members_Dialogs {
 				$msg = stripslashes( $dialogs[ $tag ]['value'] );
 			} else {
 				$msg = wpmem_get_text( $tag );
-				$msg = ( $dialogs[ $tag ] == $msg ) ? $msg : __( stripslashes( $dialogs[ $tag ] ), 'wp-members' );
+				$msg = ( $dialogs[ $tag ] == $msg ) ? $msg : esc_html__( stripslashes( $dialogs[ $tag ] ), 'wp-members' );
 			}
 		} elseif ( 'loginfailed' == $tag ) {
 			$msg = $this->login_failed();

@@ -109,7 +109,7 @@ class WP_Members_Bulk_Edit_Users {
         $form_post = ( function_exists( 'wpmem_admin_form_post_url' ) ) ? wpmem_admin_form_post_url() : '';
 
         echo '<div class="wrap">';
-        echo "<h2>" . __( 'WP-Members Bulk User Update', 'wp-members' ) . "</h2>";
+        echo "<h2>" . esc_html__( 'WP-Members Bulk User Update', 'wp-members' ) . "</h2>";
         echo '<form name="wpmem-bulk-update-all-users" id="wpmem-bulk-update-all-users" method="post" action="' . $form_post . '">';
 
         switch ( $utility_state ) {

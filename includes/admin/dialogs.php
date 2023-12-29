@@ -80,8 +80,8 @@ function wpmem_a_do_warnings( $did_update ) {
 	
 	// If there is an active warning, display message about warnings.
 	if ( ! empty( $active_warnings ) ) {
-		$strong_msg = __( 'WP-Members Options', 'wp-members' ) . ': ' . __( 'You have active settings that are not recommended.', 'wp-members' );
-		$remain_msg = __( 'If you will not be changing these settings, you can turn off this warning message by checking the "Ignore warning messages" in the settings below.', 'wp-members' );
+		$strong_msg = esc_html__( 'WP-Members Options', 'wp-members' ) . ': ' . esc_html__( 'You have active settings that are not recommended.', 'wp-members' );
+		$remain_msg = esc_html__( 'If you will not be changing these settings, you can turn off this warning message by checking the "Ignore warning messages" in the settings below.', 'wp-members' );
 
 		echo '<div class="error"><p><strong>' . $strong_msg . '</strong></p><ul style="list-style:initial; margin:5px 20px">';
 		foreach ( $active_warnings as $warning ) {
@@ -109,31 +109,31 @@ function wpmem_a_warning_msg( $msg ) {
 	switch ( $msg ) {
 
 	case 'users_can_register':
-		$strong_msg = __( 'Your WP settings allow anyone to register - this is not the recommended setting.', 'wp-members' );
-		$remain_msg = sprintf( __( 'You can %s change this here %s making sure the box next to "Anyone can register" is unchecked.', 'wp-members'), '<a href="options-general.php" target="_blank">', '</a>' );
-		$span_msg   = __( 'If you do not want users to register through wp-login.php, uncheck this option.', 'wp-members' );
+		$strong_msg = esc_html__( 'Your WP settings allow anyone to register - this is not the recommended setting.', 'wp-members' );
+		$remain_msg = sprintf( esc_html__( 'You can %s change this here %s making sure the box next to "Anyone can register" is unchecked.', 'wp-members'), '<a href="options-general.php" target="_blank">', '</a>' );
+		$span_msg   = esc_html__( 'If you do not want users to register through wp-login.php, uncheck this option.', 'wp-members' );
 		break;
 
 	case 'comment_registration':
-		$strong_msg = __( 'Your WP settings allow anyone to comment - this is not the recommended setting.', 'wp-members' );
-		$remain_msg = sprintf( __( 'You can %s change this here %s by checking the box next to "Users must be registered and logged in to comment."', 'wp-members' ), '<a href="options-discussion.php" target="_blank">', '</a>' );
-		$span_msg   = __( 'If you do not want non-registered users to comment, change this setting.', 'wp-members' );
+		$strong_msg = esc_html__( 'Your WP settings allow anyone to comment - this is not the recommended setting.', 'wp-members' );
+		$remain_msg = sprintf( esc_html__( 'You can %s change this here %s by checking the box next to "Users must be registered and logged in to comment."', 'wp-members' ), '<a href="options-discussion.php" target="_blank">', '</a>' );
+		$span_msg   = esc_html__( 'If you do not want non-registered users to comment, change this setting.', 'wp-members' );
 		break;
 
 	case 'rss_use_excerpt':
-		$strong_msg = __( 'Your WP settings allow full text rss feeds - this is not the recommended setting.', 'wp-members' );
-		$remain_msg = sprintf( __( 'You can %s change this here %s by changing "For each article in a feed, show" to "Summary."', 'wp-members' ), '<a href="options-reading.php" target="_blank">' , '</a>' );
-		$span_msg   = __( 'Full text feeds allow your protected content in an RSS reader.', 'wp-members' );
+		$strong_msg = esc_html__( 'Your WP settings allow full text rss feeds - this is not the recommended setting.', 'wp-members' );
+		$remain_msg = sprintf( esc_html__( 'You can %s change this here %s by changing "For each article in a feed, show" to "Summary."', 'wp-members' ), '<a href="options-reading.php" target="_blank">' , '</a>' );
+		$span_msg   = esc_html__( 'Full text feeds allow your protected content in an RSS reader.', 'wp-members' );
 		break;
 
 	case 'success':
-		$strong_msg = __( 'You have set WP-Members to hold registrations for approval', 'wp-members' );
-		$remain_msg = __( 'but you have not changed the default message for "Registration Completed" under "WP-Members Dialogs and Error Messages."  You should change this message to let users know they are pending approval.', 'wp-members' );
+		$strong_msg = esc_html__( 'You have set WP-Members to hold registrations for approval', 'wp-members' );
+		$remain_msg = esc_html__( 'but you have not changed the default message for "Registration Completed" under "WP-Members Dialogs and Error Messages."  You should change this message to let users know they are pending approval.', 'wp-members' );
 		break;
 
 	case 'wpmembers_captcha':
-		$strong_msg = __( 'You have turned on reCAPTCHA', 'wp-members');
-		$remain_msg = __( 'but you have not entered API keys.  You will need both a public and private key.  The CAPTCHA will not display unless a valid API key is included.', 'wp-members' );
+		$strong_msg = esc_html__( 'You have turned on reCAPTCHA', 'wp-members');
+		$remain_msg = esc_html__( 'but you have not entered API keys.  You will need both a public and private key.  The CAPTCHA will not display unless a valid API key is included.', 'wp-members' );
 		break;
 
 	}
@@ -195,7 +195,7 @@ function wpmem_a_rss_box() {
 		<div class="inside"><?php
 		wp_widget_rss_output( array(
 			'url'          => 'https://rocketgeek.com/feed/',  //put your feed URL here
-			'title'        => __( 'Latest from RocketGeek', 'wp-members' ),
+			'title'        => esc_html__( 'Latest from RocketGeek', 'wp-members' ),
 			'items'        => 4, //how many posts to show
 			'show_summary' => 0,
 			'show_author'  => 0,
@@ -213,7 +213,7 @@ function wpmem_a_rss_box() {
 function wpmem_a_rating_box() {
 	?><div class="postbox">
 		<h3><?php _e( 'Like WP-Members?', 'wp-members' ); ?></h3>
-		<div class="inside"><?php echo sprintf( __( 'If you like WP-Members please give it a %s&#9733;&#9733;&#9733;&#9733;&#9733;%s rating. Thanks!!', 'wp-members' ), '<a href="https://wordpress.org/support/plugin/wp-members/reviews?rate=5#new-post">', '</a>' ); ?></div>
+		<div class="inside"><?php echo sprintf( esc_html__( 'If you like WP-Members please give it a %s&#9733;&#9733;&#9733;&#9733;&#9733;%s rating. Thanks!!', 'wp-members' ), '<a href="https://wordpress.org/support/plugin/wp-members/reviews?rate=5#new-post">', '</a>' ); ?></div>
 	</div><?php
 }
 
@@ -224,7 +224,7 @@ function wpmem_a_rating_box() {
  * @since 2.8.0
  */
 function butlerblog_dashboard_widget() {
-	wp_add_dashboard_widget( 'dashboard_custom_feed', __( 'Latest from ButlerBlog', 'wp-members' ), 'butlerblog_feed_output' );
+	wp_add_dashboard_widget( 'dashboard_custom_feed', esc_html__( 'Latest from ButlerBlog', 'wp-members' ), 'butlerblog_feed_output' );
 }
 
 
@@ -237,7 +237,7 @@ function butlerblog_feed_output() {
 	echo '<div class="rss-widget">';
 	wp_widget_rss_output( array(
 		'url'          => 'https://feeds.feedburner.com/butlerblog',
-		'title'        => __( 'Latest from ButlerBlog', 'wp-members' ),
+		'title'        => esc_html__( 'Latest from ButlerBlog', 'wp-members' ),
 		'items'        => 5,
 		'show_summary' => 0,
 		'show_author'  => 0,

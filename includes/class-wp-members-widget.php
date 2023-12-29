@@ -21,7 +21,7 @@ class widget_wpmemwidget extends WP_Widget {
 			'WP-Members Login',
 			array( 
 				'classname'   => 'wp-members', 
-				'description' => __( 'Displays the WP-Members sidebar login.', 'wp-members' ), 
+				'description' => esc_html__( 'Displays the WP-Members sidebar login.', 'wp-members' ), 
 			)
 		);
 	}
@@ -36,7 +36,7 @@ class widget_wpmemwidget extends WP_Widget {
 	
 		// Default widget settings.
 		$defaults = array( 
-			'title'       => __( 'Login Status', 'wp-members' ),
+			'title'       => esc_html__( 'Login Status', 'wp-members' ),
 			'redirect_to' => '',
 		);
 		$instance = wp_parse_args( ( array ) $instance, $defaults );
@@ -79,7 +79,7 @@ class widget_wpmemwidget extends WP_Widget {
 	function widget( $args, $instance ) {
 
 		$redirect_to = ( array_key_exists( 'redirect_to', $instance ) ) ? $instance['redirect_to'] : '';
-		$title       = ( array_key_exists( 'title',       $instance ) ) ? $instance['title']       : __( 'Login Status', 'wp-members' );
+		$title       = ( array_key_exists( 'title',       $instance ) ) ? $instance['title']       : esc_html__( 'Login Status', 'wp-members' );
 		$customizer  = ( is_customize_preview() ) ? get_theme_mod( 'wpmem_show_logged_out_state', false ) : false;
 		
 		/** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
