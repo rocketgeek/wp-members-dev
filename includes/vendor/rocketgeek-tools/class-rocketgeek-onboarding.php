@@ -55,8 +55,8 @@ class RocketGeek_Onboarding_Beta {
         $rgut = new RocketGeek_Satellite_Beta( $slug, $product_file, 'update', 'plugin' );
     }
     
-    public function admin_menu () {
-        add_submenu_page( null, $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array( $this, 'do_options_page' ) );
+    public function admin_menu() {
+        add_submenu_page( '', $this->page_title, $this->menu_title, $this->capability, $this->menu_slug, array( $this, 'do_options_page' ) );
     }
     
     public function do_options_page() {
