@@ -116,7 +116,7 @@ class WP_Members_Admin_API {
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-options.php' );
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-emails.php'  );
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-captcha.php' );
-			// include_once( $wpmem->path . 'admin/tab-about.php' );
+			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-about.php' );
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-dialogs.php' );
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-dropins.php' );	
 			include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-shortcodes.php' );		
@@ -153,7 +153,7 @@ class WP_Members_Admin_API {
 		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Dialogs',    'do_tab' ), 10 );
 		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Emails',     'do_tab' ), 15 );
 		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Shortcodes', 'do_tab' ), 16 );
-		// add_action( 'wpmem_admin_do_tab',            'wpmem_a_about_tab', 999, 1 );
+		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_About',      'do_tab' ), 17 );
 		
 		// If user has a role that cannot edit users, set profile actions for non-admins.
 		
