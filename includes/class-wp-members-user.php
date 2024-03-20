@@ -402,7 +402,7 @@ class WP_Members_User {
 			// Add for _data hooks
 			$this->post_data['user_registered'] = current_time( 'mysql', 1 );
 			$this->post_data['user_role']       = get_option( 'default_role' );
-			$this->post_data['wpmem_reg_ip']    = wpmem_get_user_ip();
+			$this->post_data['wpmem_reg_ip']    = sanitize_text_field( wpmem_get_user_ip() );
 			$this->post_data['wpmem_reg_url']   = esc_url_raw( wpmem_get( 'wpmem_reg_page', wpmem_get( 'redirect_to', false, 'request' ), 'request' ) );
 
 			/*

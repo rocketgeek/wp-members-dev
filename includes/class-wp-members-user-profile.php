@@ -64,10 +64,9 @@ class WP_Members_User_Profile {
 
 		$user_id = ( 'profile' == $current_screen->id ) ? $user_ID : filter_var( $_REQUEST['user_id'], FILTER_SANITIZE_NUMBER_INT ); 
 		$display = ( 'profile' == $current_screen->base ) ? 'user' : 'admin'; 
-		$display = ( current_user_can( $required_capability ) ) ? 'admin' : $display; ?>
-
-		<h3><?php
-		$heading = ( 'admin' == $display ) ? esc_html__( 'WP-Members Additional Fields', 'wp-members' ) : esc_html__( 'Additional Information', 'wp-members' );
+		$display = ( current_user_can( $required_capability ) ) ? 'admin' : $display;
+		$heading = ( 'admin' == $display ) ? __( 'WP-Members Additional Fields', 'wp-members' ) : __( 'Additional Information', 'wp-members' );
+		
 		/**
 		 * Filter the heading for additional profile fields.
 		 *
@@ -80,7 +79,8 @@ class WP_Members_User_Profile {
 		 *
 		 * @param string The default additional fields heading.
 		 */
-		echo apply_filters( 'wpmem_' . $display . '_profile_heading', $heading ); ?></h3>   
+		$heading = apply_filters( 'wpmem_' . $display . '_profile_heading', $heading ); ?>
+		<h3><?php echo esc_attr( $heading ); ?></h3>   
 		<table class="form-table">
 			<?php
 			// Get fields.
@@ -539,8 +539,8 @@ class WP_Members_User_Profile {
 						break;
 				} ?>
 				<tr>
-					<th><label><?php echo $label; ?></label></th>
-					<td><input id="activate_user" type="checkbox" class="input" name="activate_user" value="<?php echo $action; ?>" /></td>
+					<th><label><?php echo esc_html( $label ); ?></label></th>
+					<td><input id="activate_user" type="checkbox" class="input" name="activate_user" value="<?php echo esc_attr( $action ); ?>" /></td>
 				</tr>
 			<?php }
 		}
@@ -584,7 +584,7 @@ class WP_Members_User_Profile {
 	public static function _show_ip( $user_id ) { ?>
 		<tr>
 			<th><label><?php _e( 'IP @ registration', 'wp-members' ); ?></label></th>
-			<td><?php echo get_user_meta( $user_id, 'wpmem_reg_ip', true ); ?></td>
+			<td><?php echo esc_attr( get_user_meta( $user_id, 'wpmem_reg_ip', true ) ); ?></td>
 		</tr>
 		<?php
 	}
@@ -626,12 +626,12 @@ class WP_Members_User_Profile {
 				echo '<div id="wpmem_user_profile_tabs">';
 				echo '<ul>';
 				foreach ( $tabs as $key => $value ) {
-					echo '<li><a href="#wpmem_user_profile_tabs-' . ( $key ) . '">' . $value['tab'] . '</a></li>';
+					echo '<li><a href="#wpmem_user_profile_tabs-' . esc_attr( $key ) . '">' . esc_attr( $value['tab'] ) . '</a></li>';
 				}
 				echo '</ul>';
 				foreach ( $tabs as $key => $value ) {
-					echo '<div id="wpmem_user_profile_tabs-' . ( $key ) . '">';
-					echo ( isset( $value['content'] ) ) ? $value['content'] : '';
+					echo '<div id="wpmem_user_profile_tabs-' . esc_attr( $key ) . '">';
+					echo ( isset( $value['content'] ) ) ? esc_attr( $value['content'] ) : '';
 					do_action( 'wpmem_user_profile_tabs_content', $key );
 					echo '</div>';
 				}
