@@ -1235,7 +1235,16 @@ class WP_Members_User {
 	 */ 
 	function check_activated( $user, $username, $password ) {
 		if ( ! is_wp_error( $user ) && ! is_null( $user ) && false == $this->is_user_activated( $user->ID ) ) {
-			$user = new WP_Error( 'authentication_failed', esc_html__( '<strong>ERROR</strong>: User has not been activated.', 'wp-members' ) );
+			$msg = esc_html__( sprintf( '%sERROR%s: User has not been activated.', '<strong>', '</strong>' ), 'wp-members' );
+			/**
+			 * Filter the activation message.
+			 * 
+			 * @since 3.5.0
+			 * 
+			 * @param string
+			 */
+			$msg = apply_filters( 'wpmem_user_not_activated_msg', $msg );
+			$user = new WP_Error( 'authentication_failed', $msg );
 		}
 		/**
 		 * Filters the check_validated result.
@@ -1312,8 +1321,8 @@ class WP_Members_User {
 		$default_products = $wpmem->membership->get_default_products();
 		
 		// Assign any default memberships to user.
-		foreach ( $default_products as $product ) {
-			wpmem_set_user_product( $product, $user_id );
+		foreach ( $default_products as $membership ) {
+			wpmem_set_user_product( $membership, $user_id );
 		}
 	}
 }
