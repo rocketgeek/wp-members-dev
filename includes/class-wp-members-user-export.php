@@ -100,6 +100,8 @@ class WP_Members_User_Export {
 			'entity_decode'  => false,
 			'date_format'    => 'Y-m-d',
 			'required_caps'  => 'list_users',
+			'separator'      => ',',
+			'enclosure'      => '"',
 		);
 		// Merge args with default (in case any were missing).
 		$args = wp_parse_args( $args, $defaults );
@@ -112,6 +114,7 @@ class WP_Members_User_Export {
 		 * @since 3.4.0 Added $tag.
 		 * @since 3.4.0 Deprecated 'exclude_fields' (unset using wpmem_export_fields instead).
 		 * @since 3.4.0 Deprecated 'export_fields'  use "fields" instead.
+		 * @since 3.5.0 Added $separator and $enclosure
 		 *
 		 * @param array $args {
 		 *     Array of defaults for export.
@@ -123,6 +126,8 @@ class WP_Members_User_Export {
 		 *     @type  boolean $entity_decode
 		 *     @type  string  $date_format
 		 *     @type  string  $required_caps
+		 *     @type  string  $separator default: ,
+		 *     @type  string  $enclosure default: "
 		 * }
 		 * @param string $tag
 		 */
@@ -167,7 +172,7 @@ class WP_Members_User_Export {
 			 */
 			$header = apply_filters( 'wpmem_user_export_header', $header, $tag );
 
-			fputcsv( $handle, $header );
+			fputcsv( $handle, $header, $args['separator'], $args['enclosure'] );
 
 			// Loop through the array of users, assemble csv.
 			// $fields only includes fields to be exported at this point.
@@ -250,7 +255,7 @@ class WP_Members_User_Export {
 				 */
 				$row = apply_filters( 'wpmem_user_export_row', $row, $user_info->ID, $tag );
 
-				fputcsv( $handle, $row );
+				fputcsv( $handle, $row, $args['separator'], $args['enclosure'] );
 
 				// Update the user record as being exported.
 				if ( 'all' != $args['export'] ) {
@@ -299,8 +304,11 @@ class WP_Members_User_Export {
 		$export_fields['role']            = esc_html__( 'Role', 'wp-members' );
 		if ( wpmem_is_enabled( 'enable_products' ) ) {
 			$membership_products = wpmem_get_memberships();
-			foreach( $membership_products as $product_key => $product ) {
-				$export_fields[ self::$membership_product_stem . $product_key ] = $membership_products[ $product_key ]['title'];
+			// Don't bother if it's empty (i.e. memberships enabled, but none created).
+			if ( $membership_products && ! empty( $membership_products ) ) {
+				foreach( $membership_products as $product_key => $product ) {
+					$export_fields[ self::$membership_product_stem . $product_key ] = $membership_products[ $product_key ]['title'];
+				}
 			}
 		}
 	
