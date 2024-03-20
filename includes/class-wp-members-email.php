@@ -487,7 +487,7 @@ class WP_Members_Email {
 				// Add custom field shortcodes.
 				foreach ( $wpmem_fields as $meta_key => $field ) {
 					$val = ( is_array( $field_data ) && $field['register'] ) ? $field_data[ $meta_key ] : get_user_meta( $user_id, $meta_key, true );
-					$shortcodes[ $meta_key ] = $val;
+					$shortcodes[ $meta_key ] = ( 1 == $this->html ) ? $val . '<br />' : $val;
 				}
 
 				/**
