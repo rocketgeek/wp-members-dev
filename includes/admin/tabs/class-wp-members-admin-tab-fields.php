@@ -638,7 +638,7 @@ Last Row|last_row<?php } } ?></textarea>
 				// Update user search fields.
 				update_option( 'wpmembers_usfields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_usearch', array() ) ) );
 				if ( wpmem_is_woo_active() ) {
-					if ( 1 == $wpmem->woo->add_checkout_fields ) { 
+					if ( 1 == $wpmem->woo->add_checkout_fields ) {
 						update_option( 'wpmembers_wcchkout_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcchkout', array() ) ) );
 					}
 					if ( 1 == $wpmem->woo->add_my_account_fields ) {

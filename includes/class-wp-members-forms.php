@@ -1017,7 +1017,15 @@ class WP_Members_Forms {
 		// If editing, the user object of the user being edit.
 		$user = ( 'edit' == $tag ) ? get_user_by( 'ID', get_current_user_id() ) : false;
 
-		// Set up default wrappers.
+		/**
+		 * Set up default wrappers. 
+		 * 
+		 * DO NOT EDIT THESE! If you need to customize, use the filter hook 
+		 * documented below to set up a proper, external filter function.
+		 * 
+		 * @see   wpmem_register_form_args
+		 * @link  https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/wpmem_register_form_args/
+		 */
 		$defaults = array(
 
 			// Wrappers.
@@ -2139,7 +2147,7 @@ class WP_Members_Forms {
 
 			$dialogs = get_option( 'wpmembers_dialogs' );
 
-			// This shown above blocked content.
+			// The message shown above blocked content.
 			$msg = wpmem_get_text( 'restricted_msg' );
 			$msg = ( $dialogs['restricted_msg'] == $msg ) ? $msg : __( stripslashes( $dialogs['restricted_msg'] ), 'wp-members' );
 			$str = '<div id="wpmem_restricted_msg"><p>' . $msg . '</p></div>';
@@ -2150,10 +2158,10 @@ class WP_Members_Forms {
 			 * @since 2.7.3
 			 * @since 3.2.0 Added raw message string and HTML as separate params.
 			 *
-			 * @param string $str The post restricted message with HTML.
-			 * @param string $msg The raw message string.
-			 * @param string      The 'before' HTML wrapper.
-			 * @param string      The 'after' HTML wrapper.
+			 * @param string $full_html The post restricted message with HTML.
+			 * @param string $message   The raw message string.
+			 * @param string $before    The 'before' HTML wrapper.
+			 * @param string $after     The 'after' HTML wrapper.
 			 */
 			$str = apply_filters( 'wpmem_restricted_msg', $str, $msg, '<div id="wpmem_restricted_msg"><p>', '</p></div>' );
 		}

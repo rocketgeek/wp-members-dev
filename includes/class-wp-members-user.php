@@ -535,7 +535,7 @@ class WP_Members_User {
 		}
 		
 		// Capture IP address of all users at registration.
-		$user_ip = ( $this->reg_type['is_wpmem'] ) ? $this->post_data['wpmem_reg_ip'] : wpmem_get_user_ip();
+		$user_ip = ( $this->reg_type['is_wpmem'] ) ? $this->post_data['wpmem_reg_ip'] : wpmem_get_user_ip(); // Sanitized at source now.
 		update_user_meta( $user_id, 'wpmem_reg_ip', $user_ip );
 
 	}
