@@ -98,6 +98,8 @@ function wpmem_uninstall_options() {
 	}
 	delete_option( 'wpmembers_optin' );
 	delete_option( 'wpmembers_install_state' );
+
+	delete_option( 'wpmem_enable_field_sc' );
 }
 
 // End of file.

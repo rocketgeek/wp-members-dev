@@ -168,6 +168,13 @@ function wpmem_upgrade_settings() {
 		
 		// @since 3.3.0 Upgrade stylesheet setting.
 		$wpmem_settings['select_style'] = wpmem_upgrade_style_setting( $wpmem_settings );
+
+		// Change 3.4.9 field shortcode option.
+		if ( ! isset( $wpmem_settings['shortcode'] ) ) {
+			$field_sc = get_option( 'wpmem_enable_fields_sc' );
+			$wpmem_settings['shortcodes']['enable_field'] = ( $field_sc ) ? intval( $field_sc ) : 2;
+			delete_option( 'wpmem_enable_fields_sc' );
+		}
 		
 		// Version number should be updated no matter what.
 		$wpmem_settings['version']    = WPMEM_VERSION;
@@ -215,6 +222,7 @@ function wpmem_upgrade_settings() {
 			'attrib'          => get_option( 'wpmembers_attrib' ),
 			'clone_menus'     => 0,
 			'enable_products' => 0,
+			'shortcodes'      => array( 'enable_field' => 0 ),
 		);
 		// Handle auto excerpt setting change and add to setting array.
 		$autoex = get_option( 'wpmembers_autoex' );
@@ -529,6 +537,7 @@ function wpmem_install_settings() {
 		'attrib'          => 0,
 		'post_types'      => array(),
 		'form_tags'       => array( 'default' => 'Registration Default' ),
+		'shortcodes'      => array( 'enable_field' => 0 ),
 	);
 	
 	// Using update_option to allow for forced update.

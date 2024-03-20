@@ -535,7 +535,7 @@ class WP_Members {
 		foreach ( $settings as $key => $val ) {
 			// @todo Leaving error message and password reset settings values in for now for rollback backwards compatibility.
 			//       Later, we'll remove those values in the upgrade, so this can be cleaned up.
-			if ( 'pwd_link' != $key || 'login_error' != $key ) {
+			if ( 'pwd_link' != $key || 'login_error' != $key || 'shortcodes' != $key ) {
 				$this->$key = $val;
 			}
 		}
@@ -551,7 +551,7 @@ class WP_Members {
 		
 		$this->forms       = new WP_Members_Forms;         // Load forms.
 		$this->api         = new WP_Members_API;           // Load api.
-		$this->shortcodes  = new WP_Members_Shortcodes();  // Load shortcodes.
+		$this->shortcodes  = new WP_Members_Shortcodes( $settings );  // Load shortcodes.
 		$this->membership  = new WP_Members_Products();    // Load membership plans
 		$this->email       = new WP_Members_Email;         // Load email functions
 		$this->user        = new WP_Members_User( $this ); // Load user functions.

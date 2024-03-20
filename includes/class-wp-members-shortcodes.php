@@ -22,8 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WP_Members_Shortcodes {
+
+	public $enable_field = 0;
 	
-	function __construct() {
+	function __construct( $settings ) {
+
+		$this->enable_field = ( isset( $settings['shortcodes']['enable_field'] ) ) ? $settings['shortcodes']['enable_field'] : 0;
+
 		/**
 		 * Fires before shortcodes load.
 		 *
@@ -32,7 +37,6 @@ class WP_Members_Shortcodes {
 		 */
 		do_action( 'wpmem_load_shortcodes' );
 		
-		add_shortcode( 'wpmem_field',        array( $this, 'fields'       ) );
 		add_shortcode( 'wpmem_logged_in',    array( $this, 'logged_in'    ) );
 		add_shortcode( 'wpmem_logged_out',   array( $this, 'logged_out'   ) );
 		add_shortcode( 'wpmem_logout',       array( $this, 'logout'       ) );
@@ -46,6 +50,22 @@ class WP_Members_Shortcodes {
 		add_shortcode( 'wpmem_login_button', array( $this, 'login_button' ) );
 		add_shortcode( 'wpmem_reg_link',     array( $this, 'login_link'   ) );
 		add_shortcode( 'wpmem_form_nonce',   array( $this, 'form_nonce'   ) );
+
+		/**
+		 * Filters the capability required for partial [wpmem_field]. 
+		 * 
+		 * @since 3.5.0
+		 * 
+		 * @param  string  $required_capability
+		 */
+		$required_capability = apply_filters( 'wpmem_field_sc_required_capability', 'list_users' );
+
+		if ( 1 == $this->enable_field && current_user_can( $required_capability ) ) {
+			add_shortcode( 'wpmem_field', array( $this, 'fields' ) );
+		}
+		if ( 2 == $this->enable_field ) {
+			add_shortcode( 'wpmem_field', array( $this, 'fields' ) );
+		}
 		
 		/**
 		 * Fires after shortcodes load.
@@ -661,7 +681,7 @@ class WP_Members_Shortcodes {
 		$fields = wpmem_fields();
 
 		// Additional fields from $user_info that are allowed by default.
-		$allowed_fields = array_merge( array( 'ID', 'user_registered', 'user_url', 'description', 'display_name' ), array_keys( $fields ) );
+		$allowed_fields = array_merge( array( 'ID', 'user_login', 'user_email', 'user_registered', 'user_url', 'description', 'display_name', 'expires' ), array_keys( $fields ) );
 
 		// Remove some (it won't ever get here for these, but just so they don't show up in the filter array to confuse someone).
 		unset( $allowed_fields['password'] );
