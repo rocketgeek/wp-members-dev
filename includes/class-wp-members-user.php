@@ -951,20 +951,20 @@ class WP_Members_User {
 	 *       product). Maybe add role checking to the expiration block if both exist.
 	 *
 	 * @global object $wpmem
-	 * @param  mixed  $product Accepts a single membership slug/meta, or an array of multiple memberships.
+	 * @param  mixed  $membership Accepts a single membership slug/meta, or an array of multiple memberships.
 	 * @param  int    $user_id (optional)
 	 * @return bool   $access
 	 */
-	function has_access( $product, $user_id = false ) {
+	function has_access( $membership, $user_id = false ) {
 		global $wpmem;
 		if ( ! is_user_logged_in() && ! $user_id ) {
 			return false;
 		}
 		
 		// Product must be an array.
-		$product_array = ( ! is_array( $product ) ) ? explode( ",", $product ) : $product;
+		$membership_array = ( ! is_array( $membership ) ) ? explode( ",", $membership ) : $membership;
 
-		$product_array = $this->get_membership_stack( $product_array );
+		$membership_array = $this->get_membership_stack( $membership_array );
 
 		// Current user or requested user.
 		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
@@ -975,7 +975,7 @@ class WP_Members_User {
 		// Start by assuming no access.
 		$access  = false;
 
-		foreach ( $product_array as $prod ) {
+		foreach ( $membership_array as $prod ) {
 			$expiration_product = false;
 			$role_product = false;
 			if ( isset( $memberships[ $prod ] ) ) {
@@ -1010,13 +1010,13 @@ class WP_Members_User {
 		 * Filter the access result.
 		 *
 		 * @since 3.2.0
-		 * @since 3.2.3 Added $product argument.
+		 * @since 3.2.3 Added $membership argument.
 		 *
 		 * @param  boolean $access
-		 * @param  array   $product
+		 * @param  array   $membership
 		 * @param  integer $user_id
 		 */
-		return apply_filters( 'wpmem_user_has_access', $access, $product_array, $user_id );
+		return apply_filters( 'wpmem_user_has_access', $access, $membership_array, $user_id );
 
 	}
 	
@@ -1028,38 +1028,41 @@ class WP_Members_User {
 	 * @since 3.4.1
 	 *
 	 * @global stdClass $wpmem
-	 * @param  array    $product_array
-	 * $return array    $product_array Product array with child products added.
+	 * @param  array    $membership_array
+	 * $return array    $membership_array Product array with child products added.
 	 */
-	function get_membership_stack( $product_array ) {
+	function get_membership_stack( $membership_array ) {
 
 		global $wpmem;
 		$membership_ids = wpmem_get_memberships_ids();
-		foreach ( $product_array as $product ) {
-			// Do we need child access?
-			$child_access = get_post_meta( $membership_ids[ $product ], 'wpmem_product_child_access', true );
-			if ( 1 == $child_access ) {
-				$args = array(
-					'post_type'   => $wpmem->membership->post_type,
-					'post_parent' => $membership_ids[ $product ], // Current post's ID
-				);
-				$children = get_children( $args );
-				if ( ! empty( $children ) ) {
-					foreach ( $children as $child ) {
-						$product_array[] = $child->post_name;
+		foreach ( $membership_array as $membership ) {
+			// If the membership exists, check for child/parent relationships (if it doesn't exist and we didn't check here, we'd throw an undefined index error).
+			if ( isset( $membership_ids[ $membership ] ) ) {
+				// Do we need child access?
+				$child_access = get_post_meta( $membership_ids[ $membership ], 'wpmem_product_child_access', true );
+				if ( 1 == $child_access ) {
+					$args = array(
+						'post_type'   => $wpmem->membership->post_type,
+						'post_parent' => $membership_ids[ $membership ], // Current post's ID
+					);
+					$children = get_children( $args );
+					if ( ! empty( $children ) ) {
+						foreach ( $children as $child ) {
+							$membership_array[] = $child->post_name;
+						}
 					}
-				}
-			} 
-			// Ancestor access is by default.
-			$ancestors = get_post_ancestors( $membership_ids[ $product ] );
-			if ( ! empty( $ancestors ) ) {
-				foreach ( $ancestors as $ancestor ) {
-					$product_array[] = get_post_field( 'post_name', $ancestor );;
+				} 
+				// Ancestor access is by default.
+				$ancestors = get_post_ancestors( $membership_ids[ $membership ] );
+				if ( ! empty( $ancestors ) ) {
+					foreach ( $ancestors as $ancestor ) {
+						$membership_array[] = get_post_field( 'post_name', $ancestor );;
+					}
 				}
 			}
 		}
 		
-		return $product_array;		
+		return $membership_array;		
 	}
 	
 	/**
@@ -1073,7 +1076,7 @@ class WP_Members_User {
 	 *
 	 * @param  int      $user_id
 	 * @param  stdClass $obj
-	 * @return array    $products {
+	 * @return array    $memberships {
 	 *     Memberships the user has as an array keyed by the membership slug.
 	 *     Memberships the user does not have enabled are not in the array.
 	 *     If a memberships is an expiration product, the expiration is the  
@@ -1085,16 +1088,16 @@ class WP_Members_User {
 	 */
 	function get_user_products( $user_id = false, $obj = false ) {
 		global $wpmem;
-		$product_array = ( $obj ) ? $obj->membership->products : ( ( isset( $wpmem->membership->products ) ) ? $wpmem->membership->products : array() );
+		$membership_array = ( $obj ) ? $obj->membership->memberships : ( ( isset( $wpmem->membership->memberships ) ) ? $wpmem->membership->memberships : array() );
 		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
-		foreach ( $product_array as $product_meta => $product ) {
-			$user_product = get_user_meta( $user_id, '_wpmem_products_' . $product_meta, true );
+		foreach ( $membership_array as $membership_meta => $membership ) {
+			$user_product = get_user_meta( $user_id, '_wpmem_products_' . $membership_meta, true );
 			if ( $user_product ) {
-				$products[ $product_meta ] = $user_product;
+				$memberships[ $membership_meta ] = $user_product;
 			}
 			$user_product = '';
 		}
-		return ( isset( $products ) ) ? $products : array();
+		return ( isset( $memberships ) ) ? $memberships : array();
 	}
 	
 	/**
@@ -1109,38 +1112,38 @@ class WP_Members_User {
 	 * @since 3.3.0 Updated to new single meta, keeps legacy array for rollback.
 	 * @since 3.3.1 Added no gap renewal option.
 	 *
-	 * @param string $product
+	 * @param string $membership
 	 * @param int    $user_id
 	 * @param string $set_date Formatted date should be MySQL timestamp, or simply YYYY-MM-DD.
 	 */
-	function set_user_product( $product, $user_id = false, $set_date = false ) {
+	function set_user_product( $membership, $user_id = false, $set_date = false ) {
 
 		global $wpmem;
 		
 		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
 		
 		// New single meta format. @todo This remains when legacy array is removed.
-		$prev_value = get_user_meta( $user_id, '_wpmem_products_' . $product, true );
+		$prev_value = get_user_meta( $user_id, '_wpmem_products_' . $membership, true );
 
 		// Convert date to add.
-		$expiration_period = ( isset( $wpmem->membership->products[ $product ]['expires'] ) ) ? $wpmem->membership->products[ $product ]['expires'] : false;
+		$expiration_period = ( isset( $wpmem->membership->products[ $membership ]['expires'] ) ) ? $wpmem->membership->products[ $membership ]['expires'] : false;
 		
 		$renew = ( $prev_value ) ? true : false;
 	
 		// If membership is an expiration product.
 		if ( is_array( $expiration_period ) ) {
-			$new_value = $wpmem->membership->set_product_expiration( $product, $user_id, $set_date, $prev_value, $renew );
+			$new_value = $wpmem->membership->set_product_expiration( $membership, $user_id, $set_date, $prev_value, $renew );
 		} else {
 			$new_value = true;
 		}
 		
 		// Update product setting.
-		update_user_meta( $user_id, '_wpmem_products_' . $product, $new_value );
+		update_user_meta( $user_id, '_wpmem_products_' . $membership, $new_value );
 		
 		// Update the legacy setting.
 		$user_products = get_user_meta( $user_id, '_wpmem_products', true );
 		$user_products = ( $user_products ) ? $user_products : array();
-		$user_products[ $product ] = ( true === $new_value ) ? true : date( 'Y-m-d H:i:s', $new_value );
+		$user_products[ $membership ] = ( true === $new_value ) ? true : date( 'Y-m-d H:i:s', $new_value );
 		update_user_meta( $user_id, '_wpmem_products', $user_products );
 
 		/**
@@ -1149,12 +1152,12 @@ class WP_Members_User {
 		 * @since 3.3.0
 		 *
 		 * @param  int    $user_id
-		 * @param  string $product
+		 * @param  string $membership
 		 * @param  mixed  $new_value
 		 * @param  string $prev_value
 		 * @param  bool   $renew
 		 */
-		do_action( 'wpmem_user_product_set', $user_id, $product, $new_value, $prev_value, $renew );
+		do_action( 'wpmem_user_product_set', $user_id, $membership, $new_value, $prev_value, $renew );
  
 	}
 	
@@ -1164,10 +1167,10 @@ class WP_Members_User {
 	 * @since 3.2.0
 	 * @since 3.3.0 Updated for new single meta, keeps legacy array for rollback.
 	 *
-	 * @param string $product
+	 * @param string $membership
 	 * @param int    $user_id
 	 */
-	function remove_user_product( $product, $user_id = false ) {
+	function remove_user_product( $membership, $user_id = false ) {
 		global $wpmem;
 		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
 		
@@ -1175,12 +1178,12 @@ class WP_Members_User {
 		$user_products = get_user_meta( $user_id, '_wpmem_products', true );
 		$user_products = ( $user_products ) ? $user_products : array();
 		if ( $user_products ) {
-			unset( $user_products[ $product ] );
+			unset( $user_products[ $membership ] );
 			update_user_meta( $user_id, '_wpmem_products', $user_products );
 		}
 		
 		// @todo New version.
-		return delete_user_meta( $user_id, '_wpmem_products_' . $product );
+		return delete_user_meta( $user_id, '_wpmem_products_' . $membership );
 	}
 	
 	/**
