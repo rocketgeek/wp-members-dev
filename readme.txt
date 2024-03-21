@@ -2,8 +2,8 @@
 Contributors: cbutlerjr
 Tags: access, authentication, content, login, member, membership, password, protect, register, registration, restriction, subscriber
 Requires at least: 4.0
-Tested up to: 6.2
-Stable tag: 3.4.8
+Tested up to: 6.4
+Stable tag: 3.5.0
 
 License: GPLv3
 
@@ -134,27 +134,32 @@ WP-Members 3.4.8 is a security update, along with a series of bug fix patches. B
 
 = 3.5.0 =
 
-* @todo WP-Members pluggable deprecated for use in theme functions.php (wpmem will be initialized when plugins are loaded).  If you have any WP-Members pluggable functions that load in the theme functions.php, you'll need to move these to another location, such as a custom plugin file.  Keep in mind, pluggable functions are no longer the preferred way of customizing (and have not been for many years) as most customizations, if not all, can be handled by using the plugin's filter and action hooks.
+* IMPORTANT: WP-Members pluggable deprecated for use in theme functions.php.  WP-Members is now initialized when plugins are loaded, which is an earlier load action than previous versions.  If you have any WP-Members pluggable functions that load in the theme functions.php, you'll need to move these to another location, such as a custom plugin file.  Keep in mind, pluggable functions are no longer the preferred way of customizing (and have not been for many years) as most customizations, if not all, can be handled by using the plugin's filter and action hooks.
+* IMPORTANT: Legacy password reset (requiring username & email to send a new password via email) is fully obsolete.  Plugin now only sends a password reset link for the user to then access the site and set a new password (no passwords via email).
+* IMPORTANT: Legacy login error message is fully obsolete.  Legacy messages still used, in error message, but generation/display is now using the WP Error object class.
 
-* Legacy password reset (requiring username & email to send a new password via email) is fully obsolete.  Plugin now only sends a password reset link for the user to then access the site and set a new password (no passwords via email).
-* Legacy login error message is fully obsolete.  Legacy messages still used, in error message, but generation/display is now using the WP Error object class.
-
-* Adds formatting filters (wpmem_field_shortcode_multi_args, wpmem_field_shortcode_multi_rows, wpmem_field_sc_multi_html) for field shortcode to customize HTML when displaying multiple select/multiple checkbox field results.
-
+Bug fixes:
 * Fixes a bug in the login_link shortcode that caused an empty href value.
 * Fixes a bug in the login that causes double sessions.
 * Fixes a bug in wpmem_user_has_access() that returns false for checking a specified user ID if the check is run when no user is logged in.
 * Fixes a bug in wpmem_user_is_current() that throws a PHP error if the user does not have access to the requested membership (should return false in this instance).
+* Fixes a bug if WooCommerce registration is used and WP-Members fields are set to be included but no specific WP-Members fields are identified for inclusion (empty value).
+* Fixes a bug in the [wpmem_tos] shortcode if no URL is passed.
+* Fixes a bug in membership check if the user doesn't have the membership.
 
+New features:
+* Adds a "novalidate" option by filter toggle to the reg/login forms (for disabling the default HTML5 validation on required fields).
+* Adds formatting filters (wpmem_field_shortcode_multi_args, wpmem_field_shortcode_multi_rows, wpmem_field_sc_multi_html) for field shortcode to customize HTML when displaying multiple select/multiple checkbox field results.
+* User registration/profile fields are now selectable for each state (reg/profile) in the Fields tab.
+* If WooCommerce is enabled, registration/profile fields are selectable for inclusion in WooCommerce checkout, registration, and profile forms.
+* Adds "drop-ins" functionality (officially; this has actually been in the plugin since 3.4).
+* Adds 'wpmem_user_profile_caps' filter hook for customizing the required user capability to inlcude the WP-Members tabs (experimental until confirmed with other extensions).
+
+Other:
+* Security audit of shortcode object class.
 * Updates wpmem_email_to_user() to use tags instead of numeric tags, but numeric values are backward compatible.
 * Can resend welcome email (with confirmation link) when confirmation link setting is enabled. This can be via the bulk action menu (multiple users) or hover link (single user).
-
-* fixes a bug in the [wpmem_tos] shortcode if no URL is passed.
-* Fixes a bug in membership check if the user doesn't have the membership (look this up in git).
-
-* Adds a "novalidate" option by filter toggle to the reg/login forms (for disabling the default HTML5 validation on required fields).
-
-* Fixes a bug if WooCommerce registration is used and WP-Members fields are set to be included but no specific WP-Members fields are identified for inclusion (empty value).
+* Removes obsolete file /admin/tab-options.php.  Users of the WP-Members User List extension version 1.9.4 and earlier will need to update the User List extension for full compatiblity.
 
 = 3.4.8 =
 
