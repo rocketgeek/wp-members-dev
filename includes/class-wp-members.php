@@ -1238,55 +1238,59 @@ class WP_Members {
 	 * @return
 	 */
 	function do_securify_rest( $response, $post, $request ) {
-		
-		if ( ! is_user_logged_in() ) { // @todo This needs to be changed to check for whether the user has access (for internal requests).
-			// Response for restricted content
-			$block_value = wpmem_is_blocked( $response->data['id'] );
-			if ( $block_value ) {
+	
+		// Only run if $response contains "id", otherwise we can't check it as blocked (since it would not contain a post ID).
+		if ( isset( $response->data['id'] ) ) {
 
-				/**
-				 * 
-				 * 
-				 * @since 3.4.7
-				 * 
-				 * @param 
-				 * @param WP_REST_Response $response The response object.
-				 * @param WP_Post          $post     Post object.
-				 * @param WP_REST_Request  $request  Request object. 
-				 */
-				$drop = apply_filters( "wpmem_securify_rest_{$post->post_type}_drop_response_data", array(), $response, $post, $request );
+			if ( ! is_user_logged_in() ) { // @todo This needs to be changed to check for whether the user has access (for internal requests).
+				// Response for restricted content
+				$block_value = wpmem_is_blocked( $response->data['id'] );
+				if ( $block_value ) {
 
-				foreach ( $drop as $dropped_key ) {
-					$response->data[ $dropped_key ] = array();
-				}
-
-				if ( isset( $response->data['content']['rendered'] ) ) {
 					/**
-					 * Filters restricted content message.
-					 *
-					 * @since 3.3.2
-					 * @since 3.3.4 Added $response, $post, and $request
-					 *
-					 * @param string $message
+					 * 
+					 * 
+					 * @since 3.4.7
+					 * 
+					 * @param 
+					 * @param WP_REST_Response $response The response object.
+					 * @param WP_Post          $post     Post object.
+					 * @param WP_REST_Request  $request  Request object. 
 					 */
-					$response->data['content']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_content", __( "You must be logged in to view this content.", 'wp-members' ), $response, $post, $request );
-				}
-				if ( isset( $response->data['excerpt']['rendered'] ) ) {
-					/**
-					 * Filters restricted excerpt message.
-					 *
-					 * @since 3.3.2
-					 * @since 3.3.4 Added $response, $post, and $request
-					 *
-					 * @param string $message
-					 */
-					$response->data['excerpt']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_excerpt", __( "You must be logged in to view this content.", 'wp-members' ), $response, $post, $request );
-				}
-			}
+					$drop = apply_filters( "wpmem_securify_rest_{$post->post_type}_drop_response_data", array(), $response, $post, $request );
 
-			// Response for hidden content. @todo This needs to be changed to check for whether the user has access (for internal requests).
-			if ( ! is_admin() && in_array( $post->ID, $this->hidden_posts() ) ) {
-				return new WP_REST_Response( __( 'The page you are looking for does not exist', 'wp-members' ), 404 );
+					foreach ( $drop as $dropped_key ) {
+						$response->data[ $dropped_key ] = array();
+					}
+
+					if ( isset( $response->data['content']['rendered'] ) ) {
+						/**
+						 * Filters restricted content message.
+						 *
+						 * @since 3.3.2
+						 * @since 3.3.4 Added $response, $post, and $request
+						 *
+						 * @param string $message
+						 */
+						$response->data['content']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_content", __( "You must be logged in to view this content.", 'wp-members' ), $response, $post, $request );
+					}
+					if ( isset( $response->data['excerpt']['rendered'] ) ) {
+						/**
+						 * Filters restricted excerpt message.
+						 *
+						 * @since 3.3.2
+						 * @since 3.3.4 Added $response, $post, and $request
+						 *
+						 * @param string $message
+						 */
+						$response->data['excerpt']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_excerpt", __( "You must be logged in to view this content.", 'wp-members' ), $response, $post, $request );
+					}
+				}
+
+				// Response for hidden content. @todo This needs to be changed to check for whether the user has access (for internal requests).
+				if ( ! is_admin() && in_array( $post->ID, $this->hidden_posts() ) ) {
+					return new WP_REST_Response( __( 'The page you are looking for does not exist', 'wp-members' ), 404 );
+				}
 			}
 		}
 		return $response;

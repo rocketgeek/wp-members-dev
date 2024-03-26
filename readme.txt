@@ -146,6 +146,7 @@ Bug fixes:
 * Fixes a bug if WooCommerce registration is used and WP-Members fields are set to be included but no specific WP-Members fields are identified for inclusion (empty value).
 * Fixes a bug in the [wpmem_tos] shortcode if no URL is passed.
 * Fixes a bug in membership check if the user doesn't have the membership.
+* Fixes a bug in WP_Members::do_securify_rest() to check for a post ID, otherwise an error thrown when we try to check if the post is blocked.
 
 New features:
 * Adds a "novalidate" option by filter toggle to the reg/login forms (for disabling the default HTML5 validation on required fields).
