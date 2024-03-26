@@ -218,6 +218,21 @@ class WP_Members_Admin_Tab_Fields {
 					<input type="checkbox" name="add_html" value="y" <?php //echo ( $mode == 'edit' ) ? checked( true, $field['html'] ) : false; ?> />
 				</li>
 				</div>-->
+			
+			<?php 
+			/**
+			 @todo add default value entry for field properties.
+			
+			if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'text', 'number', 'date' ) ) ) ) ) {
+				echo ( $mode == 'add' ) ? '<div id="wpmem_default_value">' : '';
+				<li>
+					<label><?php _e( 'Default value', 'wp-members' ); ?></label>
+					<input type="text" name="add_default_value" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['default_value'] ) ? $field['default_value'] : false ) : false; ?>" /> <?php echo __( 'This will pre-populate the field with a default value. Leave empty if no default value is desired', 'wp-members' ) . ' ' . $span_optional; ?>
+				</li>
+				echo ( $mode == 'add' ) ? '</div>' : '';
+			}
+			*/ ?>
+
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'text', 'password', 'email', 'url', 'number', 'date', 'textarea', 'timestamp' ) ) ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_placeholder">' : ''; ?>
 				<li>
