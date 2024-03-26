@@ -193,7 +193,8 @@ class WP_Members_Dialogs {
 		 * @since 3.1.0
 		 * @deprecated 3.2.7 Use wpmem_default_text instead.
 		 */
-		$text = apply_filters( 'wpmem_default_text_strings', '' );
+		$text = apply_filters_deprecated( 'wpmem_default_text_strings', array( '' ), '3.2.7', 'wpmem_default_text' );
+
 		
 		// Merge filtered $terms with $defaults.
 		$text = wp_parse_args( $text, $defaults );
@@ -323,11 +324,10 @@ class WP_Members_Dialogs {
 		 *
 		 * @since 2.9.0
 		 * @deprecated 3.3.0 Use wpmem_msg_defaults instead.
-		 * @todo Obsolete in 3.5.0
 		 *
 		 * @param array An array of arguments to merge with defaults.
 		 */
-		$args = apply_filters( 'wpmem_msg_args', '' );
+		$args = apply_filters_deprecated( 'wpmem_msg_args', array(''), '3.2.0', 'wpmem_dialogs' );
 
 		/** This filter is documented in /includes/class-wp-members-admin-api.php */
 		$dialogs = apply_filters( 'wpmem_dialogs', get_option( 'wpmembers_dialogs' ) );
@@ -363,7 +363,7 @@ class WP_Members_Dialogs {
 		 * @param string $tag      The tag that we are on, if any.
 		 * @param array  $dialogs
 		 */
-		$defaults = apply_filters( 'wpmem_msg_dialog_arr', $defaults, $tag, $dialogs );
+		$defaults = apply_filters_deprecated( 'wpmem_msg_dialog_arr', array( $defaults, $tag, $dialogs ), '3.3.0', 'wpmem_msg_defaults' );
 
 		// Merge $args with defaults.
 		$args = wp_parse_args( $args, $defaults );

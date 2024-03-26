@@ -147,7 +147,8 @@ class WP_Members_Captcha {
 		 *
 		 * @param string $html A string of HTML for the reCAPTCHA.
 		 */
-		$html = apply_filters( 'wpmem_recaptcha', $html );
+		$html = apply_filters_deprecated( 'wpmem_recaptcha', array( $html ), '3.3.5', 'wpmem_captcha' );
+
 
 		/**
 		 * Filter the captcha HTML.

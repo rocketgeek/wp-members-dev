@@ -1119,7 +1119,7 @@ class WP_Members_Forms {
 		 * @param array        The array of form fields.
 		 * @param string $tag  Toggle new registration or profile update. new|edit.
 		 */
-		$wpmem_fields = apply_filters( 'wpmem_register_fields_arr', $wpmem_fields, $tag );
+		$wpmem_fields = apply_filters_deprecated( 'wpmem_register_fields_arr', array( $wpmem_fields, $tag ), '3.1.7', 'wpmem_fields' );
 
 		$hidden_rows = array();
 		$form_has_file = false;
@@ -2073,7 +2073,7 @@ class WP_Members_Forms {
 		 *
 		 * @param array $default_inputs An array matching the elements used by default.
 		 */	
-		$default_inputs = apply_filters( 'wpmem_inc_' . $form . '_inputs', $input_arrays[ $form ] );
+		$default_inputs = apply_filters_deprecated( 'wpmem_inc_' . $form . '_inputs', array( $input_arrays[ $form ] ), '3.3.0', 'wpmem_' . $form . '_form_defaults' );
 
 		$form_arrays = array(
 			'login' => array( 
@@ -2111,7 +2111,7 @@ class WP_Members_Forms {
 		 *
 		 * @param array $args An array of arguments to use. Default null. (login|changepassword|resetpassword|forgotusername)
 		 */
-		$args = apply_filters( 'wpmem_inc_' . $form . '_args', '' );
+		$args = apply_filters_deprecated( 'wpmem_inc_' . $form . '_args', array(''), '3.3.0', 'wpmem_' . $form . '_form_defaults' );
 		$arr  = wp_parse_args( $args, $form_arrays[ $form ] );
 		
 		/**

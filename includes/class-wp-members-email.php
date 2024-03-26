@@ -240,7 +240,7 @@ class WP_Members_Email {
 			 * @param string $this->settings['body'] The body content of the new registration email.
 			 * @param int    $user_id
 			 */
-			$this->settings['body'] = apply_filters( 'wpmem_email_' . $this->settings['tag'], $this->settings['body'] );
+			$this->settings['body'] = apply_filters_deprecated( 'wpmem_email_' . $this->settings['tag'], array( $this->settings['body'] ), '3.2.0', 'wpmem_email_filter' );
 
 			// Get the email footer if needed.
 			$foot = ( $this->settings['add_footer'] ) ? $this->settings['footer'] : '';

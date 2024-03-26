@@ -204,7 +204,7 @@ class widget_wpmemwidget extends WP_Widget {
 			 *
 			 * @param array An array of the defaults to be changed.
 			 */
-			$args = apply_filters( 'wpmem_sb_login_args', '' );
+			$args = apply_filters_deprecated( 'wpmem_sb_login_args', array(''), '3.3.0', 'wpmem_login_widget_args' );
 
 			// Merge $args with defaults.
 			$args = wp_parse_args( $args, $defaults );
@@ -295,7 +295,7 @@ class widget_wpmemwidget extends WP_Widget {
 			 *
 			 * @param string $hidden The HTML for the hidden fields.
 			 */
-			$hidden = apply_filters( 'wpmem_sb_hidden_fields', $hidden );
+			$hidden = apply_filters_deprecated( 'wpmem_sb_hidden_fields', array( $hidden ), '3.4.0', 'wpmem_login_widget_hidden_fields' );
 			/**
 			 * Filter sidebar login form hidden fields.
 			 *
@@ -320,7 +320,7 @@ class widget_wpmemwidget extends WP_Widget {
 				 * @param string $link_html
 				 * @param string $link
 				 */
-				$link_html = apply_filters( 'wpmem_sb_forgot_link_str', $link_html, $link );
+				$link_html = apply_filters_deprecated( 'wpmem_sb_forgot_link_str', array( $link_html, $link ), '3.4.0', 'wpmem_login_widget_forgot_link_str' );
 				/**
 				 * Filter the sidebar forgot password.
 				 *
@@ -346,7 +346,7 @@ class widget_wpmemwidget extends WP_Widget {
 				 * @param string $link_html
 				 * @param string $link
 				 */
-				$link_html = apply_filters( 'wpmem_sb_reg_link_str', $link_html, $link );
+				$link_html = apply_filters_deprecated( 'wpmem_sb_reg_link_str', array( $link_html, $link ), '3.4.0', 'wpmem_login_widget_reg_link_str' );
 				/**
 				 * Filter the sidebar register link.
 				 *
@@ -381,7 +381,7 @@ class widget_wpmemwidget extends WP_Widget {
 			 *
 			 * @param string $form The HTML for the sidebar login form.
 			 */
-			$form = apply_filters( 'wpmem_sidebar_form', $form );
+			$form = apply_filters_deprecated( 'wpmem_sidebar_form', array( $form ), '3.3.9', 'wpmem_login_widget_form' );
 			/**
 			 * Filter the sidebar form.
 			 *
@@ -409,7 +409,7 @@ class widget_wpmemwidget extends WP_Widget {
 				 *
 				 * @param string $error_msg The error message.
 				 */
-				$error_msg = apply_filters( 'wpmem_login_failed_sb', $error_msg );
+				$error_msg = apply_filters_deprecated( 'wpmem_login_failed_sb', array( $error_msg ), '3.4.0', 'wpmem_login_widget_login_failed' );
 				/**
 				 * Filter the sidebar login failed message.
 				 *
@@ -449,7 +449,7 @@ class widget_wpmemwidget extends WP_Widget {
 			 * @param  array $defaults
 			 * @return array
 			 */
-			$args = apply_filters( 'wpmem_sidebar_status_args', $defaults );
+			$args = apply_filters_deprecated( 'wpmem_sidebar_status_args', array( $defaults ), '3.4.0', 'wpmem_login_widget_status_args' );
 			/**
 			 * Filter sidebar login status arguments.
 			 *
@@ -474,7 +474,7 @@ class widget_wpmemwidget extends WP_Widget {
 			 *
 			 * @param string $str The login status for the user.
 			 */
-			$str = apply_filters( 'wpmem_sidebar_status', $str );
+			$str = apply_filters_deprecated( 'wpmem_sidebar_status', array( $str ), '3.4.0', 'wpmem_login_widget_status' );
 			/**
 			 * Filter the sidebar user login status.
 			 *
