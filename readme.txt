@@ -155,6 +155,7 @@ New features:
 * If WooCommerce is enabled, registration/profile fields are selectable for inclusion in WooCommerce checkout, registration, and profile forms.
 * Adds "drop-ins" functionality (officially; this has actually been in the plugin since 3.4).
 * Adds 'wpmem_user_profile_caps' filter hook for customizing the required user capability to inlcude the WP-Members tabs (experimental until confirmed with other extensions).
+* Adds custom object class to handle custom functions when the Import Users and Customers plugin is used and moderated registration or confirmation link settings are enabled. 
 
 Other:
 * Security audit of shortcode object class.
