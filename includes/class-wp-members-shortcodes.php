@@ -607,7 +607,6 @@ class WP_Members_Shortcodes {
 	 * Filter the end result with `wpmem_field_shortcode`.
 	 * 
 	 * User input is sanitized with wpmem_sanitize_array().
-	 * @todo Output should be reviewed for escape.
 	 *
 	 * @since 3.1.2
 	 * @since 3.1.4 Changed to display value rather than stored value for dropdown/multicheck/radio.
