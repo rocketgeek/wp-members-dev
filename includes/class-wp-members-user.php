@@ -18,13 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Members_User {
 	
 	/**
-	 * Container for reg form data.
+	 * Containers for reg form data.
 	 *
 	 * @since  3.1.7
 	 * @access public
 	 * @var    array
 	 */
 	public $post_data = array();
+	public $prev_data = array();
 	
 	/**
 	 * Container for user access information.

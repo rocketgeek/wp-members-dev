@@ -495,6 +495,10 @@ class WP_Members {
 	public $usertrack;
 	public $user_list;
 
+	// @deprecated
+	public $pwd_link;
+	public $login_error;
+
 	/**
 	 * Plugin initialization function.
 	 *
