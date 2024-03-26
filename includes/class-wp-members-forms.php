@@ -2165,8 +2165,19 @@ class WP_Members_Forms {
 
 			// The message shown above blocked content.
 			$msg = wpmem_get_text( 'restricted_msg' );
-			$msg = ( $dialogs['restricted_msg'] == $msg ) ? $msg : __( stripslashes( $dialogs['restricted_msg'] ), 'wp-members' );
-			$str = '<div id="wpmem_restricted_msg"><p>' . $msg . '</p></div>';
+			/**
+			 * Filter the message args.
+			 * 
+			 * @since 3.5.0
+			 * 
+			 * @param  array  $args
+			 */
+			$args = apply_filters( 'wpmem_restricted_msg_args', array( 
+				'msg' => ( $dialogs['restricted_msg'] == $msg ) ? $msg : __( stripslashes( $dialogs['restricted_msg'] ), 'wp-members' ),
+				'before' => '<div id="wpmem_restricted_msg"><p>',
+				'after'  => '</p></div>',
+			));
+			$full_html = $args['before'] . $args['msg'] . $args['after'];
 
 			/**
 			 * Filter the post restricted message.
@@ -2179,7 +2190,7 @@ class WP_Members_Forms {
 			 * @param string $before    The 'before' HTML wrapper.
 			 * @param string $after     The 'after' HTML wrapper.
 			 */
-			$str = apply_filters( 'wpmem_restricted_msg', $str, $msg, '<div id="wpmem_restricted_msg"><p>', '</p></div>' );
+			$str = apply_filters( 'wpmem_restricted_msg', $full_html, $args['msg'], $args['before'], $args['after'] );
 		}
 		
 		return $str;
