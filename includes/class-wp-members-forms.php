@@ -72,27 +72,30 @@ class WP_Members_Forms {
 
 				// Key fields with meta key.
 				$meta_key = $val[2];
+
+				// What is the field type.
+				$field_type = $val[3];
 	
 				// Old format, new key.
 				foreach ( $val as $subkey => $subval ) {
-					$wpmem->fields[ $meta_key ][ $subkey ] = $subval;
+					$assembled_fields[ $meta_key ][ $subkey ] = $subval;
 				}
 				
 				// Setup field properties.
-				$wpmem->fields[ $meta_key ]['label']    = $val[1];
-				$wpmem->fields[ $meta_key ]['type']     = $val[3];
-				$wpmem->fields[ $meta_key ]['register'] = ( 'y' == $val[4] ) ? true : false;
-				$wpmem->fields[ $meta_key ]['required'] = ( 'y' == $val[5] ) ? true : false;
-				$wpmem->fields[ $meta_key ]['profile']  = ( isset( $val['profile'] ) ) ? $val['profile'] : true ; // // @todo Wait for profile fix
-				$wpmem->fields[ $meta_key ]['native']   = ( 'y' == $val[6] ) ? true : false;
+				$assembled_fields[ $meta_key ]['label']    = $val[1];
+				$assembled_fields[ $meta_key ]['type']     = $field_type;
+				$assembled_fields[ $meta_key ]['register'] = ( 'y' == $val[4] ) ? true : false;
+				$assembled_fields[ $meta_key ]['required'] = ( 'y' == $val[5] ) ? true : false;
+				$assembled_fields[ $meta_key ]['profile']  = $val['profile'];
+				$assembled_fields[ $meta_key ]['native']   = ( 'y' == $val[6] ) ? true : false;
 				
-				// Certain field types have additional properties.
-				switch ( $val[3] ) {
+				// These field types have additional properties.
+				switch ( $field_type ) {
 					
 					case 'checkbox':
-						$wpmem->fields[ $meta_key ]['checked_value']   = $val[7];
-						$wpmem->fields[ $meta_key ]['checked_default'] = ( 'y' == $val[8] ) ? true : false;
-						$wpmem->fields[ $meta_key ]['checkbox_label']  = ( isset( $val['checkbox_label'] ) ) ? $val['checkbox_label'] : 0;
+						$assembled_fields[ $meta_key ]['checked_value']   = $val[7];
+						$assembled_fields[ $meta_key ]['checked_default'] = ( 'y' == $val[8] ) ? true : false;
+						$assembled_fields[ $meta_key ]['checkbox_label']  = ( isset( $val['checkbox_label'] ) ) ? $val['checkbox_label'] : 0;
 						break;
 
 					case 'select':
@@ -100,7 +103,7 @@ class WP_Members_Forms {
 					case 'multicheckbox':
 					case 'radio':
 					case 'membership':
-						if ( 'membership' == $val[3] ) {
+						if ( 'membership' == $field_type ) {
 							$val[7] = array( esc_html__( 'Choose membership', 'wp-members' ) . '|' );
 							foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
 								$val[7][] = $membership_value['title'] . '|' . $membership_key;
@@ -109,31 +112,39 @@ class WP_Members_Forms {
 						// Correct a malformed value (if last value is empty due to a trailing comma).
 						if ( '' == end( $val[7] ) ) {
 							array_pop( $val[7] );
-							$wpmem->fields[ $meta_key ][7] = $val[7];
+							$assembled_fields[ $meta_key ][7] = $val[7];
 						}
-						$wpmem->fields[ $meta_key ]['values']    = $val[7];
-						$wpmem->fields[ $meta_key ]['delimiter'] = ( isset( $val[8] ) ) ? $val[8] : '|';
-						$wpmem->fields[ $meta_key ]['options']   = array();
+						$assembled_fields[ $meta_key ]['values']    = $val[7];
+						$assembled_fields[ $meta_key ]['delimiter'] = ( isset( $val[8] ) ) ? $val[8] : '|';
+						$assembled_fields[ $meta_key ]['options']   = array();
 						foreach ( $val[7] as $value ) {
 							$pieces = explode( '|', trim( $value ) );
 							if ( isset( $pieces[1] ) && $pieces[1] != '' ) {
-								$wpmem->fields[ $meta_key ]['options'][ $pieces[1] ] = $pieces[0];
+								$assembled_fields[ $meta_key ]['options'][ $pieces[1] ] = $pieces[0];
 							}
 						}
 						break;
 
 					case 'file':
 					case 'image':
-						$wpmem->fields[ $meta_key ]['file_types'] = $val[7];
+						$assembled_fields[ $meta_key ]['file_types'] = $val[7];
 						break;
 
 					case 'hidden':
-						$wpmem->fields[ $meta_key ]['value'] = $val[7];
+						$assembled_fields[ $meta_key ]['value'] = $val[7];
 						break;
-						
+
+					default:
+						$assembled_fields[ $meta_key ]['value'] = ( isset( $val['value'] ) ) ? $val['value'] : ''; // @since 3.5.0 adds default value.
+						break;
 				}
 			}
 		}
+
+		// @todo Set for checking backwards compatibility, but eventually get $wpmem->fields out altogether.
+		$wpmem->fields = $assembled_fields;
+
+		return $assembled_fields;
 	}
 
 	/**
@@ -144,6 +155,7 @@ class WP_Members_Forms {
 	 * @param array $fields
 	 */
 	function localize_fields( $fields ) {
+		// @todo Find wpmem_custom_translation_strings()
 		if ( function_exists( 'wpmem_custom_translation_strings' ) ) {
 			$string_map = wpmem_custom_translation_strings( get_locale() );
 			foreach ( $string_map as $meta_key => $value ) {
@@ -1191,6 +1203,10 @@ class WP_Members_Forms {
 				} else {
 					$val = ( isset( $_POST[ $meta_key ] ) ) ? wpmem_sanitize_field( $_POST[ $meta_key ], $field['type'] ) : '';
 				}
+
+				if ( '' != $field['value'] ) {
+					$val = $field['value'];
+				}
 			}
 
 			// Does the tos field.
@@ -1877,7 +1893,7 @@ class WP_Members_Forms {
 		global $wpmem;
 		echo '<table class="form-table"><tbody>';
 
-		$wpmem_fields = wpmem_fields( 'add_new' );
+		$wpmem_fields = wpmem_fields(); // @todo For now in 3.5+, load all fields.  Perhaps at some point we go to wpmem_fields( 'add_new' );
 		$exclude = wpmem_get_excluded_meta( 'wp-register' );
 
 		foreach ( $wpmem_fields as $meta_key => $field ) {

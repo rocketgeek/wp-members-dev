@@ -302,10 +302,8 @@ function wpmem_fields( $tag = 'all', $form = 'default' ) {
 	// @todo Review for removal.
 	$tag = $wpmem->convert_tag( $tag );
 
-	// Load fields if none are loaded.
-	if ( ! isset( $wpmem->fields ) || empty( $wpmem->fields ) ) {
-		$wpmem->forms->load_fields( $tag );
-	}
+	// Change in 3.5.0, always load fields here, regardless of whether they are loaded or not. That way it resets for the requested instance.
+	$wpmem->forms->load_fields( $tag );
 
 	/**
 	 * Filters the fields array.
