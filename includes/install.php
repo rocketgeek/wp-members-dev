@@ -65,7 +65,7 @@ function wpmem_do_install() {
 		wpmem_upgrade_user_search_crud_table();
 
 		if ( version_compare( $existing_settings['version'], '3.5.0', '<' ) ) {
-			wpmem_add_profile_to_fields();
+			wpmem_add_profile_to_fields( $existing_settings );
 		}
 		
 		// Not 100% certain where we needed to add wpmem_append_email(), but it was likely before 3.1.0.
@@ -880,7 +880,8 @@ function wpmem_upgrade_user_search_crud_table() {
 	$wpdb->query( "CREATE TABLE IF NOT EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud (meta_key VARCHAR(255) NOT NULL);" );
 }
 
-function wpmem_add_profile_to_fields() {
+function wpmem_add_profile_to_fields( $existing_settings ) {
+	
 	$fields = get_option( 'wpmembers_fields' );
 	$skips = array( 'username', 'user_login', 'password', 'confirm_password', 'tos' );
 	foreach ( $fields as $key => $val ) {
