@@ -53,6 +53,8 @@ class WP_Members_Products {
 	 * @var object
 	 */
 	public $admin;
+
+	public $woo_connector;
 	
 	/**
 	 * Product details.

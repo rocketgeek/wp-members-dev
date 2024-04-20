@@ -35,6 +35,8 @@ class WP_Members_User {
 	 * @var    array
 	 */
 	public $access = array();
+
+	public $reg_type;
 	
 	/**
 	 * Initilize the User object.
