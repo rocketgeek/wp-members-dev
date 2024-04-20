@@ -600,7 +600,15 @@ class WP_Members_Products {
 			$site_memberships  = wpmem_get_memberships();
 			$email_memberships = ( $wpmem->email->html ) ? '<p><ul>' : "";
 			foreach ( $user_memberships as $meta_key => $membership ) {
-				$email_memberships .= ( $wpmem->email->html ) ? "<li>" . $site_memberships[ $meta_key ]['title'] . '</li>' : $site_memberships[ $meta_key ]['title'] . "\r\n";
+				/*
+				 * In the odd situation where a user has a membership that does
+				 * not exist in $site_memberships, such as if the user had the membership
+				 * and the site later deleted it but it's still in the user's array,
+				 * check for unknown values before outputting to avoid undefined errors.
+				 */
+				if ( isset( $site_memberships[ $meta_key ] ) ) {
+					$email_memberships .= ( $wpmem->email->html ) ? "<li>" . esc_html( $site_memberships[ $meta_key ]['title'] ) . '</li>' : esc_attr( $site_memberships[ $meta_key ]['title'] ) . "\r\n";
+				}
 			}
 			$email_memberships .= ( $wpmem->email->html ) ? '</ul>' : "";
 

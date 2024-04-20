@@ -306,7 +306,7 @@ class WP_Members_User_Export {
 			$membership_products = wpmem_get_memberships();
 			// Don't bother if it's empty (i.e. memberships enabled, but none created).
 			if ( $membership_products && ! empty( $membership_products ) ) {
-				foreach( $membership_products as $product_key => $product ) {
+				foreach ( $membership_products as $product_key => $product ) {
 					$export_fields[ self::$membership_product_stem . $product_key ] = $membership_products[ $product_key ]['title'];
 				}
 			}

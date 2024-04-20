@@ -80,7 +80,7 @@ class WP_Members_User_Profile {
 		 * @param string The default additional fields heading.
 		 */
 		$heading = apply_filters( 'wpmem_' . $display . '_profile_heading', $heading ); ?>
-		<h3><?php echo esc_attr( $heading ); ?></h3>   
+		<h3><?php echo esc_html( $heading ); ?></h3>   
 		<table class="form-table">
 			<?php
 			// Get fields.
@@ -150,7 +150,7 @@ class WP_Members_User_Profile {
 							$attachment_url = wp_get_attachment_image( $val, 'medium' );
 							if ( 'admin' == $display ) {
 								$edit_url = admin_url( 'upload.php?item=' . $val );
-								$input = ( $attachment_url ) ? '<a href="' . $edit_url . '">' . $attachment_url . '</a>' : $empty_file;
+								$input = ( $attachment_url ) ? '<a href="' . esc_url_raw( $edit_url ) . '">' . esc_url_raw( $attachment_url ) . '</a>' : $empty_file;
 							} else {
 								$input = ( $attachment_url ) ? $attachment_url : $empty_file;
 							}
@@ -537,10 +537,11 @@ class WP_Members_User_Profile {
 						$label  = esc_html__( 'Activate this user?', 'wp-members' );
 						$action = 1;
 						break;
-				} ?>
+				} 
+				// Values used below are either already escaped or specifically defined (not variable input). ?>
 				<tr>
-					<th><label><?php echo esc_html( $label ); ?></label></th>
-					<td><input id="activate_user" type="checkbox" class="input" name="activate_user" value="<?php echo esc_attr( $action ); ?>" /></td>
+					<th><label><?php echo $label; ?></label></th>
+					<td><input id="activate_user" type="checkbox" class="input" name="activate_user" value="<?php echo $action; ?>" /></td>
 				</tr>
 			<?php }
 		}
