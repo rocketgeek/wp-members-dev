@@ -214,6 +214,9 @@ class WP_Members_Admin_API {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_action( 'admin_notices', array( $this, 'do_admin_notices' ) );
 		}
+
+		add_action( 'current_screen', array( $this, 'check_user_folders_for_index' ) );
+
 	} // End of load_hooks()
 
 	/**
@@ -684,6 +687,40 @@ class WP_Members_Admin_API {
 	
 	function post_types() {
 		return get_post_types( array( 'public' => true, '_builtin' => false ), 'names', 'and' );
+	}
+
+	function check_user_folders_for_index() {
+		global $current_screen, $wpmem;
+		if ( 'user-edit' == $current_screen->id 
+		  || 'profile' == $current_screen->id
+		  || 'dashboard' == $current_screen->id
+		  || 'plugins' == $current_screen->id
+		  || 'update-core' == $current_screen->id
+		  || 'settings_page_wpmem-settings' == $current_screen->id ) {
+
+			$upload_vars  = wp_upload_dir( null, false );
+			$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . $wpmem->upload_base );
+			$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+
+			if ( file_exists( $wpmem_user_files_dir ) ) {
+				// If there is a user file dir, check/self-heal htaccess/index files.
+				wpmem_create_file( array(
+					'path'     => $wpmem_user_files_dir,
+					'name'     => '.htaccess',
+					'contents' => "Options -Indexes"
+				) );
+				wpmem_create_file( array(
+					'path'     => $wpmem_base_dir,
+					'name'     => 'index.php',
+					'contents' => "<?php // Silence is golden."
+				) );
+				wpmem_create_file( array(
+					'path'     => $wpmem_user_files_dir,
+					'name'     => 'index.php',
+					'contents' => "<?php // Silence is golden."
+				) );
+			}
+		}
 	}
 
 } // End of WP_Members_Admin_API class.
