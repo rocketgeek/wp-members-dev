@@ -154,8 +154,8 @@ class WP_Members_Dialogs {
 			// Widget.
 			'widget_status'         => esc_html__( 'You are logged in as %s', 'wp-members' ),
 			'widget_logout'         => esc_html__( 'click here to log out', 'wp-members' ),
-			'widget_login_failed'   => esc_html__( 'Login Failed!<br />You entered an invalid username or password.', 'wp-members' ),
-			'widget_login_failed_new' => esc_html__( 'Invalid username or password.', 'wp-members' ), // @todo New string replacement. Replace widget_login_failed when translated.
+			'widget_login_failed_old' => __( 'Login Failed!<br />You entered an invalid username or password.', 'wp-members' ),
+			'widget_login_failed'   => esc_html__( 'Invalid username or password.', 'wp-members' ), // @todo New string replacement. Replace widget_login_failed when translated.
 			'widget_not_logged_in'  => '',
 			'widget_login_username' => esc_html__( 'Username or Email', 'wp-members' ),
 			'widget_login_password' => esc_html__( 'Password', 'wp-members' ),
@@ -165,11 +165,13 @@ class WP_Members_Dialogs {
 			
 			// Default Dialogs.
 			'restricted_msg'       => esc_html__( "This content is restricted to site members.  If you are an existing user, please log in.  New users may register below.", 'wp-members' ),
-			'success'              => esc_html__( "Congratulations! Your registration was successful.<br /><br />You may now log in using the password that was emailed to you.", 'wp-members' ),
+			'success_old'          => __( "Congratulations! Your registration was successful.<br /><br />You may now log in using the password that was emailed to you.", 'wp-members' ),
+			'success'              => esc_html__( "Congratulations! Your registration was successful. You may now log in using the password that was emailed to you.", 'wp-members' ),
 			
 			// @todo Under consideration for removal from the Dialogs tab.
 			'user'                 => esc_html__( "Sorry, that username is taken, please try another.", 'wp-members' ),
-			'email'                => esc_html__( "Sorry, that email address already has an account.<br />Please try another.", 'wp-members' ),
+			'email_old'            => __( "Sorry, that email address already has an account.<br />Please try another.", 'wp-members' ),
+			'email'                => esc_html__( "Sorry, that email address already has an account. Please try another.", 'wp-members' ),
 			'editsuccess'          => esc_html__( "Your information was updated!", 'wp-members' ),
 			
 			// @todo These are defaults and are under consideration for removal from the dialogs tab, possibly as we change the password reset to a link based process.

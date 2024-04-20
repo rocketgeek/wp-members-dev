@@ -279,7 +279,7 @@ class WP_Members_Validation_Link {
 	 */ 
 	function check_validated( $user, $username, $password ) {
 		if ( ! is_wp_error( $user ) && ! is_null( $user ) && false == wpmem_is_user_confirmed( $user->ID ) ) {
-			$user = new WP_Error( 'authentication_failed', esc_html__( '<strong>ERROR</strong>: User has not confirmed their account.', 'wp-members' ) );
+			$user = new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: User has not confirmed their account.', 'wp-members' ) );
 		}
 		/**
 		 * Filters the check_validated result.
