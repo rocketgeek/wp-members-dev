@@ -1177,4 +1177,19 @@ function wpmem_create_username_from_email( $email, $fields = array() ) {
 	
 	return $temp_user;
 }
+
+/**
+ * Utility to get all users. Essentially a wrapper for WP_User_Query
+ * 
+ * @since 3.5.0
+ * 
+ * @todo Add query args for getting users by membership (and by not membership)
+ */
+function wpmem_get_users( $args = array( 'fields' => 'ID' ), $type = 'array' ) {
+	$type = ( ! is_array( $args ) ) ? $args : $type;
+	$args['count_total'] = false;
+	$user_search = new WP_User_Query( $args );
+	$result = $user_search->get_results();
+	return ( 'object' == $type ) ? (object)$result : $result;
+}
 // End of file.

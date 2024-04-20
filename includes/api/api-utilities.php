@@ -304,3 +304,25 @@ function wpmem_get_redirect_to( $args = array() ) {
 	}
 	return $redirect_to;
 }
+
+/**
+ * Creates an index file in a directory.
+ * 
+ * @since 3.5.0
+ * 
+ * @param array $args {
+ *     The name, path, and contents of the file.
+ * 
+ *     @type string $path
+ *     @type string $name
+ *     @type string $contents
+ * }
+ */
+function wpmem_create_file( $args ) {
+	$check_file = trailingslashit( $args['path'] ) . $args['name'];
+    if ( ! file_exists( $check_file ) ) {
+		$file = fopen( $check_file, "w" ) or die( "Unable to create file!" );
+		fwrite( $file, $args['contents'] );
+		fclose( $file );
+	}
+}
