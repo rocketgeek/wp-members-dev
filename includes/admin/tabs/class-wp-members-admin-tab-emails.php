@@ -84,7 +84,7 @@ class WP_Members_Admin_Tab_Emails {
 											self::do_email_input( $email );
 										}
 									}
-									$arr = get_option( 'wpmembers_email_footer' ); 
+									$arr = wpmem_get_email_settings( 'wpmembers_email_footer' ); 
 									$footer_args = array(
 										'body_input' => 'wpmembers_email_footer_body',
 										'body_value' => $arr,

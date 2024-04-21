@@ -291,8 +291,8 @@ class WP_Members_Admin_API {
 	 */
 	function add_email( $args ) {
 		
-		// Get saved settings.
-		$settings = get_option( $args['name'] );
+		// Get saved settings (or defaults).
+		$settings = wpmem_get_email_settings( $args['name'] );;
 		
 		$defaults = array(
 			'name'          => $args['name'],
@@ -395,9 +395,8 @@ class WP_Members_Admin_API {
 	 * @since 3.1.0
 	 */	
 	function default_emails() {
-		global $wpmem;
 		
-		if ( 0 == $wpmem->mod_reg ) {
+		if ( ! wpmem_is_enabled( 'mod_reg' ) ) {
 	
 			$this->add_email( array(
 				'name'          => 'wpmembers_email_newreg',
@@ -406,7 +405,7 @@ class WP_Members_Admin_API {
 				'body_input'    => 'wpmembers_email_newreg_body',	
 			) );
 
-			if ( 1 == $wpmem->act_link ) {
+			if ( wpmem_is_enabled( 'act_link' ) ) {
 				$this->add_email( array(
 					'name'          => 'wpmembers_email_validated',
 					'heading'       => esc_html__( "User email validated", 'wp-members' ),
@@ -424,7 +423,7 @@ class WP_Members_Admin_API {
 				'body_input'    => 'wpmembers_email_newmod_body',	
 			) );
 			
-			if ( 1 == $wpmem->act_link ) {
+			if ( wpmem_is_enabled( 'act_link' ) ) {
 				$this->add_email( array(
 					'name'          => 'wpmembers_email_validated',
 					'heading'       => esc_html__( "User email validated", 'wp-members' ),
@@ -455,7 +454,7 @@ class WP_Members_Admin_API {
 			'body_input'    => 'wpmembers_email_getuser_body',	
 		) );	
 	
-		if ( $wpmem->notify == 1 ) {
+		if ( wpmem_is_enabled( 'notify' ) ) {
 			$this->add_email( array(
 				'name'          => 'wpmembers_email_notify',
 				'heading'       => esc_html__( "Admin Notification", 'wp-members' ),
@@ -472,7 +471,6 @@ class WP_Members_Admin_API {
 	 * @since 3.1.1
 	 */	
 	function default_dialogs() {
-		global $wpmem;
 		
 		/**
 		 * Filter the dialog array to add custom dialogs.

@@ -136,3 +136,15 @@ function wpmem_notify_admin( $args, $wpmem_fields = null, $field_data = null ) {
 	$wpmem->email->notify_admin( $user_id, $wpmem_fields, $field_data );
 }
 endif;
+
+/**
+ * Checks for default email vals.
+ * 
+ * @since 3.5.0
+ */
+function wpmem_get_email_settings( $tag ) {
+	global $wpmem;
+	// Are there settings for this email?
+	$saved_settings = get_option( $tag );
+	return ( $saved_settings ) ? $saved_settings : $wpmem->email->get_default_email( $tag );
+}

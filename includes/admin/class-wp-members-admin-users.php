@@ -158,7 +158,7 @@ class WP_Members_Admin_Users {
 							} elseif ( 'unconfirm' == $action ) {
 								wpmem_set_user_as_unconfirmed( $user );
 							} elseif ( 'resend_welcome' == $action ) {
-								wpmem_email_to_user( $args = array( 
+								wpmem_email_to_user( array( 
 									'user_id' => $user,
 									'tag' => ( wpmem_is_enabled( 'mod_reg' ) ) ? 'newmod' : 'newreg'
 								));
