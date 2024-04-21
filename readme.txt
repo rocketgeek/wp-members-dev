@@ -156,12 +156,24 @@ New features:
 * Adds "drop-ins" functionality (officially; this has actually been in the plugin since 3.4).
 * Adds 'wpmem_user_profile_caps' filter hook for customizing the required user capability to inlcude the WP-Members tabs (experimental until confirmed with other extensions).
 * Adds custom object class to handle custom functions when the Import Users and Customers plugin is used and moderated registration or confirmation link settings are enabled. 
+* Adds wpmem_get_users()
+* Adds wpmem_create_file()
+* Adds new login error message if user is not confirmed with link to request a new confirmation link.
+* Adds a resend confirmation link form for the user.
+* Adds a resend confirmation link action in the admin (hoverlink in Users > All Users).
+* Adds default email function for emails that are not completely set up.
+
+Security:
+
+* Interim security updates from 3.4.9.x series included and improved.
+* Security audit of shortcode object class.  Includes some of the updates from 3.4.9.x and expands on those.  All shortcode inputs from attributes is sanitized, all output is escaped.
+* Improved handling of user directories for uploaded files (when used).
 
 Other:
-* Security audit of shortcode object class.
 * Updates wpmem_email_to_user() to use tags instead of numeric tags, but numeric values are backward compatible.
 * Can resend welcome email (with confirmation link) when confirmation link setting is enabled. This can be via the bulk action menu (multiple users) or hover link (single user).
 * Removes obsolete file /admin/tab-options.php.  Users of the WP-Members User List extension version 1.9.4 and earlier will need to update the User List extension for full compatiblity.
+* No longer installs default email content on clean install. (See release notes re: default email content function.)
 
 = 3.4.8 =
 

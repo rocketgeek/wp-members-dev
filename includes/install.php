@@ -53,7 +53,6 @@ function wpmem_do_install() {
 		$wpmem_settings = wpmem_install_settings();
 		wpmem_install_fields();
 		wpmem_install_dialogs();
-		wpmem_append_email();
 		//update_option( 'wpmembers_style', 'generic-no-float.css', '', 'yes' );
 
 	} else {
@@ -68,11 +67,9 @@ function wpmem_do_install() {
 			wpmem_add_profile_to_fields( $existing_settings );
 		}
 		
-		// Not 100% certain where we needed to add wpmem_append_email(), but it was likely before 3.1.0.
 		if ( version_compare( $existing_settings['version'], '3.1.1', '<' ) ) {
 			wpmem_upgrade_dialogs();
 			wpmem_upgrade_captcha();
-			wpmem_append_email();
 		}
 		
 		// Only run these if DB version is < 2.2.0
@@ -248,160 +245,6 @@ function wpmem_upgrade_settings() {
 		
 		return $wpmem_newsettings;
 	}
-}
-
-/**
- * Adds the fields for email messages.
- *
- * Was append_email() since 2.7, changed to wpmem_append_email() in 3.0.
- *
- * @since 2.7
- */
-function wpmem_append_email() {
-
-	// Email for a new registration.
-	$subj = 'Your registration info for [blogname]';
-	$body = 'Thank you for registering for [blogname]!
-
-Please confirm your email address by following the link below:
-[confirm_link]
-
-Once you have confirmed your email address, you will be able to log in using the credentials you created when you registered.
-';
-
-	$arr = array(
-		"subj" => $subj,
-		"body" => $body,
-	);
-
-	if ( ! get_option( 'wpmembers_email_newreg' ) ) {
-		update_option( 'wpmembers_email_newreg', $arr, false );
-	}
-
-	$arr = $subj = $body = '';
-
-	// Email for new registration, registration is moderated.
-	$subj = 'Thank you for registering for [blogname]';
-	$body = 'Thank you for registering for [blogname]. 
-Your registration has been received and is pending approval.
-You will receive login instructions upon approval of your account
-';
-
-	$arr = array(
-		"subj" => $subj,
-		"body" => $body,
-	);
-
-	if ( ! get_option( 'wpmembers_email_newmod' ) ) {
-		update_option( 'wpmembers_email_newmod', $arr, false );
-	}
-
-	$arr = $subj = $body = '';
-
-	// Email for registration is moderated, user is approved.
-	$subj = 'Your registration for [blogname] has been approved';
-	$body = 'Your registration for [blogname] has been approved.
-
-Your registration information is below.
-You may wish to retain a copy for your records.
-
-username: [username]
-password: [password]
-
-You may log in and change your password here:
-[user-profile]
-
-You originally registered at:
-[reglink]
-';
-
-	$arr = array( 
-		"subj" => $subj,
-		"body" => $body,
-	);
-
-	if ( ! get_option( 'wpmembers_email_appmod' ) ) {
-		update_option( 'wpmembers_email_appmod', $arr, false );
-	}
-
-	$arr = $subj = $body = '';
-
-	// Email for password reset.
-	$subj = 'Your password reset for [blogname]';
-	$body = 'A password reset was requested for [blogname].
-
-Follow the link below to reset your password:
-[reset_link]
-
-If you did not request a password reset for [blogname], simply ignore this message and the reset key will expire.
-';
-
-	$arr = array(
-		"subj" => $subj,
-		"body" => $body,
-	);
-
-	if ( ! get_option( 'wpmembers_email_repass' ) ) { 
-		update_option( 'wpmembers_email_repass', $arr, false );
-	}
-
-	$arr = $subj = $body = '';
-
-	// Email for admin notification.
-	$subj = 'New user registration for [blogname]';
-	$body = 'The following user registered for [blogname]:
-
-username: [username]
-email: [email]
-
-[fields]
-This user registered here:
-[reglink]
-
-user IP: [user-ip]
-
-activate user: [activate-user]
-';
-
-		$arr = array(
-		"subj" => $subj,
-		"body" => $body,
-	);
-
-	if ( ! get_option( 'wpmembers_email_notify' ) ) {
-		update_option( 'wpmembers_email_notify', $arr, false );
-	}
-
-	$arr = $subj = $body = '';
-
-	// Email footer (no subject).
-	$body = '----------------------------------
-This is an automated message from [blogname]
-Please do not reply to this address';
-
-	if ( ! get_option( 'wpmembers_email_footer' ) ) {
-		update_option( 'wpmembers_email_footer', $body, false );
-	}
-	
-	$arr = $subj = $body = '';
-	
-	// Email for retrieve username.
-	$subj = 'Username for [blogname]';
-	$body = 'Your username for [blogname] is below.
-
-username: [username]
-';
-
-		$arr = array(
-		"subj" => $subj,
-		"body" => $body,
-	);
-
-	if ( ! get_option( 'wpmembers_email_getuser' ) ) {
-		update_option( 'wpmembers_email_getuser', $arr, false );
-	}
-
-	return true;
 }
 
 /**
