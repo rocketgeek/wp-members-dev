@@ -784,28 +784,74 @@ class WP_Members_User {
 	}
 	
 	/**
-	 * Handles retrieving a forgotten username.
+	 * Handles resending a confirmation link email.
 	 *
-	 * @since 3.0.8
-	 * @since 3.1.6 Dependencies now loaded by object.
-	 * @since 3.1.8 Moved to user object.
+	 * @since 3.5.0
+	 *
+	 * @global object $wpmem
+	 * @return string $regchk The regchk value.
+	 */
+	public function resend_confirm() {
+		if ( isset( $_POST['formsubmit'] ) ) {
+			
+			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_reconfirm_nonce'], 'wpmem_shortform_nonce' ) ) {
+				return "reg_generic";
+			}
+
+			$check_user = wpmem_get( 'user', false );
+
+			$sanitized_user_to_check = ( strpos( $check_user, '@' ) ) ? sanitize_email( $check_user ) : sanitize_user( $check_user );
+
+			if ( username_exists( $sanitized_user_to_check ) ) {
+				$user = get_user_by( 'login', $sanitized_user_to_check );
+			} elseif ( email_exists( $sanitized_user_to_check ) ) {
+				$user = get_user_by( 'email', $sanitized_user_to_check );
+			} else {
+				$user = false;
+			}	
+
+			if ( $user ) {
+				// Send it in an email.
+				wpmem_email_to_user( array( 
+					'user_id' => intval( $user->ID ),
+					'tag' => ( wpmem_is_enabled( 'mod_reg' ) ) ? 'newmod' : 'newreg'
+				) );
+				/**
+				 * Fires after resending confirmation.
+				 *
+				 * @since 3.1.5
+				 *
+				 * @param int $user_ID The user's numeric ID.
+				 */
+				do_action( 'wpmem_reconfirm', intval( $user->ID ) );
+				return 'reconfirmsuccess';
+			} else {
+				return 'reconfirmfailed';
+			}
+		}
+		return;
+	}
+
+	/**
+	 * Handles resending a confirmation email.
+	 *
+	 * @since 3.5.0
 	 *
 	 * @global object $wpmem
 	 * @return string $regchk The regchk value.
 	 */
 	function retrieve_username() {
-		global $wpmem;
 		if ( isset( $_POST['formsubmit'] ) ) {
 			
 			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_getusername_nonce'], 'wpmem_shortform_nonce' ) ) {
 				return "reg_generic";
 			}
 			
-			$email = sanitize_email( $_POST['user_email'] );
-			$user  = ( isset( $_POST['user_email'] ) ) ? get_user_by( 'email', $email ) : false;
+			$sanitized_email = wpmem_get_sanitized( 'user_email', false, 'post', 'email' );
+			$user  = ( false != $sanitized_email ) ? get_user_by( 'email', $sanitized_email ) : false;
 			if ( $user ) {
 				// Send it in an email.
-				wpmem_email_to_user( array( 'user_id'=>$user->ID, 'tag'=>'getuser' ) );
+				wpmem_email_to_user( array( 'user_id'=>intval( $user->ID ), 'tag'=>'getuser' ) );
 				/**
 				 * Fires after retrieving username.
 				 *
@@ -813,7 +859,7 @@ class WP_Members_User {
 				 *
 				 * @param int $user_ID The user's numeric ID.
 				 */
-				do_action( 'wpmem_get_username', $user->ID );
+				do_action( 'wpmem_get_username', intval( $user->ID ) );
 				return 'usernamesuccess';
 			} else {
 				return 'usernamefailed';

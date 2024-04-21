@@ -551,6 +551,10 @@ class WP_Members_Shortcodes {
 
 				$content = $this->render_forgot_username( $wpmem->regchk, $content );
 
+			} elseif ( 'reconfirm' == $wpmem->action ) {
+			
+				$content = $this->render_resend_confirm( $wpmem->regchk, $content );
+			
 			} else {
 
 				$content = $content . wpmem_login_form( 'profile' );
@@ -1275,6 +1279,50 @@ class WP_Members_Shortcodes {
 
 			default:
 				$content = $content . wpmem_forgot_username_form();
+				break;
+			}
+
+		}
+
+		return $content;
+
+	}
+
+	/**
+	 * Resend confirmation link form.
+	 *
+	 * This function creates a form for requesting a new confirmation link.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param  string $wpmem_regchk
+	 * @param  string $content
+	 * @return string $content
+	 */
+	function render_resend_confirm( $wpmem_regchk, $content ) {
+
+		if ( ! is_user_logged_in() ) {
+
+			global $wpmem;
+			switch( $wpmem->regchk ) {
+
+			case "reconfirmfailed":
+				$msg = wpmem_get_text( 'pwdreseterr' );
+				$content = $content
+					. wpmem_get_display_message( 'pwdreseterr', $msg ) 
+					. wpmem_resend_confirmation_form();
+				$wpmem->regchk = ''; // Clear regchk.
+				break;
+
+			case "reconfirmsuccess":
+				$email = ( isset( $_POST['user_email'] ) ) ? sanitize_email( $_POST['user_email'] ) : '';
+				$msg = wpmem_get_text( 'reconfirm_success' );
+				$content = $content . wpmem_get_display_message( 'reconfirm_success', $msg );
+				$wpmem->regchk = ''; // Clear regchk.
+				break;
+
+			default:
+				$content = $content . wpmem_resend_confirmation_form();
 				break;
 			}
 

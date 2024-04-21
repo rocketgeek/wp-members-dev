@@ -100,6 +100,11 @@ class WP_Members_Dialogs {
 			'username_heading'     => esc_html__( 'Retrieve username', 'wp-members' ),
 			'username_email'       => esc_html__( 'Email Address', 'wp-members' ),
 			'username_button'      => esc_html__( 'Retrieve username', 'wp-members' ),
+
+			// Reconfirm form.
+			'reconfirm_heading'    => esc_html__( 'Resend confirmation email', 'wp-members' ),
+			'reconfirm_button'     => esc_html__( 'Resend confirmation', 'wp-members' ),
+			'reconfirm_success'    => esc_html__( 'A new confirmation link has been sent. Be sure to check your spam folder.', 'wp-members' ),
 			
 			// Register form.
 			'register_heading'     => esc_html__( 'New User Registration', 'wp-members' ),
@@ -138,6 +143,7 @@ class WP_Members_Dialogs {
 			'reg_captcha_err'      => esc_html__( 'There was an error with the CAPTCHA form.', 'wp-members' ),
 			'reg_file_type'        => esc_html__( 'Sorry, you can only upload the following file types for the %s field: %s.', 'wp-members' ),
 			'profile_update'       => esc_html__( 'Your information was updated!', 'wp-members' ),
+			'login_not_confirmed'  => esc_attr__( '%sERROR%s: Account not confirmed. %sRequest a new confirmation link%s.', 'wp-members' ),
 			
 			// Links.
 			'profile_edit'         => esc_html__( 'Edit My Information', 'wp-members' ),

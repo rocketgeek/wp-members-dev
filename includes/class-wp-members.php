@@ -923,6 +923,10 @@ class WP_Members {
 			case 'getusername':
 				$regchk = $this->user->retrieve_username();
 				break;
+
+			case 'reconfirm':
+				$regchk = $this->user->resend_confirm();
+				break;
 			
 			case 'register':
 			case 'update':

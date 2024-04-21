@@ -878,7 +878,14 @@ class WP_Members_Forms {
 				'page'   => 'profile',
 				'action' => 'pwdreset',
 			),
+			'reconfirm' => array(
+				'tag'    => 'reconfirm',
+				'link'   => wpmem_reconfirm_url(),
+				'page'   => 'profile',
+				'action' => 'pwdreset',
+			),
 		);
+
 		foreach ( $links_array as $key => $value ) {
 			$tag = $value['tag'];
 			if ( ( $wpmem->user_pages[ $value['page'] ] || 'profile' == $page ) && $value['action'] == $action ) {
@@ -2025,8 +2032,6 @@ class WP_Members_Forms {
 	 * @return  string    $form
 	 */
 	function do_shortform( $form, $args = array() ) {
-		
-		global $post, $wpmem;
 
 		$input_arrays = array(
 			'login' => array(
@@ -2079,6 +2084,15 @@ class WP_Members_Forms {
 					'div'    => 'div_text',
 				),
 			),
+			'reconfirm' => array( 
+				array(
+					'name'   => wpmem_get_text( 'login_username' ), 
+					'type'   => 'text',
+					'tag'    => 'user', 
+					'class'  => 'username',
+					'div'    => 'div_text',
+				),
+			)
 		);
 		
 		/**
@@ -2115,6 +2129,12 @@ class WP_Members_Forms {
 				'heading'      => wpmem_get_text( 'username_heading' ), 
 				'action'       => 'getusername', 
 				'button_text'  => wpmem_get_text( 'username_button' ),
+				'inputs'       => $default_inputs,
+			),
+			'reconfirm' => array(
+				'heading'      => wpmem_get_text( 'reconfirm_heading' ), 
+				'action'       => 'reconfirm', 
+				'button_text'  => wpmem_get_text( 'reconfirm_button' ),
 				'inputs'       => $default_inputs,
 			),
 		);
@@ -2154,8 +2174,6 @@ class WP_Members_Forms {
 	 * @return string $str The generated message.
 	 */
 	public function add_restricted_msg() {
-
-		global $wpmem;
 		
 		$str = '';
 

@@ -247,10 +247,21 @@ function wpmem_pwd_reset_url() {
  * 
  * @since 3.4.5
  * 
- * @return string The pforgot username url.
+ * @return string The forgot username url.
  */
 function wpmem_forgot_username_url() {
 	return wpmem_profile_url( 'getusername' );
+}
+
+/**
+ * Alias of wpmem_profile_url() to return the forgot username URL.
+ * 
+ * @since 3.5.0
+ * 
+ * @return string The resend confirmation url.
+ */
+function wpmem_reconfirm_url() {
+	return wpmem_profile_url( 'reconfirm' );
 }
 
 /**

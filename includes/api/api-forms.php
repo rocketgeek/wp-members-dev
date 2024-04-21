@@ -174,6 +174,19 @@ function wpmem_forgot_username_form() {
 }
 
 /**
+ * Resend confirmation link form.
+ *
+ * @since 3.5.0
+ *
+ * @global object $wpmem The WP_Members object class.
+ * @return string $str   The generated html for the forgot username form.
+ */
+function wpmem_resend_confirmation_form() {
+	global $wpmem;
+	return $wpmem->forms->do_shortform( 'reconfirm' );
+}
+
+/**
  * Add registration fields to the native WP registration.
  *
  * @since 2.8.3
