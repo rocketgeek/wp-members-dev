@@ -420,6 +420,21 @@ function wpmem_get( $tag, $default = '', $type = 'post' ) {
 }
 
 /**
+ * Utility function to check if $_POST, $_GET, or $_REQUEST is valid, and sanitizes the result.
+ *
+ * @since 3.5.0
+ *
+ * @param  string $tag          Form field or query string param.
+ * @param  string $default      Default value (optional, default: null).
+ * @param  string $request_type Request type (post|get|request) (optional, default:post).
+ * @param  string $field_type   Type of sanitization (using rktgk_sanitize_field()) (optional, default:text).
+ * @return mixed  The sanitized result (string|array|integer|boolean).
+ */
+function wpmem_get_sanitized( $tag, $default = '', $request_type = 'post', $field_type = 'text' ) {
+	return rktgk_get_sanitized( $tag, $default, $request_type, $field_type );
+}
+
+/**
  * Compares wpmem_reg_page value with the register page URL. 
  *
  * @since 3.1.4
