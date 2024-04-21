@@ -340,7 +340,7 @@ class WP_Members_Dialogs {
 				$msg = stripslashes( $dialogs[ $tag ]['value'] );
 			} else {
 				$msg = wpmem_get_text( $tag );
-				$msg = ( $dialogs[ $tag ] == $msg ) ? $msg : esc_html__( stripslashes( $dialogs[ $tag ] ), 'wp-members' );
+				$msg = ( $dialogs[ $tag ] == $msg ) ? $msg : wp_kses_post( __( stripslashes( $dialogs[ $tag ] ), 'wp-members' ) );
 			}
 		} elseif ( 'loginfailed' == $tag ) {
 			$msg = $this->login_failed();
