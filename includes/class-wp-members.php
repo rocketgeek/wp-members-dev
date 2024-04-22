@@ -509,10 +509,9 @@ class WP_Members {
 		
 		// Constants.
 		$this->path = plugin_dir_path( __DIR__ );
-		$this->name = $this->path . 'wp-members.php';
-		$this->slug = substr( basename( $this->name ), 0, -4 );
+		$this->name = trailingslashit( $this->path ) . $this->slug;
 		$this->url  = plugin_dir_url ( __DIR__ );
-	
+
 		$settings = get_option( 'wpmembers_settings' );
 		
 		// Validate that v3 settings are loaded.
