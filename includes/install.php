@@ -62,7 +62,6 @@ function wpmem_do_install() {
 		if ( version_compare( $existing_settings['version'], '3.5.0', '<' ) ) {
 			wpmem_add_profile_to_fields( $existing_settings );
 			wpmem_upgrade_user_search_crud_table(); // 3.4.7 fixes(?) a db collation issue with the user search CRUD table
-			wpmem_update_user_dirs(); // Adds index.php to any user upload directories.
 		}
 		
 		if ( version_compare( $existing_settings['version'], '3.1.1', '<' ) ) {
@@ -549,51 +548,6 @@ function wpmem_upgrade_user_search_crud_table() {
 	$wpdb->query( "CREATE TABLE IF NOT EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud (meta_key VARCHAR(255) NOT NULL);" );
 }
 
-function wpmem_update_user_dirs() {
-
-	$users_to_check = get_users( array( 'fields'=>'ID' ));
-
-	// Get the uploads directory base.
-	$upload_vars  = wp_upload_dir( null, false );
-	$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . 'wpmembers' );
-	$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
-
-	if ( file_exists( $wpmem_user_files_dir ) ) {
-
-		// We need this for the utility functions.
-		include_once 'api/api-utilities.php';
-
-		// Add indexes and htaccess
-		wpmem_create_file( array(
-			'path'     => $wpmem_base_dir,
-			'name'     => 'index.php',
-			'contents' => "<?php // Silence is golden."
-		) );
-		wpmem_create_file( array(
-			'path'     => $wpmem_user_files_dir,
-			'name'     => 'index.php',
-			'contents' => "<?php // Silence is golden."
-		) );
-		wpmem_create_file( array(
-			'path'     => $wpmem_user_files_dir,
-			'name'     => '.htaccess',
-			'contents' => "Options -Indexes"
-		) );
-
-		// Loop through users to update user dirs.
-		foreach ( $users_to_check as $user ) {
-			$wpmem_user_dir = $wpmem_user_files_dir . $user;
-			if ( is_dir( $wpmem_user_dir ) ) {
-				wpmem_create_file( array(
-					'path'     => $wpmem_user_dir,
-					'name'     => 'index.php',
-					'contents' => "<?php // Silence is golden."
-				) );
-			}
-		}
-	}
-}
-
 function wpmem_add_profile_to_fields( $existing_settings ) {
 	
 	$fields = get_option( 'wpmembers_fields' );
@@ -684,15 +638,31 @@ function wpmem_background_actions() {
 	
 		// Get the uploads directory base.
 		$upload_vars  = wp_upload_dir( null, false );
-		$base_dir = $upload_vars['basedir'];
-		$wpmem_base_dir = trailingslashit( trailingslashit( $base_dir ) . $wpmem->upload_base );
+		$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . 'wpmembers' );
 		$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
-	
-		// Fix wpmem base dir first.
-		wpmem_create_index_file( $wpmem_base_dir );
-	
-		// Fix wpmem user_files dir.
-		wpmem_create_index_file( $wpmem_user_files_dir );
+
+		if ( file_exists( $wpmem_user_files_dir ) ) {
+
+			// We need this for the utility functions.
+			include_once 'api/api-utilities.php';
+
+			// Add indexes and htaccess
+			wpmem_create_file( array(
+				'path'     => $wpmem_base_dir,
+				'name'     => 'index.php',
+				'contents' => "<?php // Silence is golden."
+			) );
+			wpmem_create_file( array(
+				'path'     => $wpmem_user_files_dir,
+				'name'     => 'index.php',
+				'contents' => "<?php // Silence is golden."
+			) );
+			wpmem_create_file( array(
+				'path'     => $wpmem_user_files_dir,
+				'name'     => '.htaccess',
+				'contents' => "Options -Indexes"
+			) );
+		}
 
 		// Update install_state (as process is now started).
 		$update_settings = get_option( 'wpmembers_settings' );
@@ -722,7 +692,11 @@ function wpmem_background_actions() {
 		foreach ( $users_to_process as $user ) {
 			$wpmem_user_dir = $wpmem_user_files_dir . $user;
 			if ( is_dir( $wpmem_user_dir ) ) {
-				wpmem_create_index_file( $wpmem_user_dir );
+				wpmem_create_file( array(
+					'path'     => $wpmem_user_dir,
+					'name'     => 'index.php',
+					'contents' => "<?php // Silence is golden."
+				) );
 			}
 		}
 
