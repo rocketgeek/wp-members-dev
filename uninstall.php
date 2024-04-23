@@ -52,16 +52,26 @@ if ( WP_UNINSTALL_PLUGIN ) {
  */
 function wpmem_uninstall_options() {
 
+	$optin = get_option( 'wpmembers_optin' );
+	if ( 1 == $optin ) {
+		include_once( plugin_dir_path( __FILE__ ) . 'includes/vendor/rocketgeek-tools/class-rocketgeek-satellite.php' );
+		$uninstall = new RocketGeek_Deploy_Plugin_v1( 'wp-members', plugin_dir_path( __FILE__ ) . 'wp-members.php', 'delete', 'plugin' );
+	}
+	delete_option( 'wpmembers_optin' );
+
 	delete_option( 'wpmembers_settings' );
 	delete_option( 'wpmembers_fields'   );
 	delete_option( 'wpmembers_dialogs'  );
 	delete_option( 'wpmembers_captcha'  );
 	delete_option( 'wpmembers_tos'      );
 	delete_option( 'wpmembers_export'   );
-	delete_option( 'wpmembers_utfields' );
-	delete_option( 'wpmembers_usfields' );
 	delete_option( 'wpmembers_dropins'  );
 	delete_option( 'wpmem_hidden_posts' );
+
+	delete_option( 'wpmembers_utfields' );
+	delete_option( 'wpmembers_usfields' );
+	delete_option( 'wpmembers_wcchkout_fields' );
+	delete_option( 'wpmembers_wcacct_fields'   );
 
 	delete_option( 'wpmembers_email_newreg'  );
 	delete_option( 'wpmembers_email_newmod'  );
@@ -75,31 +85,24 @@ function wpmem_uninstall_options() {
 	delete_option( 'wpmembers_email_validated' );
 
 	delete_option( 'widget_wpmemwidget' );
-	
-	// For pre-3.x settings that may remain.
-	delete_option( 'wpmembers_msurl'    );
-	delete_option( 'wpmembers_regurl'   );
-	delete_option( 'wpmembers_logurl'   );
-	delete_option( 'wpmembers_cssurl'   );
-	delete_option( 'wpmembers_style'    );
-	delete_option( 'wpmembers_autoex'   );
-	delete_option( 'wpmembers_attrib'   );
 
 	delete_transient( 'wpmem_user_counts' );
 	
 	// Drop user meta key search table.
 	global $wpdb;
 	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wpmembers_user_search_keys" );
-
-	$optin = get_option( 'wpmembers_optin' );
-	if ( 1 == $optin ) {
-		include_once( plugin_dir_path( __FILE__ ) . 'includes/vendor/rocketgeek-tools/class-rocketgeek-satellite.php' );
-		$uninstall = new RocketGeek_Satellite_Beta( 'wp-members', plugin_dir_path( __FILE__ ) . 'wp-members.php', 'delete', 'plugin' );
-	}
-	delete_option( 'wpmembers_optin' );
+	
+	// These should not exist following 3.5.0 upgrade, but check them anyway.
 	delete_option( 'wpmembers_install_state' );
-
 	delete_option( 'wpmem_enable_field_sc' );
+	// For pre-3.x settings that may remain.
+	delete_option( 'wpmembers_msurl'  );
+	delete_option( 'wpmembers_regurl' );
+	delete_option( 'wpmembers_logurl' );
+	delete_option( 'wpmembers_cssurl' );
+	delete_option( 'wpmembers_style'  );
+	delete_option( 'wpmembers_autoex' );
+	delete_option( 'wpmembers_attrib' );
 }
 
 // End of file.

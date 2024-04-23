@@ -57,6 +57,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+// Include action scheduler.
+require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/vendor/action-scheduler/action-scheduler.php' );
+
 // Initialize constants.
 define( 'WPMEM_VERSION',    '3.5.0' );
 define( 'WPMEM_DB_VERSION', '2.4.0' );

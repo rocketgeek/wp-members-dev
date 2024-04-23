@@ -17,6 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WP_Members {
+
+	/**
+	 * The state of plugin install/upgrade. 
+	 * 
+	 * @since 3.5.0
+	 */
+	public $install_state;
 	
 	/**
 	 * Plugin version.
@@ -508,6 +515,7 @@ class WP_Members {
 	function __construct() {
 		
 		// Constants.
+		$this->slug = 'wp-members.php';
 		$this->path = plugin_dir_path( __DIR__ );
 		$this->name = trailingslashit( $this->path ) . $this->slug;
 		$this->url  = plugin_dir_url ( __DIR__ );
@@ -519,7 +527,7 @@ class WP_Members {
 			|| $settings['version'] != $this->version
 			|| ! isset( $settings['db_version'] ) 
 			|| $settings['db_version'] != $this->db_version ) {
-			// Load installation routine and pdate settings.
+			// Load installation routine and update settings.
 			require_once $this->path . 'includes/install.php';
 			$settings = wpmem_do_install();
 		}
@@ -622,7 +630,12 @@ class WP_Members {
 		do_action( 'wpmem_load_hooks' );
 
 		// Add actions.
+
 		
+		// Do any asynchronouse upgrade processing.
+		add_action( 'init', array( $this, 'run_background_sync' ), 1000 );
+		add_action( 'wpmem_update_user_dirs_async', 'wpmem_background_actions' );
+
 		add_action( 'init',                  array( $this, 'load_textdomain' ) );
 		add_action( 'init',                  array( $this->membership, 'add_cpt' ), 0 ); // Adds membership plans custom post type.
 		add_action( 'init',                  array( $this, 'load_dependent_classes' ) );
@@ -805,6 +818,11 @@ class WP_Members {
 
 		require_once $this->path . 'includes/deprecated.php';
 		require_once $this->path . 'includes/legacy/dialogs.php'; // File is totally deprecated at this point; eval for removal.
+
+		// Check if any upgrade background processes are running or need to be run.
+		if ( 'set_bg_actions' == $this->install_state || 'running_bg_actions' == $this->install_state ) {
+			include_once $this->path . 'includes/install.php';
+		}
 	}
 
 	/**
@@ -1988,5 +2006,17 @@ class WP_Members {
 	 */
 	public function has_errors() {
 		return ( is_wp_error( $this->error ) && $this->error->has_errors() ) ? true : false;
+	}
+
+	/**
+	 * Handles asyncronous background operations for
+	 * batch processing. Uses Automattic's Action Scheduler.
+	 *
+	 * @since 2.3.0
+	 */
+	public function run_background_sync() {
+		if ( 'set_bg_actions' == $this->install_state || 'running_bg_actions' == $this->install_state ) {
+			as_enqueue_async_action( 'wpmem_update_user_dirs_async' );
+		}
 	}
 } // End of WP_Members class.

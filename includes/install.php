@@ -53,44 +53,41 @@ function wpmem_do_install() {
 		$wpmem_settings = wpmem_install_settings();
 		wpmem_install_fields();
 		wpmem_install_dialogs();
-		//update_option( 'wpmembers_style', 'generic-no-float.css', '', 'yes' );
 
 	} else {
 		
 		// Upgrade.
 		$wpmem_settings = wpmem_upgrade_settings();
 
-		// 3.4.7 fixes(?) a db collation issue with the user search CRUD table
-		wpmem_upgrade_user_search_crud_table();
-
 		if ( version_compare( $existing_settings['version'], '3.5.0', '<' ) ) {
 			wpmem_add_profile_to_fields( $existing_settings );
+			wpmem_upgrade_user_search_crud_table(); // 3.4.7 fixes(?) a db collation issue with the user search CRUD table
+			wpmem_update_user_dirs(); // Adds index.php to any user upload directories.
 		}
 		
 		if ( version_compare( $existing_settings['version'], '3.1.1', '<' ) ) {
 			wpmem_upgrade_dialogs();
 			wpmem_upgrade_captcha();
 		}
+
+		// Only run this if DB version < 2.3.0
+		if ( version_compare( $existing_settings['db_version'], '2.3.0', '<' ) ) {
+			wpmem_upgrade_hidden_transient();
+		}
 		
+		// Only run this if DB version < 2.2.1
+		if ( version_compare( $existing_settings['db_version'], '2.2.1', '<' ) ) {
+			wpmem_upgrade_woo_reg();
+		}
+
 		// Only run these if DB version is < 2.2.0
 		if ( version_compare( $existing_settings['db_version'], '2.2.0', '<' ) ) {			
 			wpmem_upgrade_fields();
 			wpmem_upgrade_product_expiration();
 		}
-		
-		// Only run this if DB version < 2.2.1
-		if ( version_compare( $existing_settings['db_version'], '2.2.1', '<' ) ) {
-			wpmem_upgrade_validation_email();
-			wpmem_upgrade_woo_reg();
-		}
-		
-		// Only run this if DB version < 2.3.0
-		if ( version_compare( $existing_settings['db_version'], '2.3.0', '<' ) ) {
-			wpmem_upgrade_hidden_transient();
-		}
 
-		// If this is an upgrade, check for correct onboarding.
-		update_option( 'wpmembers_install_state', 'update_pending' );
+		// Remove options no longer used or needed.
+		delete_option( 'wpmembers_install_state' );
 	}
 	
 	return $wpmem_settings;
@@ -102,149 +99,81 @@ function wpmem_do_install() {
  *
  * @since 3.0.0
  * @since 3.1.0 Changed from wpmem_update_settings() to wpmem_upgrade_settings().
+ * @since 3.5.0 Can only directly update 3.0.0 or higher (92% of installs are 3.2 or greater).
  *
  * @return array $wpmem_newsettings
  */
 function wpmem_upgrade_settings() {
 
 	$wpmem_settings = get_option( 'wpmembers_settings' );
-
-	// Is this an update from pre-3.0 or 3.0+?
-	$is_three = ( array_key_exists( 'version', $wpmem_settings ) ) ? true : false;
-
-	// If install is 3.0 or higher.
-	if ( $is_three ) {
-		
-		if ( ! isset( $wpmem_settings['enable_products'] ) ) {
-			$wpmem_settings['enable_products'] = 0;
-		}
-		
-		if ( ! isset( $wpmem_settings['clone_menus'] ) ) {
-			$wpmem_settings['clone_menus'] = 0;
-		}
-		
-		// reCAPTCHA v1 is obsolete.
-		if ( isset( $wpmem_settings['captcha'] ) && 1 == $wpmem_settings['captcha'] ) {
-			$wpmem_settings['captcha'] = 3;
-		}
 	
-		// If old auto excerpt settings exists, update it.
-		if ( isset( $wpmem_settings['autoex']['auto_ex'] ) ) {
-			// Update Autoex setting.
-			if ( $wpmem_settings['autoex']['auto_ex'] == 1 || $wpmem_settings['autoex']['auto_ex'] == "1" ) {
-				// If Autoex is set, move it to posts/pages.
-				$wpmem_settings['autoex']['post'] = array( 'enabled' => 1, 'length' => $wpmem_settings['autoex']['auto_ex_len'] );
-				$wpmem_settings['autoex']['page'] = array( 'enabled' => 1, 'length' => $wpmem_settings['autoex']['auto_ex_len'] );
-			} else {
-				// If it is not turned on (!=1), set it to off in new setting (-1).
-				$wpmem_settings['autoex']['post'] = array( 'enabled' => 0, 'length' => '' );
-				$wpmem_settings['autoex']['page'] = array( 'enabled' => 0, 'length' => '' );
-			}
-			unset( $wpmem_settings['autoex']['auto_ex'] );
-			unset( $wpmem_settings['autoex']['auto_ex_len'] );
-		}
-		
-		// If post types settings does not exist, set as empty array.
-		if ( ! isset( $wpmem_settings['post_types'] ) ) {
-			 $wpmem_settings['post_types'] = array();
-		}
-		
-		// If form tags is not set, add default.
-		if ( ! isset( $wpmem_settings['form_tags'] ) ) {
-			$wpmem_settings['form_tags'] = array( 'default' => 'Registration Default' );
-		}
-		
-		// If email is set in the settings array, change it back to the pre-3.1 option.
-		if ( isset( $wpmem_settings['email'] ) ) {
-			$from = ( is_array( $wpmem_settings['email'] ) ) ? $wpmem_settings['email']['from']      : '';
-			$name = ( is_array( $wpmem_settings['email'] ) ) ? $wpmem_settings['email']['from_name'] : '';
-			update_option( 'wpmembers_email_wpfrom', $from );
-			update_option( 'wpmembers_email_wpname', $name );
-			unset( $wpmem_settings['email'] );
-		}
-		
-		// @since 3.3.0 Upgrade stylesheet setting.
-		$wpmem_settings['select_style'] = wpmem_upgrade_style_setting( $wpmem_settings );
-
-		// Change 3.4.9 field shortcode option.
-		if ( ! isset( $wpmem_settings['shortcode'] ) ) {
-			$field_sc = get_option( 'wpmem_enable_fields_sc' );
-			$wpmem_settings['shortcodes']['enable_field'] = ( $field_sc ) ? intval( $field_sc ) : 2;
-			delete_option( 'wpmem_enable_fields_sc' );
-		}
-		
-		// Version number should be updated no matter what.
-		$wpmem_settings['version']    = WPMEM_VERSION;
-		$wpmem_settings['db_version'] = WPMEM_DB_VERSION;
-		
-		update_option( 'wpmembers_settings', $wpmem_settings );
-		return $wpmem_settings;
-	} else {
-		// Update pre 3.0 installs (must be 2.5.1 or higher).
-		// Handle show registration setting change.
-		$show_reg = ( $wpmem_settings[7] == 0 ) ? 1 : 0;
-		// Create new settings array.
-		$wpmem_newsettings = array(
-			'version'    => WPMEM_VERSION,
-			'db_version' => WPMEM_DB_VERSION,
-			'block'   => array(
-				'post' => $wpmem_settings[1],
-				'page' => $wpmem_settings[2],
-			),
-			'show_excerpt' => array(
-				'post' => $wpmem_settings[3],
-				'page' => $wpmem_settings[3],
-			),
-			'show_reg' => array(
-				'post' => $show_reg,
-				'page' => $show_reg,
-			),
-			'show_login' => array(
-				'post' => 1,
-				'page' => 1,
-			),
-			'notify'     => $wpmem_settings[4],
-			'mod_reg'    => $wpmem_settings[5],
-			'captcha'    => ( 1 == $wpmem_settings[6] ) ? 3 : $wpmem_settings[6], // reCAPTCHA v1 is obsolete, move to v2.
-			'use_exp'    => $wpmem_settings[9],
-			'use_trial'  => $wpmem_settings[10],
-			'warnings'   => $wpmem_settings[11],
-			'user_pages' => array(
-				'profile'  => get_option( 'wpmembers_msurl'  ),
-				'register' => get_option( 'wpmembers_regurl' ),
-				'login'    => get_option( 'wpmembers_logurl' ),
-			),
-			'cssurl'          => get_option( 'wpmembers_cssurl' ),
-			'select_style'    => get_option( 'wpmembers_style'  ),
-			'attrib'          => get_option( 'wpmembers_attrib' ),
-			'clone_menus'     => 0,
-			'enable_products' => 0,
-			'shortcodes'      => array( 'enable_field' => 0 ),
-		);
-		// Handle auto excerpt setting change and add to setting array.
-		$autoex = get_option( 'wpmembers_autoex' );
-		if ( $autoex['auto_ex'] == 1 || $autoex['auto_ex'] == "1" ) {
-			// If Autoex is set, move it to posts/pages.
-			$wpmem_newsettings['autoex']['post'] = array( 'enabled' => 1, 'length' => $autoex['auto_ex_len'] );
-			$wpmem_newsettings['autoex']['page'] = array( 'enabled' => 1, 'length' => $autoex['auto_ex_len'] );
-		} else {
-			// If it is not turned on, set it to off in new setting.		
-			$wpmem_newsettings['autoex']['post'] = array( 'enabled' => 0, 'length' => '' );
-			$wpmem_newsettings['autoex']['page'] = array( 'enabled' => 0, 'length' => '' );
-		}
-		
-		// Add new settings.
-		$wpmem_newsettings['post_types'] = array();
-		$wpmem_settings['form_tags'] = array( 'default' => 'Registration Default' );
-		$wpmem_settings['select_style'] = wpmem_upgrade_style_setting( $wpmem_settings );
-		
-		// Merge settings.
-		$wpmem_newsettings = array_merge( $wpmem_settings, $wpmem_newsettings ); 
-		
-		update_option( 'wpmembers_settings', $wpmem_newsettings );
-		
-		return $wpmem_newsettings;
+	if ( ! isset( $wpmem_settings['enable_products'] ) ) {
+		$wpmem_settings['enable_products'] = 0;
 	}
+	
+	if ( ! isset( $wpmem_settings['clone_menus'] ) ) {
+		$wpmem_settings['clone_menus'] = 0;
+	}
+	
+	// reCAPTCHA v1 is obsolete.
+	if ( isset( $wpmem_settings['captcha'] ) && 1 == $wpmem_settings['captcha'] ) {
+		$wpmem_settings['captcha'] = 3;
+	}
+
+	// If old auto excerpt settings exists, update it.
+	if ( isset( $wpmem_settings['autoex']['auto_ex'] ) ) {
+		// Update Autoex setting.
+		if ( $wpmem_settings['autoex']['auto_ex'] == 1 || $wpmem_settings['autoex']['auto_ex'] == "1" ) {
+			// If Autoex is set, move it to posts/pages.
+			$wpmem_settings['autoex']['post'] = array( 'enabled' => 1, 'length' => $wpmem_settings['autoex']['auto_ex_len'] );
+			$wpmem_settings['autoex']['page'] = array( 'enabled' => 1, 'length' => $wpmem_settings['autoex']['auto_ex_len'] );
+		} else {
+			// If it is not turned on (!=1), set it to off in new setting (-1).
+			$wpmem_settings['autoex']['post'] = array( 'enabled' => 0, 'length' => '' );
+			$wpmem_settings['autoex']['page'] = array( 'enabled' => 0, 'length' => '' );
+		}
+		unset( $wpmem_settings['autoex']['auto_ex'] );
+		unset( $wpmem_settings['autoex']['auto_ex_len'] );
+	}
+	
+	// If post types settings does not exist, set as empty array.
+	if ( ! isset( $wpmem_settings['post_types'] ) ) {
+		$wpmem_settings['post_types'] = array();
+	}
+	
+	// If form tags is not set, add default.
+	if ( ! isset( $wpmem_settings['form_tags'] ) ) {
+		$wpmem_settings['form_tags'] = array( 'default' => 'Registration Default' );
+	}
+	
+	// If email is set in the settings array, change it back to the pre-3.1 option.
+	if ( isset( $wpmem_settings['email'] ) ) {
+		$from = ( is_array( $wpmem_settings['email'] ) ) ? $wpmem_settings['email']['from']      : '';
+		$name = ( is_array( $wpmem_settings['email'] ) ) ? $wpmem_settings['email']['from_name'] : '';
+		update_option( 'wpmembers_email_wpfrom', $from );
+		update_option( 'wpmembers_email_wpname', $name );
+		unset( $wpmem_settings['email'] );
+	}
+	
+	// @since 3.3.0 Upgrade stylesheet setting.
+	// @todo Is this needed anymore?  Does it work as expected?
+	$wpmem_settings['select_style'] = wpmem_upgrade_style_setting( $wpmem_settings );
+
+	// Change 3.4.9 field shortcode option.
+	if ( ! isset( $wpmem_settings['shortcode'] ) ) {
+		$field_sc = get_option( 'wpmem_enable_fields_sc' );
+		$wpmem_settings['shortcodes']['enable_field'] = ( $field_sc ) ? intval( $field_sc ) : 2;
+		delete_option( 'wpmem_enable_fields_sc' );
+	}
+	
+	// Version number should be updated no matter what.
+	$wpmem_settings['version']    = WPMEM_VERSION;
+	$wpmem_settings['db_version'] = WPMEM_DB_VERSION;
+
+	$wpmem_settings['install_state'] = 'update_pending';
+	
+	update_option( 'wpmembers_settings', $wpmem_settings );
+	return $wpmem_settings;
 }
 
 /**
@@ -340,6 +269,7 @@ function wpmem_upgrade_captcha() {
 function wpmem_install_settings() {
 		
 	$wpmem_settings = array(
+		'install_state' => 'new_install',
 		'version'    => WPMEM_VERSION,
 		'db_version' => WPMEM_DB_VERSION,
 		'block'      => array(
@@ -385,9 +315,6 @@ function wpmem_install_settings() {
 	
 	// Using update_option to allow for forced update.
 	update_option( 'wpmembers_settings', $wpmem_settings, '', 'yes' );
-
-	// This is a new install.
-	update_option( 'wpmembers_install_state', 'new_install' );
 	
 	return $wpmem_settings;
 }
@@ -487,6 +414,7 @@ function wpmem_upgrade_fields() {
  * so this should handle most updates.
  *
  * @since 3.2.7
+ * @todo Consider revising or making obsolete.
  *
  * @param array $settings
  */
@@ -588,27 +516,6 @@ function wpmem_upgrade_product_expiration() {
 }
 
 /**
- * Adds the user email validation success email.<br>8
- * 
- * @since 3.3.8
- */
-function wpmem_upgrade_validation_email() {
-	$subj = 'Thank you for confirming your email for your [blogname] account';
-	$body = 'Thank you for confirming your email address for access to [blogname]!';
-
-	$arr = array(
-		"subj" => $subj,
-		"body" => $body,
-	);
-
-	if ( ! get_option( 'wpmembers_email_validated' ) ) {
-		update_option( 'wpmembers_email_validated', $arr, false );
-	}
-
-	$arr = $subj = $body = '';
-}
-
-/**
  * Adds woo_reg settings.
  *
  * @since 3.3.8
@@ -634,87 +541,6 @@ function wpmem_upgrade_hidden_transient() {
 	delete_transient( '_wpmem_hidden_posts' );
 }
 
-function wpmem_onboarding_init( $action ) {
-	global $wpmem, $wpmem_onboarding;
-    include_once( 'vendor/rocketgeek-tools/class-rocketgeek-onboarding.php' );
-    $settings = array(
-        'page_title'      => 'WP-Members Onboarding', 
-        'menu_title'      => 'WP-Members Onboarding',
-        'capability'      => 'manage_options',
-        'menu_slug'       => 'wp-members-onboarding',
-        'product_slug'    => 'wp-members',
-        'product_file'    => $wpmem->path . 'wp-members.php',
-        'product_action'  => $action,
-        'product_type'    => 'plugin',
-        'opt_in_callback' => 'wpmem_onboarding_opt_in',
-        'opt_in_callback_args' => array(),
-
-		'install_state_option' => 'wpmembers_install_state',
-		'finalize_template' => $wpmem->path . 'includes/admin/partials/onboarding_finalize.php',
-		'notice_template' => $wpmem->path . 'includes/admin/partials/onboarding_notice.php',
-
-		'new_install_notice_args' => array(
-			'notice_heading' => esc_html__( 'Thank you for installing WP-Members, the original WordPress membership plugin.', 'wp-members' ),
-			'notice_button'  => esc_html__( 'Complete plugin setup', 'wp-members' ),
-			'show_release_notes' => false,
-			'release_notes_link' => "",
-		),
-		'update_pending_notice_args' => array(
-			'notice_heading' => esc_html__( 'Thank you for updating WP-Members, the original WordPress membership plugin.', 'wp-members' ),
-			'notice_button'  => esc_html__( 'Complete the update', 'wp-members' ),
-			'show_release_notes' => true,
-			'release_notes_link' => "https://rocketgeek.com/release-announcements/wp-members-3-4-8/",
-		),
-    );
-    $wpmem_onboarding = new RocketGeek_Onboarding_Beta( $settings );
-}
-
-function wpmem_onboarding_new_install( $path, $version ) {
-	global $wpmem_onboarding;
-	wpmem_onboarding_init( 'install' );
-}
-
-function wpmem_onboarding_pending_update( $path, $version ) {
-	global $wpmem_onboarding;
-	wpmem_onboarding_init( 'update' );
-}
-
-function wpmem_onboarding_opt_in() {
-    global $wpmem, $wpmem_onboarding;
-    // $onboarding_title = ( 'upgrade' == $args['param1'] ) ? esc_html__( 'WP-Members Upgrade', 'wp-members' ) : esc_html__( "WP-Members New Install", 'wp-members' );
-	$install_state = get_option( 'wpmembers_install_state' );
-	$onboarding_title = ( 'update_pending' == $install_state ) ? esc_html__( 'WP-Members Upgrade', 'wp-members' ) : esc_html__( "WP-Members New Install", 'wp-members' );
-    $onboarding_release_notes = "https://rocketgeek.com/release-announcements/wp-members-3-4-8/";
-    $onboarding_version = $wpmem->version;
-
-    $page = ( ! isset( $_POST['step'] ) ) ? 'step_1' : $_POST['step'];
-    if ( 'finalize' == $page ) {
-        if ( isset( $_POST['optin'] ) ) {
-			if ( 'update_pending' == $install_state ) {
-				$wpmem_onboarding->record_plugin_upgrade( 'wp-members', $wpmem->path . 'wp-members.php' );
-			} else {
-				$wpmem_onboarding->record_plugin_activation( 'wp-members', $wpmem->path . 'wp-members.php' );
-			}
-			update_option( 'wpmembers_optin', 1 );
-        } else {
-			update_option( 'wpmembers_optin', 0 );
-		}
-
-		update_option( 'wpmembers_install_state', 'install_complete_' . $wpmem->version . '_' . time() );
-        include_once( $wpmem->path . 'includes/admin/partials/onboarding_finalize.php' );
-    }
-	exit();
-}
-
-function wpmem_plugin_deactivate() {
-    global $wpmem, $wpmem_onboarding;
-	$optin = get_option( 'wpmembers_optin' );
-	if ( 1 == $optin ) {
-		wpmem_onboarding_init( 'deactivate' );
-		$wpmem_onboarding->record_plugin_deactivation( 'wp-members', $wpmem->path . 'wp-members.php' );
-	}
-}
-
 function wpmem_upgrade_user_search_crud_table() {
 	global $wpdb;
 	// Drop old table if it exists.
@@ -723,15 +549,251 @@ function wpmem_upgrade_user_search_crud_table() {
 	$wpdb->query( "CREATE TABLE IF NOT EXISTS " . $wpdb->prefix . "wpmembers_user_search_crud (meta_key VARCHAR(255) NOT NULL);" );
 }
 
+function wpmem_update_user_dirs() {
+
+	$users_to_check = get_users( array( 'fields'=>'ID' ));
+
+	// Get the uploads directory base.
+	$upload_vars  = wp_upload_dir( null, false );
+	$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . 'wpmembers' );
+	$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+
+	if ( file_exists( $wpmem_user_files_dir ) ) {
+
+		// We need this for the utility functions.
+		include_once 'api/api-utilities.php';
+
+		// Add indexes and htaccess
+		wpmem_create_file( array(
+			'path'     => $wpmem_base_dir,
+			'name'     => 'index.php',
+			'contents' => "<?php // Silence is golden."
+		) );
+		wpmem_create_file( array(
+			'path'     => $wpmem_user_files_dir,
+			'name'     => 'index.php',
+			'contents' => "<?php // Silence is golden."
+		) );
+		wpmem_create_file( array(
+			'path'     => $wpmem_user_files_dir,
+			'name'     => '.htaccess',
+			'contents' => "Options -Indexes"
+		) );
+
+		// Loop through users to update user dirs.
+		foreach ( $users_to_check as $user ) {
+			$wpmem_user_dir = $wpmem_user_files_dir . $user;
+			if ( is_dir( $wpmem_user_dir ) ) {
+				wpmem_create_file( array(
+					'path'     => $wpmem_user_dir,
+					'name'     => 'index.php',
+					'contents' => "<?php // Silence is golden."
+				) );
+			}
+		}
+	}
+}
+
 function wpmem_add_profile_to_fields( $existing_settings ) {
 	
 	$fields = get_option( 'wpmembers_fields' );
 	$skips = array( 'username', 'user_login', 'password', 'confirm_password', 'tos' );
+	$wpmem_fields_wcchkout = array();
+	$wpmem_fields_wcaccount = array();
+	
 	foreach ( $fields as $key => $val ) {
-		if ( ! isset( $val['profile'] ) ) {
-			$fields[ $key ]['profile'] = ( ! in_array( $key, $skips ) ) ? 1 : 0;
+		$reg_val = $fields[ $key ][4];
+		$reg_val = ( "y" == $reg_val ) ? true : false;
+		$fields[ $key ]['profile'] = ( ! in_array( $key, $skips ) ) ? $reg_val : false;
+
+		if ( 1 == $existing_settings['woo']['add_checkout_fields'] ) {
+			$wpmem_fields_wcchkout[] = $key;
+		}
+		if ( 1 == $existing_settings['woo']['add_my_account_fields'] ) {
+			$wpmem_fields_wcaccount[] = $key;
 		}
 	}
+	
 	update_option( 'wpmembers_fields', $fields );
+	
+	//if ( ! empty( $wpmem_fields_wcchkout ) ) {
+		update_option( 'wpmembers_wcchkout_fields', $wpmem_fields_wcchkout );
+	//}
+	
+	//if ( ! empty( $wpmem_fields_wcaccount ) ) {
+		update_option( 'wpmembers_wcacct_fields', $wpmem_fields_wcaccount );
+	//}
+}
+
+
+function wpmem_onboarding_init( $action ) {
+	global $wpmem_onboarding;
+    $settings = array(
+        'product_action'  => $action,
+    );
+    $wpmem_onboarding = new WP_Members_Installer( $settings );
+}
+
+function wpmem_onboarding_new_install() {
+	wpmem_onboarding_init( 'install' );
+}
+
+function wpmem_onboarding_pending_update() {
+	wpmem_onboarding_init( 'update' );
+}
+
+function wpmem_onboarding_finalize() {
+    global $wpmem, $wpmem_onboarding;
+	if ( isset( $_POST['optin'] ) ) {
+		if ( 'update_pending' == $wpmem->install_state ) {
+			$wpmem_onboarding->deploy( 'wp-members', $wpmem->path . 'wp-members.php', 'update' );
+		} else {
+			$wpmem_onboarding->deploy( 'wp-members', $wpmem->path . 'wp-members.php', 'activate' );
+		}
+		update_option( 'wpmembers_optin', 1 );
+	} else {
+		update_option( 'wpmembers_optin', 0 );
+	}
+
+	$update_settings = get_option( 'wpmembers_settings' );
+	if ( 'update_pending' == $wpmem->install_state ) {
+		$wpmem->install_state = $update_settings['install_state'] = 'set_bg_actions';
+	} else {
+		$wpmem->install_state = $update_settings['install_state'] = 'install_complete_' . $wpmem->version . '_' . time();
+	}
+	update_option( 'wpmembers_settings', $update_settings );
+}
+
+function wpmem_plugin_deactivate() {
+    global $wpmem, $wpmem_onboarding;
+	$optin = get_option( 'wpmembers_optin' );
+	if ( 1 == $optin ) {
+		wpmem_onboarding_init( 'deactivate' );
+		$wpmem_onboarding->deploy( 'wp-members', $wpmem->path . 'wp-members.php', 'deactivate' );
+	}
+}
+
+function wpmem_background_actions() {
+
+    global $wpmem;
+
+	if ( 'set_bg_actions' == $wpmem->install_state ) {
+		// Get all users.
+		$users_to_check = get_users( array( 'fields'=>'ID' ));
+		update_option( 'wpmem_update_users_to_check', $users_to_check );
+	
+		// Get the uploads directory base.
+		$upload_vars  = wp_upload_dir( null, false );
+		$base_dir = $upload_vars['basedir'];
+		$wpmem_base_dir = trailingslashit( trailingslashit( $base_dir ) . $wpmem->upload_base );
+		$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+	
+		// Fix wpmem base dir first.
+		wpmem_create_index_file( $wpmem_base_dir );
+	
+		// Fix wpmem user_files dir.
+		wpmem_create_index_file( $wpmem_user_files_dir );
+
+		// Update install_state (as process is now started).
+		$update_settings = get_option( 'wpmembers_settings' );
+		$wpmem->install_state = $update_settings['install_state'] = 'running_bg_actions';
+		update_option( 'wpmembers_settings', $update_settings );
+	
+		// Schedule the process to continue.
+		as_enqueue_async_action( 'wpmem_update_user_dirs_async' );
+
+	} else {
+
+		// Pick up the saved process.
+		$users_to_check = get_option( 'wpmem_update_users_to_check' );
+
+		// Get 100 users.
+		$users_to_process = array_splice( $users_to_check, 1 );
+
+		$continue = ( empty( $users_to_check ) )? false : true;
+
+		// Set up the directory path.
+		$upload_vars  = wp_upload_dir( null, false );
+		$base_dir = $upload_vars['basedir'];
+		$wpmem_base_dir = trailingslashit( trailingslashit( $base_dir ) . $wpmem->upload_base );
+		$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+
+		// Loop through users to update user dirs.
+		foreach ( $users_to_process as $user ) {
+			$wpmem_user_dir = $wpmem_user_files_dir . $user;
+			if ( is_dir( $wpmem_user_dir ) ) {
+				wpmem_create_index_file( $wpmem_user_dir );
+			}
+		}
+
+		if ( $continue ) {
+			// Keep going with next batch.
+			update_option( 'wpmem_update_chk_user_dir_index', $users_to_check );
+			as_enqueue_async_action( 'wpmem_update_user_dirs_async' );
+		} else {
+			// Process is complete.  Clean up after yourself.
+			delete_option( 'wpmem_update_chk_user_dir_index' );
+			$update_settings = get_option( 'wpmembers_settings' );
+			$wpmem->install_state = $update_settings['install_state'] = 'install_complete_' . $wpmem->version . '_' . time();
+			update_option( 'wpmembers_settings', $update_settings );
+		}
+	}
+}
+
+class WP_Members_Installer {
+
+	public $settings;
+	public $product_action;
+	public $opt_in_callback;
+	public $opt_in_callback_args;
+
+	public function __construct( $settings ) {
+		$this->settings = $settings;
+
+		foreach ( $settings as $key => $value ) {
+			$this->{$key} = $value;
+		}
+
+		add_action( 'admin_notices', array( $this, 'onboarding_notice' ) );
+	}
+
+	public function deploy( $slug, $product_file, $action ) {
+		global $wpmem;
+		require_once $wpmem->path . 'includes/vendor/rocketgeek-plugin-manager/class-rocketgeek-deploy-plugin.php';
+		//$rgut = new RocketGeek_Deploy_Plugin_v1( $slug, $product_file, $action, 'plugin' );
+	}
+
+	public function onboarding_notice() {
+		global $wpmem;
+
+		$show_release_notes = true;
+		$release_notes_link = "https://rocketgeek.com/release-announcements/wp-members-3-4-8/";
+
+		if ( 'new_install' == $wpmem->install_state ) {
+			$notice_heading = __( 'Thank you for installing WP-Members, the original WordPress membership plugin.', 'wp-members' );
+			$notice_button  = __( 'Complete plugin setup', 'wp-members' );
+			$show_release_notes = false;
+		}
+
+		if ( 'update_pending' == $wpmem->install_state ) {
+			$notice_heading = __( 'Thank you for updating WP-Members, the original WordPress membership plugin.', 'wp-members' );
+			$notice_button  = __( 'Complete the update', 'wp-members' );
+		}
+
+		if ( 'finalize' == wpmem_get( 'wpmem_onboarding_action' ) ) {
+
+		}
+
+		include_once $wpmem->path . 'includes/admin/partials/onboarding_notice.php';
+	}
+
+	public function has_user_opted_in() {
+		global $wpmem;
+		if ( 1 == $wpmem->optin ) {
+			return true;
+		}
+
+		return false;
+	}
 }
 // End of file.

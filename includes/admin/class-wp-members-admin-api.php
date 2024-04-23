@@ -60,15 +60,19 @@ class WP_Members_Admin_API {
 	function __construct() {
 
 		global $wpmem;
+			
+		if ( 'finalize' == wpmem_get( 'wpmem_onboarding_action' ) ) {
+			require_once( $wpmem->path . 'includes/install.php' );
+			wpmem_onboarding_init( array( 'finalize' ) );
+			wpmem_onboarding_finalize();
+		}
 
-		$install_state = get_option( 'wpmembers_install_state' );
-
-		if ( 'new_install' == $install_state ) {
+		if ( 'new_install' == $wpmem->install_state ) {
 			require_once( $wpmem->path . 'includes/install.php' );
 			wpmem_onboarding_new_install( $wpmem->path, $wpmem->version );
 		}
 
-		if ( 'update_pending' == $install_state ) {
+		if ( 'update_pending' == $wpmem->install_state ) {
 			require_once( $wpmem->path . 'includes/install.php' );
 			wpmem_onboarding_pending_update( $wpmem->path, $wpmem->version );
 		}
@@ -82,9 +86,9 @@ class WP_Members_Admin_API {
 		// The following is only needed if we are on the WP-Members settings screen.
 		$is_wpmem_admin = wpmem_get( 'page', false, 'get' );
 		if ( false !== $is_wpmem_admin && 'wpmem-settings' == $is_wpmem_admin ) {
-			$tabs    = $this->default_tabs();    // Load default tabs.
-			$emails  = $this->default_emails();  // Load default emails.
-			$dialogs = $this->default_dialogs(); // Load default dialogs.
+			$this->default_tabs();    // Load default tabs.
+			$this->default_emails();  // Load default emails.
+			$this->default_dialogs(); // Load default dialogs.
 		}
 
 		$wpmem->membership->admin = new WP_Members_Products_Admin();
@@ -237,7 +241,7 @@ class WP_Members_Admin_API {
 	 * @since 3.3.0
 	 */
 	function do_admin_notices() {
-		global $wpmem; //echo '<pre>'; print_r( $wpmem ); exit();
+		global $wpmem;
 		if ( $wpmem->admin_notices ) {
 			foreach ( $wpmem->admin_notices as $key => $value ) {
 				echo '<div class="notice notice-' . $value['type'] . ' is-dismissible"> 
