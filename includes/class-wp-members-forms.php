@@ -86,7 +86,7 @@ class WP_Members_Forms {
 				$assembled_fields[ $meta_key ]['type']     = $field_type;
 				$assembled_fields[ $meta_key ]['register'] = ( 'y' == $val[4] ) ? true : false;
 				$assembled_fields[ $meta_key ]['required'] = ( 'y' == $val[5] ) ? true : false;
-				$assembled_fields[ $meta_key ]['profile']  = $val['profile'];
+				$assembled_fields[ $meta_key ]['profile']  = ( isset( $val['profile'] ) ) ? $val['profile'] : ( ( 'y' == $val[4] ) ? true : false );
 				$assembled_fields[ $meta_key ]['native']   = ( 'y' == $val[6] ) ? true : false;
 				
 				// These field types have additional properties.
@@ -104,7 +104,15 @@ class WP_Members_Forms {
 					case 'radio':
 					case 'membership':
 						if ( 'membership' == $field_type ) {
-							$val[7] = array( esc_html__( 'Choose membership', 'wp-members' ) . '|' );
+							/**
+							 * Filter the membership field dropdown default.
+							 * 
+							 * @since 3.5.0
+							 * 
+							 * @param  string  $default
+							 */
+							$membership_default = apply_filters( 'wpmem_membership_field_default', esc_html__( 'Choose membership', 'wp-members' ) );
+							$val[7] = array( $membership_default . '|' );
 							foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
 								$val[7][] = $membership_value['title'] . '|' . $membership_key;
 							}
