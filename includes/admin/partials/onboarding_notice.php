@@ -14,7 +14,7 @@ $action_complete = ( 'update_pending' == $wpmem->install_state ) ? esc_html__( '
 
 if ( 'finalize' == wpmem_get( 'wpmem_onboarding_action' ) ) {
 ?>
-<div class="notice notice-info">
+<div class="notice notice-info is-dismissible">
 	<h3><?php echo $action_complete; ?></h3>
 	<?php if ( 'update_pending' != $wpmem->install_state ) { ?>
 		<p>WP-Members installs some basic defaults to get you started. Be sure to review <a href="<?php echo admin_url(); ?>options-general.php?page=wpmem-settings">the plugin's default setup here</a>.
