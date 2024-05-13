@@ -1115,6 +1115,9 @@ class WP_Members_Forms {
 
 		// Merge $args with defaults.
 		$args = wp_parse_args( $args, $defaults );
+
+		// User ID based on filtered value.
+		$user = $args['user'];
 		
 		// Get fields.
 		$wpmem_fields = wpmem_fields( $tag );
