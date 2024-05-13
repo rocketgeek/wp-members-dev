@@ -3,7 +3,7 @@ Contributors: cbutlerjr
 Tags: access, authentication, content, login, member, membership, password, protect, register, registration, restriction, subscriber
 Requires at least: 4.0
 Tested up to: 6.4
-Stable tag: 3.5.0
+Stable tag: 3.4.9.5
 
 License: GPLv3
 
@@ -108,7 +108,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.4.8 is a security update, along with a series of bug fix patches. Backup prior to upgrading is recommended, but rollback is possible. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.4.9 is a series of security updates, along with a series of bug fix patches. Backup prior to upgrading is recommended, but rollback is possible. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -134,7 +134,7 @@ WP-Members 3.4.8 is a security update, along with a series of bug fix patches. B
 
 = 3.5.0 =
 
-* IMPORTANT: WP-Members pluggable deprecated for use in theme functions.php.  WP-Members is now initialized when plugins are loaded, which is an earlier load action than previous versions.  If you have any WP-Members pluggable functions that load in the theme functions.php, you'll need to move these to another location, such as a custom plugin file.  Keep in mind, pluggable functions are no longer the preferred way of customizing (and have not been for many years) as most customizations, if not all, can be handled by using the plugin's filter and action hooks.
+* IMPORTANT: WP-Members pluggable functions deprecated for use in theme functions.php.  WP-Members is now initialized when plugins are loaded, which is an earlier load action than previous versions.  If you have any WP-Members pluggable functions that load in the theme functions.php, you'll need to move these to another location, such as a custom plugin file.  Keep in mind, pluggable functions are no longer the preferred way of customizing (and have not been for many years) as most customizations, if not all, can be handled by using the plugin's filter and action hooks.
 * IMPORTANT: Legacy password reset (requiring username & email to send a new password via email) is fully obsolete.  Plugin now only sends a password reset link for the user to then access the site and set a new password (no passwords via email).
 * IMPORTANT: Legacy login error message is fully obsolete.  Legacy messages still used, in error message, but generation/display is now using the WP Error object class.
 
@@ -162,9 +162,10 @@ New features:
 * Adds a resend confirmation link form for the user.
 * Adds a resend confirmation link action in the admin (hoverlink in Users > All Users).
 * Adds default email function for emails that are not completely set up.
+* Code improvement: if user object is filtered in `wpmem_register_form_args`, the form values are based on the filtered user ID.
+* Code improvement: logout link in login shortcode uses `rawurlencode()` instead of `urlencode()`.
 
 Security:
-
 * Interim security updates from 3.4.9.x series included and improved.
 * Security audit of shortcode object class.  Includes some of the updates from 3.4.9.x and expands on those.  All shortcode inputs from attributes is sanitized, all output is escaped.
 * Improved handling of user directories for uploaded files (when used).
@@ -174,6 +175,19 @@ Other:
 * Can resend welcome email (with confirmation link) when confirmation link setting is enabled. This can be via the bulk action menu (multiple users) or hover link (single user).
 * Removes obsolete file /admin/tab-options.php.  Users of the WP-Members User List extension version 1.9.4 and earlier will need to update the User List extension for full compatiblity.
 * No longer installs default email content on clean install. (See release notes re: default email content function.)
+
+= 3.4.9 =
+
+* Adds wpmem_field_sc_meta_keys filter hook to filter meta keys allowed by the [wpmem_fields] shortcode (default: fields that are in the WP-Members Fields array).
+* Adds wpmem_is_login(), wpmem_is_register(), and wpmem_is_profile() conditional functions.
+* Adds index.php to user upload directories to prevent directory browsing if not specifically disabled elsewhere.
+* Define $woo_connector object variable for PHP 8.2+ with the premium WooCommerce integration extension.
+* Early patch fix for export if memberships are enabled but there are no memberships defined (from 3.5.0 included fixes).
+* Early patch fix for fields data list in admin notification email if HTML formatted email is enabled (from 3.5.0 included fixes).
+* Security update: Review shortcode object class for sanitizing all shortcode attributes and escaping all output.
+* Security update: Review admin user profile class for sanitizing all input and escaping all output.
+* Security update: Restrict use of the [wpmem_fields] shortcode.  See the release notes on the support site for more detail.
+* Update WP version compatibility.
 
 = 3.4.8 =
 

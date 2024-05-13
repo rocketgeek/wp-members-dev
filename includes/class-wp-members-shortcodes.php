@@ -1407,7 +1407,7 @@ class WP_Members_Shortcodes {
 
 			case 'login':
 
-				$logout = urldecode( $logout );
+				$logout = rawurldecode( $logout );
 				/*
 				 * NOTE: DO NOT EDIT THESE. Use the filter hook below.
 				 * 
