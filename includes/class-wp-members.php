@@ -501,6 +501,7 @@ class WP_Members {
 	public $stop_spam;
 	public $usertrack;
 	public $user_list;
+	public $excluded_meta;
 
 	// @deprecated
 	public $pwd_link;
