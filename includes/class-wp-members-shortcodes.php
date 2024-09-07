@@ -41,14 +41,16 @@ class WP_Members_Shortcodes {
 		add_shortcode( 'wpmem_logged_out',   array( $this, 'logged_out'   ) );
 		add_shortcode( 'wpmem_logout',       array( $this, 'logout'       ) );
 		add_shortcode( 'wpmem_form',         array( $this, 'forms'        ) );
-		add_shortcode( 'wpmem_show_count',   array( $this, 'user_count'   ) );
+		add_shortcode( 'wpmem_login',        array( $this, 'forms_login' ) );
+		add_shortcode( 'wpmem_reg',          array( $this, 'forms_reg' ) );
 		add_shortcode( 'wpmem_profile',      array( $this, 'user_profile' ) );
 		add_shortcode( 'wpmem_loginout',     array( $this, 'loginout'     ) );
-		add_shortcode( 'wpmem_tos',          array( $this, 'tos'          ) );
-		add_shortcode( 'wpmem_avatar',       array( $this, 'avatar'       ) );
 		add_shortcode( 'wpmem_login_link',   array( $this, 'login_link'   ) );
 		add_shortcode( 'wpmem_login_button', array( $this, 'login_button' ) );
 		add_shortcode( 'wpmem_reg_link',     array( $this, 'login_link'   ) );
+		add_shortcode( 'wpmem_tos',          array( $this, 'tos'          ) );
+		add_shortcode( 'wpmem_avatar',       array( $this, 'avatar'       ) );
+		add_shortcode( 'wpmem_show_count',   array( $this, 'user_count'   ) );
 		add_shortcode( 'wpmem_form_nonce',   array( $this, 'form_nonce'   ) );
 
 		/**
@@ -74,6 +76,36 @@ class WP_Members_Shortcodes {
 		 * @since 3.1.6 Was wpmem_load_shortcodes, now wpmem_shortcodes_loaded.
 		 */
 		do_action( 'wpmem_shortcodes_loaded' );
+	}
+
+	/**
+	 * Alias for [wpmem_form login] shortcode.
+	 * 
+	 * @since 3.5.0
+	 * 
+	 * @param  array  $atts
+	 * @param  string $content
+	 * @param  string $tag
+	 * @param  return $content
+	 */
+	public function forms_login( $atts, $content, $tag ) {
+		$atts[0] = 'login';
+		return $this->forms( $atts, $content, 'wpmem_form' );
+	}
+
+	/**
+	 * Alias for [wpmem_form reg] shortcode.
+	 * 
+	 * @since 3.5.0
+	 * 
+	 * @param  array  $atts
+	 * @param  string $content
+	 * @param  string $tag
+	 * @param  return $content
+	 */
+	public function forms_reg( $atts, $content, $tag ) {
+		$atts[0] = 'register';
+		return $this->forms( $atts, $content, 'wpmem_form' );
 	}
 	
 	/**
