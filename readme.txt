@@ -165,6 +165,7 @@ New features:
 * Adds a resend confirmation link action in the admin (hoverlink in Users > All Users).
 * Adds default email function for emails that are not completely set up.
 * Adds direct shortcodes for [wpmem_login] and [wpmem_reg] that can be used in place of [wpmem_form] with the "login" or "reg" attributes.
+* Adds WP_CLI commands for creating and managing db views (views, create-view, drop-view).
 * Code improvement: if user object is filtered in `wpmem_register_form_args`, the form values are based on the filtered user ID.
 * Code improvement: logout link in login shortcode uses `rawurlencode()` instead of `urlencode()`.
 
@@ -177,6 +178,8 @@ Other:
 * Updates wpmem_email_to_user() to use tags instead of numeric tags, but numeric values are backward compatible.
 * Can resend welcome email (with confirmation link) when confirmation link setting is enabled. This can be via the bulk action menu (multiple users) or hover link (single user).
 * Removes obsolete file /admin/tab-options.php.  Users of the WP-Members User List extension version 1.9.4 and earlier will need to update the User List extension for full compatiblity.
+* Removes obsolete file /inc/dialogs.php 
+* Removes obsolete file /inc/email.php.  
 * No longer installs default email content on clean install. (See release notes re: default email content function.)
 
 = 3.4.9 =
