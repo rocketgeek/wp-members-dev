@@ -147,6 +147,8 @@ Bug fixes:
 * Fixes a bug in the [wpmem_tos] shortcode if no URL is passed.
 * Fixes a bug in membership check if the user doesn't have the membership.
 * Fixes a bug in WP_Members::do_securify_rest() to check for a post ID, otherwise an error thrown when we try to check if the post is blocked.
+* Fixes a bug in the check to see if a restricted WooCommerce product is purchable by the user.
+* Fixes a bug in the install routine when checking if index.php files exist in uploads folder that can cause the update process to fail.
 
 New features:
 * Adds a "novalidate" option by filter toggle to the reg/login forms (for disabling the default HTML5 validation on required fields).
@@ -162,6 +164,7 @@ New features:
 * Adds a resend confirmation link form for the user.
 * Adds a resend confirmation link action in the admin (hoverlink in Users > All Users).
 * Adds default email function for emails that are not completely set up.
+* Adds direct shortcodes for [wpmem_login] and [wpmem_reg] that can be used in place of [wpmem_form] with the "login" or "reg" attributes.
 * Code improvement: if user object is filtered in `wpmem_register_form_args`, the form values are based on the filtered user ID.
 * Code improvement: logout link in login shortcode uses `rawurlencode()` instead of `urlencode()`.
 
