@@ -321,7 +321,7 @@ function wpmem_get_redirect_to( $args = array() ) {
 function wpmem_create_file( $args ) {
 	$check_file = trailingslashit( $args['path'] ) . $args['name'];
     if ( ! file_exists( $check_file ) ) {
-		$file = fopen( $check_file, "w" ) or die( "Unable to create file!" );
+		$file = fopen( $check_file, "w" );
 		fwrite( $file, $args['contents'] );
 		fclose( $file );
 	}
