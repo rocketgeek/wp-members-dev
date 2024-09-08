@@ -147,7 +147,7 @@ Bug fixes:
 * Fixes a bug in the [wpmem_tos] shortcode if no URL is passed.
 * Fixes a bug in membership check if the user doesn't have the membership.
 * Fixes a bug in WP_Members::do_securify_rest() to check for a post ID, otherwise an error thrown when we try to check if the post is blocked.
-* Fixes a bug in the check to see if a restricted WooCommerce product is purchable by the user.
+* Fixes a bug in the check to see if a restricted WooCommerce product is purchasable by the user.
 * Fixes a bug in the install routine when checking if index.php files exist in uploads folder that can cause the update process to fail.
 
 New features:

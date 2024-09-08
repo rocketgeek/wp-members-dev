@@ -709,17 +709,27 @@ function wpmem_get_plugin_version() {
  */
 function wpmem_woo_is_purchasable( $is_purchasable, $product ) {
 
-	// If product is blocked and or membership required,
-	// check access and return appropriate boolean.
+	// Is the product restricted?
+	if ( wpmem_is_blocked( $product->get_id() ) ) {
 
-	if ( ! is_user_logged_in() ) {
-		return false;
+		// If it's restricted and the user is not logged in, return false (not purchasable by this user).
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		// Does the product have a membership requirement?
+		$membership_required = wpmem_get_post_memberships( $product->get_id() );
+		// If not, it's purchasable.
+		if ( false == $membership_required ) {
+			return true;
+		} else {
+			// If a membership is required, does the user have access?  If not, return false (not purchasable by this user).
+			if ( ! wpmem_user_has_access( $membership_required ) ) {
+				return false;
+			}
+		}
 	}
 
-	if ( ! wpmem_user_has_access( wpmem_get_post_memberships( $product->get_id() ) ) ) {
-		return false;
-	}
-
-	return $is_purchasable;
+	return true;
 }
 // End of file.
