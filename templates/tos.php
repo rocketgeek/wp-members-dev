@@ -17,7 +17,7 @@
 
 <html>
 <head>
-	<title><?php _e( 'Terms of Service', 'wp-members' ); ?> | <?php bloginfo( 'name' ); ?></title>
+	<title><?php wpmem_get_text( 'tos_title', true ); ?> | <?php bloginfo( 'name' ); ?></title>
 </head>
 
 <body>
@@ -29,9 +29,9 @@ $wpmem_tos = get_option( 'wpmembers_tos' );
 echo stripslashes( $wpmem_tos );
 
 print ( '<br /><br />' );
-printf( esc_html__('%sclose%s', 'wp-members'), '[<a href="javascript:self.close()">', '</a>]' );
+printf( wpmem_get_text( 'tos_close' ), '[<a href="javascript:self.close()">', '</a>]' );
 print ( '&nbsp;&nbsp;' );
-printf( esc_html__('%sprint%s', 'wp-members'), '[<a href="javascript:window.print()">', '</a>]' );
+printf( wpmem_get_text( 'tos_print' ), '[<a href="javascript:window.print()">', '</a>]' );
 
 ?>
 

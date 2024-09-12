@@ -287,13 +287,13 @@ class WP_Members_Captcha {
 				// This variable holds the CAPTCHA image prefix, which corresponds to the correct answer.
 				$rs_captcha_prefix = ( wpmem_get( 'captcha_prefix', false ) );
 				if ( ! $rs_captcha_prefix ) {
-					$wpmem_themsg = esc_html__( 'Error with the captcha code configuration. Please notify the site administrator', 'wp-members' );
+					$wpmem_themsg = wpmem_get_text( 'rs_captcha_error' );
 					return false;
 				}
 				// This variable holds the CAPTCHA response, entered by the user.
 				$rs_captcha_code = ( wpmem_get('captcha_code', false ) );
 				if ( ! $rs_captcha_code ) {
-					$wpmem_themsg = esc_html__( 'Captcha code was empty. You must complete the captcha code.', 'wp-members' );
+					$wpmem_themsg = wpmem_get_text( 'rs_captcha_empty' );
 					return false;
 				}
 				// Check CAPTCHA validity.
@@ -303,7 +303,7 @@ class WP_Members_Captcha {
 				$rs_captcha->cleanup();
 				// If CAPTCHA validation fails (incorrect value entered in CAPTCHA field), return an error.
 				if ( ! $rs_captcha_correct ) {
-					$wpmem_themsg = esc_html__( 'You have entered an incorrect code value. Please try again.', 'wp-members' );
+					$wpmem_themsg = wpmem_get_text( 'rs_captcha_wrong' );
 					return false;
 				}
 			}

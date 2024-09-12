@@ -1295,7 +1295,7 @@ class WP_Members {
 						 *
 						 * @param string $message
 						 */
-						$response->data['content']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_content", __( "You must be logged in to view this content.", 'wp-members' ), $response, $post, $request );
+						$response->data['content']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_content", wpmem_get_text( 'rest_content_rendered' ), $response, $post, $request );
 					}
 					if ( isset( $response->data['excerpt']['rendered'] ) ) {
 						/**
@@ -1306,13 +1306,13 @@ class WP_Members {
 						 *
 						 * @param string $message
 						 */
-						$response->data['excerpt']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_excerpt", __( "You must be logged in to view this content.", 'wp-members' ), $response, $post, $request );
+						$response->data['excerpt']['rendered'] = apply_filters( "wpmem_securify_rest_{$post->post_type}_excerpt", wpmem_get_text( 'rest_excerpt_rendered' ), $response, $post, $request );
 					}
 				}
 
 				// Response for hidden content. @todo This needs to be changed to check for whether the user has access (for internal requests).
 				if ( ! is_admin() && in_array( $post->ID, $this->hidden_posts() ) ) {
-					return new WP_REST_Response( __( 'The page you are looking for does not exist', 'wp-members' ), 404 );
+					return new WP_REST_Response( wpmem_get_text( 'rest_404' ), 404 );
 				}
 			}
 		}
@@ -1587,6 +1587,7 @@ class WP_Members {
 	 * All defaults can be filtered using wpmem_default_text_strings.
 	 *
 	 * @since 3.1.0
+	 * @deprecated 3.5.0 Use wpmem_get_text() Make sure "official" extensions do not use $wpmem->get_text() before making obsolete.
 	 *
 	 * @global object $wpmem
 	 *
@@ -1646,7 +1647,7 @@ class WP_Members {
 		/** This filter is defined in /includes/api/api.php */
 		$logout = apply_filters( 'wpmem_logout_link', add_query_arg( 'a', 'logout' ) );
 		?><script type="text/javascript">
-			jQuery('.wpmem_loginout').html('<a class="login_button" href="<?php echo esc_url( $logout ); ?>"><?php echo $this->get_text( 'menu_logout' ); ?></a>');
+			jQuery('.wpmem_loginout').html('<a class="login_button" href="<?php echo esc_url( $logout ); ?>"><?php echo wpmem_get_text( 'menu_logout' ); ?></a>');
 		</script><?php
 	}
 		
@@ -1954,8 +1955,8 @@ class WP_Members {
 			'format'             => ( isset( $args['format']             ) ) ? $args['format']             : 'link',
 			'login_redirect_to'  => ( isset( $args['login_redirect_to']  ) ) ? $args['login_redirect_to']  : wpmem_current_url(),
 			'logout_redirect_to' => ( isset( $args['logout_redirect_to'] ) ) ? $args['logout_redirect_to'] : wpmem_current_url(), // @todo - This is not currently active.
-			'login_text'         => ( isset( $args['login_text']         ) ) ? $args['login_text']         : __( 'log in',  'wp-members' ),
-			'logout_text'        => ( isset( $args['logout_text']        ) ) ? $args['logout_text']        : __( 'log out', 'wp-members' ),
+			'login_text'         => ( isset( $args['login_text']         ) ) ? $args['login_text']         : wpmem_get_text( 'loginout_login_text' ),
+			'logout_text'        => ( isset( $args['logout_text']        ) ) ? $args['logout_text']        : wpmem_get_text( 'loginout_logout_text' ),
 			'class'              => ( isset( $args['class']              ) ) ? $args['class']              : 'wpmem_loginout_link',
 			'id'                 => ( isset( $args['id']                 ) ) ? $args['id']                 : 'wpmem_loginout_link',
 		);

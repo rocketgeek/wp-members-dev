@@ -651,7 +651,7 @@ function wpmem_woo_reg_validate( $username, $email, $errors ) {
 	
 	foreach ( $fields as $key => $field_args ) {
 		if ( 1 == $field_args['required'] && empty( $_POST[ $key ] ) ) {
-			$message = sprintf( esc_html__( '%s is a required field.', 'wp-members' ), '<strong>' . $field_args['label'] . '</strong>' );
+			$message = sprintf( wpmem_get_text( 'woo_reg_required_field' ), '<strong>' . $field_args['label'] . '</strong>' );
 			$errors->add( $key, $message );
 		}
 	}

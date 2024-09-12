@@ -34,10 +34,10 @@ class WP_Members_Pwd_Reset {
 	function __construct() {
 		
 		$defaults = array(
-			'invalid_key'     => esc_html__( "Invalid key." ),
-			'invalid_user'    => esc_html__( "Invalid user.", 'wp-members' ),
-			'key_is_expired'  => esc_html__( "Sorry, the password reset key is expired.", 'wp-members' ),
-			'request_new_key' => esc_html__( "Request a new reset key.", 'wp-members' ),
+			'invalid_key'     => wpmem_get_text( 'pwd_reset_invalid_key' ), // "Invalid key."
+			'invalid_user'    => wpmem_get_text( 'pwd_reset_invalid_user' ), // "Invalid user."
+			'key_is_expired'  => wpmem_get_text( 'pwd_reset_key_is_expired' ), // "Sorry, the password reset key is expired."
+			'request_new_key' => wpmem_get_text( 'pwd_reset_request_new_key' ), // "Request a new reset key."
 		);
 		
 		/**

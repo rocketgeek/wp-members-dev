@@ -726,13 +726,13 @@ class WP_Members_User {
 
 		if ( ! isset( $arr['user'] ) || '' == $arr['user'] ) { 
 			// There was an empty field.
-			$errors->add( 'empty', esc_html__( 'User field cannot be empty', 'wp-members' ) );
+			$errors->add( 'empty', wpmem_get_text( 'pwd_reset_empty' ) );
 			return "pwdreseterr";
 
 		} else {
 
 			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_pwdreset_nonce'], 'wpmem_shortform_nonce' ) ) {
-				$errors->add( 'nonce', esc_html__( 'There was an unspecified error', 'wp-members' ) );
+				$errors->add( 'nonce', wpmem_get_text( 'pwd_reset_nonce' ) );
 				return "reg_generic";
 			}
 
@@ -1287,7 +1287,7 @@ class WP_Members_User {
 	 */ 
 	function check_activated( $user, $username, $password ) {
 		if ( ! is_wp_error( $user ) && ! is_null( $user ) && false == $this->is_user_activated( $user->ID ) ) {
-			$msg = esc_html__( sprintf( '%sERROR%s: User has not been activated.', '<strong>', '</strong>' ), 'wp-members' );
+			$msg = sprintf( wpmem_get_text( 'user_not_activated' ), '<strong>', '</strong>' );
 			/**
 			 * Filter the activation message.
 			 * 

@@ -34,10 +34,10 @@ class WP_Members_Validation_Link {
 	public function __construct() {
 		
 		$defaults = array(
-			'email_text'        => esc_html__( 'Click to validate your account: ',       'wp-members' ),
-			'success_message'   => esc_html__( 'Thank you for validating your account.', 'wp-members' ),
-			'invalid_message'   => esc_html__( 'Validation key was expired or invalid',  'wp-members' ),
-			'moderated_message' => esc_html__( 'Your account is now pending approval',   'wp-members' ),
+			'email_text'        => wpmem_get_text( 'validate_email_text' ), // 'Click to validate your account: '
+			'success_message'   => wpmem_get_text( 'validate_success_msg' ), // 'Thank you for validating your account.'
+			'invalid_message'   => wpmem_get_text( 'validate_invalid_msg' ), // 'Validation key was expired or invalid'
+			'moderated_message' => wpmem_get_text( 'validate_moderated_msg' ), // 'Your account is now pending approval'
 		);
 		
 		/**

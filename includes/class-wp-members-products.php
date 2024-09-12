@@ -622,13 +622,13 @@ class WP_Members_Products {
 		$pairs = array(
 			'title_before' => '<h2>',
 			'title_after'  => '</h2>',
-			'title'        => esc_html__( 'Memberships', 'wp-members' ),
+			'title'        => wpmem_get_text( 'membership_sc_title' ), // "Memberships"
 			'list_before'  => '<ul>',
 			'list_after'   => '</ul>',
 			'item_before'  => '<li>',
 			'item_after'   => '</li>',
 			'date_format'  => 'default',
-			'no_expire'    => esc_html__( 'Does not expire', 'wp-members' ),
+			'no_expire'    => wpmem_get_text( 'membership_sc_no_expire' ), // "Does not expire"
 		);
 
 		$args = shortcode_atts( $pairs, $atts, $tag );

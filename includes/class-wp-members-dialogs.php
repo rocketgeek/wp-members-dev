@@ -54,6 +54,7 @@ class WP_Members_Dialogs {
 			'password'         => esc_html__( 'Password', 'wp-members' ),
 			'confirm_password' => esc_html__( 'Confirm Password', 'wp-members' ),
 			'tos'              => esc_html__( 'TOS', 'wp-members' ),
+			'tos_alt'          => esc_html__( 'Terms of Service', 'wp-members' ),
 		);
 		
 		/*
@@ -192,7 +193,42 @@ class WP_Members_Dialogs {
 			
 			'product_restricted_single'    => esc_html__( "This content requires the following membership: ", 'wp-members' ),
 			'product_restricted_multiple'  => esc_html__( "This content requires one of the following memberships: ", 'wp-members' ),
-		
+
+			// @todo These are new in 3.5.0 (moved from other areas of the plugin)
+			'rs_captcha_error' => esc_html__( 'Error with the captcha code configuration. Please notify the site administrator', 'wp-members' ),
+			'rs_captcha_empty' => esc_html__( 'Captcha code was empty. You must complete the captcha code.', 'wp-members' ),
+			'rs_captcha_wrong' => esc_html__( 'You have entered an incorrect code value. Please try again.', 'wp-members' ),
+			'membership_field' => esc_html__( 'Choose membership', 'wp-members' ),
+			'wp_form_required' => esc_html__( '(required)' ),
+			'wp_form_activate' => esc_html__( 'Activate this user?', 'wp-members' ),
+			'membership_sc_title'     => esc_html__( 'Memberships', 'wp-members' ),
+			'membership_sc_no_expire' => esc_html__( 'Does not expire', 'wp-members' ),
+			'customizer_generic_msg'  => esc_html__( "This is a generic message to display the form message dialog in the Customizer.", 'wp-members' ),
+			'logout_sc_text' => esc_html__( 'Click here to log out.', 'wp-members' ),
+			'user_not_activated' => esc_html__( '%sERROR%s: User has not been activated.', 'wp-members' ),
+			'validate_email_text'    => esc_html__( 'Click to validate your account: ',       'wp-members' ), 
+			'validate_success_msg'   => esc_html__( 'Thank you for validating your account.', 'wp-members' ), 
+			'validate_invalid_msg'   => esc_html__( 'Validation key was expired or invalid',  'wp-members' ), 
+			'validate_moderated_msg' => esc_html__( 'Your account is now pending approval',   'wp-members' ),
+			'rest_content_rendered'  => esc_html__( "You must be logged in to view this content.", 'wp-members' ),
+			'rest_excerpt_rendered'  => esc_html__( "You must be logged in to view this content.", 'wp-members' ),
+			'rest_404'               => esc_html__( 'The page you are looking for does not exist', 'wp-members' ),
+			'loginout_login_text'    => esc_html__( 'log in',  'wp-members' ),
+			'loginout_logout_text'   => esc_html__( 'log out', 'wp-members' ),
+			'woo_reg_required_field' => esc_html__( '%s is a required field.', 'wp-members' ),
+			'tos_title' => esc_html__( 'Terms of Service', 'wp-members' ),
+			'tos_close' => esc_html__('%sclose%s', 'wp-members'),
+			'tos_print' => esc_html__('%sprint%s', 'wp-members'),
+
+			// @todo These replace the default password reset dialogs.
+			'pwd_reset_invalid_key'     => esc_html__( "Invalid key.", 'wp-members' ),
+			'pwd_reset_invalid_user'    => esc_html__( "Invalid user.", 'wp-members' ),
+			'pwd_reset_key_is_expired'  => esc_html__( "Sorry, the password reset key is expired.", 'wp-members' ),
+			'pwd_reset_request_new_key' => esc_html__( "Request a new reset key.", 'wp-members' ),
+			'pwd_reset_empty'           => esc_html__( 'User field cannot be empty', 'wp-members' ),
+			'pwd_reset_nonce'           => esc_html__( 'There was an unspecified error', 'wp-members' ),
+
+
 		); // End of $defaults array.
 		
 		/**

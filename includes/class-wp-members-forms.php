@@ -111,7 +111,7 @@ class WP_Members_Forms {
 							 * 
 							 * @param  string  $default
 							 */
-							$membership_default = apply_filters( 'wpmem_membership_field_default', esc_html__( 'Choose membership', 'wp-members' ) );
+							$membership_default = apply_filters( 'wpmem_membership_field_default', wpmem_get_text( 'membership_field' ) );
 							$val[7] = array( $membership_default . '|' );
 							foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
 								$val[7][] = $membership_value['title'] . '|' . $membership_key;
@@ -390,7 +390,7 @@ class WP_Members_Forms {
 			$pname = ( 'multiselect' == $type ) ? $name . "[]" : $name;
 			$str = "<select name=\"$pname\" id=\"$id\" class=\"$class\"" . ( ( 'multiselect' == $type ) ? " multiple " : "" ) . ( ( $required ) ? " required " : "" ) . ">\n";
 			if ( 'membership' == $type ) {
-				$value = array( __( 'Choose membership', 'wp-members' ) . '|' );
+				$value = array( wpmem_get_text( 'membership_field' ) . '|' );
 				foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
 					$value[] = $membership_value['title'] . '|' . $membership_key;
 				}
@@ -1720,7 +1720,7 @@ class WP_Members_Forms {
 
 			foreach ( $wpmem_fields as $meta_key => $field ) {
 
-				$req = ( $field['required'] ) ? ( ( $is_woo ) ? ' <span class="required">*</span>' : ' <span class="req">' . __( '(required)' ) . '</span>' ) : '';
+				$req = ( $field['required'] ) ? ( ( $is_woo ) ? ' <span class="required">*</span>' : ' <span class="req">' . wpmem_get_text( 'wp_form_required' ) . '</span>' ) : '';
 
 				// File fields not yet supported for this form.
 				if ( $field['register'] && $meta_key != 'user_email' && $field['type'] != 'file' && $field['type'] != 'image' ) {
@@ -1918,7 +1918,7 @@ class WP_Members_Forms {
 
 			if ( ! $field['native'] && ! in_array( $meta_key, $exclude ) ) {
 
-				$req = ( $field['required'] ) ? ' <span class="description">' . __( '(required)' ) . '</span>' : '';
+				$req = ( $field['required'] ) ? ' <span class="description">' . wpmem_get_text( 'wp_form_required' ) . '</span>' : '';
 
 				$class = ( 'radio'    == $field['type'] 
 					    || 'checkbox' == $field['type']
@@ -1995,7 +1995,7 @@ class WP_Members_Forms {
 		if ( 1 == $wpmem->mod_reg ) {
 			echo '<tr>
 					<th scope="row">
-						<label for="activate_user">' . __( 'Activate this user?', 'wp-members' ) . '</label>
+						<label for="activate_user">' . wpmem_get_text( 'wp_form_activate' ) . '</label>
 					</th>
 					<td>' . wpmem_form_field( array( 'name' => 'activate_user', 'type' => 'checkbox', 'value' => 1, 'compare' => '' ) ) . '</td>
 				  </tr>';
