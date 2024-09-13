@@ -75,10 +75,6 @@
 			$("#wpmem_mspage_custom").show();
 		else
 			$("#wpmem_mspage_custom").hide();
-		if ($("#wpmem_stylesheet_select").val() == 'use_custom')
-			$("#wpmem_stylesheet_custom").show();
-		else
-			$("#wpmem_stylesheet_custom").hide();
 		$("#wpmem_logpage_select").change(function() {
 			if ($("#wpmem_logpage_select").val() == 'use_custom')
 				$("#wpmem_logpage_custom").show();
@@ -96,12 +92,6 @@
 				$("#wpmem_mspage_custom").show();
 			else
 				$("#wpmem_mspage_custom").hide();
-		});
-		$("#wpmem_stylesheet_select").change(function() {
-			if ($("#wpmem_stylesheet_select").val() == 'use_custom')
-				$("#wpmem_stylesheet_custom").show();
-			else
-				$("#wpmem_stylesheet_custom").hide();
 		});
 	});
 })(jQuery);
@@ -173,10 +163,23 @@
 				|| $("#wpmem_field_type_select").val() == 'multicheckbox'
 			) {
 				$("#wpmem_dropdown_info").show();
-				$("#add_dropdown_value").prop('required',true);
+				if ( $("#wpmem_field_type_select").val() == 'radio' 
+				     || $("#wpmem_field_type_select").val() == 'multicheckbox'
+				) {
+					$("#add_dropdown_value").hide();
+					$("#add_radio_value").show();
+					$("#add_radio_value").prop('required',true);
+				} else {
+					$("#add_radio_value").hide();
+					$("#add_dropdown_value").show();
+					$("#add_dropdown_value").prop('required',true);					
+				}
 			} else {
 				$("#wpmem_dropdown_info").hide();
+				$("#add_radio_value").hide();
+				$("#add_dropdown_value").hide();
 				$("#add_dropdown_value").prop('required',false);
+				$("#add_radio_value").prop('required',false);
 			}
 			if ( $("#wpmem_field_type_select").val() == 'multiselect' || $("#wpmem_field_type_select").val() == 'multicheckbox'
 			)
