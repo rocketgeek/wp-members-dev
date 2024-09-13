@@ -182,6 +182,8 @@ Other:
 * Removes obsolete file /inc/dialogs.php 
 * Removes obsolete file /inc/email.php.  
 * No longer installs default email content on clean install. (See release notes re: default email content function.)
+* Removes stylesheet selector in admin.  Legacy stylesheets remain in the plugin package, so if they are selected, they will be used.  However, now to identify a stylesheet other than the default, you can simply enter the URL of the custom stylesheet location.
+* Updates dialogs array used by wpmem_get_text() to include all user facing strings (adds strings that have been added by special features over the past several updates).
 
 = 3.4.9 =
 
