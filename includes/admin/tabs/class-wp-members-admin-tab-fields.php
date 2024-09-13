@@ -425,15 +425,15 @@ Last Row|last_row<?php } } ?></textarea>
 		$wpmem_us_fields = get_option( 'wpmembers_usfields' );
 		if ( wpmem_is_woo_active() ) {
 			if ( 1 == $wpmem->woo->add_checkout_fields ) {
-				$wpmem_wc_checkout_skip = array( 'username', 'user_email' );
+				$wpmem_wc_checkout_skip = array_merge( rktgk_wc_checkout_fields(), array( 'username', 'user_login', 'user_email', 'confirm_email', 'password', 'confirm_password' ) );
 				$wpmem_wc_checkout_fields = get_option( 'wpmembers_wcchkout_fields' );
 			}
 			if ( 1 == $wpmem->woo->add_my_account_fields ) {
-				$wpmem_wc_acct_skip = array( 'username', 'user_email' );
+				$wpmem_wc_acct_skip = array_merge( rktgk_wc_checkout_fields(), array( 'username', 'user_login', 'user_email', 'confirm_email', 'password', 'confirm_password' ) );
 				$wpmem_wc_acct_fields = get_option( 'wpmembers_wcacct_fields' );
 			}
 			if ( 1 == $wpmem->woo->add_update_fields ) {
-				$wpmem_wc_update_skip = array( 'username', 'user_email' );
+				$wpmem_wc_update_skip = array_merge( rktgk_wc_checkout_fields(), array( 'username', 'user_login', 'user_email', 'confirm_email', 'password', 'confirm_password' ) );
 				$wpmem_wc_update_fields = get_option( 'wpmembers_wcupdate_fields' );
 			}
 		}
@@ -504,7 +504,7 @@ Last Row|last_row<?php } } ?></textarea>
 				if ( wpmem_is_woo_active() ) {
 					//if ( wpmem_is_enabled( 'woo/add_checkout_fields' ) ) {
 					if ( 1 == $wpmem->woo->add_checkout_fields ) {
-						$item['wcchkout'] = ( ! in_array( $meta, $wpmem_wc_checkout_skip ) ) ? wpmem_form_field( array(
+						$item['wcchkout'] = ( ! in_array( $meta, $wpmem_wc_checkout_skip ) && $item['type'] != 'file' && $item['type'] != 'image' ) ? wpmem_form_field( array(
 							'name' => "wpmem_fields_wcchkout[]",
 							'type' => 'checkbox',
 							'value' => $meta,
@@ -513,7 +513,7 @@ Last Row|last_row<?php } } ?></textarea>
 					}
 					//if ( wpmem_is_enabled( 'woo/add_my_account_fields' ) ) {
 					if ( 1 == $wpmem->woo->add_my_account_fields ) {
-						$item['wcaccount'] = ( ! in_array( $meta, $wpmem_wc_acct_skip ) ) ? wpmem_form_field( array(
+						$item['wcaccount'] = ( ! in_array( $meta, $wpmem_wc_acct_skip ) && $item['type'] != 'file' && $item['type'] != 'image'  ) ? wpmem_form_field( array(
 							'name' => "wpmem_fields_wcaccount[]",
 							'type' => 'checkbox',
 							'value' => $meta,
@@ -522,7 +522,7 @@ Last Row|last_row<?php } } ?></textarea>
 					}
 					//if ( wpmem_is_enabled( 'woo/add_update_fields' ) ) {
 					if ( 1 == $wpmem->woo->add_update_fields ) {
-						$item['wcupdate'] = ( ! in_array( $meta, $wpmem_wc_update_skip ) ) ? wpmem_form_field( array(
+						$item['wcupdate'] = ( ! in_array( $meta, $wpmem_wc_update_skip ) && $item['type'] != 'file' && $item['type'] != 'image'  ) ? wpmem_form_field( array(
 							'name' => "wpmem_fields_wcupdate[]",
 							'type' => 'checkbox',
 							'value' => $meta,

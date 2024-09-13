@@ -519,8 +519,10 @@ function wpmem_upgrade_woo_reg() {
 	
 	if ( ! isset( $wpmem_settings['woo'] ) ) {
 		$wpmem_settings['woo'] = array(
-			'add_my_account_fields' => 1,
-			'add_checkout_fields'   => 1,
+			'add_my_account_fields' => 0,
+			'add_checkout_fields' => 0,
+			'add_update_fields' => 0,
+			'product_restrict' => 0,
 		);
 		update_option( 'wpmembers_settings', $wpmem_settings );
 	}
@@ -547,31 +549,36 @@ function wpmem_add_profile_to_fields( $existing_settings ) {
 	
 	$fields = get_option( 'wpmembers_fields' );
 	$skips = array( 'username', 'user_login', 'password', 'confirm_password', 'tos' );
+	$woo_skips = array_merge( rktgk_wc_checkout_fields(), array( 'username', 'user_login', 'user_email', 'confirm_email', 'password', 'confirm_password' ) );
 	$wpmem_fields_wcchkout = array();
 	$wpmem_fields_wcaccount = array();
 	
-	foreach ( $fields as $key => $val ) {
-		$reg_val = $fields[ $key ][4];
-		$reg_val = ( "y" == $reg_val ) ? true : false;
-		$fields[ $key ]['profile'] = ( ! in_array( $key, $skips ) ) ? $reg_val : false;
+	foreach ( $fields as $key => $field ) {
+		$meta_key = $field[2];
+		$reg_val = ( "y" == $field[4] ) ? true : false;
+		$fields[ $key ]['profile'] = ( ! in_array( $meta_key, $skips ) ) ? $reg_val : false;
 
 		if ( 1 == $existing_settings['woo']['add_checkout_fields'] ) {
-			$wpmem_fields_wcchkout[] = $key;
+			if ( 'file' !=  $field[3] && 'image' != $field[3] && ! in_array( $meta_key, $woo_skips ) && $reg_val ) {
+				$wpmem_fields_wcchkout[] = $meta_key;
+			}
 		}
 		if ( 1 == $existing_settings['woo']['add_my_account_fields'] ) {
-			$wpmem_fields_wcaccount[] = $key;
+			if ( 'file' !=  $field[3] && 'image' != $field[3] && ! in_array( $meta_key, $woo_skips ) && $reg_val ) {
+				$wpmem_fields_wcaccount[] = $meta_key;
+			}
 		}
 	}
 	
 	update_option( 'wpmembers_fields', $fields );
 	
-	//if ( ! empty( $wpmem_fields_wcchkout ) ) {
+	if ( ! empty( $wpmem_fields_wcchkout ) ) {
 		update_option( 'wpmembers_wcchkout_fields', $wpmem_fields_wcchkout );
-	//}
+	}
 	
-	//if ( ! empty( $wpmem_fields_wcaccount ) ) {
+	if ( ! empty( $wpmem_fields_wcaccount ) ) {
 		update_option( 'wpmembers_wcacct_fields', $wpmem_fields_wcaccount );
-	//}
+	}
 }
 
 
