@@ -357,17 +357,33 @@ class WP_Members_Admin_Tab_Fields {
 	} else {
 	echo $field['values'][ $row ]; echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
 	} }
-					} else {
-						if (version_compare(PHP_VERSION, '5.3.0') >= 0) { ?>
+					} else { ?>
 ---- Select One ----|,
 Choice One|choice_one,
 "1,000|one_thousand",
 "1,000-10,000|1,000-10,000",
-Last Row|last_row<?php } else { ?>
----- Select One ----|,
+Last Row|last_row
+					<?php } ?></textarea>
+
+
+					<textarea name="add_radio_value" id="add_radio_value" rows="5" cols="40"><?php
+	// Accomodate editing the current radio values or create radio value example.
+	if ( $mode == 'edit' ) {
+	for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
+	// If the row contains commas (i.e. 1,000-10,000), wrap in double quotes.
+	if ( strstr( $field['values'][ $row ], ',' ) ) {
+	echo '"' . $field['values'][ $row ]; echo ( $row == count( $field['values'] )- 1  ) ? '"' : "\",\n";
+	} else {
+	echo $field['values'][ $row ]; echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
+	} }
+					} else { ?>
 Choice One|choice_one,
-Choice 2|choice_two,
-Last Row|last_row<?php } } ?></textarea>
+"1,000|one_thousand",
+"1,000-10,000|1,000-10,000",
+Last Row|last_row
+					<?php } ?></textarea>
+
+
 				</li>
 				<li>
 					<label>&nbsp;</label>
@@ -783,7 +799,8 @@ Last Row|last_row<?php } } ?></textarea>
 					|| $type == 'multicheckbox' 
 				) {
 					// Get the values.
-					$str = stripslashes( sanitize_textarea_field( $_POST['add_dropdown_value'] ) );
+					$which_post = ( $type == 'radio' || $type == 'multicheckbox' ) ? 'add_radio_value' : 'add_dropdown_value';
+					$str = stripslashes( sanitize_textarea_field( $_POST[ $which_post ] ) );
 					// Remove linebreaks.
 					$str = trim( str_replace( array("\r", "\r\n", "\n"), '', $str ) );
 					// Create array.
