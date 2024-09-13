@@ -115,6 +115,8 @@ class WP_Members_CLI_Settings {
 	 * List custom post types for WP-Members management.
 	 *
 	 * @since 3.3.5
+	 * 
+	 * @alias post-types
 	 */
 	public function post_types() {
 		global $wpmem;
@@ -143,6 +145,8 @@ class WP_Members_CLI_Settings {
 	 * : disable the specified post type.
 	 *
 	 * @since 3.3.5
+	 * 
+	 * @alias post-type
 	 */
 	public function post_type( $args, $assoc_args ) {
 		global $wpmem;

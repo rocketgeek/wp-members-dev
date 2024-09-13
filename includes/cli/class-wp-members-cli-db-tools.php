@@ -30,6 +30,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
          * [--where_value=<where_value>] 
          * : Required if there is a where comparison.
          * 
+         * [--order_by=<meta_key>] 
+         * : Order the view by a field.
+         * 
+         * [--order=<desc>] 
+         * : Order by desc|asc
+         * 
+         * [--dates=<meta_fields>] 
+         * : Field that should be date formatted.
+         * 
+         * [--date_display=<display_format>] 
+         * : What format for dates. Default: %Y-%m-%d
+         * 
          * @alias create-view
          */
         public function create_view( $args, $assoc_args ) {
@@ -41,6 +53,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             $columns   = explode( ',', esc_sql( $assoc_args['fields'] ) );
             $meta_keys = ( isset( $assoc_args['meta'] ) ) ? explode( ',', esc_sql( $assoc_args['meta'] ) ) : false;
             $meta_id   = $this->get_meta_id( esc_attr( $assoc_args['table'] ) ); // The id field for meta (i.e. user_id, post_id, etc) is table name, no prefix.
+            $order_by  = ( isset( $assoc_args['order_by'] ) ) ? esc_sql( $assoc_args['order_by'] ) : false;
+            $order     = ( isset( $assoc_args['order'] ) ) ? esc_sql( $assoc_args['order'] ) : 'asc';
+            $dates     = ( isset( $assoc_args['dates'] ) ) ? explode( ',', esc_sql( $assoc_args['dates'] ) ) : false;
+            $date_display = ( isset( $assoc_args['date_display'] ) ) ? esc_sql( $assoc_args['date_display'] ) : "%Y-%m-%d";
+
             if ( isset( $assoc_args['where'] ) ) {
                 $is_where  = true;
                 $where     = esc_sql( $assoc_args['where'] ); 
@@ -85,6 +102,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                 if ( $is_where && $column == $where ) {
                     $where_field = 't.' . $column;
                 }
+
+                // Check if this is the "order by" field.
+                if ( $order_by && $column == $order_by ) {
+                    $order_by = 't.' . $column;
+                }
             }
 
             if ( $is_where && $unknown_where ) {
@@ -123,10 +145,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                     * If so, we'll have to do a JOIN for the metas.
                     */
                     if ( $is_where ) {
-                        $sql_meta[] = 'm' . $m . '.meta_value AS ' . esc_sql( $meta_field );
+
+                        if ( in_array( $meta_field, $dates ) ) {
+                            $sql_meta[] = 'FROM_UNIXTIME( m' . $m . '.meta_value, "' . $date_format . '")  AS `' . esc_sql( $meta_field ) . '`';
+                        } else {
+                            $sql_meta[] = 'm' . $m . '.meta_value AS `' . esc_sql( $meta_field ) . '`';
+                        }
                         $m++;
                     } else {
-                        $sql_meta[] = '(select meta_value from ' . $this->get_meta_table( $table ) . ' where ' . $meta_id . ' = t.id and meta_key = "' . esc_sql( $meta_field ) . '" limit 1) as ' . esc_sql( $meta_field );
+                        $sql_meta[] = '(select meta_value from ' . $this->get_meta_table( $table ) . ' where ' . $meta_id . ' = t.id and meta_key = "' . esc_sql( $meta_field ) . '" limit 1) as `' . esc_sql( $meta_field ) . '`';
                     }
                 }
                 
@@ -151,6 +178,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                         if ( $is_where && $meta_field == $where ) {
                             $where_field = 'm' . $m . '.meta_value';
                         }
+
+                        // Check if this is the "order by" field.
+                        if ( $order_by && $meta_field == $order_by ) {
+                            $order_by = 'm' . $m . '.meta_value';
+                        }
                         
                         $m++;
                     }
@@ -170,6 +202,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                 }
             }
 
+            if ( $order_by ) {
+                $sql .= ' ORDER BY ' . $order_by; 
+            }
+
             $sql .= ";";
 
             // Add the view.
@@ -183,18 +219,24 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         }
 
         /**
-         * Drops a specified db view.
+         * Drops specified db views.
          * 
          * @alias drop-view
          */
         public function drop_view( $args ) {
             global $wpdb;
-            $sql = "DROP VIEW IF EXISTS " . esc_sql( $args[0] );
-            $result = $wpdb->query( $sql );
-            if ( $result ) {
-                WP_CLI::success( __( 'Dropped user view: ', 'wp-members' ) . esc_attr( $args[0] ) );
-            } else {
-                WP_CLI::error( __( 'An unknown error occurred. View was not dropped.', 'wp-members' ) );
+            $errors = array();
+            foreach ( $args as $arg ) {
+                $sql = "DROP VIEW IF EXISTS " . esc_sql( $arg );
+                $result = $wpdb->query( $sql );
+                if ( $result ) {
+                    WP_CLI::success( __( 'Dropped user view: ', 'wp-members' ) . esc_attr( $arg ) );
+                } else {
+                    $errors[] = $arg;
+                }
+            }
+            if ( ! empty( $errors ) ) {
+                WP_CLI::error( sprintf( __( 'An unknown error occurred. The following views were not dropped: %s', 'wp-members' ), implode( ', ', $errors ) ) );
             }
         }
 

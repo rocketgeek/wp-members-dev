@@ -166,6 +166,7 @@ New features:
 * Adds default email function for emails that are not completely set up.
 * Adds direct shortcodes for [wpmem_login] and [wpmem_reg] that can be used in place of [wpmem_form] with the "login" or "reg" attributes.
 * Adds WP_CLI commands for creating and managing db views (views, create-view, drop-view).
+* Improves previous WP_CLI commands, now translation-ready and adds inline documentation (which extends to commandline help).
 * Code improvement: if user object is filtered in `wpmem_register_form_args`, the form values are based on the filtered user ID.
 * Code improvement: logout link in login shortcode uses `rawurlencode()` instead of `urlencode()`.
 

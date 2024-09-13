@@ -111,6 +111,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * Refreshes the hidden post array.
 		 *
 		 * @since 3.3.5
+		 * 
+		 * @alias refresh-hidden
 		 */
 		public function refresh_hidden() {
 			wpmem_update_hidden_posts();
