@@ -33,6 +33,14 @@ class WP_Members_Pwd_Reset {
 	 */
 	function __construct() {
 		
+		// Password reset key is generated in add_reset_to_email() using WP's get_password_reset_key()
+		add_action( 'init',               array( $this, 'init' ) );
+		add_filter( 'wpmem_email_filter', array( $this, 'add_reset_key_to_email' ), 10, 3 );
+		add_action( 'template_redirect',  array( $this, 'handle_reset'           ), 20  );
+		//add_filter( 'the_content',        array( $this, 'display_content'        ), 100 );
+	}
+
+	function init() {
 		$defaults = array(
 			'invalid_key'     => wpmem_get_text( 'pwd_reset_invalid_key' ), // "Invalid key."
 			'invalid_user'    => wpmem_get_text( 'pwd_reset_invalid_user' ), // "Invalid user."
@@ -46,7 +54,10 @@ class WP_Members_Pwd_Reset {
 		 * @since 3.3.8
 		 *
 		 * @param array $defaults {
-		 *     
+		 *     @type string $invalid_key
+		 *     @type string $invalid_user
+		 *     @type string $key_is_expired
+		 *     @type string $request_new_key
 		 * }
 		 */
 		$defaults = apply_filters( 'wpmem_pwd_reset_default_dialogs', $defaults );
@@ -54,11 +65,6 @@ class WP_Members_Pwd_Reset {
 		foreach ( $defaults as $key => $value ) {
 			$this->{$key} = $value;
 		}
-		
-		// Password reset key is generated in add_reset_to_email() using WP's get_password_reset_key()
-		add_filter( 'wpmem_email_filter', array( $this, 'add_reset_key_to_email' ), 10, 3 );
-		add_action( 'template_redirect',  array( $this, 'handle_reset'           ), 20  );
-		//add_filter( 'the_content',        array( $this, 'display_content'        ), 100 );
 	}
 
 	function handle_reset() {
