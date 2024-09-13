@@ -20,11 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @todo Updates/install revisions needed:
- * - if reCAPTCHA is "1", update to "3" - reCAPTCHA v1 is fully obsolete by Google.
- */
-
-/**
  * Installs or upgrades the plugin.
  *
  * @since 2.2.2

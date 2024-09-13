@@ -2199,7 +2199,16 @@ class WP_Members_Forms {
 			 * 
 			 * @since 3.5.0
 			 * 
-			 * @param  array  $args
+			 * @todo Eliminate <p> tag from before/after.  Use CSS to adjust the div size instead.
+			 * @todo Rework localization of custom strings into dialogs class.
+			 * 
+			 * @param  array  $args  {
+			 *     The various parts of the restricted dialog.
+			 * 
+			 *     @type string $msg     The actual message.
+			 *     @type string $before  The opening HTML tags.
+			 *     @type string $after   The closing HTML tags (no need to change this if you're not changing the opening tag type).
+			 * }
 			 */
 			$args = apply_filters( 'wpmem_restricted_msg_args', array( 
 				'msg' => ( $dialogs['restricted_msg'] == $msg ) ? $msg : __( stripslashes( $dialogs['restricted_msg'] ), 'wp-members' ),
