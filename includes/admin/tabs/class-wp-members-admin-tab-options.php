@@ -276,14 +276,9 @@ class WP_Members_Admin_Tab_Options {
 									</li><?php
 								} ?>
 								<h3><?php esc_html_e( 'Stylesheet' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#styles" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
-								  <li>
-									<label><?php esc_html_e( 'Stylesheet' ); ?>:</label>
-									<select name="wpmem_settings_style" id="wpmem_stylesheet_select">
-									<?php WP_Members_Admin_Tab_Options::style_list( $wpmem->select_style ); ?>
-									</select>
-								  </li>
 								  <?php $wpmem_cssurl = $wpmem->cssurl; ?>
 								  <div id="wpmem_stylesheet_custom">
+									  <p><?php _e( 'The plugin has a standard stylesheet. To use a custom stylesheet, you can enter its URL below.', 'wp-members' ); ?></p>
 									  <li>
 										<label><?php esc_html_e( 'Custom Stylesheet:', 'wp-members' ); ?></label>
 										<input class="regular-text code" type="text" name="wpmem_settings_cssurl" value="<?php echo $wpmem_cssurl; ?>" placeholder="https://" size="50" />
@@ -618,6 +613,7 @@ class WP_Members_Admin_Tab_Options {
 	 *
 	 * @since 2.8.0
 	 * @since 3.3.0 Ported from wpmem_admin_style_list().
+	 * @deprecated 3.5.0 No longer needed as the selector is no longer used.
 	 *
 	 * @param $style string The stored stylesheet setting.
 	 */
