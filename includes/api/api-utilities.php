@@ -326,3 +326,40 @@ function wpmem_create_file( $args ) {
 		fclose( $file );
 	}
 }
+
+/**
+ * Gets plugin upload base dir. 
+ * 
+ * @since 3.5.0
+ * 
+ * @return string $wpmem->upload_base
+ */
+function wpmem_get_upload_base() {
+	global $wpmem;
+	return $wpmem->upload_base;
+}
+
+/**
+ * Gets WP-Members upload dirs as an extension of wp_upload_dir().
+ * 
+ * @since 3.5.0
+ * 
+ * @return array {
+ *     @type string $upload_vars
+ *     @type string $base_dir
+ *     @type string $wpmem_base_dir
+ *     @type string $wpmem_user_files_dir
+ * }
+ */
+function wpmem_upload_dir() {
+    $upload_vars  = wp_upload_dir( null, false );
+	$base_dir = $upload_vars['basedir'];
+	$wpmem_base_dir = trailingslashit( trailingslashit( $base_dir ) . wpmem_get_upload_base() );
+	$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+    return array( 
+        'upload_vars'          => $upload_vars,
+        'base_dir'             => $base_dir,
+        'wpmem_base_dir'       => $wpmem_base_dir,
+        'wpmem_user_files_dir' => $wpmem_user_files_dir
+    );
+}
