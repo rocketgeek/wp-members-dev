@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Members_Forms {
 
 	public $reg_form_showing = false;
+	public $file_user_id; // A container for the uploaded file user ID.
 
 	/**
 	 * Plugin initialization function.
@@ -578,13 +579,11 @@ class WP_Members_Forms {
 	 */
 	function file_upload_dir( $param ) {
 		
-		global $wpmem;
-		
 		$user_id  = ( isset( $this->file_user_id ) ) ? $this->file_user_id : null;
 		
 		$args = array(
 			'user_id'   => $user_id,
-			'wpmem_dir' => $wpmem->upload_base,
+			'wpmem_dir' => wpmem_get_upload_base(),
 			'user_dir'  => 'user_files/' . $user_id,
 		);
 		

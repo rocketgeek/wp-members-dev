@@ -26,7 +26,7 @@ if ( 'finalize' == wpmem_get( 'wpmem_onboarding_action' ) ) {
 	</ul>  
 	<h3><?php _e( 'Want more features? Or need help?', 'wp-members' ); ?></h3>
 	<p>There are <a href="https://rocketgeek.com/store/?<?php echo http_build_query( $utms ); ?>" target="_blank">premium plugin add-ons</a> available as well as a <a href="https://rocketgeek.com/plugins/wp-members/support-options/?<?php echo http_build_query( $utms ); ?>" target="_blank">discounted bundle</a>.<br />
-	If you need additional assistance, consider a <a href="https://rocketgeek.com/plugins/wp-members/support-options/?<?php echo http_build_query( $utms ); ?>" target="_blank">premium support subscription</a>.</p>
+	If you need assistance, consider a <a href="https://rocketgeek.com/plugins/wp-members/support-options/?<?php echo http_build_query( $utms ); ?>" target="_blank">premium support subscription</a>.</p>
 	<p>
 		<a href="<?php echo admin_url() . 'options-general.php?page=wpmem-settings'; ?>"><?php _e( 'Go to WP-Members settings', 'wp-members' ); ?></a> | 
 		<a href="<?php echo admin_url() . 'plugins.php'; ?>"><?php _e( 'Go to WordPress plugins page', 'wp-members' ); ?></a> |

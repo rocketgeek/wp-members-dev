@@ -40,6 +40,7 @@ function wpmem_do_install() {
 
 	$chk_force = false;
 
+	// Existing settings are held in a separate array so we can update settings as we go.
 	$existing_settings = get_option( 'wpmembers_settings' );
 	
 	if ( false == $existing_settings || $chk_force == true ) {
@@ -56,6 +57,7 @@ function wpmem_do_install() {
 
 		if ( version_compare( $existing_settings['version'], '3.5.0', '<' ) ) {
 			wpmem_add_profile_to_fields( $existing_settings );
+			wpmem_update_user_dirs();
 			wpmem_upgrade_user_search_crud_table(); // 3.4.7 fixes(?) a db collation issue with the user search CRUD table
 		}
 		
@@ -546,6 +548,10 @@ function wpmem_upgrade_user_search_crud_table() {
 }
 
 function wpmem_add_profile_to_fields( $existing_settings ) {
+
+	if ( ! function_exists( 'rktgk_wc_checkout_fields' ) ) {
+		include_once( 'vendor/rocketgeek-utilities/loader.php' );
+	}
 	
 	$fields = get_option( 'wpmembers_fields' );
 	$skips = array( 'username', 'user_login', 'password', 'confirm_password', 'tos' );
@@ -613,8 +619,6 @@ function wpmem_onboarding_finalize() {
 
 	$update_settings = get_option( 'wpmembers_settings' );
 	if ( 'update_pending' == $wpmem->install_state ) {
-		$wpmem->install_state = $update_settings['install_state'] = 'set_bg_actions';
-	} else {
 		$wpmem->install_state = $update_settings['install_state'] = 'install_complete_' . $wpmem->version . '_' . time();
 	}
 	update_option( 'wpmembers_settings', $update_settings );
@@ -629,70 +633,35 @@ function wpmem_plugin_deactivate() {
 	}
 }
 
-function wpmem_background_actions() {
+function wpmem_update_user_dirs() {
 
-    global $wpmem;
+	include_once 'api/api-utilities.php';
 
-	if ( 'set_bg_actions' == $wpmem->install_state ) {
-		// Get all users.
-		$users_to_check = get_users( array( 'fields'=>'ID' ));
-		update_option( 'wpmem_update_users_to_check', $users_to_check );
-	
-		// Get the uploads directory base.
-		$upload_vars  = wp_upload_dir( null, false );
-		$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . 'wpmembers' );
-		$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+	$upload_vars = wpmem_upload_dir();
 
-		if ( file_exists( $wpmem_user_files_dir ) ) {
+	$users_to_check = get_users( array( 'fields'=>'ID' ));
 
-			// We need this for the utility functions.
-			include_once 'api/api-utilities.php';
+	if ( file_exists( $upload_vars['wpmem_user_files_dir'] ) ) {
 
-			// Add indexes and htaccess
-			wpmem_create_file( array(
-				'path'     => $wpmem_base_dir,
-				'name'     => 'index.php',
-				'contents' => "<?php // Silence is golden."
-			) );
-			wpmem_create_file( array(
-				'path'     => $wpmem_user_files_dir,
-				'name'     => 'index.php',
-				'contents' => "<?php // Silence is golden."
-			) );
-			wpmem_create_file( array(
-				'path'     => $wpmem_user_files_dir,
-				'name'     => '.htaccess',
-				'contents' => "Options -Indexes"
-			) );
-		}
+		// Add indexes and htaccess
+		wpmem_create_file( array(
+			'path'     => $upload_vars['wpmem_base_dir'],
+			'name'     => 'index.php',
+			'contents' => "<?php // Silence is golden."
+		) );
+		
+		wpmem_create_file( array(
+			'path'     => $upload_vars['wpmem_user_files_dir'],
+			'name'     => '.htaccess',
+			'contents' => "Options -Indexes"
+		) );
+	}
 
-		// Update install_state (as process is now started).
-		$update_settings = get_option( 'wpmembers_settings' );
-		$wpmem->install_state = $update_settings['install_state'] = 'running_bg_actions';
-		update_option( 'wpmembers_settings', $update_settings );
-	
-		// Schedule the process to continue.
-		as_enqueue_async_action( 'wpmem_update_user_dirs_async' );
-
-	} else {
-
-		// Pick up the saved process.
-		$users_to_check = get_option( 'wpmem_update_users_to_check' );
-
-		// Get 100 users.
-		$users_to_process = array_splice( $users_to_check, 1 );
-
-		$continue = ( empty( $users_to_check ) )? false : true;
-
-		// Set up the directory path.
-		$upload_vars  = wp_upload_dir( null, false );
-		$base_dir = $upload_vars['basedir'];
-		$wpmem_base_dir = trailingslashit( trailingslashit( $base_dir ) . $wpmem->upload_base );
-		$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+	if ( file_exists( $upload_vars['wpmem_user_files_dir'] ) ) {
 
 		// Loop through users to update user dirs.
-		foreach ( $users_to_process as $user ) {
-			$wpmem_user_dir = $wpmem_user_files_dir . $user;
+		foreach ( $users_to_check as $user ) {
+			$wpmem_user_dir = trailingslashit( $upload_vars['wpmem_user_files_dir'] ) . $user;
 			if ( is_dir( $wpmem_user_dir ) ) {
 				wpmem_create_file( array(
 					'path'     => $wpmem_user_dir,
@@ -700,18 +669,6 @@ function wpmem_background_actions() {
 					'contents' => "<?php // Silence is golden."
 				) );
 			}
-		}
-
-		if ( $continue ) {
-			// Keep going with next batch.
-			update_option( 'wpmem_update_chk_user_dir_index', $users_to_check );
-			as_enqueue_async_action( 'wpmem_update_user_dirs_async' );
-		} else {
-			// Process is complete.  Clean up after yourself.
-			delete_option( 'wpmem_update_chk_user_dir_index' );
-			$update_settings = get_option( 'wpmembers_settings' );
-			$wpmem->install_state = $update_settings['install_state'] = 'install_complete_' . $wpmem->version . '_' . time();
-			update_option( 'wpmembers_settings', $update_settings );
 		}
 	}
 }

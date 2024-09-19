@@ -548,7 +548,7 @@ class WP_Members {
 			// @todo Leaving error message and password reset settings values in for now for rollback backwards compatibility.
 			//       Later, we'll remove those values in the upgrade, so this can be cleaned up.
 			if ( 'pwd_link' != $key || 'login_error' != $key || 'shortcodes' != $key ) {
-				$this->$key = $val;
+				$this->{$key} = $val;
 			}
 		}
 
@@ -631,12 +631,6 @@ class WP_Members {
 		do_action( 'wpmem_load_hooks' );
 
 		// Add actions.
-
-		
-		// Do any asynchronouse upgrade processing.
-		add_action( 'init', array( $this, 'run_background_sync' ), 1000 );
-		add_action( 'wpmem_update_user_dirs_async', 'wpmem_background_actions' );
-
 		add_action( 'init',                  array( $this, 'load_textdomain' ) );
 		add_action( 'init',                  array( $this->membership, 'add_cpt' ), 0 ); // Adds membership plans custom post type.
 		add_action( 'init',                  array( $this, 'load_dependent_classes' ) );
@@ -756,6 +750,8 @@ class WP_Members {
 	 *
 	 * @since 3.0.0
 	 * @since 3.3.0 Deprecated all but exp and trl constants.
+	 * 
+	 * @todo Can WPMEM_MOD_REG be deprecated?
 	 */
 	function load_constants() {
 		( ! defined( 'WPMEM_MOD_REG' ) ) ? define( 'WPMEM_MOD_REG', $this->mod_reg   ) : '';
@@ -820,11 +816,6 @@ class WP_Members {
 
 		require_once $this->path . 'includes/deprecated.php';
 		require_once $this->path . 'includes/legacy/dialogs.php'; // File is totally deprecated at this point; eval for removal.
-
-		// Check if any upgrade background processes are running or need to be run.
-		if ( 'set_bg_actions' == $this->install_state || 'running_bg_actions' == $this->install_state ) {
-			include_once $this->path . 'includes/install.php';
-		}
 	}
 
 	/**
@@ -2011,15 +2002,4 @@ class WP_Members {
 		return ( is_wp_error( $this->error ) && $this->error->has_errors() ) ? true : false;
 	}
 
-	/**
-	 * Handles asyncronous background operations for
-	 * batch processing. Uses Automattic's Action Scheduler.
-	 *
-	 * @since 2.3.0
-	 */
-	public function run_background_sync() {
-		if ( 'set_bg_actions' == $this->install_state || 'running_bg_actions' == $this->install_state ) {
-			as_enqueue_async_action( 'wpmem_update_user_dirs_async' );
-		}
-	}
 } // End of WP_Members class.
