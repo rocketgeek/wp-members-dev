@@ -149,6 +149,7 @@ Bug fixes:
 * Fixes a bug in WP_Members::do_securify_rest() to check for a post ID, otherwise an error thrown when we try to check if the post is blocked.
 * Fixes a bug in the check to see if a restricted WooCommerce product is purchasable by the user.
 * Fixes a bug in the install routine when checking if index.php files exist in uploads folder that can cause the update process to fail.
+* Fixes a bug in the [wpmem_user_membership_posts] shortcode that caused the title of the list to be whatever the title of the last post was. It should display the name of the membership associated with the list instead.
 
 New features:
 * Adds a "novalidate" option by filter toggle to the reg/login forms (for disabling the default HTML5 validation on required fields).
@@ -184,6 +185,7 @@ Other:
 * No longer installs default email content on clean install. (See release notes re: default email content function.)
 * Removes stylesheet selector in admin.  Legacy stylesheets remain in the plugin package, so if they are selected, they will be used.  However, now to identify a stylesheet other than the default, you can simply enter the URL of the custom stylesheet location.
 * Updates dialogs array used by wpmem_get_text() to include all user facing strings (adds strings that have been added by special features over the past several updates).
+* Can no longer directly update from a version earlier than 3.0.0 (not that there are any out there; 92% of all installs are 3.2 or greater).  A 2.x version update is better off with a clean install.
 
 = 3.4.9 =
 
