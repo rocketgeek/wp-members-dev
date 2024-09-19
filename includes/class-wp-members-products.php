@@ -673,16 +673,16 @@ class WP_Members_Products {
 			
 			if ( $ids ) {
 
-				$title = $args['title_before'] . wpmem_get_membership_name( $key ) . $args['title_after'];
+				$membership_title = $args['title_before'] . wpmem_get_membership_name( $key ) . $args['title_after'];
 				$post_list = $args['list_before'];
 				foreach ( $ids as $id ) {
-					$title = get_the_title( $id );
-					$link  = '<a href="' . get_permalink( $id ) . '">' . $title . '</a>';
+					$post_title = get_the_title( $id );
+					$link  = '<a href="' . get_permalink( $id ) . '">' . $post_title . '</a>';
 					$post_list .= $args['item_before'] . $link . $args['item_after'];
 				}
 				$post_list .= $args['list_after'];
 				
-				$content .= $title . $post_list;
+				$content .= $membership_title . $post_list;
 			}
 		}
 	
