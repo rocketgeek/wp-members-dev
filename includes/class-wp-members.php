@@ -558,8 +558,11 @@ class WP_Members {
 		// @todo Until I think of a better place to put this.
 		$this->optin = get_option( 'wpmembers_optin' );
 		
+		// Load user pages (login, register, user profile).
 		$this->load_user_pages();
-		$this->set_style();
+		
+		// Set the stylesheet.
+		$this->cssurl = ( 'use_custom' == $settings['select_style'] ) ? $this->cssurl : $this->url . 'assets/css/forms/generic-no-float' . wpmem_get_suffix() . '.css';
 		
 		$this->forms       = new WP_Members_Forms;         // Load forms.
 		$this->api         = new WP_Members_API;           // Load api.
@@ -1560,15 +1563,6 @@ class WP_Members {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Sets the stylesheet URL.
-	 *
-	 * @since 3.3.0
-	 */
-	function set_style() {
-		$this->cssurl = ( 'use_custom' == $this->select_style ) ? $this->cssurl : $this->url . 'assets/css/forms/' . $this->select_style . wpmem_get_suffix() . '.css'; // Set the stylesheet.
 	}
 	
 	/**

@@ -276,9 +276,9 @@ class WP_Members_Admin_Tab_Options {
 									</li><?php
 								} ?>
 								<h3><?php esc_html_e( 'Stylesheet' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#styles" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
-								  <?php $wpmem_cssurl = $wpmem->cssurl; ?>
+								  <?php $wpmem_cssurl = ( $wpmem->select_style == 'default' ) ? '' : $wpmem->cssurl; ?>
 								  <div id="wpmem_stylesheet_custom">
-									  <p><?php _e( 'The plugin has a standard stylesheet. To use a custom stylesheet, you can enter its URL below.', 'wp-members' ); ?></p>
+									  <p><?php _e( 'The plugin has a standard stylesheet. To use it, leave the following option empty. To use a custom stylesheet, enter its URL below.', 'wp-members' ); ?></p>
 									  <li>
 										<label><?php esc_html_e( 'Custom Stylesheet:', 'wp-members' ); ?></label>
 										<input class="regular-text code" type="text" name="wpmem_settings_cssurl" value="<?php echo $wpmem_cssurl; ?>" placeholder="https://" size="50" />
@@ -477,7 +477,7 @@ class WP_Members_Admin_Tab_Options {
 			$wpmem_settings_cssurl = esc_url( $_POST['wpmem_settings_cssurl'] );
 			$cssurl = ( '' != $wpmem_settings_cssurl ) ? trim( $wpmem_settings_cssurl ) : '';
 
-			$wpmem_settings_style = ( isset( $_POST['wpmem_settings_style'] ) ) ? sanitize_text_field( $_POST['wpmem_settings_style'] ) : false;
+			$wpmem_settings_style = ( '' != $cssurl ) ? 'use_custom' : 'default';
 
 			$wpmem_newsettings = array(
 				'version' => $wpmem->version,
