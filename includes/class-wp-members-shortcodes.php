@@ -370,12 +370,12 @@ class WP_Members_Shortcodes {
 					$membership = ( isset( $sanitized_atts['membership'] ) ) ? $sanitized_atts['membership'] : $sanitized_atts['product'];
 					$message    = ( isset( $sanitized_atts['msg'] ) && ( true === $sanitized_atts['msg'] || "true" === strtolower( $sanitized_atts['msg'] ) ) ) ? true : false;
 					$not_in     = ( isset( $sanitized_atts['not_in'] ) && "false" != $sanitized_atts['not_in'] ) ? true : false;
-					if ( true == $not_in ) {
+					if ( $not_in ) {
 						$do_return = ( wpmem_user_has_access( $membership ) || ! is_user_logged_in() ) ? false : true;
 					} else {
 						if ( wpmem_user_has_access( $membership ) ) {
 							$do_return = true;
-						} elseif ( true === $message ) {
+						} elseif ( true == $message ) {
 							$do_return = true;
 							$settings = array(
 								'wrapper_before' => '<div class="product_restricted_msg">',

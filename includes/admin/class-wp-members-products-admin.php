@@ -750,8 +750,8 @@ class WP_Members_Products_Admin {
 					</tr>'; ?>	
 				<?php
 
-				foreach ( $wpmem->membership->products as $key => $value ) {
-					$checked = ( $user_products && array_key_exists( $key, $user_products ) ) ? "checked" : "";
+				foreach ( wpmem_get_memberships() as $key => $value ) {
+
 					echo "<tr>";
 					echo '<td style="padding:5px 5px;">
 					<select name="_wpmem_membership_product[' . $key . ']">

@@ -197,7 +197,7 @@ function wpmem_format_date( $args ) {
 	 *
 	 * @param arrag $args
 	 */
-	$args = apply_filters( 'wpmem_format_date_args', $args );
+	$args = apply_filters_deprecated( 'wpmem_format_date_args', $args, '3.4.0', 'rktgk_format_date' );
 	return rktgk_format_date( $args );
 }
 

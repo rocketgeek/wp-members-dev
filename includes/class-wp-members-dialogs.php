@@ -304,6 +304,8 @@ class WP_Members_Dialogs {
 		 * @since 2.9.0
 		 * @since 3.3.3 Should pass defaults to filter.
 		 * @deprecated 3.4.0
+		 * 
+		 * @todo Apply apply_filters_deprecated()
 		 *
 		 * @param array An array of arguments to merge with defaults.
 		 */
