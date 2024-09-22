@@ -355,12 +355,13 @@ function wpmem_remove_user_membership( $membership, $user_id = false ) {
 }
 
 /**
- * An alias for wpmem_get_user_products().
+ * Gets memberships a user has.
  * 
  * @since 3.4.2
  */
 function wpmem_get_user_memberships( $user_id = false ) {
-	return wpmem_get_user_products( $user_id );
+	global $wpmem;
+	return ( $user_id ) ? $wpmem->user->get_user_products( $user_id ) : $wpmem->user->access;
 }
 
 /**
@@ -398,7 +399,7 @@ function wpmem_remove_user_product( $product, $user_id = false ) {
 }
 
 /** 
- * Gets memberships a user has.
+ * Deprecated alias for wpmem_get_user_memberships().
  *
  * @since 3.3.0
  * @since 3.4.2 Use wpmem_get_user_memberships() instead.
@@ -408,8 +409,7 @@ function wpmem_remove_user_product( $product, $user_id = false ) {
  * @return array
  */
 function wpmem_get_user_products( $user_id = false ) {
-	global $wpmem;
-	return ( $user_id ) ? $wpmem->user->get_user_products( $user_id ) : $wpmem->user->access;
+	return wpmem_get_user_memberships( $user_id );
 }
 
 /**
