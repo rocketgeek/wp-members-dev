@@ -814,7 +814,7 @@ class WP_Members {
 			require_once $this->path . 'includes/cli/class-wp-members-cli.php';
 			require_once $this->path . 'includes/cli/class-wp-members-cli-user.php';
 			require_once $this->path . 'includes/cli/class-wp-members-cli-settings.php';
-			require_once $this->path . 'includes/cli/class-db-tools.php';
+			require_once $this->path . 'includes/cli/class-wp-members-cli-db-tools.php';
 		}
 
 		require_once $this->path . 'includes/deprecated.php';
@@ -1412,14 +1412,14 @@ class WP_Members {
 			$hidden = $this->hidden_posts();
 		} else {
 			// If the user is logged in.
-			if ( 1 == $this->enable_products ) {
+			if ( wpmem_is_enabled( 'enable_products' ) ) {
 				// Get user product access.
 				$hidden = $this->hidden_posts();
 				$hidden = ( is_array( $hidden ) ) ? $hidden : array();
 
 				// Remove posts with a product the user has access to.
-				foreach ( $this->membership->products as $key => $value ) {
-					if ( isset( $this->user->access[ $key ] ) && ( true == $this->user->access[ $key ] || $this->user->is_current( $this->user->access[ $key ] ) ) ) {
+				foreach ( wpmem_get_memberships() as $key => $value ) {
+					if ( wpmem_user_has_access( $key ) ) {
 						foreach ( $hidden as $post_id ) {
 							if ( 1 == get_post_meta( $post_id, wpmem_get_membership_meta( $key ), true ) ) {
 								$hidden_key = array_search( $post_id, $hidden );

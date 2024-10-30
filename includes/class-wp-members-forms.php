@@ -114,7 +114,7 @@ class WP_Members_Forms {
 							 */
 							$membership_default = apply_filters( 'wpmem_membership_field_default', wpmem_get_text( 'membership_field' ) );
 							$val[7] = array( $membership_default . '|' );
-							foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
+							foreach( wpmem_get_memberships() as $membership_key => $membership_value ) {
 								$val[7][] = $membership_value['title'] . '|' . $membership_key;
 							}
 						}
@@ -392,7 +392,7 @@ class WP_Members_Forms {
 			$str = "<select name=\"$pname\" id=\"$id\" class=\"$class\"" . ( ( 'multiselect' == $type ) ? " multiple " : "" ) . ( ( $required ) ? " required " : "" ) . ">\n";
 			if ( 'membership' == $type ) {
 				$value = array( wpmem_get_text( 'membership_field' ) . '|' );
-				foreach( $wpmem->membership->products as $membership_key => $membership_value ) {
+				foreach( wpmem_get_memberships() as $membership_key => $membership_value ) {
 					$value[] = $membership_value['title'] . '|' . $membership_key;
 				}
 			}
@@ -1218,7 +1218,7 @@ class WP_Members_Forms {
 				if ( 'file' == $field['type'] ) {
 					$val = ( isset( $_FILES[ $meta_key ]['name'] ) ) ? sanitize_file_name( $_FILES[ $meta_key ]['name'] ) : '' ;
 				} else {
-					$val = ( isset( $_POST[ $meta_key ] ) ) ? wpmem_sanitize_field( $_POST[ $meta_key ], $field['type'] ) : '';
+					$val = wpmem_get_sanitized( $meta_key, '', 'post', $field['type'] ); // ( isset( $_POST[ $meta_key ] ) ) ? wpmem_sanitize_field( $_POST[ $meta_key ], $field['type'] ) : '';
 				}
 
 				if ( '' != $field['value'] ) {
@@ -1732,7 +1732,7 @@ class WP_Members_Forms {
 
 						$label = ( 'tos' == $meta_key ) ? $tos_link_text : __( $field['label'], 'wp-members' );
 
-						$val = ( isset( $_POST[ $meta_key ] ) ) ? esc_attr( $_POST[ $meta_key ] ) : '';
+						$val = esc_attr( wpmem_get( $meta_key, '' ) ); // ( isset( $_POST[ $meta_key ] ) ) ? esc_attr( $_POST[ $meta_key ] ) : '';
 						$val = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
 
 						$row_before = '<p class="wpmem-checkbox">';
@@ -1766,7 +1766,7 @@ class WP_Members_Forms {
 
 						case( 'textarea' ):
 							$input = '<textarea name="' . $meta_key . '" id="' . $meta_key . '" class="textarea">';
-							$input.= ( isset( $_POST[ $meta_key ] ) ) ? esc_textarea( $_POST[ $meta_key ] ) : '';
+							$input.= esc_textarea( wpmem_get( $meta_key, '' ) ); // ( isset( $_POST[ $meta_key ] ) ) ? esc_textarea( $_POST[ $meta_key ] ) : '';
 							$input.= '</textarea>';		
 							break;
 
@@ -1776,7 +1776,7 @@ class WP_Members_Forms {
 						case( 'radio' ):
 						case( 'membership' ):
 							$row_before = ( $is_woo && ( 'select' == $field['type'] || 'multiselect' == $field['type'] || 'membership' == $field['type'] ) ) ? $row_before : '<p class="' . $field['type'] . '">';
-							$valtochk = ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
+							$valtochk = sanitize_text_field( wpmem_get( $meta_key, '' ) ); // ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
 							$formfield_args = array( 
 								'name'     => $meta_key,
 								'type'     => $field['type'],
@@ -1939,22 +1939,24 @@ class WP_Members_Forms {
 				$args['pattern']     = ( isset( $field['pattern']     ) ) ? $field['pattern']     : '';
 				$args['title']       = ( isset( $field['title']       ) ) ? $field['title']       : '';
 
+				$posted_meta = wpmem_get( $meta_key, '' );
+
 				switch ( $field['type'] ) {
 
 				case( 'select' ):
-					$val = ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
+					$val = sanitize_text_field( $posted_meta ); // ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
 					$args['value']   = $field['values'];
 					$args['compare'] = $val;
 					echo wpmem_form_field( $args );
 					break;
 
 				case( 'textarea' ):
-					$args['value'] = ( isset( $_POST[ $meta_key ] ) ) ? esc_textarea( $_POST[ $meta_key ] ) : '';
+					$args['value'] = esc_textarea( $posted_meta ); // ( isset( $_POST[ $meta_key ] ) ) ? esc_textarea( $_POST[ $meta_key ] ) : '';
 					echo wpmem_form_field( $args );
 					break;
 
 				case( 'checkbox' ):
-					$val = ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
+					$val = sanitize_text_field( $posted_meta ); // ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
 					$val = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
 					$args['value']   = $field['checked_value'];
 					$args['compare'] = $val;
@@ -1966,7 +1968,7 @@ class WP_Members_Forms {
 				case( 'radio' ):
 				case( 'membership' );
 					$args['value']   = $field['values'];
-					$args['compare'] = ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
+					$args['compare'] = sanitize_text_field( $posted_meta ); // ( isset( $_POST[ $meta_key ] ) ) ? sanitize_text_field( $_POST[ $meta_key ] ) : '';
 					if ( 'multicheckbox' == $field['type'] || 'multiselect' == $field['type'] ) {
 						$args['delimiter'] = $field['delimiter'];
 					}
@@ -1979,7 +1981,7 @@ class WP_Members_Forms {
 					break;
 
 				default:
-					$args['value'] = ( isset( $_POST[ $meta_key ] ) ) ? esc_attr( $_POST[ $meta_key ] ) : '';
+					$args['value'] = esc_attr( $posted_meta ); // ( isset( $_POST[ $meta_key ] ) ) ? esc_attr( $_POST[ $meta_key ] ) : '';
 					echo wpmem_form_field( $args );
 					break;
 				}

@@ -1040,9 +1040,9 @@ class WP_Members_User {
 					}
 				}
 				// Is this a role product?
-				if ( '' != $wpmem->membership->products[ $prod ]['role'] ) {
+				if ( '' != wpmem_get_membership_role( $prod ) ) {
 					$role_product = true;
-					if ( $memberships[ $prod ] && wpmem_user_has_role( $wpmem->membership->products[ $prod ]['role'] ) ) {
+					if ( $memberships[ $prod ] && wpmem_user_has_role( wpmem_get_membership_role( $prod ) ) ) {
 						if ( $expiration_product && ! $this->is_current( $memberships[ $prod ] ) ) {
 							$access = false;
 							break;
@@ -1184,7 +1184,7 @@ class WP_Members_User {
 	
 		// If membership is an expiration product.
 		if ( is_array( $expiration_period ) ) {
-			$new_value = $wpmem->membership->set_product_expiration( $membership, $user_id, $set_date, $prev_value, $renew );
+			$new_value = wpmem_generate_membership_expiration_date( $membership, $user_id, $set_date, $prev_value, $renew );
 		} else {
 			$new_value = true;
 		}

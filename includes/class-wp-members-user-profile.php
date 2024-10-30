@@ -439,7 +439,7 @@ class WP_Members_User_Profile {
 				}
 			}
 			
-			if ( 1 == $wpmem->enable_products ) {
+			if ( wpmem_is_enabled( 'enable_products' ) ) {
 				// Update products.
 				if ( isset( $_POST['_wpmem_membership_product'] ) ) {
 					foreach ( $_POST['_wpmem_membership_product'] as $product_key => $product_value ) {
@@ -448,8 +448,8 @@ class WP_Members_User_Profile {
 						// Enable or Disable?
 						if ( 'enable' == $product_value ) {
 							// Does product require a role?
-							if ( false !== $wpmem->membership->products[ $product_key ]['role'] ) {
-								wpmem_update_user_role( $user_id, $wpmem->membership->products[ $product_key ]['role'], 'add' );
+							if ( false != wpmem_get_membership_role( $product_key ) || '' != wpmem_get_membership_role( $product_key ) ) {
+								wpmem_update_user_role( $user_id, wpmem_get_membership_role( $product_key ), 'add' );
 							}
 							// Do we need to set a specific date?
 							if ( isset( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) ) {

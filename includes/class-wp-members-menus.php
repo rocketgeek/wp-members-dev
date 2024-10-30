@@ -111,8 +111,6 @@ class WP_Members_Menus {
 	* @param   array   $args
 	*/
 	public function nav_menu_item_fields( $item_id, $item, $depth, $args ) {
-		
-		global $wpmem;
 
 		$restrictions = get_post_meta( $item->ID, $this->post_meta, true );
 
@@ -156,8 +154,8 @@ class WP_Members_Menus {
 
 		</div>
 
-		<?php if ( 1 == $wpmem->enable_products ) { 
-			$display_products = $wpmem->membership->products;
+		<?php if ( wpmem_is_enabled( 'enable_products' ) ) { 
+			$display_products = wpmem_get_memberships();
 			$checked_products = ( isset( $restrictions['products'] ) && is_array( $restrictions['products'] ) ) ? $restrictions['products'] : false;
 			?>
 			<div class="field-wpmem_nav_menu wpmem_nav_menu_field description-wide" style="margin: 5px 0; <?php echo $hidden;?>">
@@ -172,10 +170,10 @@ class WP_Members_Menus {
 
 			$i = 1;
 
-			/* Loop through each of the available roles. */
+			/* Loop through each of the available memberships. */
 			foreach ( $display_products as $key => $product ) {
 
-				/* If the role has been selected, make sure it's checked. */
+				/* If the memberships has been selected, make sure it's checked. */
 				$checked = checked( true, ( is_array( $checked_products ) && in_array( $key, $checked_products ) ), false );
 				?>
 
@@ -216,9 +214,8 @@ class WP_Members_Menus {
 	* @global object $wpmem
 	*/
 	public function update_nav_menu_item( $menu_id, $menu_item_db_id ) {
-		global $wpmem;
 		$product_names = array();
-		foreach ( $wpmem->membership->products as $key => $value ) {
+		foreach ( wpmem_get_memberships() as $key => $value ) {
 			$product_names[ $key ] = $value['title'];
 		}
 

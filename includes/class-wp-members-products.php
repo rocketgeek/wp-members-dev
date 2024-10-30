@@ -80,6 +80,7 @@ class WP_Members_Products {
 	 * }
 	 */
 	public $products = array();
+	public $memberships = array();
 
 	/**
 	 * Product meta keyed by ID.
@@ -93,6 +94,7 @@ class WP_Members_Products {
 	 * }
 	 */
 	public $product_by_id = array();
+	public $membership_by_id = array();
 	
 	/**
 	 * Class constructor.
@@ -143,6 +145,8 @@ class WP_Members_Products {
 				}
 			}
 		}
+		$this->memberships = $this->products;
+		$this->membership_by_id = $this->product_by_id;
 	}
 	
 	/**

@@ -503,7 +503,7 @@ class WP_Members_Products_Admin {
 		$product  = ( $product ) ? $product : array();
 		$values[] = esc_html__( 'None', 'wp-members' ) . '|';
 		
-		foreach ( $wpmem->membership->products as $key => $value ) {
+		foreach ( wpmem_get_memberships() as $key => $value ) {
 			
 			if ( $is_new ) {
 				if ( isset( $value[ 'set_default_' . $post->post_type ] ) && 1 == $value[ 'set_default_' . $post->post_type ] ) {
@@ -546,7 +546,7 @@ class WP_Members_Products_Admin {
 		} else {
 			update_post_meta( $post->ID, $wpmem->membership->post_meta, $products );
 		}
-		foreach ( $wpmem->membership->products as $key => $value ) {
+		foreach ( wpmem_get_memberships() as $key => $value ) {
 			if ( in_array( $key, $products ) ) {
 				update_post_meta( $post->ID, wpmem_get_membership_meta( $key ), 1 );
 			} else {
@@ -673,7 +673,7 @@ class WP_Members_Products_Admin {
 		if ( 'wpmem_product' == $column_name ) {
 			global $wpmem;
 			$display = array();
-			$user_products = $wpmem->user->get_user_products( $user_id );
+			$user_products = wpmem_get_user_memberships( $user_id );
 			if ( $user_products ) {
 				foreach ( $user_products as $meta => $value ) {
 					$expires = ( $user_products[ $meta ] > 1 ) ? '<br />' . esc_html__( 'expires:', 'wp-members' ) . ' ' . date_i18n( get_option( 'date_format' ), $user_products[ $meta ] ) : '';
@@ -736,9 +736,9 @@ class WP_Members_Products_Admin {
 			$user_id = ( 'profile' == $pagenow && current_user_can( $required_capability ) ) ? get_current_user_id() : sanitize_text_field( wpmem_get( 'user_id', false, 'get' ) );
 			$user_products = wpmem_get_user_products( $user_id );
 			echo '<h3>' . esc_html__( 'Membership Access', 'wp-members' ) . '</h3>';
-			if ( ! empty( $wpmem->membership->products ) ) {
+			if ( ! empty( wpmem_get_memberships() ) ) {
 				$expires_heading = "&nbsp;";
-				foreach( $wpmem->membership->products as $key => $value ) {
+				foreach( wpmem_get_memberships() as $key => $value ) {
 					$expires_heading = ( ! empty( $value['expires'] ) ) ? esc_html__( 'Expires', 'wp-members' ) : $expires_heading;
 				}
 				echo '<table>
