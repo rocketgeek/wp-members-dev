@@ -554,8 +554,8 @@ function wpmem_woo_edit_account_form() {
 	$fields = wpmem_woo_edit_account_fields();
 	foreach ( $fields as $meta_key => $field ) { ?>
 		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-			<label for="<?php echo $meta_key; ?>"><?php _e( $field['label'], 'wp-members' ); ?></label>
-			<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="<?php echo $meta_key; ?>" id="<?php echo $meta_key; ?>" value="<?php echo wpmem_get_user_meta( get_current_user_id(), $meta_key ); ?>" />
+			<label for="<?php echo esc_attr( $meta_key ); ?>"><?php esc_html_e( $field['label'], 'wp-members' ); ?></label>
+			<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="<?php echo esc_attr( $meta_key ); ?>" id="<?php echo esc_attr( $meta_key ); ?>" value="<?php echo esc_attr( wpmem_get_user_meta( get_current_user_id(), $meta_key ) ); ?>" />
 		</p>
 	<?php }
 }
@@ -626,9 +626,9 @@ function wpmem_form_field_wc_custom_field_types( $field, $key, $args, $value ) {
 			);
 
 			$field_html = wpmem_form_field( $field_args );
-			$field_html = str_replace( 'class="' . $wpmem_fields[ $key ]['type'] . '"', 'class="' . $wpmem_fields[ $key ]['type'] . '" style="display:initial;"', $field_html );
-			$field = '<p class="form-row ' . implode( ' ', $args['class'] ) .'" id="' . $key . '_field">
-				<label for="' . $key . '" class="' . implode( ' ', $args['label_class'] ) .'">' . $args['label'] . ( ( 1 == $wpmem_fields[ $key ]['required'] ) ? '&nbsp;<abbr class="required" title="required">*</abbr>' : '' ) . '</label>';
+			$field_html = str_replace( 'class="' . $wpmem_fields[ $key ]['type'] . '"', 'class="' . esc_attr( $wpmem_fields[ $key ]['type'] ) . '" style="display:initial;"', $field_html );
+			$field = '<p class="form-row ' . implode( ' ', $args['class'] ) .'" id="' . esc_attr( $key ) . '_field">
+				<label for="' . esc_attr( $key ) . '" class="' . implode( ' ', $args['label_class'] ) .'">' . esc_html( $args['label'] ) . ( ( 1 == $wpmem_fields[ $key ]['required'] ) ? '&nbsp;<abbr class="required" title="required">*</abbr>' : '' ) . '</label>';
 			$field .= $field_html;
 			$field .= '</p>';
 		}
@@ -651,7 +651,7 @@ function wpmem_woo_reg_validate( $username, $email, $errors ) {
 	
 	foreach ( $fields as $key => $field_args ) {
 		if ( 1 == $field_args['required'] && empty( $_POST[ $key ] ) ) {
-			$message = sprintf( wpmem_get_text( 'woo_reg_required_field' ), '<strong>' . $field_args['label'] . '</strong>' );
+			$message = sprintf( wpmem_get_text( 'woo_reg_required_field' ), '<strong>' . esc_html( $field_args['label'] ) . '</strong>' );
 			$errors->add( $key, $message );
 		}
 	}

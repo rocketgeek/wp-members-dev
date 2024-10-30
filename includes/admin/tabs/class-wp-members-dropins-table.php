@@ -54,7 +54,7 @@ class WP_Members_Dropins_Table extends WP_List_Table {
 		global $wpmem;
 		$checked = checked( true, in_array( $item['dropin_file'], $wpmem->dropins_enabled ), false );
 		//return sprintf( '<input type="checkbox" name="delete[]" value="%s" title="%s" />', $item['dropin_file'], esc_html__( 'delete', 'wp-members' ) );
-		return sprintf( '<input type="checkbox" name="%s[]" value="%s" %s />', $this->_args['singular'], $item['dropin_file'], $checked );
+		return sprintf( '<input type="checkbox" name="%s[]" value="%s" %s />', esc_attr( $this->_args['singular'] ), esc_attr( $item['dropin_file'] ), $checked );
 	}
 
 	/**
@@ -140,7 +140,7 @@ class WP_Members_Dropins_Table extends WP_List_Table {
 	 * @param  array $columns
 	 */
 	function single_row( $columns ) {
-		echo '<tr id="list_items_' . $columns['dropin_name'] . '" class="list_item" list_item="' . $columns['dropin_name'] . '">';
+		echo '<tr id="list_items_' . esc_attr( $columns['dropin_name'] ) . '" class="list_item" list_item="' . esc_attr( $columns['dropin_name'] ) . '">';
 		echo $this->single_row_columns( $columns );
 		echo "</tr>\n";
 	}

@@ -76,7 +76,7 @@ function wpmem_admin_user_profile( $user_id ) {
  * @global object $wpmem The WP_Members Object.
  * @param  string $tab   The plugin tab being displayed.
  * @param  mixed  $args  Array of additional arguments|boolean. Default: false.
- * @return string $url
+ * @return string $url   The escaped admin URL for posting forms.
  */
 function wpmem_admin_form_post_url( $args = false ) {
 	global $wpmem;

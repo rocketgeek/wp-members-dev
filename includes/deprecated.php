@@ -60,8 +60,8 @@ function wpmem_inc_status() {
 	/** This filter is defined in /includes/api/api.php */
 	$logout = apply_filters( 'wpmem_logout_link', $url . '/?a=logout' );
 
-	$status = '<p>' . sprintf( wpmem_get_text( 'sb_login_status' ), $user_login )
-		. ' | <a href="' . $logout . '">' . wpmem_get_text( 'sb_logout_link' ) . '</a></p>';
+	$status = '<p>' . esc_html( sprintf( wpmem_get_text( 'sb_login_status' ) ), $user_login )
+		. ' | <a href="' . esc_url_raw( $logout ) . '">' . wpmem_get_text( 'sb_logout_link' ) . '</a></p>';
 
 	return $status;
 }

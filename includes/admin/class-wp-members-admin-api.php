@@ -275,7 +275,7 @@ class WP_Members_Admin_API {
 			$link_args = array( 'page' => 'wpmem-settings', 'tab'  => $tab );
 			$link = add_query_arg( $link_args, admin_url( 'options-general.php' ) );
 			$class = ( $tab == $current ) ? 'nav-tab nav-tab-active' : 'nav-tab';
-			$links[] = sprintf( '<a class="%s" href="%s">%s</a>', $class, $link, $name );
+			$links[] = sprintf( '<a class="%s" href="%s">%s</a>', esc_attr( $class ), esc_url( $link ), esc_attr( $name ) );
 		}
 	
 		echo '<h2 class="nav-tab-wrapper">';
@@ -647,7 +647,7 @@ class WP_Members_Admin_API {
 			$wpmem_plugin = plugin_basename( $wpmem->path . '/wp-members.php' );
 		}
 		if ( $file == $wpmem_plugin ) {
-			$settings_link = '<a href="' . add_query_arg( 'page', 'wpmem-settings', 'options-general.php' ) . '">' . esc_html__( 'Settings', 'wp-members' ) . '</a>';
+			$settings_link = '<a href="' . esc_url( add_query_arg( 'page', 'wpmem-settings', 'options-general.php' ) ) . '">' . esc_html__( 'Settings', 'wp-members' ) . '</a>';
 			$links = array_merge( array( $settings_link ), $links );
 		}
 		return $links;

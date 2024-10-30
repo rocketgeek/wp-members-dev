@@ -104,7 +104,7 @@ class WP_Members_Admin_Posts {
 		}
 
 		// If we did not return already, we need to wp_safe_redirect.
-		wp_safe_redirect( $sendback );
+		wp_safe_redirect( esc_url_raw( $sendback ) );
 		exit();
 	}
 

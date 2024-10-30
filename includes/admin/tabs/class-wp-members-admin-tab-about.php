@@ -151,7 +151,7 @@ class WP_Members_Admin_Tab_About {
                 break;
         }
 
-        echo $url;
+        echo esc_url( $url );
     }
 
 } // End of file.

@@ -40,7 +40,7 @@ class WP_Members_Fields_Table extends WP_List_Table {
 		if ( in_array( $item['meta'], $this->no_delete ) || in_array( $item['meta'], $this->excludes ) ) {
 			return;
 		} else {
-			return sprintf( '<input type="checkbox" name="delete[]" value="%s" title="%s" />', $item['meta'], esc_html__( 'delete', 'wp-members' ) );
+			return sprintf( '<input type="checkbox" name="delete[]" value="%s" title="%s" />', esc_attr( $item['meta'] ), esc_html__( 'delete', 'wp-members' ) );
 		}
 	}
 
@@ -55,7 +55,7 @@ class WP_Members_Fields_Table extends WP_List_Table {
 				'edit'  => 'field',
 				'field' => $item['meta'],
 			), admin_url( 'options-general.php' ) );
-			return '<a href="' . $link . '"><span class="dashicons dashicons-edit"></span></a> <a href="' . $link . '" data-tooltip="' . esc_html__( 'Edit this field', 'wp-members' ) . '">' . $item['meta'] . '</a>';
+			return '<a href="' . esc_url( $link ) . '"><span class="dashicons dashicons-edit"></span></a> <a href="' . esc_url( $link ) . '" data-tooltip="' . esc_html__( 'Edit this field', 'wp-members' ) . '">' . esc_attr( $item['meta'] ) . '</a>';
 		}
 	}
 
@@ -154,7 +154,7 @@ class WP_Members_Fields_Table extends WP_List_Table {
 	 */
 	function column_delete( $item ) {
 		$can_delete = ( $item['meta_key'] == 'user_nicename' || $item['meta_key'] == 'display_name' || $item['meta_key'] == 'nickname' ) ? true : false;
-		return ( ( $can_delete ) || ! $item['native'] ) ? sprintf( $item['native'] . '<input type="checkbox" name="field[%s]" value="delete" />', $item['meta'] ) : '';
+		return ( ( $can_delete ) || ! $item['native'] ) ? sprintf( $item['native'] . '<input type="checkbox" name="field[%s]" value="delete" />', esc_attr( $item['meta'] ) ) : '';
 	}
 	
 	/**

@@ -129,14 +129,16 @@ class WP_Members_Validation_Link {
 			 * @param  array   $query_args
 			 */
 			$link = apply_filters( 'wpmem_validation_link', $link, $url, $query_args );
+
+			$sanitized_link = esc_url_raw( $link );
 		
 			// Does email body have the [confirm_link] shortcode?
 			if ( strpos( $arr['body'], '[confirm_link]' ) ) {
-				$arr['body'] = str_replace( '[confirm_link]', $link, $arr['body'] );
+				$arr['body'] = str_replace( '[confirm_link]', $sanitized_link, $arr['body'] );
 			} else {
 				// Add text and link to the email body.
 				$arr['body'] = $arr['body'] . "\r\n"
-					. $this->email_text . ' ' . $link;
+					. $this->email_text . ' ' . $sanitized_link;
 			}
 		}
 

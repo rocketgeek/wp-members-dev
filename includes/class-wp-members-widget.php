@@ -43,12 +43,12 @@ class widget_wpmemwidget extends WP_Widget {
 		
 		// Title input. ?>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'wp-members' ); ?></label>
-			<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" style="width:95%;" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'wp-members' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" value="<?php echo esc_attr( $instance['title'] ); ?>" style="width:95%;" />
 		</p>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'redirect_to' ); ?>"><?php _e( 'Redirect to (optional):', 'wp-members' ); ?></label>
-			<input id="<?php echo $this->get_field_id( 'redirect_to' ); ?>" name="<?php echo $this->get_field_name( 'redirect_to' ); ?>" value="<?php echo $instance['redirect_to']; ?>" style="width:95%;" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>"><?php _e( 'Redirect to (optional):', 'wp-members' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'redirect_to' ) ); ?>" value="<?php echo esc_attr( $instance['redirect_to'] ); ?>" style="width:95%;" />
 		</p>
 		<?php
 	}
@@ -109,8 +109,8 @@ class widget_wpmemwidget extends WP_Widget {
 		$id = apply_filters( 'wpmem_widget_id', 'wp-members', $instance, $this->id_base  );
 		
 		echo $args['before_widget'];
-		echo '<div id="' . $id . '">';
-		echo $args['before_title'] . $title . $args['after_title'];
+		echo '<div id="' . esc_attr( $id ) . '">';
+		echo $args['before_title'] . esc_attr( $title ) . $args['after_title'];
 		// The Widget
 		$this->do_sidebar( $redirect_to, $customizer ); 
 		echo '</div>';
@@ -159,7 +159,7 @@ class widget_wpmemwidget extends WP_Widget {
 		}
 
 		// Clean whatever the url is.
-		$post_to = esc_url( $post_to );
+		$esc_post_to = esc_url( $post_to );
 
 		if ( ! is_user_logged_in() || ( '1' == $customizer && is_customize_preview() ) ) {
 
@@ -237,7 +237,7 @@ class widget_wpmemwidget extends WP_Widget {
 			
 			// Build the input rows.
 			foreach ( $inputs as $input ) {
-				$label = '<label for="' . esc_attr( $input['tag'] ) . '">' . $input['name'] . '</label>';
+				$label = '<label for="' . esc_attr( $input['tag'] ) . '">' . esc_html( $input['name'] ) . '</label>';
 				$field = wpmem_form_field( array(
 					'name'     => $input['tag'], 
 					'type'     => $input['type'],
@@ -284,7 +284,7 @@ class widget_wpmemwidget extends WP_Widget {
 			}
 
 			$hidden = '<input type="hidden" name="rememberme" value="forever" />' . $args['n'] .
-					'<input type="hidden" name="redirect_to" value="' . ( ( $redirect_to ) ? $redirect_to : $post_to ) . '" />' . $args['n'] .
+					'<input type="hidden" name="redirect_to" value="' . ( ( $redirect_to ) ? esc_url( $redirect_to ) : $esc_post_to ) . '" />' . $args['n'] .
 					'<input type="hidden" name="a" value="login" />' . $args['n'] .
 					'<input type="hidden" name="slog" value="true" />';
 			/**
@@ -310,7 +310,7 @@ class widget_wpmemwidget extends WP_Widget {
 			if ( $wpmem->user_pages['profile'] != null ) { 
 				/** This filter is documented in wp-members/includes/class-wp-members-forms.php */
 				$link = apply_filters( 'wpmem_forgot_link', wpmem_profile_url( 'pwdreset' ) );
-				$link_html = ' <a href="' . $link . '">' . wpmem_get_text( 'widget_login_forgot' ) . '</a>&nbsp;';
+				$link_html = ' <a href="' . esc_url_raw( $link ) . '">' . wpmem_get_text( 'widget_login_forgot' ) . '</a>&nbsp;';
 				/**
 				 * Filter the sidebar forgot password.
 				 *
@@ -336,7 +336,7 @@ class widget_wpmemwidget extends WP_Widget {
 			if ( $wpmem->user_pages['register'] != null ) {
 				/** This filter is documented in wp-members/includes/class-wp-members-forms.php */
 				$link = apply_filters( 'wpmem_reg_link', $wpmem->user_pages['register'] );
-				$link_html = ' <a href="' . $link . '">' . wpmem_get_text( 'widget_login_register' ) . '</a>';
+				$link_html = ' <a href="' . esc_url_raw( $link ) . '">' . wpmem_get_text( 'widget_login_register' ) . '</a>';
 				/**
 				 * Filter the sidebar register link.
 				 *
@@ -363,7 +363,7 @@ class widget_wpmemwidget extends WP_Widget {
 
 			$form = $args['fieldset_before'] . $args['n'] . $form . $args['n'] . $args['fieldset_after'];
 
-			$form = '<form name="form" method="post" action="' . $post_to . '" id="' . wpmem_sanitize_class( $args['form_id'] ) . '" class="' . wpmem_sanitize_class( $args['form_class'] ) . '">' . $args['n'] . $form . $args['n'] . '</form>';
+			$form = '<form name="form" method="post" action="' . $esc_post_to . '" id="' . wpmem_sanitize_class( $args['form_id'] ) . '" class="' . wpmem_sanitize_class( $args['form_class'] ) . '">' . $args['n'] . $form . $args['n'] . '</form>';
 
 			// Add status message, if one exists.
 			if ( '' == $args['status_msg'] ) {
@@ -464,7 +464,7 @@ class widget_wpmemwidget extends WP_Widget {
 			$args = wp_parse_args( $args, $defaults );
 
 			// Generate the message string.
-			$str = $args['wrapper_before'] . $args['status_text'] . "<a href=\"$logout\">" . $args['link_text'] . '</a>' . $args['wrapper_after'];
+			$str = $args['wrapper_before'] . $args['status_text'] . '<a href="' . esc_url_raw( $logout ) . '">' . esc_html( $args['link_text'] ) . '</a>' . $args['wrapper_after'];
 
 			/**
 			 * Filter the sidebar user login status.

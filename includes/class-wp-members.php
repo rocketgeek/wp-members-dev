@@ -501,11 +501,13 @@ class WP_Members {
 	public $stop_spam;
 	public $usertrack;
 	public $user_list;
+	public $woo_connector;
 	public $excluded_meta;
 
 	// @deprecated
 	public $pwd_link;
 	public $login_error;
+	public $style; // @todo verify if this is deprecated.
 
 	/**
 	 * Plugin initialization function.
@@ -814,7 +816,7 @@ class WP_Members {
 			require_once $this->path . 'includes/cli/class-wp-members-cli.php';
 			require_once $this->path . 'includes/cli/class-wp-members-cli-user.php';
 			require_once $this->path . 'includes/cli/class-wp-members-cli-settings.php';
-			require_once $this->path . 'includes/cli/class-wp-members-cli-db-tools.php';
+			require_once $this->path . 'includes/cli/class-db-tools.php';
 		}
 
 		require_once $this->path . 'includes/deprecated.php';
@@ -1756,7 +1758,7 @@ class WP_Members {
 							$more_link_text = __( '(more&hellip;)' );
 						}
 						// The default $more_link.
-						$more_link = ' <a href="'. get_permalink( $post->ID ) . '" class="more-link">' . $more_link_text . '</a>';
+						$more_link = ' <a href="'. esc_url( get_permalink( $post->ID ) ) . '" class="more-link">' . esc_attr( $more_link_text ) . '</a>';
 					}
 
 					// Apply the_content_more_link filter if one exists (will match up all 'more' link text).
@@ -1956,11 +1958,11 @@ class WP_Members {
 		}
 		
 		if ( 'button' == $args['format'] ) {
-			$html = '<form action="' . $link . '" id="' . $args['id'] . '" class="' . $args['class'] . '">';
+			$html = '<form action="' . esc_url( $link ) . '" id="' . esc_attr( $args['id'] ) . '" class="' . esc_attr( $args['class'] ) . '">';
 			$html.= ( is_user_logged_in() ) ? '<input type="hidden" name="a" value="logout" />' : '';
-			$html.= '<input type="submit" value="' . $text . '" /></form>';
+			$html.= '<input type="submit" value="' . esc_attr( $text ) . '" /></form>';
 		} else {
-			$html = sprintf( '<a href="%s" id="%s" class="%s">%s</a>', $link, $args['id'], $args['class'], $text );
+			$html = sprintf( '<a href="%s" id="%s" class="%s">%s</a>', esc_url( $link ), esc_attr( $args['id'] ), esc_attr( $args['class'] ), esc_attr( $text ) );
 		}
 		return $html;
 	}

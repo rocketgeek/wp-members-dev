@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function wpmem_redirect_to_login( $redirect_to = false ) {
 	if ( ! is_user_logged_in() ) {
 		$redirect_to = ( $redirect_to ) ? $redirect_to : wpmem_current_url();
-		wp_safe_redirect( wpmem_login_url( $redirect_to ) );
+		wp_safe_redirect( wpmem_login_url( esc_url_raw( $redirect_to ) ) );
 		exit();
 	}
 	return;
@@ -192,7 +192,7 @@ function wpmem_login_url( $redirect_to = false ) {
 	} else {
 		$url = $login_url;
 	}
-	return $url;
+	return esc_url_raw( $url );
 }
 
 /**
@@ -213,7 +213,7 @@ function wpmem_register_url() {
 	 * 
 	 * @param string $reg_url
 	 */
-	return apply_filters( 'wpmem_register_url', $reg_url );
+	return esc_url_raw( apply_filters( 'wpmem_register_url', $reg_url ) );
 }
 
 /**
@@ -228,7 +228,7 @@ function wpmem_register_url() {
  */
 function wpmem_profile_url( $a = false ) {
 	global $wpmem;
-	return ( $a ) ? add_query_arg( 'a', $a, trailingslashit( $wpmem->user_pages['profile'] ) ) : $wpmem->user_pages['profile'];
+	return ( $a ) ? add_query_arg( 'a', esc_attr( $a ), trailingslashit( $wpmem->user_pages['profile'] ) ) : $wpmem->user_pages['profile'];
 }
 
 /**
@@ -303,7 +303,7 @@ function wpmem_current_url( $slash = true, $getq = true ) {
 	$url = home_url( add_query_arg( array(), $wp->request ) );
 	$url = ( $slash ) ? trailingslashit( $url ) : $url;
 	$url = ( $getq && count( $_GET ) > 0 ) ? $url . '?' . $_SERVER['QUERY_STRING'] : $url;
-	return $url;
+	return esc_url_raw( $url );
 }
 
 /**
@@ -460,7 +460,7 @@ function wpmem_is_reg_page( $check = false ) {
 	} else {
 		if ( ! is_int( $check ) ) {
 			global $wpdb;
-			$sql   = "SELECT ID FROM $wpdb->posts WHERE post_name = '$check' AND post_status = 'publish' LIMIT 1";	
+			$sql   = 'SELECT ID FROM $wpdb->posts WHERE post_name = "' . esc_sql( $check ) . '" AND post_status = "publish" LIMIT 1';	
 			$arr   = $wpdb->get_results( $sql, ARRAY_A  ); 
 			$check = $arr[0]['ID'];
 		}
@@ -731,5 +731,48 @@ function wpmem_woo_is_purchasable( $is_purchasable, $product ) {
 	}
 
 	return true;
+}
+
+/**
+ * Display an icon or text indicating the restriction value of a post for logged out users.
+ * 
+ * @note Make sure dashicons are loaded if $icon is true.
+ * 
+ * @since 3.5.0
+ * 
+ * @param  int   $post_id
+ * @param  bool  $icon
+ * @param  bool  $echo
+ * @return bool
+ */
+function wpmem_show_post_restriction( $post_id, $icon = false, $echo = false ) {
+
+	$defaults = array( 
+		'open_icon' => '<span class="dashicons dashicons-lock"></span>',
+		'open_text' => '[ members only ]',
+		'restricted_icon' => '<span class="dashicons dashicons-unlock"></span>',
+		'restricted_text' => '[ free ]',
+	);
+	$filtered = apply_filters( 'wpmem_show_post_restriction_args', $defaults, $post_id );
+	$args = wp_parse_args( $filtered, $defaults );
+
+    if ( ! is_user_logged_in() ) {
+        
+        if ( wpmem_is_blocked( $post_id ) ) {
+
+            $result = ( $icon ) ?  $args['restricted_icon'] : $args['restricted_text'];
+
+        } else {
+
+            $result = ( $icon ) ? $args['open_icon'] : $args['open_text'];
+
+        }
+
+        if ( $echo ) {
+            echo $result;
+        } else {
+            return $result;
+        }
+    }
 }
 // End of file.

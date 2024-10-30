@@ -68,14 +68,14 @@ class WP_Members_Admin_Users {
 			if ( wpmem_is_enabled( 'act_link' ) ) {
 				if ( false === wpmem_is_user_confirmed( $user_object->ID ) ) {
 					$action = 'confirm';
-					$term   = esc_html__( 'Confirm', 'wp-members' );
+					$term   = __( 'Confirm', 'wp-members' );
 				} else {
 					$action = 'unconfirm';
-					$term   = esc_html__( 'Unconfirm', 'wp-members' );
+					$term   = __( 'Unconfirm', 'wp-members' );
 				}
 				$url = add_query_arg( array( 'action' => $action . '-single', 'user' => $user_object->ID ), "users.php" );
 				$url = wp_nonce_url( $url, 'confirm-user' );
-				$actions[ $action ] = '<a href="' . $url . '">' . $term . '</a>';
+				$actions[ $action ] = '<a href="' . esc_url( $url ) . '">' . esc_html( $term ) . '</a>';
 				
 				// Resend welcome email (will contain confirmation link if enabled).
 				$actions['resend_welcome'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'resend-single', 'user' => $user_object->ID ), "users.php" ), 'resend-user' ) . '">' . esc_html__( 'Resend welcome email', 'wp-members' ) . '</a>';
@@ -86,14 +86,14 @@ class WP_Members_Admin_Users {
 
 				if ( false === $is_active ) {
 					$action = 'activate';
-					$term   = esc_html__( 'Activate', 'wp-members' );
+					$term   = __( 'Activate', 'wp-members' );
 				} else {
 					$action = 'deactivate';
-					$term   = esc_html__( 'Deactivate', 'wp-members' );
+					$term   = __( 'Deactivate', 'wp-members' );
 				}
 				$url = add_query_arg( array( 'action' => $action . '-single', 'user' => $user_object->ID ), "users.php" );
 				$url = wp_nonce_url( $url, 'activate-user' );
-				$actions[ $action ] = '<a href="' . $url . '">' . $term . '</a>';
+				$actions[ $action ] = '<a href="' . esc_url( $url ) . '">' . esc_html( $term ) . '</a>';
 			}
 		}
 		return $actions;
@@ -169,18 +169,18 @@ class WP_Members_Admin_Users {
 
 					switch ( $action ) {
 						case 'activate':
-							$msg = urlencode( sprintf( esc_html__( '%s users activated', 'wp-members' ), $x ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users activated', 'wp-members' ), intval( $x ) ) );
 							break;
 						case 'deactivate':
-							$msg = urlencode( sprintf( esc_html__( '%s users deactivated', 'wp-members' ), $x ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users deactivated', 'wp-members' ), intval( $x ) ) );
 						case 'confirm':
-							$msg = urlencode( sprintf( esc_html__( '%s users confirmed', 'wp-members' ), $x ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users confirmed', 'wp-members' ), intval( $x ) ) );
 							break;
 						case 'unconfirm':
-							$msg = urlencode( sprintf( esc_html__( '%s users unconfirmed', 'wp-members' ), $x ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users unconfirmed', 'wp-members' ), intval( $x ) ) );
 							break;
 						case 'resend_welcome':
-							$msg = urlencode( sprintf( esc_html__( 'Resent welcome to %s users', 'wp-members' ), $x ) );
+							$msg = urlencode( sprintf( esc_html__( 'Resent welcome to %s users', 'wp-members' ), intval( $x ) ) );
 					}
 
 				} else {
@@ -298,7 +298,7 @@ class WP_Members_Admin_Users {
 		do_action( 'wpmem_user_action' );
 
 		// If we did not return already, we need to wp_safe_redirect.
-		wp_safe_redirect( $sendback );
+		wp_safe_redirect( esc_url( $sendback ) );
 		exit();
 
 	}
@@ -313,11 +313,11 @@ class WP_Members_Admin_Users {
 		global $pagenow, $user_action_msg;
 		 if( $pagenow == 'users.php' && isset( $_REQUEST['activated'] ) ) {
 			$message = esc_html( $_REQUEST['activated'] );
-			echo "<div class=\"updated\"><p>{$message}</p></div>";
+			echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
 		}
 
 		if ( $user_action_msg ) {
-			echo "<div class=\"updated\"><p>{$user_action_msg}</p></div>";
+			echo '<div class="updated"><p>' . esc_html( $user_action_msg ) . '</p></div>';
 		}
 	}
 
@@ -416,12 +416,12 @@ class WP_Members_Admin_Users {
 		
 		foreach ( $views as $key => $view ) {
 			if ( isset( $user_counts[ $key ] ) ) {
-				$link          = "users.php?action=show&amp;show=" . $key;
+				$link          = "users.php?action=show&amp;show=" . esc_attr( $key );
 				$current       = ( $show == $key ) ? ' class="current"' : '';
 				$views[ $key ] = sprintf(
 					'<a href="%s" %s>%s <span class="count">(%d)</span></a>',
 					esc_url( $link ),
-					$current,
+					esc_attr( $current ),
 					$view,
 					isset( $user_counts[ $key ] ) ? $user_counts[ $key ] : ''
 				);

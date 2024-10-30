@@ -47,7 +47,7 @@ class WP_Members_Forms {
 		// Validate fields settings.
 		if ( ! isset( $fields ) || empty( $fields ) ) {
 			// Update settings.
-			$fields = array( array( 10, 'Email', 'user_email', 'email', 'y', 'y', 'y', 'profile'=>true ) );
+			$fields = array( array( 10, esc_html__( 'Email', 'wp-members' ), 'user_email', 'email', 'y', 'y', 'y', 'profile'=>true ) );
 		}
 
 		// Check woo reg fields.
@@ -2261,8 +2261,8 @@ class WP_Members_Forms {
 			$tos_link_url = do_shortcode( $tos_content );
 			$tos_link_tag = '<a href="' . esc_url( $tos_link_url ) . '" target="_blank">';
 		} else {
-			$tos_link_url = add_query_arg( 'tos', 'display' );
-			$tos_link_tag = "<a href=\"#\" onClick=\"window.open('" . $tos_link_url . "','tos');\">";
+			$tos_link_url = esc_url( add_query_arg( 'tos', 'display' ) );
+			$tos_link_tag = "<a href=\"#\" onClick=\"window.open('" . esc_url( $tos_link_url ) . "','tos');\">";
 		}
 
 		/**

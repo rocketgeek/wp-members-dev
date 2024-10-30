@@ -1034,20 +1034,20 @@ function wpmem_get_user_obj( $user ) {
  * @return  array   $users  An array of user IDs who have the requested meta.
  */
 function wpmem_get_users_by_meta( $meta, $value = "EXISTS" ) {
-	$args  = array( 'fields' => array( 'ID' ), 'meta_key' => $meta );
+	$args  = array( 'fields' => array( 'ID' ), 'meta_key' => esc_sql( $meta ) );
 	if ( false === $value ) {
 		$args['meta_value'] = '';
 		$args['meta_compare'] = 'NOT EXISTS';
-	} elseif ( "EXISTS" === $value ) {
+	} elseif ( "EXISTS" == $value ) {
 		$args['meta_value'] = '';
 		$args['meta_compare'] = '>';
 	} else {
-		$args['meta_value'] = $value;
+		$args['meta_value'] = esc_sql( $value );
 	}
 	$results = get_users( $args );
 	if ( $results ) {
 		foreach( $results as $result ) {
-			$users[] = $result->ID;
+			$users[] = intval( $result->ID );
 		}
 		return $users;
 	} else {

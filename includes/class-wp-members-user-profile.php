@@ -145,14 +145,14 @@ class WP_Members_User_Profile {
 						$empty_file = '<span class="description">' . esc_html__( 'None' ) . '</span>';
 						if ( 'file' == $field['type'] ) {
 							$attachment_url = wp_get_attachment_url( $val );
-							$input = ( $attachment_url ) ? '<a href="' . $attachment_url . '">' . $attachment_url . '</a>' : $empty_file;
+							$input = ( $attachment_url ) ? '<a href="' . esc_url( $attachment_url ) . '">' . esc_url_raw( $attachment_url ) . '</a>' : $empty_file;
 						} else {
 							$attachment_url = wp_get_attachment_image( $val, 'medium' );
 							if ( 'admin' == $display ) {
 								$edit_url = admin_url( 'upload.php?item=' . $val );
-								$input = ( $attachment_url ) ? '<a href="' . esc_url_raw( $edit_url ) . '">' . esc_url_raw( $attachment_url ) . '</a>' : $empty_file;
+								$input = ( $attachment_url ) ? '<a href="' . esc_url( $edit_url ) . '">' . esc_url_raw( $attachment_url ) . '</a>' : $empty_file;
 							} else {
-								$input = ( $attachment_url ) ? $attachment_url : $empty_file;
+								$input = ( $attachment_url ) ? esc_url_raw( $attachment_url ) : $empty_file;
 							}
 						}
 						$input.= '<br />' . wpmem_get_text( 'profile_upload' ) . '<br />';
@@ -383,11 +383,11 @@ class WP_Members_User_Profile {
 					}
 				}
 			} elseif ( $field['type'] == 'checkbox' ) {
-				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? sanitize_text_field( $_POST[ $meta ] ) : '';
+				$fields[ $meta ] = wpmem_get_sanitized( $meta, '' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_text_field( $_POST[ $meta ] ) : '';
 			} elseif ( $field['type'] == 'multiselect' || $field['type'] == 'multicheckbox' ) {
 				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wp_unslash( $_POST[ $meta ] ) ) : '';
 			} elseif ( $field['type'] == 'textarea' ) {
-				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? sanitize_textarea_field( $_POST[ $meta ] ) : '';
+				$fields[ $meta ] = wpmem_get_sanitized( $meta, '', 'post', 'textarea' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_textarea_field( $_POST[ $meta ] ) : '';
 			}
 		}
 
@@ -441,27 +441,25 @@ class WP_Members_User_Profile {
 			
 			if ( wpmem_is_enabled( 'enable_products' ) ) {
 				// Update products.
-				if ( isset( $_POST['_wpmem_membership_product'] ) ) {
-					foreach ( $_POST['_wpmem_membership_product'] as $product_key => $product_value ) {
-						// Sanitize.
-						$product_key = sanitize_text_field( $product_key );
-						// Enable or Disable?
-						if ( 'enable' == $product_value ) {
-							// Does product require a role?
-							if ( false != wpmem_get_membership_role( $product_key ) || '' != wpmem_get_membership_role( $product_key ) ) {
-								wpmem_update_user_role( $user_id, wpmem_get_membership_role( $product_key ), 'add' );
-							}
-							// Do we need to set a specific date?
-							if ( isset( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) ) {
-								wpmem_set_user_product( $product_key, $user_id, sanitize_text_field( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) );
-							} else {
-								wpmem_set_user_product( $product_key, $user_id );
-							}
+				foreach ( wpmem_get_sanitized( '_wpmem_membership_product', array(), 'post', 'array' ) as $product_key => $product_value ) {
+					// Sanitize.
+					$product_key = sanitize_text_field( $product_key );
+					// Enable or Disable?
+					if ( 'enable' == $product_value ) {
+						// Does product require a role?
+						if ( false != wpmem_get_membership_role( $product_key ) || '' != wpmem_get_membership_role( $product_key ) ) {
+							wpmem_update_user_role( $user_id, wpmem_get_membership_role( $product_key ), 'add' );
 						}
-						if ( 'disable' == $product_value ) {
-							$wpmem->user->remove_user_product( $product_key, $user_id );
+						// Do we need to set a specific date?
+						if ( isset( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) ) {
+							wpmem_set_user_product( $product_key, $user_id, sanitize_text_field( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) );
+						} else {
+							wpmem_set_user_product( $product_key, $user_id );
 						}
-					}	
+					}
+					if ( 'disable' == $product_value ) {
+						$wpmem->user->remove_user_product( $product_key, $user_id );
+					}
 				}
 			}
 		}
@@ -524,24 +522,24 @@ class WP_Members_User_Profile {
 				switch( $user_active_flag ) {
 
 					case "0":
-						$label  = esc_html__( 'Reactivate this user?', 'wp-members' );
+						$label  = __( 'Reactivate this user?', 'wp-members' );
 						$action = 1;
 						break;
 
 					case "1":
-						$label  = esc_html__( 'Deactivate this user?', 'wp-members' );
+						$label  = __( 'Deactivate this user?', 'wp-members' );
 						$action = 0;
 						break;
 
 					default:
-						$label  = esc_html__( 'Activate this user?', 'wp-members' );
+						$label  = __( 'Activate this user?', 'wp-members' );
 						$action = 1;
 						break;
 				} 
 				// Values used below are either already escaped or specifically defined (not variable input). ?>
 				<tr>
-					<th><label><?php echo $label; ?></label></th>
-					<td><input id="activate_user" type="checkbox" class="input" name="activate_user" value="<?php echo $action; ?>" /></td>
+					<th><label><?php echo esc_html( $label ); ?></label></th>
+					<td><input id="activate_user" type="checkbox" class="input" name="activate_user" value="<?php echo intval( $action ); ?>" /></td>
 				</tr>
 			<?php }
 		}
@@ -584,7 +582,7 @@ class WP_Members_User_Profile {
 	 */
 	public static function _show_ip( $user_id ) { ?>
 		<tr>
-			<th><label><?php _e( 'IP @ registration', 'wp-members' ); ?></label></th>
+			<th><label><?php esc_html_e( 'IP @ registration', 'wp-members' ); ?></label></th>
 			<td><?php echo esc_attr( get_user_meta( $user_id, 'wpmem_reg_ip', true ) ); ?></td>
 		</tr>
 		<?php

@@ -1011,7 +1011,7 @@ class WP_Members_Shortcodes {
 		if ( is_user_logged_in() && $tag == 'wpmem_logout' ) {
 			$link = ( isset( $sanitized_atts['url'] ) ) ? add_query_arg( array( 'a'=>'logout', 'redirect_to'=>$sanitized_atts['url'] ) ) : add_query_arg( 'a', 'logout' );
 			$text = ( $content ) ? $content : wpmem_get_text( 'logout_sc_text' ); // "Click here to log out."
-			return do_shortcode( '<a href="' . esc_url( $link ) . '">' . $text . '</a>' );
+			return do_shortcode( '<a href="' . esc_url( $link ) . '">' . esc_html( $text ) . '</a>' );
 		}
 	}
 
@@ -1303,7 +1303,7 @@ class WP_Members_Shortcodes {
 				break;
 
 			case "usernamesuccess":
-				$email = ( isset( $_POST['user_email'] ) ) ? sanitize_email( $_POST['user_email'] ) : '';
+				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' ); // ( isset( $_POST['user_email'] ) ) ? sanitize_email( $_POST['user_email'] ) : '';
 				$msg = sprintf( wpmem_get_text( 'usernamesuccess' ), $email );
 				$content = $content . wpmem_get_display_message( 'usernamesuccess', $msg );
 				$wpmem->regchk = ''; // Clear regchk.
@@ -1347,7 +1347,7 @@ class WP_Members_Shortcodes {
 				break;
 
 			case "reconfirmsuccess":
-				$email = ( isset( $_POST['user_email'] ) ) ? sanitize_email( $_POST['user_email'] ) : '';
+				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' ); // ( isset( $_POST['user_email'] ) ) ? sanitize_email( $_POST['user_email'] ) : '';
 				$msg = wpmem_get_text( 'reconfirm_success' );
 				$content = $content . wpmem_get_display_message( 'reconfirm_success', $msg );
 				$wpmem->regchk = ''; // Clear regchk.

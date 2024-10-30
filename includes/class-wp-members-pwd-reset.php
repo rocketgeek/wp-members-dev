@@ -148,7 +148,7 @@ class WP_Members_Pwd_Reset {
 					reset_password( $user, $pass1 );
 					$this->content = wpmem_get_display_message( 'pwdchangesuccess', $this->error_msg( 'pwdchangesuccess' ) ) . wpmem_login_form( 'pwdreset' );
 				} else {
-					$this->content = $errors->get_error_message() .  wpmem_change_password_form();
+					$this->content = $errors->get_error_message() . wpmem_change_password_form();
 				}
 			} else {
 				// Password change form has not been submitted yet.
@@ -209,14 +209,16 @@ class WP_Members_Pwd_Reset {
 				 */
 				$link = apply_filters( 'wpmem_pwd_reset_email_link', $link, $query_args, $user );
 			}
+
+			$sanitized_link = esc_url( $link );
 			
 			// Does email body have the [reset_link] shortcode?
 			if ( strpos( $arr['body'], '[reset_link]' ) ) {
-				$arr['body'] = str_replace( '[reset_link]', $link, $arr['body'] );
+				$arr['body'] = str_replace( '[reset_link]', $sanitized_link, $arr['body'] );
 			} else {
 				// Add text and link to the email body.
 				$arr['body'] = $arr['body'] . "\r\n"
-					. $link;
+					. $sanitized_link;
 			}
 		}
 		return $arr;
@@ -237,7 +239,7 @@ class WP_Members_Pwd_Reset {
 	
 	function error_msg( $code, $message = false ) {
 		if ( $message ) {
-			$error = wpmem_get_display_message( $code, $message . '<br /><a href="' . wpmem_profile_url( 'pwdreset' ) . '">' . $this->request_new_key . '</a>' );
+			$error = wpmem_get_display_message( $code, $message . '<br /><a href="' . esc_url( wpmem_profile_url( 'pwdreset' ) ) . '">' . $this->request_new_key . '</a>' );
 		} else {
 			$error = wpmem_get_display_message( $code );
 		}
