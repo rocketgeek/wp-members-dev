@@ -302,7 +302,7 @@ function wpmem_get_redirect_to( $args = array() ) {
 			$redirect_to = ( isset( $_SERVER['REQUEST_URI'] ) ) ? $_SERVER['REQUEST_URI'] : get_permalink();
 		}
 	}
-	return $redirect_to;
+	return esc_url_raw( $redirect_to );
 }
 
 /**
