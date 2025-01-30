@@ -701,7 +701,7 @@ class WP_Members_Admin_API {
 		  || 'settings_page_wpmem-settings' == $current_screen->id ) {
 
 			$upload_vars  = wp_upload_dir( null, false );
-			$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . $wpmem->upload_base );
+			$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . wpmem_get_upload_base() );
 			$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
 
 			if ( file_exists( $wpmem_user_files_dir ) ) {

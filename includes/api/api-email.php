@@ -54,9 +54,9 @@ function wpmem_mail_from_name() {
  *       is named something other than "wp-members".
  */
 if ( ! function_exists( 'wpmem_mail_content_type' ) ):
-function wpmem_mail_content_type() {
+function wpmem_mail_content_type( $content_type = 'text/plain' ) {
 	global $wpmem;
-	return $wpmem->email->content_type();
+	return $wpmem->email->content_type( $content_type );
 }
 endif;
 

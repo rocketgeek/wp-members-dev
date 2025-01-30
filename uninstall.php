@@ -81,6 +81,7 @@ function wpmem_uninstall_options() {
 	delete_option( 'wpmembers_email_notify'  );
 	delete_option( 'wpmembers_email_wpfrom'  );
 	delete_option( 'wpmembers_email_wpname'  );
+	delete_option( 'wpmembers_email_html'    );
 	delete_option( 'wpmembers_email_getuser' );
 	delete_option( 'wpmembers_email_validated' );
 

@@ -336,7 +336,13 @@ function wpmem_create_file( $args ) {
  */
 function wpmem_get_upload_base() {
 	global $wpmem;
-	return $wpmem->upload_base;
+	if ( isset( $wpmem->upload_base ) ) {
+		return $wpmem->upload_base;
+	} else {
+		/** This filter is defined in class-wp-members-forms.php */
+		$args = apply_filters( 'wpmem_user_upload_dir', array( 'wpmem_dir' => "wpmembers" ) );
+		return $args['wpmem_dir'];
+	}
 }
 
 /**

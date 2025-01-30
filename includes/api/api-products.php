@@ -104,7 +104,7 @@ function wpmem_get_products() {
  */
 function wpmem_get_memberships() {
 	global $wpmem;
-	return ( ! empty( $wpmem->membership->products ) ) ? $wpmem->membership->products : false;
+	return ( ! empty( $wpmem->membership->products ) ) ? $wpmem->membership->products : array();
 }
 
 /**

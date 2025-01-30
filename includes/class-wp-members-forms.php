@@ -1430,6 +1430,7 @@ class WP_Members_Forms {
 			foreach ( $this->get_reg_row_keys() as $check_key ) {
 				if ( ! isset( $rows[ $meta_key ][ $check_key ] ) ) {
 					$rows[ $meta_key ][ $check_key ] = '';
+					$row_item[ $check_key ] = '';
 				}
 			}
 			// Check form to see if we need multipart enctype.

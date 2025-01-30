@@ -580,10 +580,6 @@ class WP_Members {
 		if ( $this->clone_menus ) {
 			$this->menus_clone = new WP_Members_Clone_Menus(); // Load clone menus.
 		}
-
-		if ( 1 == $this->act_link ) {
-			$this->act_newreg = new WP_Members_Validation_Link;
-		}
 		
 		// @todo Is this a temporary fix?
 		$this->email->load_from();
@@ -648,6 +644,8 @@ class WP_Members {
 		add_action( 'wp_enqueue_scripts',    array( $this, 'loginout_script' ) );
 		add_action( 'customize_register',    array( $this, 'customizer_settings' ) );
 		add_action( 'wp_footer',             array( $this, 'invisible_captcha' ) );
+
+		add_action( 'wpmem_after_init',      array( $this, 'after_wpmem_loaded' ) );
 
 		if ( is_admin() ) {
 			add_action( 'init', array( $this, 'load_admin' ) ); // @todo Check user role to load correct dashboard
@@ -1996,6 +1994,12 @@ class WP_Members {
 	 */
 	public function has_errors() {
 		return ( is_wp_error( $this->error ) && $this->error->has_errors() ) ? true : false;
+	}
+
+	public function after_wpmem_loaded() {
+		if ( wpmem_is_enabled( 'act_link' ) ) {
+			$this->act_newreg = new WP_Members_Validation_Link;
+		}
 	}
 
 } // End of WP_Members class.
