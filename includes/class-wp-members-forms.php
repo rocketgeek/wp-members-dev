@@ -40,6 +40,9 @@ class WP_Members_Forms {
 	function load_fields( $tag = "all", $form = 'default' ) {
 		
 		global $wpmem;
+
+		// @todo Temp fix for admin notification bug.
+		$tag = ( 'admin_notify' == $tag ) ? 'register' : $tag;
 	
 		// Get stored fields settings.
 		$fields = get_option( 'wpmembers_fields' );
