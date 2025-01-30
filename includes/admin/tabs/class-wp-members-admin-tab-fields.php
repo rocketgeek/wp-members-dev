@@ -345,6 +345,7 @@ class WP_Members_Admin_Tab_Fields {
 				</li>
 				<?php echo ( $mode == 'add' ) ? '</div>' : '';
 				} ?>
+			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'select' || $field['type'] == 'multiselect' ) ) ) { ?>
 				<li>
 					<label style="vertical-align:top"><?php _e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo $span_required; ?></label>
 					<textarea name="add_dropdown_value" id="add_dropdown_value" rows="5" cols="40"><?php
@@ -364,8 +365,11 @@ Choice One|choice_one,
 "1,000-10,000|1,000-10,000",
 Last Row|last_row
 					<?php } ?></textarea>
-
-
+					</li>
+			<?php } ?>
+			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'radio' || $field['type'] == 'multicheckbox' ) ) ) { ?>
+				<li>
+					<label style="vertical-align:top"><?php _e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo $span_required; ?></label>
 					<textarea name="add_radio_value" id="add_radio_value" rows="5" cols="40"><?php
 	// Accomodate editing the current radio values or create radio value example.
 	if ( $mode == 'edit' ) {
@@ -382,9 +386,8 @@ Choice One|choice_one,
 "1,000-10,000|1,000-10,000",
 Last Row|last_row
 					<?php } ?></textarea>
-
-
 				</li>
+			<?php } ?>
 				<li>
 					<label>&nbsp;</label>
 					<span class="description"><?php _e( 'Options should be Option Name|option_value,', 'wp-members' ); ?></span>
@@ -619,16 +622,7 @@ Last Row|last_row
 
 	public static function bulk_actions() { 
 		if ( 'wpmem-settings' == wpmem_get( 'page', false, 'get' ) && 'fields' == wpmem_get( 'tab', false, 'get' ) ) {
-		?><script type="text/javascript">
-			(function($) {
-				$(document).ready(function() {
-					$("table").attr("id", "wpmem-fields");
-					/**$("tr").attr('style', 'cursor:move;');**/
-				});
-			})(jQuery);
-			jQuery('<input id="add_field"  name="add_field" class="button action" type="submit" value="<?php _e( 'Add Field', 'wp-members' ); ?>" />').appendTo(".top .bulkactions");
-			jQuery('<input id="add_field2" name="add_field" class="button action" type="submit" value="<?php _e( 'Add Field', 'wp-members' ); ?>" />').appendTo(".bottom .bulkactions");
-		</script><?php
+			?><script type="text/javascript">(function($){$(document).ready(function(){$("table").attr("id","wpmem-fields");});})(jQuery);</script><?php
 		}
 	}
 
@@ -805,10 +799,16 @@ Last Row|last_row
 					$str = trim( str_replace( array("\r", "\r\n", "\n"), '', $str ) );
 					// Create array.
 					if ( ! function_exists( 'str_getcsv' ) ) {
-						$arr[7] = explode( ',', $str );
+						$clean_values = explode( ',', $str );
 					} else {
-						$arr[7] = str_getcsv( $str, ',', '"' );
+						$clean_values = str_getcsv( $str, ',', '"' );
 					}
+					// Clean input values.
+					foreach ( $clean_values as $key => $raw_value ) {
+						$pieces = array_map( 'trim', explode( '|', $raw_value ) );
+						$clean_values[ $key ] = $pieces[0] . '|' . $pieces[1];
+					}
+					$arr[7] = $clean_values;
 					// If multiselect or multicheckbox, set delimiter.
 					if ( 'multiselect' == $type || 'multicheckbox' == $type ) {
 						$arr[8] = ( ',' === wpmem_get( 'add_delimiter_value', '|' ) ) ? ',' : '|';
