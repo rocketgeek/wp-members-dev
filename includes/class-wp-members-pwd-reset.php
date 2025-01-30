@@ -187,17 +187,18 @@ class WP_Members_Pwd_Reset {
 			} else {
 
 				$query_args = array(
-					'a'     => $this->action,
-					'key'   => $key,
-					'login' => $user->user_login,
+					'a'     => trim( $this->action ),
+					'key'   => trim( $key ),
+					'login' => trim( $user->user_login ),
 				);
 				
 				// urlencode, primarily for user_login with a space.
 				$query_args = array_map( 'rawurlencode', $query_args );
 				
 				// Generate reset link.
-				$link = add_query_arg( $query_args, trailingslashit( wpmem_profile_url() ) );
-
+				$link = ( ! get_option( 'permalink_structure' ) ) ? wpmem_profile_url() : trailingslashit( wpmem_profile_url() );
+				$link = add_query_arg( $query_args, $link );
+					
 				/**
 				 * Filter the password reset URL in the email.
 				 * 
@@ -210,8 +211,8 @@ class WP_Members_Pwd_Reset {
 				$link = apply_filters( 'wpmem_pwd_reset_email_link', $link, $query_args, $user );
 			}
 
-			$sanitized_link = esc_url( $link );
-			
+			$sanitized_link = esc_url_raw( $link );
+
 			// Does email body have the [reset_link] shortcode?
 			if ( strpos( $arr['body'], '[reset_link]' ) ) {
 				$arr['body'] = str_replace( '[reset_link]', $sanitized_link, $arr['body'] );
