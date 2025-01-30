@@ -2,8 +2,8 @@
 Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 4.0
-Tested up to: 6.6
-Stable tag: 3.4.9.7
+Tested up to: 6.7
+Stable tag: 3.5.0
 
 License: GPLv3
 
@@ -108,7 +108,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.4.9 is a series of security updates, along with a series of bug fix patches. Backup prior to upgrading is recommended, but rollback is possible. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -177,6 +177,7 @@ Security:
 * Improved handling of user directories for uploaded files (when used).
 
 Other:
+* Updates wpmem_get_memberships() to return an empty array if there are no memberships (previous versions returned a false boolean).
 * Updates wpmem_email_to_user() to use tags instead of numeric tags, but numeric values are backward compatible.
 * Can resend welcome email (with confirmation link) when confirmation link setting is enabled. This can be via the bulk action menu (multiple users) or hover link (single user).
 * Removes obsolete file /admin/tab-options.php.  Users of the WP-Members User List extension version 1.9.4 and earlier will need to update the User List extension for full compatiblity.
