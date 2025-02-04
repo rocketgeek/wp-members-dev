@@ -553,12 +553,18 @@ function wpmem_woo_checkout_update_meta( $order_id ) {
  */
 function wpmem_woo_edit_account_form() {
 	$fields = wpmem_woo_edit_account_fields();
-	foreach ( $fields as $meta_key => $field ) { ?>
-		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-			<label for="<?php echo esc_attr( $meta_key ); ?>"><?php esc_html_e( $field['label'], 'wp-members' ); ?></label>
-			<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="<?php echo esc_attr( $meta_key ); ?>" id="<?php echo esc_attr( $meta_key ); ?>" value="<?php echo esc_attr( wpmem_get_user_meta( get_current_user_id(), $meta_key ) ); ?>" />
-		</p>
-	<?php }
+	foreach ( $fields as $meta_key => $field ) { 
+		$args = array( 
+			'type' => wpmem_get_field_type( $meta_key ),
+			'label' => wpmem_get_field_label( $meta_key ),
+			'required' => wpmem_is_field_required( $meta_key )
+		);
+		if ( 'checkbox' == wpmem_get_field_type( $meta_key ) ) {
+			$args['checked_value'] = $field['checked_value'];
+		}
+		$value = esc_attr( wpmem_get_user_meta( get_current_user_id(), $meta_key ) );
+		woocommerce_form_field( $meta_key, $args, $value );
+	}
 }
 
 function wpmem_woo_edit_account_fields() {
@@ -572,6 +578,44 @@ function wpmem_woo_edit_account_fields() {
 			}
 		}
 		return $return_fields;
+	}
+}
+
+/**
+ * Sets required fields for WooCommerce Edit Account form. 
+ * 
+ * @since 3.5.1
+ */
+function wpmem_woo_edit_account_required( $required_fields ) {
+	$fields = wpmem_fields();
+	// Get saved checkout field settings.
+	$wpmembers_wcupdate = get_option( 'wpmembers_wcupdate_fields' );
+	if ( $wpmembers_wcupdate ) {
+		foreach ( $fields as $meta => $field ) {
+			if ( in_array( $meta, $wpmembers_wcupdate ) && wpmem_is_field_required( $meta ) ) {
+				$required_fields[ $meta ] = wpmem_get_field_label( $meta );
+			}
+		}
+	}
+	return $required_fields;
+}
+
+/**
+ * Saves WooCommerce Edit Account custom field values on update.
+ * 
+ * @since 3.5.1
+ */
+function wpmem_woo_edit_account_save( $user_id ) {
+	$fields = wpmem_fields();
+	// Get saved checkout field settings.
+	$wpmembers_wcupdate = get_option( 'wpmembers_wcupdate_fields' );
+	if ( $wpmembers_wcupdate ) {
+		foreach ( $fields as $meta => $field ) {
+			if ( in_array( $meta, $wpmembers_wcupdate ) ) {
+				$value = wpmem_get_sanitized( $meta, 'post', wpmem_get_field_type( $meta ) );
+				update_user_meta( $user_id, $meta, $value );
+			}
+		}
 	}
 }
 
@@ -751,4 +795,14 @@ function wpmem_is_file_field( $field_meta ) {
 function wpmem_get_field_label( $meta_key ) {
 	$fields = wpmem_fields();
 	return $fields[ $meta_key ]['label'];
+}
+
+/**
+ * Checks if field is required.
+ * 
+ * @since 3.5.1
+ */
+function wpmem_is_field_required( $meta_key ) {
+	$fields = wpmem_fields();
+	return ( $fields[ $meta_key ]['required'] ) ? true : false; 
 }

@@ -23,6 +23,8 @@ __Simple to install and configure - yet customizable and scalable!__
 * Limit menu items to logged in users
 * User login, registration, and profile integrated into your theme
 * Create custom registration and profile fields
+* Integrate custom fields into WooCommerce checkout and registration (only supported by shortcode pages, not block editor version)
+* Create custom memberships and content restriction
 * Notify admin of new user registrations
 * Hold new registrations for admin approval
 * Create post excerpt teaser content automatically
@@ -108,7 +110,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.0 is a major update. 3.5.1 is a bug fix release. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -139,11 +141,12 @@ WP-Members 3.5.0 is a major update. 3.5.1 is a bug fix release. See changelog fo
 * Fixes a bug in the admin email notification that does not display the [fields] shortcode.
 * Fixes a bug in the Shortcodes tab that throws a PHP error on settings save.
 * Fixes a bug that causes fields to not be added to the WP native registration form or processed properly in the Add New screen.
+* Fixes bugs in adding WP-Members fields to WooCommerce forms.
 * Improves the select, multiselect, multicheckbox, and radio field types so that inadvertent white space after the delimiter "|" is removed.
 * Improves the password reset to use esc_url_raw() instead of esc_url() on the reset link.  Also trims whitespace before assembling query args and rawurlencodes the query args before link assembly.
 * Improves admin email notification, especially for HTML formatted email (removes hard `<br>` tag at the end of shortcode fields so they can be used in email subject line).
 * Makes $field_arr array key in admin notification email filter `wpmem_notify_filter` obsolete (unlikely that anyone is using this).
-* Adds new API functions: wpmem_get_file_field_url(), wpmem_get_field_type(), wpmem_is_file_field(), wpmem_get_field_label().
+* Adds new API functions: wpmem_get_file_field_url(), wpmem_get_field_type(), wpmem_is_file_field(), wpmem_get_field_label(), wpmem_is_field_required().
 
 = 3.5.0 =
 

@@ -206,6 +206,8 @@ class WP_Members_User {
 		$this->reg_type['is_woo']     = ( wpmem_get( 'woocommerce-register-nonce' ) ) ? true : false;
 		// Is this a WooCommerce checkout?
 		$this->reg_type['is_woo_checkout'] = ( wpmem_get( 'woocommerce_checkout_place_order' ) ) ? true : false;
+		// Is this a WooCommerce profile update?
+		$this->reg_type['is_woo_update'] = ( wpmem_get( 'save-account-details-nonce' ) ) ? true : false;
 	}
 
 	/**

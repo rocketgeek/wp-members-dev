@@ -43,6 +43,8 @@ class WP_Members_WooCommerce_Integration {
 
         if ( 1 == $this->add_update_fields ) { // if (  wpmem_is_enabled( 'woo/add_update_fields' ) ) {
             add_action( 'woocommerce_edit_account_form', 'wpmem_woo_edit_account_form' );
+            add_action( 'woocommerce_save_account_details', 'wpmem_woo_edit_account_save' );
+            add_filter( 'woocommerce_save_account_details_required_fields', 'wpmem_woo_edit_account_required' );
         }
 
         if ( 1 == $this->product_restrict ) { // if ( wpmem_is_enabled( 'woo/product_restrict' ) ) {
