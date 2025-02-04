@@ -667,7 +667,7 @@ class WP_Members {
 		foreach( $this->post_types as $post_type ) {
 			add_filter( "rest_prepare_{$post_type}", array( $this, 'do_securify_rest' ), 10, 3 );
 		}
-				   
+
 		//add_filter( 'query_vars',                array( $this, 'add_query_vars' ), 10, 2 ); // adds custom query vars
 		add_filter( 'get_pages',               array( $this, 'filter_get_pages' ) );
 		add_filter( 'wp_get_nav_menu_items',   array( $this, 'filter_nav_menu_items' ), null, 3 );
