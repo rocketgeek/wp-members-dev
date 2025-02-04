@@ -43,6 +43,7 @@ class WP_Members_Forms {
 
 		// @todo Temp fix for admin notification bug.
 		$tag = ( 'admin_notify' == $tag ) ? 'register' : $tag;
+		$tag = ( 'register_wp' == $tag ) ? 'register' : $tag;
 	
 		// Get stored fields settings.
 		$fields = get_option( 'wpmembers_fields' );
@@ -2316,4 +2317,5 @@ class WP_Members_Forms {
 	function set_reg_form_showing( $value ) {
 		$this->reg_form_showing = $value;
 	}
+
 } // End of WP_Members_Forms class.

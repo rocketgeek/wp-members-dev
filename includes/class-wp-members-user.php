@@ -209,6 +209,18 @@ class WP_Members_User {
 	}
 
 	/**
+	 * Checks registration type.
+	 * 
+	 * @since 3.5.0
+	 * 
+	 * @param  string  $type
+	 * @return boolean
+	 */
+	function is_reg_type( $type ) {
+		return $this->reg_type[ 'is_' . $type ];
+	}
+
+	/**
 	 * Validate user registration.
 	 *
 	 * @since 3.3.0
@@ -514,9 +526,13 @@ class WP_Members_User {
 	
 		// If this is native WP (wp-login.php), Users > Add New, or WooCommerce registration.
 		if ( $this->reg_type['is_native'] || $this->reg_type['is_add_new'] || $this->reg_type['is_woo'] ) {
+			
+			// Add new should process all fields.
+			$which_fields = ( $this->reg_type['is_add_new'] ) ? 'all' : 'register_wp';
+			
 			// Get any excluded meta fields.
 			$exclude = wpmem_get_excluded_meta( 'wp-register' );
-			$fields  = wpmem_fields( 'register_wp' );
+			$fields  = wpmem_fields( $which_fields );
 			if ( is_array( $fields ) && ! empty( $fields ) ) {
 				foreach ( $fields as $meta_key => $field ) {
 					$value = wpmem_get( $meta_key, false );

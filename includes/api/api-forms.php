@@ -196,8 +196,9 @@ function wpmem_resend_confirmation_form() {
  * @global  stdClass  $wpmem
  * @param   string    $process
  */
-function wpmem_wp_register_form( $process = 'register_wp' ) {
+function wpmem_wp_register_form( $process ) {
 	global $wpmem;
+	$process = ( ! $process || '' == $process ) ? 'register_wp' : $process;
 	$wpmem->forms->wp_register_form( $process );
 }
 

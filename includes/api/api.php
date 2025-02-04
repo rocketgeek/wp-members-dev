@@ -648,6 +648,7 @@ function wpmem_is_rest() {
  * Gets registration type.
  *
  * @since 3.3.5
+ * @since 3.5.1 Checks is_reg_type().
  *
  * @global  stdClass  $wpmem
  * @param   string    $type (wpmem|native|add_new|woo|woo_checkout)
@@ -655,7 +656,7 @@ function wpmem_is_rest() {
  */
 function wpmem_is_reg_type( $type ) {
 	global $wpmem;
-	return $wpmem->user->reg_type[ 'is_' . $type ];
+	return $wpmem->user->is_reg_type( $type );
 }
 
 /**
