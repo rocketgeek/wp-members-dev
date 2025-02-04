@@ -383,17 +383,17 @@ class WP_Members_Email {
 							$val = esc_url( $user->user_url );
 						} elseif ( in_array( $meta_key, $wp_user_fields ) ) {
 							$val = esc_html( $user->{$meta_key} );
-						} elseif ( 'file' == $field['type'] || 'image' == $field['type'] ) {
-							$val = wp_get_attachment_url( get_user_meta( $user_id, $meta_key, true ) );
+						} elseif ( wpmem_is_file_field( $meta_key ) ) {
+							$val = wpmem_get_file_field_url( $meta_key, $user_id );
 						} else {
 							$val = ( is_array( $field_data ) ) ? esc_html( $field_data[ $meta_key ] ) : esc_html( get_user_meta( $user_id, $meta_key, true ) );
 						}
-						$field_arr[ esc_html__( $field['label'], 'wp-members' ) ] = $val;
+						$field_arr[ $meta_key ] = $val;
 					}
 				}
 			}
 		}
-		$this->settings['field_arr'] = $field_arr;
+		$this->settings['fields'] = $field_arr;
 
 		// Apply filters (if set) for the sending email address.
 		$default_header = ( $this->from && $this->from_name ) ? 'From: "' . $this->from_name . '" <' . $this->from . '>' : '';
@@ -426,6 +426,7 @@ class WP_Members_Email {
 		 * @since 2.9.8
 		 * @since 3.3.9 Added $user param.
 		 * @since 3.4.2 Added optional line_break param.
+		 * @since 3.5.0 $field_arr obsolete, use $fields instead.
 		 *
 		 * @param array $this->settings
 		 *     An array containing email body, subject, user id, and additional settings.
@@ -445,7 +446,8 @@ class WP_Members_Email {
 		 *     @type boolean $add_footer
 		 *     @type boolean $footer
 		 *     @type boolean $disable
-		 *     @type array   $field_arr
+		 *     @type array   $field_arr @obsolete 3.5.0
+		 *     @type array   $fields
 		 *     @type string  $headers
 		 *     @type string  $admin_email
 		 *     @type string  $line_break
@@ -459,10 +461,10 @@ class WP_Members_Email {
 		// If emails are not disabled, continue the email process.
 		if ( ! $this->settings['disable'] ) {
 
-			// Split field_arr into field_str.
+			// Split fields into field_str.
 			$field_str = '';
-			foreach ( $this->settings['field_arr'] as $key => $val ) {
-				$field_str.= $key . ': ' . $val . $this->settings['line_break']; 
+			foreach ( $this->settings['fields'] as $key => $val ) {
+				$field_str.= wpmem_get_field_label( $key ) . ': ' . $val . $this->settings['line_break']; 
 			}
 
 			// Get the email footer if needed.
@@ -486,9 +488,9 @@ class WP_Members_Email {
 
 				// Add custom field shortcodes.
 				foreach ( $wpmem_fields as $meta_key => $field ) {
-					$val = ( is_array( $field_data ) && $field['register'] ) ? $field_data[ $meta_key ] : get_user_meta( $user_id, $meta_key, true );
-					$shortcodes[ $meta_key ] = ( 1 == $this->html ) ? $val . '<br />' : $val;
+					$shortcodes[ $meta_key ] = $this->settings['fields'][ $meta_key ];
 				}
+				// @todo Instead of foreach above: $shortcodes = array_merge( $shortcodes, $this->settings['fields']);
 
 				/**
 				 * Filter available email shortcodes.

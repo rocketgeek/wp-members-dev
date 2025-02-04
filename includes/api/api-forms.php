@@ -708,3 +708,46 @@ function wpmem_checkbox_field_display( $field_meta, $echo = false ) {
 function wpmem_select_field_display( $field_meta, $value, $echo = false ) {
 	return wpmem_field_display_value( $field_meta, $value, $echo );
 }
+
+/**
+ * Returns the URL for a file field.
+ * 
+ * @since 3.5.1
+ */
+function wpmem_get_file_field_url( $field_meta, $user_id ) {
+	if ( wpmem_is_file_field( $field_meta ) ) {
+		return wp_get_attachment_url( get_user_meta( $user_id, $field_meta, true ) );
+	} else {
+		return false;
+	}
+}
+
+/**
+ * Returns the field type.
+ * 
+ * @since 3.5.1
+ */
+function wpmem_get_field_type( $field_meta ) {
+	$fields = wpmem_fields();
+	return $fields[ $field_meta ]['type'];
+}
+
+/**
+ * Returns true if file type field
+ * 
+ * @since 3.5.1
+ */
+function wpmem_is_file_field( $field_meta ) {
+	$field_type = wpmem_get_field_type( $field_meta );
+	return ( 'file' == $field_type || 'image' == $field_type ) ? true : false;
+}
+
+/**
+ * Returns the field label.
+ * 
+ * @since 3.5.1
+ */
+function wpmem_get_field_label( $meta_key ) {
+	$fields = wpmem_fields();
+	return $fields[ $meta_key ]['label'];
+}
