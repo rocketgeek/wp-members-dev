@@ -201,7 +201,7 @@ class WP_Members_Admin_Tab_Emails {
 				'media_buttons' => false,
 				'textarea_rows' => 10,
 			);
-			wp_editor( $args['body_value'], esc_attr( $args['body_input'] ), $editor_args );
+			wp_editor( wp_unslash( $args['body_value'] ), esc_attr( $args['body_input'] ), $editor_args );
 		} else { ?>
 			<textarea name="<?php echo esc_attr( $args['body_input'] ); ?>" rows="12" cols="50" id="" class="large-text code"><?php echo esc_textarea( wp_unslash( $args['body_value'] ) ); ?></textarea>
         <?php }
