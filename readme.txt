@@ -108,7 +108,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.0 is a major update. 3.5.1 is a bug fix release. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -131,6 +131,19 @@ WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum
 
 
 == Changelog ==
+
+= 3.5.1 =
+
+* Fixes a bug in the CLI interface that doesn't load the db tools correctly.
+* Fixes a bug in the Fields tab edit view that displays two textarea inputs for select, multiselect, multicheckbox, and radio field types.
+* Fixes a bug in the admin email notification that does not display the [fields] shortcode.
+* Fixes a bug in the Shortcodes tab that throws a PHP error on settings save.
+* Fixes a bug that causes fields to not be added to the WP native registration form or processed properly in the Add New screen.
+* Improves the select, multiselect, multicheckbox, and radio field types so that inadvertent white space after the delimiter "|" is removed.
+* Improves the password reset to use esc_url_raw() instead of esc_url() on the reset link.  Also trims whitespace before assembling query args and rawurlencodes the query args before link assembly.
+* Improves admin email notification, especially for HTML formatted email (removes hard `<br>` tag at the end of shortcode fields so they can be used in email subject line).
+* Makes $field_arr array key in admin notification email filter `wpmem_notify_filter` obsolete (unlikely that anyone is using this).
+* Adds new API functions: wpmem_get_file_field_url(), wpmem_get_field_type(), wpmem_is_file_field(), wpmem_get_field_label().
 
 = 3.5.0 =
 
