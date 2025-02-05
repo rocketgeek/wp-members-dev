@@ -132,9 +132,11 @@ class WP_Members_Forms {
 						$assembled_fields[ $meta_key ]['options']   = array();
 						foreach ( $val[7] as $value ) {
 							$pieces = explode( '|', trim( $value ) );
-							if ( isset( $pieces[1] ) && $pieces[1] != '' ) {
+							// @todo The following originally eliminated an empty option value. However, this 
+							//       is needed for WooCommerce. Check to see if this causes issues elsewhere.
+							//if ( isset( $pieces[1] ) && $pieces[1] != '' ) {
 								$assembled_fields[ $meta_key ]['options'][ $pieces[1] ] = $pieces[0];
-							}
+							//}
 						}
 						break;
 

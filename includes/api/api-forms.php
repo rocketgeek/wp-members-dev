@@ -487,15 +487,25 @@ function wpmem_woo_checkout_form( $checkout_fields ) {
 	$priority = apply_filters( 'wpmem_wc_checkout_field_priority_seed', 10 );
 	
 	foreach ( $fields as $meta_key => $field ) {
+		
+		// All field types have these.
 		$checkout_fields['order'][ $meta_key ] = array(
 			'type'     => $fields[ $meta_key ]['type'],
 			'label'    => ( 'tos' == $meta_key ) ? $wpmem->forms->get_tos_link( $field, 'woo' ) : $fields[ $meta_key ]['label'],
 			'required' =>  $fields[ $meta_key ]['required'],
 			'priority' => $priority,
 		);
+		
+		// If there is a placeholder.
 		if ( isset( $fields[ $meta_key ]['placeholder'] ) ) {
 			$checkout_fields['order'][ $meta_key ]['placeholder'] = $fields[ $meta_key ]['placeholder'];
 		}
+
+		if ( 'select' == wpmem_get_field_type( $meta_key ) ) {
+			$checkout_fields['order'][ $meta_key ]['options'] = wpmem_get_field_options( $meta_key );
+		}
+
+		// Increment priority
 		$priority = $priority + 10;
 	}
 	return $checkout_fields;
@@ -561,6 +571,9 @@ function wpmem_woo_edit_account_form() {
 		);
 		if ( 'checkbox' == wpmem_get_field_type( $meta_key ) ) {
 			$args['checked_value'] = $field['checked_value'];
+		}
+		if ( 'select' == wpmem_get_field_type( $meta_key ) || 'radio' == wpmem_get_field_type( $meta_key ) ) {
+			$args['options'] = wpmem_get_field_options( $meta_key );
 		}
 		$value = esc_attr( wpmem_get_user_meta( get_current_user_id(), $meta_key ) );
 		woocommerce_form_field( $meta_key, $args, $value );
@@ -652,34 +665,40 @@ function wpmem_form_field_wc_custom_field_types( $field, $key, $args, $value ) {
 
 	// Let's only mess with WP-Members fields (in case another checkout fields plugin is used).
 	if ( array_key_exists( $key, $wpmem_fields ) ) {
-		
-		// If it is a checkbox.
-		if ( 'checkbox' == $wpmem_fields[ $key ]['type'] ) {
-			
-			if ( ! $_POST && $wpmem_fields[ $key ]['checked_default'] ) {
-				$field = str_replace( '<input type="checkbox"', '<input type="checkbox" checked ', $field );
-			}
 
-		} else {
-		
-			$field_args = array(
-				'name' => $key,
-				'type' => $wpmem_fields[ $key ]['type'],
-				'required' => $wpmem_fields[ $key ]['required'],
-				'delimiter' => $wpmem_fields[ $key ]['delimiter'],
-				'value' => $wpmem_fields[ $key ]['values'],
-			);
+		switch ( $wpmem_fields[ $key ]['type'] ) {
 
-			$field_html = wpmem_form_field( $field_args );
-			$field_html = str_replace( 'class="' . $wpmem_fields[ $key ]['type'] . '"', 'class="' . esc_attr( $wpmem_fields[ $key ]['type'] ) . '" style="display:initial;"', $field_html );
-			$field = '<p class="form-row ' . implode( ' ', $args['class'] ) .'" id="' . esc_attr( $key ) . '_field">
-				<label for="' . esc_attr( $key ) . '" class="' . implode( ' ', $args['label_class'] ) .'">' . esc_html( $args['label'] ) . ( ( 1 == $wpmem_fields[ $key ]['required'] ) ? '&nbsp;<abbr class="required" title="required">*</abbr>' : '' ) . '</label>';
-			$field .= $field_html;
-			$field .= '</p>';
-		}
-		
-	}
+			case 'checkbox':
+				// If it is a checkbox that should be checked by default.
+				if ( $wpmem_fields[ $key ]['checked_default'] && ! is_user_logged_in() && ! $_POST ) {
+					$field = str_replace( '<input type="checkbox"', '<input type="checkbox" checked ', $field );
+				}
+				break;
+
+			case 'radio':
+			case 'select':
+			case 'multiselect':
+			case 'multicheckbox':
+				$field_args = array(
+					'name' => $key,
+					'type' => $wpmem_fields[ $key ]['type'],
+					'required' => $wpmem_fields[ $key ]['required'],
+					'delimiter' => $wpmem_fields[ $key ]['delimiter'],
+					'value' => $wpmem_fields[ $key ]['values'],
+				);
+				if ( is_user_logged_in() ) {
+					$field_args['compare'] = esc_attr( wpmem_get_user_meta( get_current_user_id(), $key ) );
+				}
 	
+				$field_html = wpmem_form_field( $field_args );
+				$field_html = str_replace( 'class="' . $wpmem_fields[ $key ]['type'] . '"', 'class="' . esc_attr( $wpmem_fields[ $key ]['type'] ) . '" style="display:initial;"', $field_html );
+				$field = '<p class="form-row ' . implode( ' ', $args['class'] ) .'" id="' . esc_attr( $key ) . '_field">
+					<label for="' . esc_attr( $key ) . '" class="' . implode( ' ', $args['label_class'] ) .'">' . esc_html( $args['label'] ) . ( ( 1 == $wpmem_fields[ $key ]['required'] ) ? '&nbsp;<abbr class="required" title="required">*</abbr>' : '' ) . '</label>';
+				$field .= $field_html;
+				$field .= '</p>';
+				break;
+		}		
+	}
 	return $field;  
 }
 
@@ -805,4 +824,14 @@ function wpmem_get_field_label( $meta_key ) {
 function wpmem_is_field_required( $meta_key ) {
 	$fields = wpmem_fields();
 	return ( $fields[ $meta_key ]['required'] ) ? true : false; 
+}
+
+/**
+ * Gets select field options.
+ * 
+ * @since 3.5.1
+ */
+function wpmem_get_field_options( $meta_key ) {
+	$fields = wpmem_fields();
+	return $fields[ $meta_key ]['options'];
 }
