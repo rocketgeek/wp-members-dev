@@ -142,8 +142,8 @@ function wpmem_upgrade_settings() {
 	if ( isset( $wpmem_settings['email'] ) ) {
 		$from = ( is_array( $wpmem_settings['email'] ) ) ? $wpmem_settings['email']['from']      : '';
 		$name = ( is_array( $wpmem_settings['email'] ) ) ? $wpmem_settings['email']['from_name'] : '';
-		update_option( 'wpmembers_email_wpfrom', $from );
-		update_option( 'wpmembers_email_wpname', $name );
+		update_option( 'wpmembers_email_wpfrom', $from, false );
+		update_option( 'wpmembers_email_wpname', $name, false );
 		unset( $wpmem_settings['email'] );
 	}
 	
@@ -164,7 +164,7 @@ function wpmem_upgrade_settings() {
 
 	$wpmem_settings['install_state'] = 'update_pending';
 	
-	update_option( 'wpmembers_settings', $wpmem_settings );
+	update_option( 'wpmembers_settings', $wpmem_settings, true );
 	return $wpmem_settings;
 }
 
@@ -187,7 +187,7 @@ function wpmem_upgrade_dialogs() {
 		foreach ( $wpmem_dialogs as $key => $val ) {
 			$new_arr[ $new_keys[ $key ] ] = $val;
 		}
-		update_option( 'wpmembers_dialogs', $new_arr, '', 'yes' );
+		update_option( 'wpmembers_dialogs', $new_arr, false );
 	}
 
 	return;
@@ -210,7 +210,7 @@ function wpmem_downgrade_dialogs() {
 			$new_arr[ $i ] = $val;
 			$i++;
 		}
-		update_option( 'wpmembers_dialogs', $new_arr, '', 'yes' );
+		update_option( 'wpmembers_dialogs', $new_arr, false );
 	}
 
 	return;
@@ -244,7 +244,7 @@ function wpmem_upgrade_captcha() {
 			$new_captcha['recaptcha']['public']  = $captcha_settings[0];
 			$new_captcha['recaptcha']['private'] = $captcha_settings[1];
 			$new_captcha['recaptcha']['theme']   = $captcha_settings[2];
-			update_option( 'wpmembers_captcha', $new_captcha );
+			update_option( 'wpmembers_captcha', $new_captcha, false );
 		}
 	}
 	return;
@@ -306,7 +306,7 @@ function wpmem_install_settings() {
 	);
 	
 	// Using update_option to allow for forced update.
-	update_option( 'wpmembers_settings', $wpmem_settings, '', 'yes' );
+	update_option( 'wpmembers_settings', $wpmem_settings, true );
 	
 	return $wpmem_settings;
 }
@@ -350,7 +350,7 @@ function wpmem_install_fields() {
 		array( 15, 'Confirm Password',  'confirm_password',  'password', 'n', 'n', 'n', 'profile'=>0 ),
 		array( 16, 'Terms of Service',  'tos',               'checkbox', 'n', 'n', 'n', 'agree', 'n', 'profile'=>0 ),
 	);
-	update_option( 'wpmembers_fields', $fields, '', 'yes' ); // using update_option to allow for forced update
+	update_option( 'wpmembers_fields', $fields, true ); // using update_option to allow for forced update
 	return $fields;
 }
 
@@ -373,8 +373,8 @@ function wpmem_install_dialogs() {
 	);
 	// Insert TOS dialog placeholder.
 	$dummy_tos = "Put your TOS (Terms of Service) text here.  You can use HTML markup.";
-	update_option( 'wpmembers_tos', $dummy_tos );
-	update_option( 'wpmembers_dialogs', $wpmem_dialogs_arr, '', 'yes' ); // using update_option to allow for forced update
+	update_option( 'wpmembers_tos', $dummy_tos, false );
+	update_option( 'wpmembers_dialogs', $wpmem_dialogs_arr, false ); // using update_option to allow for forced update
 }
 
 /**
@@ -394,7 +394,7 @@ function wpmem_upgrade_fields() {
 	if ( $old_style && ! in_array( 'username', $check_array ) ) {
 		$username_array = array( 0, 'Choose a Username', 'username', 'text', 'y', 'y', 'y' );
 		array_unshift( $fields, $username_array );
-		update_option( 'wpmembers_fields', $fields, '', 'yes' );
+		update_option( 'wpmembers_fields', $fields, false );
 	}
 }
 
@@ -463,7 +463,7 @@ function wpmem_upgrade_woo_reg() {
 			'add_update_fields' => 0,
 			'product_restrict' => 0,
 		);
-		update_option( 'wpmembers_settings', $wpmem_settings );
+		update_option( 'wpmembers_settings', $wpmem_settings, true );
 	}
 }
 
@@ -513,14 +513,14 @@ function wpmem_add_profile_to_fields( $existing_settings ) {
 		}
 	}
 	
-	update_option( 'wpmembers_fields', $fields );
+	update_option( 'wpmembers_fields', $fields, false );
 	
 	if ( ! empty( $wpmem_fields_wcchkout ) ) {
-		update_option( 'wpmembers_wcchkout_fields', $wpmem_fields_wcchkout );
+		update_option( 'wpmembers_wcchkout_fields', $wpmem_fields_wcchkout, false );
 	}
 	
 	if ( ! empty( $wpmem_fields_wcaccount ) ) {
-		update_option( 'wpmembers_wcacct_fields', $wpmem_fields_wcaccount );
+		update_option( 'wpmembers_wcacct_fields', $wpmem_fields_wcaccount, false );
 	}
 }
 
@@ -549,16 +549,16 @@ function wpmem_onboarding_finalize() {
 		} else {
 			$wpmem_onboarding->deploy( 'wp-members', $wpmem->path . 'wp-members.php', 'activate' );
 		}
-		update_option( 'wpmembers_optin', 1 );
+		update_option( 'wpmembers_optin', 1, false );
 	} else {
-		update_option( 'wpmembers_optin', 0 );
+		update_option( 'wpmembers_optin', 0, false );
 	}
 
 	$update_settings = get_option( 'wpmembers_settings' );
 	if ( 'update_pending' == $wpmem->install_state ) {
 		$wpmem->install_state = $update_settings['install_state'] = 'install_complete_' . $wpmem->version . '_' . time();
 	}
-	update_option( 'wpmembers_settings', $update_settings );
+	update_option( 'wpmembers_settings', $update_settings, true );
 }
 
 function wpmem_plugin_deactivate() {

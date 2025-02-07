@@ -98,7 +98,7 @@ class WP_Members_Admin_Tab_Fields {
 						$wpmem_new_fields[] = $field;
 					}
 				}
-				update_option( 'wpmembers_fields', $wpmem_new_fields );
+				update_option( 'wpmembers_fields', $wpmem_new_fields, false );
 				$did_update = esc_html__( 'Fields deleted', 'wp-members' );
 			}
 
@@ -658,19 +658,19 @@ Last Row|last_row
 				check_admin_referer( 'bulk-settings_page_wpmem-settings' );
 
 				// Update user table fields.
-				update_option( 'wpmembers_utfields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_uscreen', array() ) ) );
+				update_option( 'wpmembers_utfields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_uscreen', array() ) ), false );
 
 				// Update user search fields.
-				update_option( 'wpmembers_usfields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_usearch', array() ) ) );
+				update_option( 'wpmembers_usfields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_usearch', array() ) ), false );
 				if ( wpmem_is_woo_active() ) {
 					if ( 1 == $wpmem->woo->add_checkout_fields ) {
-						update_option( 'wpmembers_wcchkout_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcchkout', array() ) ) );
+						update_option( 'wpmembers_wcchkout_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcchkout', array() ) ), false );
 					}
 					if ( 1 == $wpmem->woo->add_my_account_fields ) {
-						update_option( 'wpmembers_wcacct_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcaccount', array() ) ) );
+						update_option( 'wpmembers_wcacct_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcaccount', array() ) ), false );
 					}
 					if ( 1 == $wpmem->woo->add_update_fields ) {
-						update_option( 'wpmembers_wcupdate_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcupdate', array() ) ) );
+						update_option( 'wpmembers_wcupdate_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcupdate', array() ) ), false );
 					}
 				}
 
@@ -697,7 +697,7 @@ Last Row|last_row
 				}
 
 				// Save updates.
-				update_option( 'wpmembers_fields', $wpmem_fields );
+				update_option( 'wpmembers_fields', $wpmem_fields, false );
 				$wpmem->forms->load_fields();
 				
 				// Set update message.
@@ -850,7 +850,7 @@ Last Row|last_row
 
 				$wpmem_newfields = $wpmem_fields;
 
-				update_option( 'wpmembers_fields', $wpmem_newfields );
+				update_option( 'wpmembers_fields', $wpmem_newfields, false );
 				$wpmem->forms->load_fields();
 				return $did_update;		
 			}
@@ -897,7 +897,7 @@ Last Row|last_row
 		}
 
 		// Save fields array with new current form field order.
-		update_option( 'wpmembers_fields', $wpmem_new_fields ); 
+		update_option( 'wpmembers_fields', $wpmem_new_fields, false ); 
 
 		// Indicate successful transaction.
 		_e( 'Form field order updated.', 'wp-members' );

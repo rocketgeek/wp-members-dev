@@ -139,9 +139,9 @@ class WP_Members_Admin_Tab_Emails {
 			$wpmem->email->from      = sanitize_email( $_POST['wp_mail_from'] );
 			$wpmem->email->from_name = sanitize_text_field( $_POST['wp_mail_from_name'] );
 			$wpmem->email->html      = intval( wpmem_get( 'wpmem_email_html', 0 ) );
-			update_option( 'wpmembers_email_wpfrom', $wpmem->email->from );
-			update_option( 'wpmembers_email_wpname', $wpmem->email->from_name );
-			update_option( 'wpmembers_email_html',   $wpmem->email->html );
+			update_option( 'wpmembers_email_wpfrom', $wpmem->email->from, false );
+			update_option( 'wpmembers_email_wpname', $wpmem->email->from_name, false );
+			update_option( 'wpmembers_email_html',   $wpmem->email->html, false );
 		}
 
 		// Update the various emails being used.
@@ -221,7 +221,7 @@ class WP_Members_Admin_Tab_Emails {
 			'subj' => sanitize_text_field( wpmem_get( $args['subject_input'] ) ),
 			'body' => wp_kses( wpmem_get( $args['body_input'] ), 'post' ),
 		);
-		update_option( $args['name'], $settings, true );
+		update_option( $args['name'], $settings, false );
 		$wpmem->admin->emails[ $args['name'] ]['subject_value'] = $settings['subj'];
 		$wpmem->admin->emails[ $args['name'] ]['body_value']    = $settings['body'];
 		return;

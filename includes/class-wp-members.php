@@ -1387,7 +1387,7 @@ class WP_Members {
 				$hidden[] = $result->id;
 			}
 		}
-		update_option( 'wpmem_hidden_posts', $hidden );
+		update_option( 'wpmem_hidden_posts', $hidden, true );
 		return $hidden;
 	}
 	

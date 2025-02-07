@@ -152,7 +152,7 @@ class WP_Members_API {
 		
 		// Increment the number and save the setting.
 		$number = $number + $increment;
-		update_option( $option, $number );
+		update_option( $option, $number, false );
 		
 		// Return the number.
 		return $number;

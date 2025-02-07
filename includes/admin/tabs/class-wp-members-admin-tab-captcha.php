@@ -285,7 +285,7 @@ class WP_Members_Admin_Tab_Captcha {
 			global $updated_captcha_type;
 			$updated_captcha_type = true;
 			$wpmem->captcha = $which;
-			wpmem_update_option( 'wpmembers_settings', 'captcha', $which );
+			wpmem_update_option( 'wpmembers_settings', 'captcha', $which, true );
 		}
 
 		if ( $update_type == 'recaptcha' || $update_type == 'recaptcha2' ) {
@@ -319,7 +319,7 @@ class WP_Members_Admin_Tab_Captcha {
 			);
 		}
 
-		update_option( 'wpmembers_captcha', $settings );
+		update_option( 'wpmembers_captcha', $settings, false );
 		return esc_html__( 'CAPTCHA was updated for WP-Members', 'wp-members' );
 	}
 }

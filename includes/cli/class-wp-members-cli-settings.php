@@ -158,13 +158,13 @@ class WP_Members_CLI_Settings {
 			// Handle disable.
 			if ( isset( $assoc_args['disable'] ) ) {
 				unset( $wpmem->post_types[ $assoc_args['disable'] ] );
-				wpmem_update_option( 'wpmembers_settings', 'post_types', $wpmem->post_types );
+				wpmem_update_option( 'wpmembers_settings', 'post_types', $wpmem->post_types, true );
 				WP_CLI::success( 'Disabled ' . $assoc_args['disable'] . ' post type.' );
 			}
 			if ( isset( $assoc_args['enable'] ) ) {
 				$cpt_obj = get_post_type_object( $assoc_args['enable'] );	
 				$new_post_types = array_merge($wpmem->post_types, array( $cpt_obj->name => $cpt_obj->labels->name ) );
-				wpmem_update_option( 'wpmembers_settings', 'post_types', $new_post_types );
+				wpmem_update_option( 'wpmembers_settings', 'post_types', $new_post_types, true );
 				WP_CLI::success( 'Enabled ' . $assoc_args['enable'] . ' post type.' );
 			}
 		} else {
@@ -188,7 +188,7 @@ class WP_Members_CLI_Settings {
 		global $wpmem;
 		$settings = $wpmem->admin->settings( 'options' );
 		if ( array_key_exists( $args[0], $settings ) && 'captcha' !== $args[0] ) {
-			wpmem_update_option( 'wpmembers_settings', $args[0], 1 );
+			wpmem_update_option( 'wpmembers_settings', $args[0], 1, true );
 			WP_CLI::success( $settings[ $args[0] ] . ' enabled' );
 		}
 		if ( array_key_exists( $args[0], $settings ) && 'captcha' === $args[0] ) {
@@ -203,7 +203,7 @@ class WP_Members_CLI_Settings {
 					$which = 4;
 					break;
 			}
-			wpmem_update_option( 'wpmembers_settings', $args[0], $which );
+			wpmem_update_option( 'wpmembers_settings', $args[0], $which, true );
 			WP_CLI::success( $settings[ $args[0] ] . ' ' . $args[1] . ' enabled' );
 		}
 	}
@@ -224,7 +224,7 @@ class WP_Members_CLI_Settings {
 		global $wpmem;
 		$settings = $wpmem->admin->settings( 'options' );
 		if ( array_key_exists( $args[0], $settings ) ) {
-			wpmem_update_option( 'wpmembers_settings', $args[0], 0 );
+			wpmem_update_option( 'wpmembers_settings', $args[0], 0, true );
 			WP_CLI::success( $settings[ $args[0] ] . ' disabled' );
 		}
 	}
@@ -276,7 +276,7 @@ class WP_Members_CLI_Settings {
 			}
 			foreach ( $assoc_args as $page => $value ) {
 				if ( isset( $assoc_args[ $page ] ) ) {
-					wpmem_update_option( 'wpmembers_settings', 'user_pages/' . $page, '' );
+					wpmem_update_option( 'wpmembers_settings', 'user_pages/' . $page, '', true );
 					WP_CLI::success( ucfirst( $page ) . ' page cleared' );
 				}	
 			}
@@ -288,7 +288,7 @@ class WP_Members_CLI_Settings {
 			}
 			foreach ( $assoc_args as $page => $value ) {
 				if ( isset( $assoc_args[ $page ] ) ) {
-					wpmem_update_option( 'wpmembers_settings', 'user_pages/' . $page, $assoc_args[ $page ] );
+					wpmem_update_option( 'wpmembers_settings', 'user_pages/' . $page, $assoc_args[ $page ], true );
 					WP_CLI::success( ucfirst( $page ) . ' page set to ID ' . $assoc_args[ $page ] );
 				}
 			}

@@ -579,7 +579,7 @@ class WP_Members_Admin_Tab_Options {
 	static function save_settings( $new ) {
 
 		// Update saved settings.
-		update_option( 'wpmembers_settings', $new );
+		update_option( 'wpmembers_settings', $new, true );
 
 		// Update the current WP_Members object with the new settings.
 		global $wpmem;
@@ -600,10 +600,10 @@ class WP_Members_Admin_Tab_Options {
 		}
 
 		if ( isset( $_POST['wpmem_settings_optin'] ) && 0 == $wpmem->optin ) {
-			update_option( 'wpmembers_optin', 1 );
+			update_option( 'wpmembers_optin', 1, false );
 			$wpmem->optin = 1;
 		} elseif ( ! isset( $_POST['wpmem_settings_optin'] ) && 1 == $wpmem->optin ) {
-			update_option( 'wpmembers_optin', 0 );
+			update_option( 'wpmembers_optin', 0, false );
 			$wpmem->optin = 0;
 		}
 	}

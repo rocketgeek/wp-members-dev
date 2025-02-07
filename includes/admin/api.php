@@ -101,13 +101,15 @@ function wpmem_wp_reserved_terms() {
  * Updates a single plugin option.
  *
  * @since 3.3.6
+ * @since 3.5.2 Added $autoload
  *
- * @param  string  $option  Name of the option to update.
- * @param  string  $key     Which key to update. Update a subkey as primary_key/subkey.
- * @param  string  $value   New value.
- * @return bool             True if the value was updated, otherwise false.
+ * @param  string  $option   Name of the option to update.
+ * @param  string  $key      Which key to update. Update a subkey as primary_key/subkey.
+ * @param  string  $value    New value.
+ * @param  bool    $autoload True|false to autoload, null to use default.
+ * @return bool              True if the value was updated, otherwise false.
  */
-function wpmem_update_option( $option, $key, $value ) {
+function wpmem_update_option( $option, $key, $value, $autoload = null ) {
 	$settings = get_option( $option );
 	if ( strpos( $key, '/' ) ) {
 		$keys = explode( '/', $key );
@@ -115,7 +117,7 @@ function wpmem_update_option( $option, $key, $value ) {
 	} else {
 		$settings[ $key ] = $value;
 	}
-	return update_option( $option, $settings );
+	return update_option( $option, $settings, $autoload );
 }
 
 /**
