@@ -459,15 +459,6 @@ class WP_Members {
 	public $menus_clone;
 
 	/**
-	 * The password reset object.
-	 * 
-	 * @since Unknown
-	 * @access public
-	 * @var object
-	 */
-	public $pwd_reset;
-
-	/**
 	 * The new account email activation object.
 	 * 
 	 * @since Unknown
@@ -574,7 +565,6 @@ class WP_Members {
 		$this->user        = new WP_Members_User( $this ); // Load user functions.
 		$this->menus       = new WP_Members_Menus();
 		$this->dialogs     = new WP_Members_Dialogs();
-		$this->pwd_reset   = new WP_Members_Pwd_Reset;
 		
 		// @deprecated Clone menus are technically deprecated, but kept in the plugin for legacy users.
 		if ( $this->clone_menus ) {
@@ -929,7 +919,6 @@ class WP_Members {
 				break;
 
 			case 'pwdreset':
-				global $wpmem;
 				$regchk = $this->user->password_update( 'link' );
 				break;
 			
@@ -1346,11 +1335,9 @@ class WP_Members {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @global object $wpdb
 	 * @return array  $hidden
 	 */
 	function hidden_posts() {
-		global $wpdb;
 		$hidden = get_option( 'wpmem_hidden_posts' );
 		if ( false === $hidden ) {
 			$hidden = $this->update_hidden_posts();

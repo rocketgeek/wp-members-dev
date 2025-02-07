@@ -37,6 +37,16 @@ class WP_Members_User {
 	public $access = array();
 
 	public $reg_type;
+
+	
+	/**
+	 * The password reset object.
+	 * 
+	 * @since Unknown
+	 * @access public
+	 * @var object
+	 */
+	public $pwd_reset;
 	
 	/**
 	 * Initilize the User object.
@@ -658,6 +668,7 @@ class WP_Members_User {
 	 * @return string $result
 	 */
 	function password_update( $action ) {
+		$this->pwd_reset = new WP_Members_Pwd_Reset;
 		if ( isset( $_POST['formsubmit'] ) ) {
 			if ( 'link' == $action ) {
 				$user = wpmem_get( 'user', false );

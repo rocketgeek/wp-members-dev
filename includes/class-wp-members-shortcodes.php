@@ -577,7 +577,7 @@ class WP_Members_Shortcodes {
 
 			} elseif ( 'set_password_from_key' == $wpmem->action ) {
 				
-				$content = ( false != $wpmem->pwd_reset->content ) ? $wpmem->pwd_reset->content : $content;
+				$content = ( false != $wpmem->user->pwd_reset->content ) ? $wpmem->user->pwd_reset->content : $content;
 
 			} elseif ( 'getusername' == $wpmem->action ) {
 
@@ -1196,7 +1196,7 @@ class WP_Members_Shortcodes {
 
 			} elseif ( 'set_password_from_key' == $wpmem->action ) {
 				
-				return ( false != $wpmem->pwd_reset->content ) ? $wpmem->pwd_reset->content : $content;
+				return ( false != $wpmem->user->pwd_reset->content ) ? $wpmem->user->pwd_reset->content : $content;
 			
 			} else {
 
