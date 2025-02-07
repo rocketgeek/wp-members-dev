@@ -67,7 +67,6 @@ class WP_Members_Email {
 	public function load_from() {
 		$this->from      = get_option( 'wpmembers_email_wpfrom', '' );
 		$this->from_name = get_option( 'wpmembers_email_wpname', '' );
-		$this->html      = get_option( 'wpmembers_email_html',   '' );
 	}
 	
 	/**
