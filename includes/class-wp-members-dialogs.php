@@ -263,9 +263,13 @@ class WP_Members_Dialogs {
 				$text[ $new_key ] = $text[ $key ];
 			}
 		}
-		
-		// Return the requested text string.
-		return $text[ $str ];
+
+		if ( ! isset( $text[ $str ] ) ) {
+			error_log( 'WP_Members_Dialogs::get_text() was called for a string key that does not exist: ' . $str );
+			return '';
+		} else {
+			return $text[ $str ];
+		}
 	}
 	
 	/**

@@ -141,6 +141,7 @@ WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 * Fix html email option, prevent from calling it twice.
 * Move pwd_reset object class to user object class, only load when used.
 * Handle multicheckbox and multiselect field types when data is serialized (from WooCommerce).
+* Add error handling to WP_Members_Dialogs::get_text() for string keys that do not exist. If one is called, the function will return an empty string and will record the call in the error log.
 
 = 3.5.1 =
 
