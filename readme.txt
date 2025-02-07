@@ -131,6 +131,17 @@ WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 
 == Changelog ==
 
+= 3.5.2 =
+
+* Improve all settings to autoload only those which are needed, specifically set to false those which are not.
+* Improve wpmem_update_option() to accept an autoload value (defaults to null, just like core WP function).
+* Improve membership options to store in a single option to minimize query every object load. Update option when memberships are updated.
+* Review which objects are loaded and when. Improve where possible.
+* Update email options to not autoload (previously set to true). These only need to load when called.
+* Fix html email option, prevent from calling it twice.
+* Move pwd_reset object class to user object class, only load when used.
+* Handle multicheckbox and multiselect field types when data is serialized (from WooCommerce).
+
 = 3.5.1 =
 
 * Fixes a bug in the CLI interface that doesn't load the db tools correctly.
