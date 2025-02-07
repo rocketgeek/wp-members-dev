@@ -625,8 +625,15 @@ function wpmem_woo_edit_account_save( $user_id ) {
 	if ( $wpmembers_wcupdate ) {
 		foreach ( $fields as $meta => $field ) {
 			if ( in_array( $meta, $wpmembers_wcupdate ) ) {
-				$value = wpmem_get_sanitized( $meta, 'post', wpmem_get_field_type( $meta ) );
-				update_user_meta( $user_id, $meta, $value );
+				$field_type = wpmem_get_field_type( $meta );
+				if ( 'multiselect' == $field_type || 'multicheckbox' == $field_type ) {
+					$value = wpmem_get( $meta, false );
+					$value = implode( $field['delimiter'], $value );
+					$sanitized_value = sanitize_text_field( $value );
+				} else {
+					$sanitized_value = wpmem_get_sanitized( $meta, 'post', $field_type );
+				}
+				update_user_meta( $user_id, $meta, $sanitized_value );
 			}
 		}
 	}
@@ -686,8 +693,15 @@ function wpmem_form_field_wc_custom_field_types( $field, $key, $args, $value ) {
 					'delimiter' => $wpmem_fields[ $key ]['delimiter'],
 					'value' => $wpmem_fields[ $key ]['values'],
 				);
+				$value = wpmem_get_user_meta( get_current_user_id(), $key );
+				
+				// Two possibilities: delimited string (WP-Members) or serialized (WooCommerce)
+				if ( is_array( $value ) ) {
+					$value = implode( $wpmem_fields[ $key ]['delimiter'], $value );
+				}
+
 				if ( is_user_logged_in() ) {
-					$field_args['compare'] = esc_attr( wpmem_get_user_meta( get_current_user_id(), $key ) );
+					$field_args['compare'] = esc_attr( $value );
 				}
 	
 				$field_html = wpmem_form_field( $field_args );

@@ -92,13 +92,21 @@ function wpmem_user_has_role( $role, $user_id = false ) {
  * the meta result and drops the $single argument.
  *
  * @since 3.3.0
+ * @since 3.5.2 Include the possibility of serialized data with WooCommerce.
  *
  * @param  int    $user_id
  * @param  string $meta_key
  * @return string $result
  */
 function wpmem_get_user_meta( $user_id, $meta_key ) {
-	return get_user_meta( $user_id, $meta_key, true );
+	$value = get_user_meta( $user_id, $meta_key, true );
+	// Check if it is serialized (WooCommerce)
+	if ( is_array( $value ) ) {
+		// Does it have a delimiter?
+		$fields = wpmem_fields('all');
+		$value = implode( $fields[ $meta_key ]['delimiter'], $value );
+	}
+	return $value;
 }
 
 /**

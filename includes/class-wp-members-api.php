@@ -31,7 +31,6 @@ class WP_Members_API {
 	 * @return array $field_keys
 	 */
 	function get_field_keys_by_meta() {
-		global $wpmem;
 		$field_keys = array();
 		foreach ( wpmem_fields() as $key => $field ) {
 			$field_keys[ $field[2] ] = $key;
@@ -53,7 +52,6 @@ class WP_Members_API {
 	 * }
 	 */
 	function get_select_display_values( $meta_key ) {
-		global $wpmem;
 		$keys = $this->get_field_keys_by_meta();
 		$fields = wpmem_fields();
 		$raw  = $fields[ $keys[ $meta_key ] ][7];
@@ -79,17 +77,25 @@ class WP_Members_API {
 	 * @return string $value   The display value.
 	 */
 	function get_field_display_value( $meta, $user_id, $value = null ) {
-		global $wpmem;
-		$fields = ( isset( $wpmem->fields ) ) ? $wpmem->fields : wpmem_fields();
+		$fields = wpmem_fields('all');
 		$field  = $fields[ $meta ];
 		$value  = ( $value ) ? $value : get_user_meta( $user_id, $meta, true );
+		/*
+		 * Nothing more to do for string values.  The following switch
+		 * handles values that may be something other than a simple string. 
+		 */
 		switch ( $field['type'] ) {
 			case 'multiselect':
 			case 'multicheckbox':
+				// @todo Right now this is the saved value as a string, not a "display" value.
+				// Two possibilities: delimited string (WP-Members) or serialized (WooCommerce)
+				if ( is_array( $value ) ) {
+					$value = implode( $field['delimiter'], $value );
+				}
 				break;
 			case 'select':
 			case 'radio':
-				$value = $fields[ $meta ]['options'][ $value ];
+				$value = $field['options'][ $value ];
 				break;
 			case 'image':
 			case 'file':
@@ -110,18 +116,14 @@ class WP_Members_API {
 	 */
 	function is_user_value_unique( $key, $val ) {
 		
-		$fields = array( 'ID','user_login','user_pass','user_nicename','user_email','user_url','user_registered','user_activation_key','user_status','display_name' );
-		// Do we need a meta query or not?
-		$is_meta = ( ! in_array( $key, $fields ) ) ? true : false;
-		
-		if ( $is_meta ) {
+		if ( $this->is_field_in_wp_users( $key ) ) {
+			$args = array( 'search' => $val, 'fields' => 'ID' );
+		} else {
 			$args = array( 'meta_query' => array( array(
 				'key'     => $key,
 				'value'   => $val,
 				'compare' => '=',
 			) ) );
-		} else {
-			$args = array( 'search' => $val, 'fields' => 'ID' );
 		}
 		
 		$users = get_users( $args );
@@ -208,6 +210,28 @@ class WP_Members_API {
 	 */
 	function is_enabled( $setting ) {
 		return ( isset( $wpmem->{$setting} ) && $wpmem->{$setting} ) ? true : false;
+	}
+
+	/**
+	 * Returns a list of wp_users fields.
+	 * 
+	 * @since 3.5.2
+	 */
+	public function get_wp_users_fields() {
+		return array( 'ID','user_login','user_pass','user_nicename','user_email','user_url','user_registered','user_activation_key','user_status','display_name' );
+	}
+
+	/**
+	 * Checks if a field is a wp_users field.
+	 * A return of false would indicate it is a meta field.
+	 * 
+	 * @since 3.5.2
+	 * 
+	 * @param  string  $meta
+	 * @return bool
+	 */
+	public function is_field_in_wp_users( $meta ) {
+		return ( in_array( $meta, $this->get_wp_users_fields() ) ) ? true : false;
 	}
 	
 } // End of WP_Members_Utilties class.
