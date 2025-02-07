@@ -67,6 +67,7 @@ function wpmem_uninstall_options() {
 	delete_option( 'wpmembers_export'   );
 	delete_option( 'wpmembers_dropins'  );
 	delete_option( 'wpmem_hidden_posts' );
+	delete_option( 'wpmem_memberships'  );
 
 	delete_option( 'wpmembers_utfields' );
 	delete_option( 'wpmembers_usfields' );

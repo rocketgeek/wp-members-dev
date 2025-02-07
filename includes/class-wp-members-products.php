@@ -123,15 +123,39 @@ class WP_Members_Products {
 	 *
 	 * @global object $wpdb The WPDB object class.
 	 */
-	function load_products() {
+	private function load_products() {
+
+		$products = get_option( 'wpmem_memberships' );
+
+		if ( ! $products ) {
+			$products = $this->update_products();
+		}
+
+		// Legacy containers.
+		$this->products      = $products['products'];
+		$this->product_by_id = $products['by_id'];
+
+		// Preferred containers.
+		$this->memberships      = $this->products;
+		$this->membership_by_id = $this->product_by_id;
+	}
+
+	/**
+	 * Saves membership settings in an option so we don't have to
+	 * run this query all the time. Option is updated anytime 
+	 * memberships are updated or saved.
+	 * 
+	 * @since 3.5.2
+	 */
+	public function update_products() {
 		global $wpdb;
 		$sql = "SELECT ID, post_title, post_name FROM " 
 			. $wpdb->prefix 
 			. "posts WHERE post_type = 'wpmem_product' AND post_status = 'publish';";
 		$result = $wpdb->get_results( $sql );
 		foreach ( $result as $plan ) {
-			$this->product_by_id[ $plan->ID ] = $plan->post_name;
-			$this->products[ $plan->post_name ]['title'] = $plan->post_title;			
+			$products['by_id'][ $plan->ID ] = $plan->post_name;
+			$products['products'][ $plan->post_name ]['title'] = $plan->post_title;			
 			$post_meta = get_post_meta( $plan->ID );
 			foreach ( $post_meta as $key => $meta ) {
 				if ( false !== strpos( $key, 'wpmem_product' ) ) {
@@ -141,12 +165,14 @@ class WP_Members_Products {
 					if ( 'wpmem_product_fixed_period' == $key ) {
 						$meta[0] = $this->explode_fixed_period( $meta[0] );
 					}
-					$this->products[ $plan->post_name ][ str_replace( 'wpmem_product_', '', $key ) ] = $meta[0];
+					$products['products'][ $plan->post_name ][ str_replace( 'wpmem_product_', '', $key ) ] = $meta[0];
 				}
 			}
 		}
-		$this->memberships = $this->products;
-		$this->membership_by_id = $this->product_by_id;
+
+		update_option( 'wpmem_memberships', $products, true );
+
+		return $products;
 	}
 	
 	/**
