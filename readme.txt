@@ -134,6 +134,7 @@ WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 = 3.5.2 =
 
 * Fixes a bug in the WP_Members_Dialogs::get_text() for unknown keys (reconfirm_link_before & reconfirm_link).
+* Fixes a bug in the [wpmem_user_memberships] shortcode that breaks the expiration date display.
 * Improve all settings to autoload only those which are needed, specifically set to false those which are not.
 * Improve wpmem_update_option() to accept an autoload value (defaults to null, just like core WP function).
 * Improve membership options to store in a single option to minimize query every object load. Update option when memberships are updated.
