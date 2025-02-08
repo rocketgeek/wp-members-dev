@@ -891,19 +891,22 @@ class WP_Members_Forms {
 				'page'   => 'profile',
 				'action' => 'pwdreset',
 			),
-			'reconfirm' => array(
+		);
+
+		if ( wpmem_is_enabled( 'act_link' ) ) {
+			$links_array['reconfirm'] = array(
 				'tag'    => 'reconfirm',
 				'link'   => wpmem_reconfirm_url(),
 				'page'   => 'profile',
 				'action' => 'pwdreset',
-			),
-		);
+			);
+		}
 
 		foreach ( $links_array as $key => $value ) {
 			$tag = $value['tag'];
 			if ( ( $wpmem->user_pages[ $value['page'] ] || 'profile' == $page ) && $value['action'] == $action ) {
 				/**
-				 * Filters register, forgot password, and forgot username links.
+				 * Filters register, forgot password, forgot username, and resend confirmation links.
 				 *
 				 * @since 2.8.0
 				 * @since 3.1.7 Combined all to a single process.
@@ -917,7 +920,7 @@ class WP_Members_Forms {
 				$link_str = $args['link_before'];
 				$link_str.= ( '' != $args['link_span_before'] ) ? sprintf( $args['link_span_before'], $key ) : '';
 				/**
-				 * Filters the register, forgot password, and forgot username links HTML.
+				 * Filters the register, forgot password, forgot username, and resend confirmation links HTML.
 				 *
 				 * @since 2.9.0
 				 * @since 3.0.9 Added $link parameter.
@@ -1227,7 +1230,7 @@ class WP_Members_Forms {
 					$val = wpmem_get_sanitized( $meta_key, '', 'post', $field['type'] ); // ( isset( $_POST[ $meta_key ] ) ) ? wpmem_sanitize_field( $_POST[ $meta_key ], $field['type'] ) : '';
 				}
 
-				if ( '' != $field['value'] ) {
+				if ( isset( $field['value'] ) && '' != $field['value'] ) {
 					$val = $field['value'];
 				}
 			}

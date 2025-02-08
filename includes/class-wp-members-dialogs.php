@@ -79,6 +79,8 @@ class WP_Members_Dialogs {
 			'forgot_link'          => esc_html__( 'Click here to reset', 'wp-members' ),
 			'register_link_before' => esc_html__( 'New User?', 'wp-members' ) . '&nbsp;',
 			'register_link'        => esc_html__( 'Click here to register', 'wp-members' ),
+			'reconfirm_link_before' => esc_html__( 'Resend confirmation link?', 'wp-members' ) . '&nbsp;',
+			'reconfirm_link'        => esc_html__( 'Click here', 'wp-members' ),
 			
 			// Password change form.
 			'pwdchg_heading'       => esc_html__( 'Change Password', 'wp-members' ),
@@ -228,7 +230,6 @@ class WP_Members_Dialogs {
 			'pwd_reset_empty'           => esc_html__( 'User field cannot be empty', 'wp-members' ),
 			'pwd_reset_nonce'           => esc_html__( 'There was an unspecified error', 'wp-members' ),
 
-
 		); // End of $defaults array.
 		
 		/**
@@ -264,11 +265,11 @@ class WP_Members_Dialogs {
 			}
 		}
 
-		if ( ! isset( $text[ $str ] ) ) {
-			error_log( 'WP_Members_Dialogs::get_text() was called for a string key that does not exist: ' . $str );
-			return '';
-		} else {
+		if ( isset( $text[ $str ] ) ) {
 			return $text[ $str ];
+		} else {
+			wpmem_write_log( 'Unknown dialog key "' . $key . '" in WP_Members_Dialogs::get_text()' );
+			return '';
 		}
 	}
 	
