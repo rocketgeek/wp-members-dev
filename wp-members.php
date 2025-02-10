@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Initialize constants.
-define( 'WPMEM_VERSION',    '3.5.2.a.1' );
+define( 'WPMEM_VERSION',    '3.5.2.a.3' );
 define( 'WPMEM_DB_VERSION', '2.4.0' );
 define( 'WPMEM_PATH', plugin_dir_path( __FILE__ ) ); // @todo Fairly certain this is obsolete.
 
