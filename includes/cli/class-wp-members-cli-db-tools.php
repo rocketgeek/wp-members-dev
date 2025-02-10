@@ -221,6 +221,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         /**
          * Drops specified db views.
          * 
+         * <view_name>
+         * : Name of the view to drop.
+         * 
          * @alias drop-view
          */
         public function drop_view( $args ) {
@@ -262,7 +265,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         }
 
         /**
-         * Gets all unique meta keys from a table. 
+         * Gets all unique meta keys from a table.
+         *
+         * <table_name>
+         * : Name of the table to view meta keys.
          * 
          * @alias meta-keys
          */
@@ -348,8 +354,66 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             }
             return ( in_array( $chk_view, $views_array ) ) ? true : false;
         }
+
+        /**
+         * Checks the options table autoload size.
+         * 
+         * ## OPTIONS
+		 *
+         * [--order=<order>]
+         * : Order to display result (ASC|DESC, default:DESC).
+         * 
+         * [--limit=<limit>]
+         * : Limit the results returned (default:10).
+		 *
+		 * [--like=<like>]
+		 * : Return options with MySQL query "LIKE".
+         * 
+         * [--all]
+		 * : Returns all results.
+         * 
+         * @alias autoload-size
+         */
+        public function autoload_size( $args, $assoc_args ) {
+
+            global $wpdb;
+            
+            $order = ( isset( $assoc_args['order'] ) ) ? $assoc_args['order'] : "DESC";
+            $limit = ( isset( $assoc_args['limit'] ) ) ? "LIMIT " . intval( $assoc_args['limit'] ) : "LIMIT 10";
+
+            if ( isset( $assoc_args['all'] ) ) {
+                $limit = '';
+            }
+
+            $and = ( isset( $assoc_args['like'] ) ) ? ' AND option_name LIKE "%' . esc_sql( $assoc_args['like'] ) . '%"' : "";
+
+            $query = 'SELECT ROUND(SUM(LENGTH(option_value))/1024) as autoload_size FROM ' . $wpdb->prefix . 'options WHERE autoload="yes" OR autoload="on";';
+            $results = $wpdb->get_results( $query );
+
+            WP_CLI::line( __( 'Autoload options size (in KiB):', 'wp-members' ) . ' ' . $results[0]->autoload_size );
+
+            $query = 'SELECT option_name, length(option_value) 
+                AS option_value_length FROM ' . $wpdb->prefix . 'options  
+                WHERE autoload="yes" OR autoload="on" ' . $and . ' ORDER BY option_value_length ' . esc_sql( $order ) . ' ' . $limit . ';';
+            
+            $results = $wpdb->get_results( $query );
+
+            if ( $results ) {
+                foreach( $results as $result ) {
+                    $list[] = array(
+                        'Name'=>$result->option_name,
+                        'Value'=>$result->option_value_length,
+                    );
+                }
+
+                WP_CLI::line( __( 'List of autoload options', 'wp-members' ) );
+                $formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Name', 'Value' ) );
+                $formatter->display_items( $list );
+            } else {
+                WP_CLI::line( __( 'There were no results', 'wp-members' ) );
+            }
+        }
     }
-	
 }
 
 WP_CLI::add_command( 'mem db', 'WP_Members_CLI_DB_Tools' );
