@@ -343,7 +343,7 @@ class WP_Members_Admin_API {
 				$settings[ $dialog['name'] ] = wp_kses( $_POST[ $dialog['name'] . '_dialog' ], 'post' );
 			}
 		}
-		update_option( 'wpmembers_dialogs', $settings, true );
+		update_option( 'wpmembers_dialogs', $settings, false );
 		// Refresh settings
 		$this->default_dialogs();
 		return;
