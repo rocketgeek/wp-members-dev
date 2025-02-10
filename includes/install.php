@@ -350,7 +350,7 @@ function wpmem_install_fields() {
 		array( 15, 'Confirm Password',  'confirm_password',  'password', 'n', 'n', 'n', 'profile'=>0 ),
 		array( 16, 'Terms of Service',  'tos',               'checkbox', 'n', 'n', 'n', 'agree', 'n', 'profile'=>0 ),
 	);
-	update_option( 'wpmembers_fields', $fields, true ); // using update_option to allow for forced update
+	update_option( 'wpmembers_fields', $fields, false ); // using update_option to allow for forced update
 	return $fields;
 }
 
