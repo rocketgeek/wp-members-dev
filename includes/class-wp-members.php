@@ -1339,7 +1339,7 @@ class WP_Members {
 	 */
 	function hidden_posts() {
 		$hidden = get_option( 'wpmem_hidden_posts' );
-		if ( false === $hidden ) {
+		if ( false == $hidden ) {
 			$hidden = $this->update_hidden_posts();
 		}
 		return $hidden;

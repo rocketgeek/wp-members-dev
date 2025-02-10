@@ -135,6 +135,7 @@ WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 
 * Fixes a bug in the WP_Members_Dialogs::get_text() for unknown keys (reconfirm_link_before & reconfirm_link).
 * Fixes a bug in the [wpmem_user_memberships] shortcode that breaks the expiration date display.
+* Improve membership stack checking. Fixes endless loop error when checking membership access.
 * Improve all settings to autoload only those which are needed, specifically set to false those which are not.
 * Improve wpmem_update_option() to accept an autoload value (defaults to null, just like core WP function).
 * Improve membership options to store in a single option to minimize query every object load. Update option when memberships are updated.
@@ -144,6 +145,7 @@ WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 * Move pwd_reset object class to user object class, only load when used.
 * Handle multicheckbox and multiselect field types when data is serialized (from WooCommerce).
 * Add error handling to WP_Members_Dialogs::get_text() for string keys that do not exist. If one is called, the function will return an empty string and will record the call in the error log.
+* Adds new CLI command "wp mem db autoload-size".
 
 = 3.5.1 =
 

@@ -1114,7 +1114,7 @@ class WP_Members_User {
 	 */
 	function get_membership_stack( $membership_array ) {
 
-		global $wpmem;
+		global $wpdb, $wpmem;
 		$membership_ids = wpmem_get_memberships_ids();
 		foreach ( $membership_array as $membership ) {
 			// If the membership exists, check for child/parent relationships (if it doesn't exist and we didn't check here, we'd throw an undefined index error).
@@ -1126,7 +1126,9 @@ class WP_Members_User {
 						'post_type'   => $wpmem->membership->post_type,
 						'post_parent' => $membership_ids[ $membership ], // Current post's ID
 					);
-					$children = get_children( $args );
+					//$children = get_children( $args );
+					$sql = 'SELECT post_name FROM ' . $wpdb->prefix . 'posts WHERE post_type = "' . esc_sql( $args['post_type'] ) . '" AND post_parent = "' . esc_sql( $args['post_parent'] ) . '";';
+					$children = $wpdb->get_results( $sql );
 					if ( ! empty( $children ) ) {
 						foreach ( $children as $child ) {
 							$membership_array[] = $child->post_name;
