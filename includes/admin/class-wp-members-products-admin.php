@@ -488,7 +488,7 @@ class WP_Members_Products_Admin {
 		}
 
 		// Anytime there's an update, update the global saved option.]
-		$wpmem->membership->update_products();
+		$wpmem->membership->update_memberhips();
 	}
 
 	/**
@@ -822,10 +822,10 @@ class WP_Members_Products_Admin {
 		global $wpdb, $wpmem;
 
 		// Add a view for each membership
-		foreach ( $wpmem->membership->product_by_id as $membership_slug ) {
+		foreach ( $wpmem->membership->membership_by_id as $membership_slug ) {
 			$views = wpmem_add_user_view_link( 
 				$views, 
-				wpmem_get_membership_name( $membership_slug ), // $wpmem->membership->products[ $product_slug ]['title'],
+				wpmem_get_membership_name( $membership_slug ), // $wpmem->membership->memberships[ $product_slug ]['title'],
 				$membership_slug,
 				wpmem_get_membership_meta( $membership_slug ), // "_wpmem_products_" . $product_slug,
 				0,
@@ -851,7 +851,7 @@ class WP_Members_Products_Admin {
 		global $wpdb, $wpmem;
 
 		// Check for membership views.
-		foreach ( $wpmem->membership->product_by_id as $membership_slug ) {
+		foreach ( $wpmem->membership->membership_by_id as $membership_slug ) {
 			// Check if we are viewing ($show) a membership ($prduct_slug).
 			$query_where = wpmem_add_query_where( $query_where, $membership_slug, wpmem_get_membership_meta( $membership_slug ), 0, $compare = '>' );
 		}
@@ -867,7 +867,7 @@ class WP_Members_Products_Admin {
 	public function refactor_membership_option( $post_id, $second_arg ) {
 		global $wpmem;
 		if ( 'wpmem_product' != get_post_type( $post_id ) ) {
-			$wpmem->membership->update_products();
+			$wpmem->membership->update_memberhips();
 		}
 	}
 }

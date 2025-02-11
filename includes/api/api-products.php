@@ -18,6 +18,7 @@
  *
  * @since Unknown
  * @since 3.4.5 Alias of wpmem_get_membership_post_list().
+ * @deprecated 3.5.0 Use wpmem_get_membership_post_list() instead.
  *
  * @global  stdClass  $wpmem
  * @param   string    $product_key
@@ -46,6 +47,7 @@ function wpmem_get_membership_post_list( $membership_key ) {
  *
  * @since 3.3.7
  * @since 3.4.5 Alias of wpmem_get_post_memberships().
+ * @deprecated 3.5.0 Use wpmem_get_post_memberships() instead.
  *
  * @global  stdClass  $wpmem
  * @param   integer   $post_id
@@ -88,6 +90,7 @@ function wpmem_get_access_message( $post_products ) {
  * Alias of wpmem_get_memberships().
  * 
  * @since Unknown
+ * @deprecated 3.5.0 Use wpmem_get_memberships() instead.
  * 
  * @return array
  */
@@ -104,7 +107,7 @@ function wpmem_get_products() {
  */
 function wpmem_get_memberships() {
 	global $wpmem;
-	return ( ! empty( $wpmem->membership->products ) ) ? $wpmem->membership->products : array();
+	return ( ! empty( $wpmem->membership->memberships ) ) ? $wpmem->membership->memberships : array();
 }
 
 /**
@@ -116,7 +119,7 @@ function wpmem_get_memberships() {
  */
 function wpmem_get_memberships_ids() {
 	global $wpmem;
-	return array_flip( $wpmem->membership->product_by_id );
+	return array_flip( $wpmem->membership->membership_by_id );
 }
 
 /**
@@ -138,11 +141,11 @@ function wpmem_get_membership_id( $membership_slug ) {
  * @since 3.4.5
  * 
  * @param  string  $membership_slug
- * @return string  Value of $wpmem->membership->products[ $membership_slug ]['title'] if set, otherwise, $membership_slug.
+ * @return string  Value of $wpmem->membership->memberships[ $membership_slug ]['title'] if set, otherwise, $membership_slug.
  */
 function wpmem_get_membership_name( $membership_slug ) {
 	global $wpmem;
-	return ( isset( $wpmem->membership->products[ $membership_slug ]['title'] ) ) ? $wpmem->membership->products[ $membership_slug ]['title'] : $membership_slug;
+	return ( isset( $wpmem->membership->memberships[ $membership_slug ]['title'] ) ) ? $wpmem->membership->memberships[ $membership_slug ]['title'] : $membership_slug;
 }
 
 /**
@@ -166,7 +169,7 @@ function wpmem_get_membership_slug( $membership_id ) {
  */
 function wpmem_get_membership_role( $membership_slug ) {
 	global $wpmem;
-	return ( isset( $wpmem->membership->products[ $membership_slug ]['role'] ) ) ? $wpmem->membership->products[ $membership_slug ]['role'] : '';
+	return ( isset( $wpmem->membership->memberships[ $membership_slug ]['role'] ) ) ? $wpmem->membership->memberships[ $membership_slug ]['role'] : '';
 }
 
 /**
@@ -397,14 +400,14 @@ function wpmem_create_membership( $args ) {
  * 
  * @since 3.5.0
  * 
- * @param  string  $product
+ * @param  string  $membership
  * @param  int     $user_id
  * @param  mixed   $set_date
  * @param  mixed   $prev_value
  * @param  boolean $renew
  * @return mixed   $new_value
  */
-function wpmem_generate_membership_expiration_date( $product, $user_id, $set_date = false, $prev_value = false, $renew = false ) {
+function wpmem_generate_membership_expiration_date( $membership, $user_id, $set_date = false, $prev_value = false, $renew = false ) {
 	global $wpmem;
-	return $wpmem->membership->set_product_expiration( $product, $user_id, $set_date, $prev_value, $renew );
+	return $wpmem->membership->set_product_expiration( $membership, $user_id, $set_date, $prev_value, $renew );
 }
