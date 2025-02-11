@@ -79,7 +79,7 @@ class WP_Members_Products {
 	 *     }
 	 * }
 	 */
-	public $products = array();
+	public $products = array(); // @deprecated 3.5.0.
 	public $memberships = array();
 
 	/**
@@ -93,7 +93,7 @@ class WP_Members_Products {
 	 *     @type string $ID The membership product slug.
 	 * }
 	 */
-	public $product_by_id = array();
+	public $product_by_id = array(); // @deprecated 3.5.0.
 	public $membership_by_id = array();
 	
 	/**
@@ -120,24 +120,25 @@ class WP_Members_Products {
 	 * Loads product settings.
 	 *
 	 * @since 3.2.0
+	 * @todo Name change to load_memberships() is coming.
 	 *
 	 * @global object $wpdb The WPDB object class.
 	 */
 	private function load_products() {
 
-		$products = get_option( 'wpmem_memberships' );
+		$memberships = get_option( 'wpmem_memberships' );
 
-		if ( ! $products ) {
-			$products = $this->update_products();
+		if ( ! $memberships ) {
+			$memberships = $this->update_memberhips();
 		}
 
-		// Legacy containers.
-		$this->products      = $products['products'];
-		$this->product_by_id = $products['by_id'];
-
 		// Preferred containers.
-		$this->memberships      = $this->products;
-		$this->membership_by_id = $this->product_by_id;
+		$this->memberships      = $memberships['products'];
+		$this->membership_by_id = $memberships['by_id'];
+		
+		// Legacy containers.
+		$this->products      = $this->memberships;
+		$this->product_by_id = $this->membership_by_id;
 	}
 
 	/**
@@ -147,15 +148,15 @@ class WP_Members_Products {
 	 * 
 	 * @since 3.5.2
 	 */
-	public function update_products() {
+	public function update_memberhips() {
 		global $wpdb;
 		$sql = "SELECT ID, post_title, post_name FROM " 
 			. $wpdb->prefix 
 			. "posts WHERE post_type = 'wpmem_product' AND post_status = 'publish';";
 		$result = $wpdb->get_results( $sql );
 		foreach ( $result as $plan ) {
-			$products['by_id'][ $plan->ID ] = $plan->post_name;
-			$products['products'][ $plan->post_name ]['title'] = $plan->post_title;			
+			$memberships['by_id'][ $plan->ID ] = $plan->post_name;
+			$memberships['products'][ $plan->post_name ]['title'] = $plan->post_title;			
 			$post_meta = get_post_meta( $plan->ID );
 			foreach ( $post_meta as $key => $meta ) {
 				if ( false !== strpos( $key, 'wpmem_product' ) ) {
@@ -165,14 +166,14 @@ class WP_Members_Products {
 					if ( 'wpmem_product_fixed_period' == $key ) {
 						$meta[0] = $this->explode_fixed_period( $meta[0] );
 					}
-					$products['products'][ $plan->post_name ][ str_replace( 'wpmem_product_', '', $key ) ] = $meta[0];
+					$memberships['products'][ $plan->post_name ][ str_replace( 'wpmem_product_', '', $key ) ] = $meta[0];
 				}
 			}
 		}
 
-		update_option( 'wpmem_memberships', $products, true );
+		update_option( 'wpmem_memberships', $memberships, true );
 
-		return $products;
+		return $memberships;
 	}
 	
 	/**
@@ -188,19 +189,20 @@ class WP_Members_Products {
 	 * }
 	 */
 	function get_post_products( $post_id ) {
-		$products = get_post_meta( $post_id, $this->post_meta, true );
+		$memberships = get_post_meta( $post_id, $this->post_meta, true );
 		/**
 		 * Filter product access by post ID.
 		 *
 		 * @since 3.3.5
 		 * @since 3.5.0 Use wpmem_post_memberships instead.
+		 * @todo Mark deprecated filter hook.
 		 *
-		 * @param array $post_products
+		 * @param array $post_memberships
 		 * @param int   $post_id
 		 */
-		$products = apply_filters( 'wpmem_post_products', $products, $post_id );
-		$products = apply_filters( 'wpmem_post_memberships', $products, $post_id );
-		return $products;
+		$memberships = apply_filters( 'wpmem_post_products', $memberships, $post_id );
+		$memberships = apply_filters( 'wpmem_post_memberships', $memberships, $post_id );
+		return $memberships;
 	}
 
 	/**
@@ -367,7 +369,7 @@ class WP_Members_Products {
 			$product_message = false;
 			$count = count( $post_products );
 			foreach( $post_products as $post_product ) {
-				$membership_id = array_search( $post_product, $this->product_by_id );
+				$membership_id = array_search( $post_product, $this->membership_by_id );
 				$message = get_post_meta( $membership_id, 'wpmem_product_message', true );
 				if ( $message ) {
 					$product_message = ( isset( $product_message ) ) ? $product_message . wpautop( $message ) : wpautop( $message );
@@ -514,11 +516,11 @@ class WP_Members_Products {
 			$new_value = strtotime( $set_date );
 		} else {
 			// Either setting initial expiration based on set time period, or adding to the existing date (renewal/extending).
-			$raw_add = explode( "|", $this->products[ $product ]['expires'][0] );
+			$raw_add = explode( "|", $this->memberships[ $product ]['expires'][0] );
 			$add_period = ( 1 < $raw_add[0] ) ? $raw_add[0] . " " . $raw_add[1] . "s" : $raw_add[0] . " " . $raw_add[1];
 
 			if ( $prev_value ) {
-				if ( isset( $this->products[ $product ]['no_gap'] ) && 1 == $this->products[ $product ]['no_gap'] ) {
+				if ( isset( $this->memberships[ $product ]['no_gap'] ) && 1 == $this->memberships[ $product ]['no_gap'] ) {
 					// Add to the user's existing date (no gap).
 					$new_value = strtotime( $add_period, $prev_value );					
 				} else {
@@ -535,7 +537,7 @@ class WP_Members_Products {
 				// User doesn't have this membershp. Go ahead and add it.
 		
 				// If we are using fixed period expiration, calculate the expiration date
-				if ( isset( $this->products[ $product ] ) && isset( $this->products[ $product ]['fixed_period'] ) ) {
+				if ( isset( $this->memberships[ $product ] ) && isset( $this->memberships[ $product ]['fixed_period'] ) ) {
 					// Calculate the fixed period expiration.
 					$new_value = $this->calculate_fixed_period ( $product );
 				} else {
@@ -571,7 +573,7 @@ class WP_Members_Products {
 	 */
 	function calculate_fixed_period( $product ) {
 		// Use fixed period expiration.
-		$end = $this->products[ $product ]['fixed_period']['end'];
+		$end = $this->memberships[ $product ]['fixed_period']['end'];
 
 		// Get the current year.
 		$current_year = date( 'Y' );
@@ -591,9 +593,9 @@ class WP_Members_Products {
 		} else {
 			// Date is not past.
 			// Are we using a grace period?
-			if ( isset( $this->products[ $product ]['fixed_period']['grace'] ) && $this->products[ $product ]['fixed_period']['grace']['num'] > 0 ) {
+			if ( isset( $this->memberships[ $product ]['fixed_period']['grace'] ) && $this->memberships[ $product ]['fixed_period']['grace']['num'] > 0 ) {
 				// Are we in the grace period?
-				$grace_period = "-" . $this->products[ $product ]['fixed_period']['grace']['num'] . " " . $this->products[ $product ]['fixed_period']['grace']['per'];
+				$grace_period = "-" . $this->memberships[ $product ]['fixed_period']['grace']['num'] . " " . $this->memberships[ $product ]['fixed_period']['grace']['per'];
 				$grace_date   = DateTime::createFromFormat( 'U', strtotime( $grace_period, strtotime( $cur_date->format( 'd-m-Y' ) ) ) );
 				if ( $grace_date < $now ) {
 					// We are in grace period, set expiration as next year.

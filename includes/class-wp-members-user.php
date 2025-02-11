@@ -1056,19 +1056,21 @@ class WP_Members_User {
 		// Start by assuming no access.
 		$access  = false;
 
+		// Start checking memberships. If the user has a valid membership, quit checking.
 		foreach ( $membership_array as $prod ) {
 			$expiration_product = false;
 			$role_product = false;
+			// Does the user have this membership?
 			if ( isset( $memberships[ $prod ] ) ) {
-				// Is this an expiration product?
-				if ( isset( $wpmem->membership->products[ $prod ]['expires'][0] ) && ! is_bool( $memberships[ $prod ] ) ) {
+				// Is this an expiration membership?
+				if ( isset( $wpmem->membership->memberships[ $prod ]['expires'][0] ) && ! is_bool( $memberships[ $prod ] ) ) {
 					$expiration_product = true;  
 					if ( $this->is_current( $memberships[ $prod ] ) ) {
 						$access = true;
 						break;
 					}
 				}
-				// Is this a role product?
+				// Is this a role membership?
 				if ( '' != wpmem_get_membership_role( $prod ) ) {
 					$role_product = true;
 					if ( $memberships[ $prod ] && wpmem_user_has_role( wpmem_get_membership_role( $prod ) ) ) {
@@ -1127,7 +1129,7 @@ class WP_Members_User {
 						'post_type'   => $wpmem->membership->post_type,
 						'post_parent' => $membership_ids[ $membership ], // Current post's ID
 					);
-					//$children = get_children( $args );
+					//Replaces use of get_children, which unfortunately causes an infinite loop.
 					$sql = 'SELECT post_name FROM ' . $wpdb->prefix . 'posts WHERE post_type = "' . esc_sql( $args['post_type'] ) . '" AND post_parent = "' . esc_sql( $args['post_parent'] ) . '";';
 					$children = $wpdb->get_results( $sql );
 					if ( ! empty( $children ) ) {
@@ -1140,12 +1142,11 @@ class WP_Members_User {
 				$ancestors = get_post_ancestors( $membership_ids[ $membership ] );
 				if ( ! empty( $ancestors ) ) {
 					foreach ( $ancestors as $ancestor ) {
-						$membership_array[] = get_post_field( 'post_name', $ancestor );;
+						$membership_array[] = get_post_field( 'post_name', $ancestor );
 					}
 				}
 			}
-		}
-		
+		}		
 		return $membership_array;
 	}
 	
@@ -1210,7 +1211,7 @@ class WP_Members_User {
 		$prev_value = get_user_meta( $user_id, '_wpmem_products_' . $membership, true );
 
 		// Convert date to add.
-		$expiration_period = ( isset( $wpmem->membership->products[ $membership ]['expires'] ) ) ? $wpmem->membership->products[ $membership ]['expires'] : false;
+		$expiration_period = ( isset( $wpmem->membership->memberships[ $membership ]['expires'] ) ) ? $wpmem->membership->memberships[ $membership ]['expires'] : false;
 		
 		$renew = ( $prev_value ) ? true : false;
 	
