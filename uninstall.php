@@ -72,6 +72,7 @@ function wpmem_uninstall_options() {
 	delete_option( 'wpmembers_utfields' );
 	delete_option( 'wpmembers_usfields' );
 	delete_option( 'wpmembers_wcchkout_fields' );
+	delete_option( 'wpmembers_wcupdate_fields' );
 	delete_option( 'wpmembers_wcacct_fields'   );
 
 	delete_option( 'wpmembers_email_newreg'  );

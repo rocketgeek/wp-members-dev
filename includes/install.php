@@ -55,6 +55,10 @@ function wpmem_do_install() {
 		// Upgrade.
 		$wpmem_settings = wpmem_upgrade_settings();
 
+		if ( version_compare( $existing_settings['version'], '3.5.2', '<' ) ) {
+			wpmem_update_autoload_options();
+		}
+
 		if ( version_compare( $existing_settings['version'], '3.5.0', '<' ) ) {
 			wpmem_add_profile_to_fields( $existing_settings );
 			wpmem_update_user_dirs();
@@ -84,6 +88,7 @@ function wpmem_do_install() {
 
 		// Remove options no longer used or needed.
 		delete_option( 'wpmembers_install_state' );
+		delete_option( 'wpmem_enable_field_sc' );
 	}
 	
 	return $wpmem_settings;
@@ -608,6 +613,48 @@ function wpmem_update_user_dirs() {
 			}
 		}
 	}
+}
+
+function wpmem_update_autoload_options() {
+	$wpmem_options = array(
+		"wpmembers_settings" => true,
+		"wpmem_hidden_posts" => true,
+		"wpmem_memberships" => true,
+		"wpmembers_optin" => false,
+		"wpmembers_fields" => false,
+		"wpmembers_dialogs" => false,
+		"wpmembers_captcha" => false,
+		"wpmembers_tos" => false,
+		"wpmembers_export" => false,
+		"wpmembers_dropins" => false,
+		"wpmembers_wcchkout_fields" => false,
+		"wpmembers_wcacct_fields" => false,
+		"wpmembers_utfields" => false,
+		"wpmembers_usfields" => false,
+		"wpmembers_email_newreg" => false,
+		"wpmembers_email_newmod" => false,
+		"wpmembers_email_appmod" => false,
+		"wpmembers_email_repass" => false,
+		"wpmembers_email_footer" => false,
+		"wpmembers_email_notify" => false,
+		"wpmembers_email_wpfrom" => false,
+		"wpmembers_email_wpname" => false,
+		"wpmembers_email_html" => false,
+		"wpmembers_email_getuser" => false,
+		"wpmembers_email_validated" => false,
+	);
+	
+	// Update wpmem options autoload values.
+	wp_set_option_autoload_values( $wpmem_options );
+	
+	// Delete pre-3.x options if they exist.
+	delete_option( "wpmembers_msurl"  );
+	delete_option( "wpmembers_regurl" );
+	delete_option( "wpmembers_logurl" );
+	delete_option( "wpmembers_cssurl" );
+	delete_option( "wpmembers_style"  );
+	delete_option( "wpmembers_autoex" );
+	delete_option( "wpmembers_attrib" );
 }
 
 class WP_Members_Installer {
