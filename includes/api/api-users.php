@@ -106,7 +106,17 @@ function wpmem_get_user_meta( $user_id, $meta_key ) {
 		$fields = wpmem_fields('all');
 		$value = implode( $fields[ $meta_key ]['delimiter'], $value );
 	}
-	return $value;
+	/**
+	 * Filter the result returned from wpmem_get_user_meta()
+	 * 
+	 * @since 3.5.2
+	 * 
+	 * @param  $meta_value
+	 * @param  $user_id
+	 * @param  $meta_key
+	 * @return $meta_value
+	 */
+	return apply_filters( 'wpmem_get_user_meta', $value, $user_id, $meta_key );
 }
 
 /**
