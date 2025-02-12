@@ -3,7 +3,7 @@ Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 4.0
 Tested up to: 6.7
-Stable tag: 3.5.1
+Stable tag: 3.5.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 The original WordPress membership plugin with content restriction, user login, custom registration fields, user profiles, and more.
@@ -135,17 +135,21 @@ WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 
 * Fixes a bug in the WP_Members_Dialogs::get_text() for unknown keys (reconfirm_link_before & reconfirm_link).
 * Fixes a bug in the [wpmem_user_memberships] shortcode that breaks the expiration date display.
-* Improve membership stack checking. Fixes endless loop error when checking membership access.
+* Fixes a bug in the install/upgrade script that causes the "finalize" dialog to display indefinitely for a new install.
+* Fixes a bug in the install/upgrade script that didn't properly transfer stylesheet settings if the stylesheet was not the default.
+* Fixes a bug in the html email option, fix prevents from calling it twice.
+* Fixes a bug in the membership stack reading that caused an infinite loop (may or may not be a bug, depending on specific local install settings).
+* Improve handling of multicheckbox and multiselect field types when data is serialized (from WooCommerce).
 * Improve all settings to autoload only those which are needed, specifically set to false those which are not.
+* Improve email options to not autoload (previously set to true). These only need to load when called.
 * Improve wpmem_update_option() to accept an autoload value (defaults to null, just like core WP function).
 * Improve membership options to store in a single option to minimize query every object load. Update option when memberships are updated.
-* Review which objects are loaded and when. Improve where possible.
-* Update email options to not autoload (previously set to true). These only need to load when called.
-* Fix html email option, prevent from calling it twice.
-* Move pwd_reset object class to user object class, only load when used.
-* Handle multicheckbox and multiselect field types when data is serialized (from WooCommerce).
+* Improve uninstall to remove all possible wpmem_user_count transients.
+* Improve uninstall to remove all possible formats of the widget name.
+* Review which objects are loaded and when. Improve where possible.  Moved password reset object to only load when doing a password reset.
 * Add error handling to WP_Members_Dialogs::get_text() for string keys that do not exist. If one is called, the function will return an empty string and will record the call in the error log.
 * Adds new CLI command "wp mem db autoload-size".
+* Adds wpmem_get_user_meta filter hook.
 
 = 3.5.1 =
 
