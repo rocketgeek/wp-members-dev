@@ -1312,7 +1312,7 @@ class WP_Members {
 	 * @return string $content
 	 */
 	function reg_securify( $content ) {
-		global $wpmem, $wpmem_themsg;
+		global $wpmem_themsg;
 		$nonce = wpmem_get( 'reg_nonce', false, 'get' );
 		if ( $nonce && wp_verify_nonce( $nonce, 'register_redirect' ) ) {
 			$content = wpmem_get_display_message( 'success', $wpmem_themsg );
@@ -1512,12 +1512,10 @@ class WP_Members {
 	 *
 	 * @since 3.2.4
 	 *
-	 * @global object $wpmem
 	 * @param  string $where
 	 * @return string $where
 	 */
 	function filter_get_adjacent_post_where( $where ) {
-		global $wpmem;
 		if ( ! is_user_logged_in() ) {
 			$hidden_posts = $this->get_hidden_posts();
 			if ( ! empty( $hidden_posts ) ) {
@@ -1561,15 +1559,12 @@ class WP_Members {
 	 * @since 3.1.0
 	 * @deprecated 3.5.0 Use wpmem_get_text() Make sure "official" extensions do not use $wpmem->get_text() before making obsolete.
 	 *
-	 * @global object $wpmem
-	 *
 	 * @param  string $str
 	 * @return string $text
 	 */	
 	function get_text( $str ) {
-		global $wpmem;
-		return $wpmem->dialogs->get_text( $str );
-	} // End of get_text().
+		return $this->dialogs->get_text( $str );
+	}
 	
 	/**
 	 * Initializes the WP-Members widget.
@@ -1611,11 +1606,8 @@ class WP_Members {
 	 * Outputs login/out script for the footer.
 	 *
 	 * @since 3.2.0
-	 *
-	 * @global object $wpmem
 	 */
 	public function do_loginout_script() {
-		global $wpmem;
 		/** This filter is defined in /includes/api/api.php */
 		$logout = apply_filters( 'wpmem_logout_link', add_query_arg( 'a', 'logout' ) );
 		?><script type="text/javascript">
@@ -1676,24 +1668,18 @@ class WP_Members {
 	 *
 	 * @since 2.6
 	 * @since 3.2.3 Moved to WP_Members class.
-	 *
-	 * @global object $wpmem The WP_Members object. 
 	 */
 	function enqueue_style() {
-		global $wpmem;
-		wp_enqueue_style ( 'wp-members', wpmem_force_ssl( $wpmem->cssurl ), false, $wpmem->version );
+		wp_enqueue_style ( 'wp-members', wpmem_force_ssl( $this->cssurl ), false, $this->version );
 	}
 
 	/**
 	 * Loads the wp-login.php stylesheet.
 	 *
 	 * @since 3.3.0
-	 *
-	 * @global stdClass $wpmem
 	 */
 	function enqueue_style_wp_login() {
-		global $wpmem;
-		wp_enqueue_style( 'wp-members', $wpmem->url . 'assets/css/wp-login' . wpmem_get_suffix() . '.css', false, $wpmem->version );
+		wp_enqueue_style( 'wp-members', $this->url . 'assets/css/wp-login' . wpmem_get_suffix() . '.css', false, $this->version );
 	}
 	
 	/**
@@ -1704,21 +1690,20 @@ class WP_Members {
 	 * @since 3.2.5 Check if post object exists.
 	 *
 	 * @global object $post  The post object.
-	 * @global object $wpmem The WP_Members object.
 	 *
 	 * @param  string $content
 	 * @return string $content
 	 */
 	function do_excerpt( $content ) {
 
-		global $post, $more, $wpmem;
+		global $post, $more;
 		
 		if ( is_object( $post ) ) {
 			
 			$post_id   = $post->ID;
 			$post_type = $post->post_type;
 
-			$autoex = ( isset( $wpmem->autoex[ $post->post_type ] ) && 1 == $wpmem->autoex[ $post->post_type ]['enabled'] ) ? $wpmem->autoex[ $post->post_type ] : false;
+			$autoex = ( isset( $this->autoex[ $post->post_type ] ) && 1 == $this->autoex[ $post->post_type ]['enabled'] ) ? $this->autoex[ $post->post_type ] : false;
 
 			// Is there already a 'more' link in the content?
 			$has_more_link = ( stristr( $content, 'class="more-link"' ) ) ? true : false;
@@ -1737,8 +1722,8 @@ class WP_Members {
 						$more_link      = '';
 					} else {
 						// The default $more_link_text.
-						if ( isset( $wpmem->autoex[ $post->post_type ]['text'] ) && '' != $wpmem->autoex[ $post->post_type ]['text'] ) {
-							$more_link_text = __( $wpmem->autoex[ $post->post_type ]['text'], 'wp-members' );
+						if ( isset( $this->autoex[ $post->post_type ]['text'] ) && '' != $this->autoex[ $post->post_type ]['text'] ) {
+							$more_link_text = __( $this->autoex[ $post->post_type ]['text'], 'wp-members' );
 						} else {
 							$more_link_text = __( '(more&hellip;)' );
 						}
@@ -1779,7 +1764,7 @@ class WP_Members {
 					// Are we only excerpting blocked content?
 					if ( $args['blocked_only'] ) {
 						$post_meta = get_post_meta( $post->ID, '_wpmem_block', true );
-						if ( 1 == $wpmem->block[ $post->post_type ] ) {
+						if ( 1 == $this->block[ $post->post_type ] ) {
 							// Post type is blocked, if post meta unblocks it, don't do excerpt.
 							$do_excerpt = ( "0" == $post_meta ) ? false : true;
 						} else {
