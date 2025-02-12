@@ -153,8 +153,8 @@ function wpmem_upgrade_settings() {
 	}
 	
 	// @since 3.3.0 Upgrade stylesheet setting.
-	// @since 3.5.0 Simplified.
-	$wpmem_settings['select_style'] = wpmem_upgrade_style_setting( $wpmem_settings );
+	// @since 3.5.0 Simplified. Only two options: default|use_custom.
+	$wpmem_settings = wpmem_upgrade_style_setting( $wpmem_settings );
 
 	// Change 3.4.9 field shortcode option.
 	if ( ! isset( $wpmem_settings['shortcode'] ) ) {
@@ -416,7 +416,24 @@ function wpmem_upgrade_fields() {
  * @param array $settings
  */
 function wpmem_upgrade_style_setting( $settings ) {
-	return ( 'generic-no-float' == $settings['select_style'] ) ? 'default' : 'use_custom';
+	if ( 'generic-no-float' == $settings['select_style'] ) {
+		// This is the default style.
+		$settings['cssurl'] = '';
+		$settings['select_style'] = 'default';
+	} else {
+		// If there is a custom URL, keep it.
+		if ( 'use_custom' == $settings['select_style'] ) {
+			$settings['cssurl'] = $settings['cssurl'];
+			$settings['select_style'] = 'use_custom';
+		} else {
+			// If it is from the selector but not default, set to "use_custom" and set the url.
+			// NOTE: Set select_style last because we're using the saved value to build the cssurl setting first.
+			$url = plugin_dir_url ( __DIR__ );
+			$settings['cssurl'] = trailingslashit( $url ) . 'assets/css/forms/' . $settings['select_style'] . '.min.css';
+			$settings['select_style'] = 'use_custom';
+		}
+	}
+	return $settings;
 }
 
 /**
@@ -506,12 +523,12 @@ function wpmem_add_profile_to_fields( $existing_settings ) {
 		$reg_val = ( "y" == $field[4] ) ? true : false;
 		$fields[ $key ]['profile'] = ( ! in_array( $meta_key, $skips ) ) ? $reg_val : false;
 
-		if ( 1 == $existing_settings['woo']['add_checkout_fields'] ) {
+		if ( isset( $existing_settings['woo']['add_checkout_fields'] ) && 1 == $existing_settings['woo']['add_checkout_fields'] ) {
 			if ( 'file' !=  $field[3] && 'image' != $field[3] && ! in_array( $meta_key, $woo_skips ) && $reg_val ) {
 				$wpmem_fields_wcchkout[] = $meta_key;
 			}
 		}
-		if ( 1 == $existing_settings['woo']['add_my_account_fields'] ) {
+		if ( isset( $existing_settings['woo']['add_my_account_fields'] ) && 1 == $existing_settings['woo']['add_my_account_fields'] ) {
 			if ( 'file' !=  $field[3] && 'image' != $field[3] && ! in_array( $meta_key, $woo_skips ) && $reg_val ) {
 				$wpmem_fields_wcaccount[] = $meta_key;
 			}
@@ -547,7 +564,7 @@ function wpmem_onboarding_pending_update() {
 }
 
 function wpmem_onboarding_finalize() {
-    global $wpmem, $wpmem_onboarding;
+	global $wpmem, $wpmem_onboarding;
 	if ( isset( $_POST['optin'] ) ) {
 		if ( 'update_pending' == $wpmem->install_state ) {
 			$wpmem_onboarding->deploy( 'wp-members', $wpmem->path . 'wp-members.php', 'update' );
@@ -560,7 +577,7 @@ function wpmem_onboarding_finalize() {
 	}
 
 	$update_settings = get_option( 'wpmembers_settings' );
-	if ( 'update_pending' == $wpmem->install_state ) {
+	if ( 'update_pending' == $wpmem->install_state || 'finalize' == wpmem_get( 'wpmem_onboarding_action' ) ) {
 		$wpmem->install_state = $update_settings['install_state'] = 'install_complete_' . $wpmem->version . '_' . time();
 	}
 	update_option( 'wpmembers_settings', $update_settings, true );
