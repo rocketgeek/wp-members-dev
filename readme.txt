@@ -107,7 +107,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.2 is a bug fix release. WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -146,6 +146,7 @@ WP-Members 3.5.1 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 * Improve membership options to store in a single option to minimize query every object load. Update option when memberships are updated.
 * Improve uninstall to remove all possible wpmem_user_count transients.
 * Improve uninstall to remove all possible formats of the widget name.
+* Improve stylesheet load (checks for a custom URL value rather than the "select_style" setting).
 * Review which objects are loaded and when. Improve where possible.  Moved password reset object to only load when doing a password reset.
 * Add error handling to WP_Members_Dialogs::get_text() for string keys that do not exist. If one is called, the function will return an empty string and will record the call in the error log.
 * Adds new CLI command "wp mem db autoload-size".
