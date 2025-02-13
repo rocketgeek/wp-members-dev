@@ -150,28 +150,36 @@ class WP_Members_Products {
 	 */
 	public function update_memberhips() {
 		global $wpdb;
-		$sql = "SELECT ID, post_title, post_name FROM " 
-			. $wpdb->prefix 
-			. "posts WHERE post_type = 'wpmem_product' AND post_status = 'publish';";
+		$sql = "SELECT ID, post_title, post_name 
+			FROM " . $wpdb->prefix . "posts 
+			WHERE post_type = 'wpmem_product' 
+			AND post_status = 'publish';";
 		$result = $wpdb->get_results( $sql );
-		foreach ( $result as $plan ) {
-			$memberships['by_id'][ $plan->ID ] = $plan->post_name;
-			$memberships['products'][ $plan->post_name ]['title'] = $plan->post_title;			
-			$post_meta = get_post_meta( $plan->ID );
-			foreach ( $post_meta as $key => $meta ) {
-				if ( false !== strpos( $key, 'wpmem_product' ) ) {
-					if ( 'wpmem_product_expires' == $key ) {
-						$meta[0] = unserialize( $meta[0] );
+
+		if ( $result ) {
+			foreach ( $result as $plan ) {
+				$memberships['by_id'][ $plan->ID ] = $plan->post_name;
+				$memberships['products'][ $plan->post_name ]['title'] = $plan->post_title;			
+				$post_meta = get_post_meta( $plan->ID );
+				foreach ( $post_meta as $key => $meta ) {
+					if ( false !== strpos( $key, 'wpmem_product' ) ) {
+						if ( 'wpmem_product_expires' == $key ) {
+							$meta[0] = unserialize( $meta[0] );
+						}
+						if ( 'wpmem_product_fixed_period' == $key ) {
+							$meta[0] = $this->explode_fixed_period( $meta[0] );
+						}
+						$memberships['products'][ $plan->post_name ][ str_replace( 'wpmem_product_', '', $key ) ] = $meta[0];
 					}
-					if ( 'wpmem_product_fixed_period' == $key ) {
-						$meta[0] = $this->explode_fixed_period( $meta[0] );
-					}
-					$memberships['products'][ $plan->post_name ][ str_replace( 'wpmem_product_', '', $key ) ] = $meta[0];
 				}
 			}
-		}
 
-		update_option( 'wpmem_memberships', $memberships, true );
+			update_option( 'wpmem_memberships', $memberships, true );
+
+		} else {
+			// Prevent a blowup if there are no memberships.
+			$memberships = array( 'products'=>array(), 'by_id'=>array() );
+		}
 
 		return $memberships;
 	}

@@ -91,7 +91,9 @@ class WP_Members_Admin_API {
 			$this->default_dialogs(); // Load default dialogs.
 		}
 
-		$wpmem->membership->admin = new WP_Members_Products_Admin();
+		if ( wpmem_is_enabled( 'enable_products' ) ) {
+			$wpmem->membership->admin = new WP_Members_Products_Admin();
+		}
 	}
 
 	/**
