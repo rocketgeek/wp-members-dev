@@ -70,9 +70,15 @@ class WP_Members_Admin_Tab_Dialogs {
 							<form name="updatedialogform" id="updatedialogform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 							<?php wp_nonce_field( 'wpmem-update-dialogs' ); ?>
 								<table class="form-table">
-								<?php if ( ! empty ( $wpmem->admin->dialogs ) ) {	
-									foreach( $wpmem->admin->dialogs as $dialog ) {
-										$wpmem->admin->do_dialog_input( $dialog );
+								<?php if ( ! empty ( $wpmem->admin->dialogs ) ) {
+
+									// Are we using deprecated dialogs?
+									$use_deprecated = get_option( 'wpmem_legacy_dialogs' );
+									$deprecated_dialogs = ( $use_deprecated ) ? $wpmem->dialogs->get_deprecated_dialogs() : array();
+									foreach( $wpmem->admin->dialogs as $key => $dialog ) {
+										if ( ! array_key_exists( $key, $deprecated_dialogs ) ) {
+											$wpmem->admin->do_dialog_input( $dialog );
+										}
 									}
 								} ?>
 								<?php $wpmem_tos = stripslashes( get_option( 'wpmembers_tos' ) ); ?>

@@ -339,12 +339,13 @@ class WP_Members_Admin_API {
 	 * @since 3.1.1
 	 */
 	function dialog_update() {
-		$settings = array();
-		foreach ( $this->dialogs as $dialog ) {
+		$settings = $this->dialogs;
+		foreach ( $settings as $dialog ) {
 			if ( isset( $_POST[ $dialog['name'] . '_dialog' ] ) ) {
 				$settings[ $dialog['name'] ] = wp_kses( $_POST[ $dialog['name'] . '_dialog' ], 'post' );
 			}
 		}
+
 		update_option( 'wpmembers_dialogs', $settings, false );
 		// Refresh settings
 		$this->default_dialogs();

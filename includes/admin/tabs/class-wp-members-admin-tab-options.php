@@ -173,9 +173,22 @@ class WP_Members_Admin_Tab_Options {
 								  </li>
 								<?php } 
 								}?></ul>
-								<!--
+
 								<h3><?php esc_html_e( 'New Feature Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/new-feature-settings/" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
-								-->
+								<?php
+								$rows = array(
+									array(__('Remove legacy dialogs', 'wp-members' ),'wpmem_legacy_dialogs'),
+								);
+								$checkbox_value = get_option( 'wpmem_legacy_dialogs' );
+								?><ul><?php
+								foreach ( $rows as $key => $row ) { ?>
+								  <li>
+									<label><?php echo $row[0]; ?></label>
+									<?php echo wpmem_form_field( $row[1], 'checkbox', '1', $checkbox_value ); ?>
+								  </li>
+								<?php } ?>
+								</ul>
+								
 								<?php if ( wpmem_is_woo_active() ) { ?>
 								<h3><?php esc_html_e( 'WooCommerce Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/woocommerce-settings/" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<?php
@@ -558,6 +571,12 @@ class WP_Members_Admin_Tab_Options {
 			
 			if ( isset( $_POST['wpmem_settings_act_link'] ) == 1 ) {
 				update_user_meta( get_current_user_id(), '_wpmem_activation_confirm', time() );
+			}
+
+			if ( 1 == wpmem_get_sanitized( 'wpmem_legacy_dialogs', 0, 'post', 'int' ) ) {
+				update_option( 'wpmem_legacy_dialogs', 0, false );
+			} else {
+				update_option( 'wpmem_legacy_dialogs', 1, false );
 			}
 
 			WP_Members_Admin_Tab_Options::save_settings( $wpmem_newsettings );

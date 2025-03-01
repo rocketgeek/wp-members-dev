@@ -133,6 +133,7 @@ WP-Members 3.5.2 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 
 = 3.5.3 =
 
+* Prepares for changes in default dialogs with legacy option or new option (certain default dialogs will be removed from the admin panel by version 3.6.0).
 * Fixes a bug in the default TOS dialog that causes a fatal error when opening the new window.
 
 = 3.5.2 =
