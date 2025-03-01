@@ -152,7 +152,7 @@ class WP_Members_Admin_Tab_Fields {
 			<ul>
 				<li>
 					<label><?php _e( 'Field Label', 'wp-members' ); ?> <?php echo $span_required; ?></label>
-					<input type="text" name="add_name" value="<?php echo ( $mode == 'edit' ) ? $field['label'] : false; ?>" required />
+					<input type="text" name="add_name" value="<?php echo ( $mode == 'edit' ) ? $field['label'] : false; ?>" class="regular-text" required />
 					<?php _e( 'The name of the field as it will be displayed to the user.', 'wp-members' ); ?>
 				</li>
 				<li>
@@ -161,7 +161,7 @@ class WP_Members_Admin_Tab_Fields {
 						echo "<span>$meta_key</span>"; ?>
 						<input type="hidden" name="add_option" value="<?php echo $meta_key; ?>" required /> 
 					<?php } else { ?>
-						<input type="text" name="add_option" value="" />
+						<input type="text" name="add_option" value="" class="regular-text" />
 						<?php _e( 'The database meta value for the field. It must be unique and contain no spaces (underscores are ok).', 'wp-members' ); ?>
 					<?php } ?>
 				</li>
@@ -237,7 +237,7 @@ class WP_Members_Admin_Tab_Fields {
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_placeholder">' : ''; ?>
 				<li>
 					<label><?php _e( 'Placeholder', 'wp-members' ); ?></label>
-					<input type="text" name="add_placeholder" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['placeholder'] ) ? $field['placeholder'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<input type="text" name="add_placeholder" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['placeholder'] ) ? $field['placeholder'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
@@ -245,7 +245,7 @@ class WP_Members_Admin_Tab_Fields {
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_pattern">' : ''; ?>
 				<li>
 					<label><?php _e( 'Pattern', 'wp-members' ); ?></label>
-					<input type="text" name="add_pattern" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['pattern'] ) ? $field['pattern'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<input type="text" name="add_pattern" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['pattern'] ) ? $field['pattern'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
@@ -253,7 +253,7 @@ class WP_Members_Admin_Tab_Fields {
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_title">' : ''; ?>
 				<li>
 					<label><?php _e( 'Title', 'wp-members' ); ?></label>
-					<input type="text" name="add_title" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['title'] ) ? $field['title'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<input type="text" name="add_title" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['title'] ) ? $field['title'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
@@ -261,7 +261,7 @@ class WP_Members_Admin_Tab_Fields {
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_date_format">' : ''; ?>
 				<li>
 					<label><?php _e( 'PHP Date Format', 'wp-members' ); ?></label>
-					<input type="text" name="add_timestamp_display" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['timestamp_display'] ) ? $field['timestamp_display'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<input type="text" name="add_timestamp_display" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['timestamp_display'] ) ? $field['timestamp_display'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
@@ -270,11 +270,11 @@ class WP_Members_Admin_Tab_Fields {
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_min_max">' : ''; ?>
 				<li>
 					<label><?php _e( 'Minimum Value', 'wp-members' ); ?></label>
-					<input type="text" name="add_min" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['min'] ) ? $field['min'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<input type="text" name="add_min" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['min'] ) ? $field['min'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
 				</li>
 				<li>
 					<label><?php _e( 'Maximum Value', 'wp-members' ); ?></label>
-					<input type="text" name="add_max" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['max'] ) ? $field['max'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<input type="text" name="add_max" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['max'] ) ? $field['max'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
@@ -294,7 +294,7 @@ class WP_Members_Admin_Tab_Fields {
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_file_info">' : ''; ?>
 				<li>
 					<label><?php _e( 'Accepted file types:', 'wp-members' ); ?></label>
-					<input type="text" name="add_file_value" value="<?php echo ( $mode == 'edit' && ( $field['type'] == 'file' || $field['type'] == 'image' ) ) ? $field['file_types'] : false; ?>" />
+					<input type="text" name="add_file_value" value="<?php echo ( $mode == 'edit' && ( $field['type'] == 'file' || $field['type'] == 'image' ) ) ? $field['file_types'] : false; ?>" class="regular-text" />
 				</li>
 				<li>
 					<label>&nbsp;</label>
@@ -316,8 +316,8 @@ class WP_Members_Admin_Tab_Fields {
 					</select> <span class="description"><?php _e( 'Selecting "after" will generally display the label to the right of the checkbox', 'wp-members' ); ?></span>
 				</li>
 				<li>
-					<label><?php _e( 'Stored value if checked:', 'wp-members' ); ?> <span class="req"><?php _e( '(required)', 'wp-members' ); ?></span></label>
-					<input type="text" name="add_checked_value" id="add_checked_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'checkbox' ) ? $field['checked_value'] : false; ?>" />
+					<label><?php _e( 'Stored value if checked:', 'wp-members' ); ?></label>
+					<input type="text" name="add_checked_value" id="add_checked_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'checkbox' ) ? $field['checked_value'] : false; ?>" class="regular-text" /> <span class="req"><?php _e( '(required)', 'wp-members' ); ?></span>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } 
@@ -402,7 +402,7 @@ Last Row|last_row
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_hidden_info">' : ''; ?>
 				<li>
 					<label><?php _e( 'Value', 'wp-members' ); ?> <?php echo $span_required; ?></label>
-					<input type="text" name="add_hidden_value" id="add_hidden_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'hidden' ) ? $field['value'] : ''; ?>" />
+					<input type="text" name="add_hidden_value" id="add_hidden_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'hidden' ) ? $field['value'] : ''; ?>" class="regular-text" />
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
