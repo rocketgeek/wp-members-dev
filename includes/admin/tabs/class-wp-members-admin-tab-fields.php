@@ -415,6 +415,10 @@ Last Row|last_row
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
+				<li>
+					<label><?php _e( 'Label href', 'wp-members' ); ?></label>
+					<input type="text" name="add_terms_check_href" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['href'] ) ? $field['href'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+				</li>
 			</ul><br />
 			<?php if ( $mode == 'edit' ) { ?><input type="hidden" name="field_arr" value="<?php echo $meta_key; ?>" /><?php } ?>
 			<?php if ( 'add' == $mode ) {
@@ -766,6 +770,13 @@ Last Row|last_row
 				$arr[4] = ( 'y' == wpmem_get( 'add_display', 'n'  ) ) ? 'y' : 'n';
 				$arr[5] = ( 'y' == wpmem_get( 'add_required', 'n' ) ) ? 'y' : 'n';
 				$arr['profile'] = ( 'y' == wpmem_get( 'add_profile', 'n' ) ) ? true : false;
+
+				// Optional label href
+				$href = wpmem_get( 'add_terms_check_href', false );
+				if ( $href ) {
+					$sanitized_href = ( strpos( $href, 'http' ) ) ? esc_url_raw( $href ) : sanitize_text_field( $href );
+					$arr['label_href'] = $sanitized_href;
+				}
 
 				// Mark native fields:
 				$native_fields = array( 'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'display_name', 'first_name', 'last_name', 'nickname', 'description' );

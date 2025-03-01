@@ -60,6 +60,9 @@ class WP_Members_Forms {
 			$woo_reg_fields = ( $woo_reg_fields ) ? $woo_reg_fields : array();
 		}
 
+		// @todo Possibly need to establish $assembled_fields as an array explicitly.
+		$assembled_fields = array();
+
 		// Add new field array keys
 		foreach ( $fields as $key => $val ) {
 
@@ -1192,6 +1195,10 @@ class WP_Members_Forms {
 					'required' => $field['required'], 
 					'req_mark' => $args['req_mark'] 
 				) );
+
+				if ( isset( $field['label_href'] ) ) {
+					$label = sprintf( $label, '<a href="' . esc_url_raw( $field['label_href'] ) . '" target="_blank">', '</a>' );
+				}
 
 			} 
 
