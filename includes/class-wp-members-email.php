@@ -575,7 +575,7 @@ class WP_Members_Email {
 	 *
 	 * @since 3.4.0
 	 *
-	 * @return string Always returns "text/html"
+	 * @return string Returns the content type.
 	 */
 	public function content_type( $content_type = 'text/plain' ) {
 		return ( 1 == $this->html ) ? 'text/html' : $content_type;

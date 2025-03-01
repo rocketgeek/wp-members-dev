@@ -290,9 +290,7 @@ class WP_Members_Forms {
 	 * @return string $str The field returned as a string.
 	 */
 	function create_form_field( $args ) {
-		
-		global $wpmem;
-		
+
 		// Set defaults for most possible $args.
 		$id          = ( isset( $args['id'] ) ) ? esc_attr( $args['id'] ) : esc_attr( $args['name'] );
 		$name        = esc_attr( $args['name'] );
