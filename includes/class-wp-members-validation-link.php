@@ -274,30 +274,7 @@ class WP_Members_Validation_Link {
 	public function set_as_logged_in( $user_id ) {
 		// If registration is not moderated, set the user as logged in.
 		if ( ! wpmem_is_enabled( 'mod_reg' ) ) {
-			/**
-			 * Sets the WP auth cookie.
-			 *
-			 * May trigger the following WP filter/actions:
-			 * - auth_cookie_expiration
-			 * - secure_auth_cookie
-			 * - secure_logged_in_cookie
-			 * - set_auth_cookie
-			 * - set_logged_in_cookie
-			 * - send_auth_cookies
-			 *
-			 * @see https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
-			 */
-			wp_set_auth_cookie( $user_id, true );
-
-			/**
-			 * Sets the user as logged in.
-			 *
-			 * May trigger the folloiwng WP filter/actions:
-			 * - set_current_user
-			 *
-			 * @see https://developer.wordpress.org/reference/functions/wp_set_current_user/
-			 */
-			wp_set_current_user( $user_id );
+			wpmem_set_as_logged_in( $user_id );
 		}
 	}
 

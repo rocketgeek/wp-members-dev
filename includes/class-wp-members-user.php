@@ -1018,8 +1018,29 @@ class WP_Members_User {
 	 */
 	public function set_as_logged_in( $user_id ) {
 		$user = get_user_by( 'id', $user_id );
-		wp_set_current_user( $user_id, $user->user_login );
+		/**
+		 * Sets the WP auth cookie.
+		 *
+		 * May trigger the following WP filter/actions:
+		 * - auth_cookie_expiration
+		 * - secure_auth_cookie
+		 * - secure_logged_in_cookie
+		 * - set_auth_cookie
+		 * - set_logged_in_cookie
+		 * - send_auth_cookies
+		 *
+		 * @see https://developer.wordpress.org/reference/functions/wp_set_auth_cookie/
+		 */
 		wp_set_auth_cookie( $user_id, wpmem_get( 'rememberme', false, 'request' ) );
+		/**
+		 * Sets the user as logged in.
+		 *
+		 * May trigger the folloiwng WP filter/actions:
+		 * - set_current_user
+		 *
+		 * @see https://developer.wordpress.org/reference/functions/wp_set_current_user/
+		 */
+		wp_set_current_user( $user_id, $user->user_login );
 	}
 	
 	/**
