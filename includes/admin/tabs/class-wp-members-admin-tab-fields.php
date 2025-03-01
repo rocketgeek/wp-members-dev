@@ -195,12 +195,21 @@ class WP_Members_Admin_Tab_Fields {
 					<?php } ?>
 				</li>
 				<li>
-					<label><?php _e( 'Display?', 'wp-members' ); ?></label>
+					<label><?php _e( 'Registration', 'wp-members' ); ?></label>
 					<?php if ( 'username' != $meta_key && 'user_email' != $meta_key ) { ?>
 					<input type="checkbox" name="add_display" value="y" <?php echo ( $mode == 'edit' ) ? checked( true, $field['register'] ) : false; ?> />
 					<?php } else { ?>
 					<span><?php _e( 'This field is always displayed', 'wp-members' ); ?></span>
 					<input type="hidden" name="add_display" value="y" />
+					<?php } ?>
+				</li>
+				<li>
+				<label><?php _e( 'Profile', 'wp-members' ); ?></label>
+					<?php if ( 'username' != $meta_key && 'user_email' != $meta_key ) { ?>
+					<input type="checkbox" name="add_profile" value="y" <?php echo ( $mode == 'edit' ) ? checked( true, $field['profile'] ) : false; ?> />
+					<?php } else { ?>
+					<span><?php _e( 'This field cannot be changed', 'wp-members' ); ?></span>
+					<input type="hidden" name="add_profile" value="y" />
 					<?php } ?>
 				</li>
 				<li>
@@ -346,9 +355,9 @@ class WP_Members_Admin_Tab_Fields {
 				<?php echo ( $mode == 'add' ) ? '</div>' : '';
 				} ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'select' || $field['type'] == 'multiselect' ) ) ) { ?>
-				<li>
+				<li id="add_dropdown_value">
 					<label style="vertical-align:top"><?php _e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo $span_required; ?></label>
-					<textarea name="add_dropdown_value" id="add_dropdown_value" rows="5" cols="40"><?php
+					<textarea name="add_dropdown_value" rows="8" cols="60"><?php
 	// Accomodate editing the current dropdown values or create dropdown value example.
 	if ( $mode == 'edit' ) {
 	for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
@@ -368,9 +377,9 @@ Last Row|last_row
 					</li>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'radio' || $field['type'] == 'multicheckbox' ) ) ) { ?>
-				<li>
+				<li id="add_radio_value" >
 					<label style="vertical-align:top"><?php _e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo $span_required; ?></label>
-					<textarea name="add_radio_value" id="add_radio_value" rows="5" cols="40"><?php
+					<textarea name="add_radio_value" rows="8" cols="60"><?php
 	// Accomodate editing the current radio values or create radio value example.
 	if ( $mode == 'edit' ) {
 	for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
@@ -756,6 +765,7 @@ Last Row|last_row
 				$arr[3] = $type;
 				$arr[4] = ( 'y' == wpmem_get( 'add_display', 'n'  ) ) ? 'y' : 'n';
 				$arr[5] = ( 'y' == wpmem_get( 'add_required', 'n' ) ) ? 'y' : 'n';
+				$arr['profile'] = ( 'y' == wpmem_get( 'add_profile', 'n' ) ) ? true : false;
 
 				// Mark native fields:
 				$native_fields = array( 'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'display_name', 'first_name', 'last_name', 'nickname', 'description' );
@@ -793,7 +803,7 @@ Last Row|last_row
 					|| $type == 'multicheckbox' 
 				) {
 					// Get the values.
-					$which_post = ( $type == 'radio' || $type == 'multicheckbox' ) ? 'add_radio_value' : 'add_dropdown_value';
+					$which_post = ( $type == 'radio' || $type == 'multicheckbox' || $type == 'multiselect' ) ? 'add_radio_value' : 'add_dropdown_value';
 					$str = stripslashes( sanitize_textarea_field( $_POST[ $which_post ] ) );
 					// Remove linebreaks.
 					$str = trim( str_replace( array("\r", "\r\n", "\n"), '', $str ) );
