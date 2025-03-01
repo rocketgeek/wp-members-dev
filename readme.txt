@@ -131,6 +131,10 @@ WP-Members 3.5.2 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 
 == Changelog ==
 
+= 3.5.3 =
+
+* Fixes a bug in the default TOS dialog that causes a fatal error when opening the new window.
+
 = 3.5.2 =
 
 * Fixes a bug in the WP_Members_Dialogs::get_text() for unknown keys (reconfirm_link_before & reconfirm_link).
