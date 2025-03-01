@@ -134,7 +134,9 @@ WP-Members 3.5.2 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 = 3.5.3 =
 
 * Prepares for changes in default dialogs with legacy option or new option (certain default dialogs will be removed from the admin panel by version 3.6.0).
-* Adds link (href) support for field labels.
+* Add link (href) support for field labels.
+* Add wpmem_create_form_label_args filter.
+* Add wpmem_create_form_label_anchor_tag filter.
 * Clean up new field add screen, adds register/profile as separate options (could previously only be selected on main table view), sets proper textarea for multiple checkbox settings.
 * Fixes a bug in the default TOS dialog that causes a fatal error when opening the new window.
 

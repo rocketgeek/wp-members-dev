@@ -521,7 +521,7 @@ class WP_Members_Forms {
 			 * @param  string  $meta_key
 			 * @param  string  $href
 			 */
-			$anchor_tag = apply_filters( 'wpmem_create_form_label_a_href', '<a href="' . $args['label_href'] . '" target="_blank">', $args['meta_key'], $args['label_href'] );
+			$anchor_tag = apply_filters( 'wpmem_create_form_label_anchor_tag', '<a href="' . $args['label_href'] . '" target="_blank">', $args['meta_key'], $args['label_href'] );
 			$label_text = sprintf( $label_text, $anchor_tag, '</a>' );
 		}
 		
