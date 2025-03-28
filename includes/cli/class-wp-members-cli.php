@@ -1,5 +1,10 @@
 <?php
 
+require_once 'class-wp-members-cli-memberships.php';
+require_once 'class-wp-members-cli-user.php';
+require_once 'class-wp-members-cli-settings.php';
+require_once 'class-wp-members-cli-db-tools.php';
+
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
@@ -7,7 +12,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 */
 	class WP_Members_CLI {
 
-		public function __construct() {}
+		public function __construct() {
+		}
 		
 		/**
 		 * Object getter.
