@@ -411,3 +411,79 @@ function wpmem_generate_membership_expiration_date( $membership, $user_id, $set_
 	global $wpmem;
 	return $wpmem->membership->set_product_expiration( $membership, $user_id, $set_date, $prev_value, $renew );
 }
+
+// @todo EXPERIMENTAL
+// Anything after this line is subject to change in future versions, including the name.
+/**
+ * Gets the count(s) of a given membership.
+ * 
+ * @since 3.5.3
+ * 
+ * @param  string  $membership  The membership slug
+ * @param  string  $type        What type of count to get (all|active|expired default:all)
+ * @return int     $count
+ */
+function wpmem_get_membership_count( $membership, $type = "all" ) {
+	global $wpdb;
+	$user_meta = wpmem_get_membership_meta( $membership );
+	switch ( $type ) {
+		case "active":
+			$period = strtotime( "-" . wpmem_get_expiration_period( $membership ), time() );
+			$compare = ">";
+			break;
+		case "expired":
+			$period = strtotime( "-" . wpmem_get_expiration_period( $membership ), time() );
+			$compare = "<";
+			break;
+		default:
+			$period = 0;
+			$compare = ">";
+			break;
+	}
+
+	//if ( $period ) {
+		// It's an expiration membership
+		$sql = "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" AND meta_value ' . $compare . ' ' . $period . ' ORDER BY meta_value;';
+	//} else {
+		// It's not an expiration membership
+	//}
+
+	$results = $wpdb->get_results( $sql );
+
+	return count( $results );
+}
+
+/**
+ * Checks whether a membership is an expiration membership.
+ * 
+ * @since 3.5.3
+ * 
+ * @param  string  $membership  The membership slug
+ * @return boolean
+ */
+function wpmem_is_membership_expirable( $membership ) {
+	global $wpmem;
+	$exp_period = ( isset( $wpmem->membership->memberships[ $membership ]['expires'] ) ) ? $wpmem->membership->memberships[ $membership ]['expires'] : false;
+	return ( is_array( $exp_period ) ) ? true : false;
+}
+
+/**
+ * Gets the expiration period for a membership.
+ * 
+ * @since 3.5.3
+ * 
+ * @param  string  $membership  The membership slug
+ * @param  boolean $raw         Whether to return raw array (default) or string of period (i.e. "1 year")
+ * @return mixed                Returns string of period for use in time() functions (i.e. "1 year") or 
+ *                              the raw array (array(1,year)) if $raw=true.
+ */
+function wpmem_get_expiration_period( $membership, $raw = false ) {
+	global $wpmem;
+	$exp_period = ( isset( $wpmem->membership->memberships[ $membership ]['expires'] ) ) ? $wpmem->membership->memberships[ $membership ]['expires'] : false;
+	if ( is_array( $exp_period ) ) {
+		$period = explode("|", $exp_period[0]);
+		return ( ! $raw ) ? $period[0] . ' ' . $period[1] : $period; 
+	} else {
+		return false;
+	}
+}
