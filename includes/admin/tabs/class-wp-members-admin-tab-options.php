@@ -177,9 +177,8 @@ class WP_Members_Admin_Tab_Options {
 								<h3><?php esc_html_e( 'New Feature Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/new-feature-settings/" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<?php
 								$rows = array(
-									array(__('Remove legacy dialogs', 'wp-members' ),'wpmem_legacy_dialogs'),
+									array( 'Remove legacy dialogs', 'wpmem_legacy_dialogs' ),
 								);
-								$checkbox_value = get_option( 'wpmem_legacy_dialogs' );
 								?><ul><?php
 								foreach ( $rows as $key => $row ) { ?>
 								  <li>
@@ -574,9 +573,9 @@ class WP_Members_Admin_Tab_Options {
 			}
 
 			if ( 1 == wpmem_get_sanitized( 'wpmem_legacy_dialogs', 0, 'post', 'int' ) ) {
-				update_option( 'wpmem_legacy_dialogs', 0, false );
-			} else {
 				update_option( 'wpmem_legacy_dialogs', 1, false );
+			} else {
+				update_option( 'wpmem_legacy_dialogs', 0, false );
 			}
 
 			WP_Members_Admin_Tab_Options::save_settings( $wpmem_newsettings );

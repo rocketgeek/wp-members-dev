@@ -70,22 +70,19 @@ class WP_Members_Admin_Tab_Dialogs {
 							<form name="updatedialogform" id="updatedialogform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 							<?php wp_nonce_field( 'wpmem-update-dialogs' ); ?>
 								<table class="form-table">
-								<?php if ( ! empty ( $wpmem->admin->dialogs ) ) {
-
-									// Are we using deprecated dialogs?
-									$use_deprecated = get_option( 'wpmem_legacy_dialogs' );
-									$deprecated_dialogs = ( $use_deprecated ) ? $wpmem->dialogs->get_deprecated_dialogs() : array();
+								<?php 
+								if ( ! empty ( $wpmem->admin->dialogs ) ) {
 									foreach( $wpmem->admin->dialogs as $key => $dialog ) {
-										if ( ! array_key_exists( $key, $deprecated_dialogs ) ) {
-											$wpmem->admin->do_dialog_input( $dialog );
-										}
+										$wpmem->admin->do_dialog_input( $dialog );
 									}
-								} ?>
-								<?php $wpmem_tos = stripslashes( get_option( 'wpmembers_tos' ) ); ?>
+								}
+								//if ( 0 == get_option( 'wpmem_legacy_dialogs' ) ) {
+									$wpmem_tos = stripslashes( get_option( 'wpmembers_tos' ) ); ?>
 									<tr valign="top"> 
 										<th scope="row"><?php esc_html_e( 'Terms of Service (TOS)', 'wp-members' ); ?></th> 
 										<td><textarea name="dialogs_tos" rows="3" cols="50" id="" class="large-text code"><?php echo esc_textarea( $wpmem_tos ); ?></textarea></td> 
-									</tr>
+									</tr><?php 
+								//} ?>
 									<tr valign="top">
 										<th scope="row">&nbsp;</th>
 										<td>

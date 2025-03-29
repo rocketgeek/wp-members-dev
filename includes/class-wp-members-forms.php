@@ -60,7 +60,7 @@ class WP_Members_Forms {
 			$woo_reg_fields = ( $woo_reg_fields ) ? $woo_reg_fields : array();
 		}
 
-		// @todo Possibly need to establish $assembled_fields as an array explicitly.
+		// Establish $assembled_fields as an array explicitly.
 		$assembled_fields = array();
 
 		// Add new field array keys
@@ -1389,7 +1389,7 @@ class WP_Members_Forms {
 					// @todo "checkbox_label" should be set already, check why it isn't.
 					if ( 'checkbox' == $field['type'] && isset( $field['checkbox_label'] ) && 1 == $field['checkbox_label'] ) {
 						$input = $input . ' <label for="' . $meta_key . '">' . $label . '</label>';
-						$fields[ $meta_key ]['label'] = $field['label'] = $label = '';
+						$label = ''; // @todo Overdoing it throws a "Automatic conversion of false to array is deprecated" error: $fields[ $meta_key ]['label'] = $field['label'] = $label = '';
 					}
 				}
 

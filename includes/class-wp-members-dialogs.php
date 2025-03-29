@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Members_Dialogs {
 	
 	function __construct() {
-		if ( 0 == get_option( 'wpmem_legacy_dialogs' ) ) {
+		if ( 1 == get_option( 'wpmem_legacy_dialogs' ) ) {
 			add_filter( 'wpmem_msg_defaults', array( $this, 'map_deprecated_dialogs' ), 10, 3 );
 		}
 	}
@@ -138,7 +138,7 @@ class WP_Members_Dialogs {
 			'reg_valid_email'      => esc_html__( 'You must enter a valid email address.', 'wp-members' ),
 			'reg_non_alphanumeric' => esc_html__( 'The username cannot include non-alphanumeric characters.', 'wp-members' ),
 			'reg_empty_username'   => esc_html__( 'Sorry, username is a required field', 'wp-members' ),
-			'reg_username_taken'   => esc_html__( 'Sorry, that username is taken, Please try another.', 'wp-members' ),
+			'reg_username_taken'   => esc_html__( 'Sorry, that username is taken. Please try another.', 'wp-members' ),
 			'reg_email_taken'      => esc_html__( 'Sorry, that email address already has an account. Please try another.', 'wp-members' ),
 			'reg_password_match'   => esc_html__( 'Passwords did not match.', 'wp-members' ),
 			'reg_email_match'      => esc_html__( 'Emails did not match.', 'wp-members' ),

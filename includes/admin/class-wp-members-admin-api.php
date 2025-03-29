@@ -478,6 +478,8 @@ class WP_Members_Admin_API {
 	 * @since 3.1.1
 	 */	
 	function default_dialogs() {
+
+		global $wpmem;
 		
 		/**
 		 * Filter the dialog array to add custom dialogs.
@@ -499,7 +501,10 @@ class WP_Members_Admin_API {
 			'pwdreseterr'      => esc_html__( "Username or email do not exist when trying to reset forgotten password", 'wp-members' ),
 			'pwdresetsuccess'  => esc_html__( "Password reset", 'wp-members' ),
 		);
-		
+
+		// @todo Are we using deprecated dialogs? This will be used to remove them from display in the tab - maybe 3.5.4?
+		// $deprecated_dialogs = ( 1 == get_option( 'wpmem_legacy_dialogs' ) ) ? $wpmem->dialogs->get_deprecated_dialogs() : array();	
+
 		foreach ( $dialogs as $key => $val ) {
 			if ( array_key_exists( $key, $dialog_labels ) ) {
 				$dialogs[ $key ] = array(
