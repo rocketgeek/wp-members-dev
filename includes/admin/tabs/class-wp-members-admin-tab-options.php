@@ -179,6 +179,7 @@ class WP_Members_Admin_Tab_Options {
 								$rows = array(
 									array( 'Remove legacy dialogs', 'wpmem_legacy_dialogs' ),
 								);
+								$checkbox_value = get_option( 'wpmem_legacy_dialogs' );
 								?><ul><?php
 								foreach ( $rows as $key => $row ) { ?>
 								  <li>
