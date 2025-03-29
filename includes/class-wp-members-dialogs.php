@@ -380,7 +380,7 @@ class WP_Members_Dialogs {
 		 *
 		 * @param array An array of arguments to merge with defaults.
 		 */
-		$args = apply_filters_deprecated( 'wpmem_msg_args', array(''), '3.2.0', 'wpmem_dialogs' );
+		$args = apply_filters_deprecated( 'wpmem_msg_args', array(''), '3.3.0', 'wpmem_msg_defaults' );
 
 		/** This filter is documented in /includes/class-wp-members-admin-api.php */
 		$dialogs = apply_filters( 'wpmem_dialogs', get_option( 'wpmembers_dialogs' ) );

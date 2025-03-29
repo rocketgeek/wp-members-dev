@@ -819,7 +819,7 @@ class WP_Members_Products_Admin {
 	 */
 	function user_views( $views, $show ) {
 
-		global $wpdb, $wpmem;
+		global $wpmem;
 
 		// Add a view for each membership
 		foreach ( $wpmem->membership->membership_by_id as $membership_slug ) {
@@ -848,7 +848,7 @@ class WP_Members_Products_Admin {
 	 */
 	function query_where( $query_where, $show ) {
 
-		global $wpdb, $wpmem;
+		global $wpmem;
 
 		// Check for membership views.
 		foreach ( $wpmem->membership->membership_by_id as $membership_slug ) {
