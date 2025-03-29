@@ -511,17 +511,30 @@ class WP_Members_Forms {
 		$req_mark = ( ! isset( $args['req_mark'] ) || ! $args['req_mark'] ) ? wpmem_get_text( 'register_req_mark' ) : $args['req_mark'];
 
 		$label_text = __( $args['label'], 'wp-members' );
-		if ( $args['label_href'] ) {
+		if ( isset( $args['label_href'] ) && '' != $args['label_href'] ) {
+
+			// Adjust placeholders.
+			$label_text = str_replace( '%', '%s', $label_text );
+
 			/**
 			 * Filters the anchor tag.
 			 * 
 			 * @since 3.5.3
 			 * 
-			 * @param  string  $tag
-			 * @param  string  $meta_key
-			 * @param  string  $href
+			 * @param  array   $atts     An array of attributes for the <a> tag.
+			 * @param  string  $meta_key Meta key of the field.
 			 */
-			$anchor_tag = apply_filters( 'wpmem_create_form_label_anchor_tag', '<a href="' . $args['label_href'] . '" target="_blank">', $args['meta_key'], $args['label_href'] );
+			$tag_atts = apply_filters( 'wpmem_form_label_link', array ( 
+				'href'   => $args['label_href'],
+				'target' => '_blank',
+			), $args['meta_key'] );
+			
+			$anchor_tag = "<a ";
+			foreach ( $tag_atts as $attribute => $value ) {
+				$anchor_tag .= ( '' != $value ) ? esc_attr( $attribute ) . '="' . esc_attr( $value ) . '" ' : esc_attr( $attribute ) . ' ';
+			}
+			$anchor_tag .= ">";
+			
 			$label_text = sprintf( $label_text, $anchor_tag, '</a>' );
 		}
 		
