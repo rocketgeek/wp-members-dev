@@ -1232,12 +1232,12 @@ class WP_Members_User {
 		$prev_value = get_user_meta( $user_id, '_wpmem_products_' . $membership, true );
 
 		// Convert date to add.
-		$expiration_period = ( isset( $wpmem->membership->memberships[ $membership ]['expires'] ) ) ? $wpmem->membership->memberships[ $membership ]['expires'] : false;
+		$expiration_period = wpmem_get_expiration_period( $membership ); // Only needs to check if it's an expriation membership?
 		
 		$renew = ( $prev_value ) ? true : false;
 	
 		// If membership is an expiration product.
-		if ( is_array( $expiration_period ) ) {
+		if ( $expiration_period ) {
 			$new_value = wpmem_generate_membership_expiration_date( $membership, $user_id, $set_date, $prev_value, $renew );
 		} else {
 			$new_value = true;
