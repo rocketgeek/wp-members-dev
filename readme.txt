@@ -107,7 +107,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.2 is a bug fix release. WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.3 is a feature update release. It fixes some minor bugs and adds new filters and some additional features. WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -136,9 +136,10 @@ WP-Members 3.5.2 is a bug fix release. WP-Members 3.5.0 is a major update. See c
 * Prepares for changes in default dialogs with legacy option or new option (certain default dialogs will be removed from the admin panel by version 3.6.0).
 * Add link (href) support for field labels.
 * Add wpmem_create_form_label_args filter.
-* Add wpmem_create_form_label_anchor_tag filter.
+* Add wpmem_form_label_link filter.
 * Clean up new field add screen, adds register/profile as separate options (could previously only be selected on main table view), sets proper textarea for multiple checkbox settings.
 * Fixes a bug in the default TOS dialog that causes a fatal error when opening the new window.
+* Deprecated default TOS in favor of custom linked labels (old field is valid if used, but does not install as default with new install)
 
 = 3.5.2 =
 

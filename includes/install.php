@@ -353,7 +353,6 @@ function wpmem_install_fields() {
 		array( 13, 'Biographical Info', 'description',       'textarea', 'n', 'n', 'y', 'profile'=>1 ),
 		array( 14, 'Password',          'password',          'password', 'n', 'n', 'n', 'profile'=>0 ),
 		array( 15, 'Confirm Password',  'confirm_password',  'password', 'n', 'n', 'n', 'profile'=>0 ),
-		array( 16, 'Terms of Service',  'tos',               'checkbox', 'n', 'n', 'n', 'agree', 'n', 'profile'=>0 ),
 	);
 	update_option( 'wpmembers_fields', $fields, false ); // using update_option to allow for forced update
 	return $fields;
