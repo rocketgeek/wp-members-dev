@@ -256,10 +256,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                     $list[] = array( 'Views'=>$result->{'Tables_in_'.$wpdb->dbname} );
                 }
 
+                /* translators: %s is the placeholder for the name of the database, do not remove it. */
                 WP_CLI::line( sprintf( __( 'List of views contained in %s', 'wp-members' ), $wpdb->dbname ) );
                 $formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Views' ) );
                 $formatter->display_items( $list );
             } else {
+                /* translators: %s is the placeholder for the name of the database, do not remove it. */
                 WP_CLI::line( sprintf( __( 'There are no views in %s', 'wp-members' ), $wpdb->dbname ) );
             }
         }
@@ -278,6 +280,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                 foreach( $results as $result ) {
                     $list[] = array( 'Field'=>$result );
                 }
+                /* translators: %s %s is the placeholder for the name of the database and prefix, do not remove it. */
                 WP_CLI::line( sprintf( __( 'List of meta keys contained in %s %s', 'wp-members' ), $wpdb->dbname, $wpdb->prefix . esc_attr( $args[0] ) ) );
                 $formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Field' ) );
                 $formatter->display_items( $list );

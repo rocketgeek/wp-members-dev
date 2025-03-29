@@ -10,7 +10,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		public function list( $args, $assoc_args ) {
             $memberships = wpmem_get_memberships();
 			if ( empty( $memberships ) ) {
-				WP_CLI::line( 'There are no memberships created for this site' );
+				WP_CLI::line( __( 'There are no memberships created for this site', 'wp-members' ) );
 			} else {
 				foreach ( $memberships as $membership ) {
 					 $list[] = array(
@@ -19,7 +19,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					 );
 				}
 
-				WP_CLI::line( 'WP-Members memberships:' );
+				WP_CLI::line( __( 'WP-Members memberships:', 'wp-members' ) );
 				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'name', 'slug' ) );
 				$formatter->display_items( $list );
 			}
@@ -46,7 +46,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 					$memberships = wpmem_get_memberships();
 					if ( empty( $memberships ) ) {
-						WP_CLI::error( 'There are no memberships' );
+						WP_CLI::error( __( 'No memberships exist for this site', 'wp-members' ) );
 					}
 
 					// Is this "all" as in "all memberships" or "all" as in "all counts of an individual membership"?
@@ -58,10 +58,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						$expired_count = wpmem_get_membership_count( $membership['name'], 'expired' );
 						$total_count   = wpmem_get_membership_count( $membership['name'] );
 
-						WP_CLI::line( 'Counts for "' . $membership['title'] . '" membership:' );
-						WP_CLI::line( 'Active: ' . $active_count );
-						WP_CLI::line( 'Expired: ' . $expired_count );
-						WP_CLI::line( 'Total: ' . $total_count );
+						/* translators: %s is the placeholder for the name of the membership, do not remove it. */
+						WP_CLI::line( sprintf( __( 'Counts for "%s" membership:', 'wp-members' ), $membership['title'] ) );
+						WP_CLI::line( __( 'Active: ', 'wp-members' ) . $active_count );
+						WP_CLI::line( __( 'Expired: ', 'wp-members' ) . $expired_count );
+						WP_CLI::line( __( 'Total: ', 'wp-members' ) . $total_count );
 
 					} else {
 
@@ -79,7 +80,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 							);
 						}
 		
-						WP_CLI::line( 'WP-Members membership counts:' );
+						WP_CLI::line( __( 'WP-Members membership counts:', 'wp-members' ) );
 						$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Membership', 'Active', 'Expired', 'Total' ) );
 						$formatter->display_items( $list );
 					}
@@ -91,7 +92,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					$memberships = wpmem_get_memberships();
 
 					if ( empty( $memberships ) ) {
-						WP_CLI::error( 'There are no memberships' );
+						WP_CLI::error( __( 'No memberships exist for this site', 'wp-members' ) );
 					}
 
 					$membership = $args[0];

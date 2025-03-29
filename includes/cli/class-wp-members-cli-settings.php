@@ -128,7 +128,7 @@ class WP_Members_CLI_Settings {
 				'Value' => $enabled,
 			);
 		}
-		WP_CLI::line( 'Custom post type settings for WP-Members:' );
+		WP_CLI::line( __( 'Custom post type settings for WP-Members:', 'wp-members' ) );
 		$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Post Type', 'Value' ) );
 		$formatter->display_items( $list ); 
 	}
@@ -153,22 +153,25 @@ class WP_Members_CLI_Settings {
 		if ( isset( $assoc_args['enable'] ) || isset( $assoc_args['disable'] ) ) {
 			$post_types = $wpmem->admin->post_types();
 			if ( ( isset( $assoc_args['enable'] ) && ! array_key_exists( $assoc_args['enable'], $post_types ) ) || ( isset( $assoc_args['disable'] ) && ! array_key_exists( $assoc_args['disable'], $post_types ) ) ) {
-				WP_CLI::error( 'Not an available post type. Try wp mem settings post_types' );
+				WP_CLI::error( __( 'Not an available post type. Try wp mem settings post_types', 'wp-members' ) );
 			}
 			// Handle disable.
 			if ( isset( $assoc_args['disable'] ) ) {
 				unset( $wpmem->post_types[ $assoc_args['disable'] ] );
 				wpmem_update_option( 'wpmembers_settings', 'post_types', $wpmem->post_types, true );
-				WP_CLI::success( 'Disabled ' . $assoc_args['disable'] . ' post type.' );
+				/* translators: %s is the placeholder for the name of the post type, do not remove it. */
+				WP_CLI::success( sprintf( __( 'Disabled %s post type.', 'wp-members' ), $assoc_args['disable'] ) );
 			}
 			if ( isset( $assoc_args['enable'] ) ) {
 				$cpt_obj = get_post_type_object( $assoc_args['enable'] );	
 				$new_post_types = array_merge($wpmem->post_types, array( $cpt_obj->name => $cpt_obj->labels->name ) );
 				wpmem_update_option( 'wpmembers_settings', 'post_types', $new_post_types, true );
-				WP_CLI::success( 'Enabled ' . $assoc_args['enable'] . ' post type.' );
+				/* translators: %s is the placeholder for the name of the post type, do not remove it. */
+				WP_CLI::success( sprintf( __( 'Enabled %s post type.', 'wp-members' ), $assoc_args['enable'] ) );
 			}
 		} else {
-			WP_CLI::error( 'Must specify an option: --enable=<post_type> or --disable=<post_type>' );
+			/* translators: --enable=<post_type> and --disable=<post_type> are CLI command arguments, do not translate them. */
+			WP_CLI::error( __( 'Must specify an option: --enable=<post_type> or --disable=<post_type>', 'wp-members' ) );
 		}
 	}
 	
@@ -189,7 +192,8 @@ class WP_Members_CLI_Settings {
 		$settings = $wpmem->admin->settings( 'options' );
 		if ( array_key_exists( $args[0], $settings ) && 'captcha' !== $args[0] ) {
 			wpmem_update_option( 'wpmembers_settings', $args[0], 1, true );
-			WP_CLI::success( $settings[ $args[0] ] . ' enabled' );
+			/* translators: %s is the meta key of the setting */
+			WP_CLI::success( sprintf( __( '%s enabled', 'wp-members' ), $settings[ $args[0] ] ) );
 		}
 		if ( array_key_exists( $args[0], $settings ) && 'captcha' === $args[0] ) {
 			switch( $args[1] ) {
@@ -204,7 +208,8 @@ class WP_Members_CLI_Settings {
 					break;
 			}
 			wpmem_update_option( 'wpmembers_settings', $args[0], $which, true );
-			WP_CLI::success( $settings[ $args[0] ] . ' ' . $args[1] . ' enabled' );
+			/* translators: %s is the meta key of the setting */
+			WP_CLI::success(  sprintf( __( '%s %s enabled', 'wp-members' ), $settings[ $args[0] ], $args[1] ) );
 		}
 	}
 	
@@ -225,7 +230,8 @@ class WP_Members_CLI_Settings {
 		$settings = $wpmem->admin->settings( 'options' );
 		if ( array_key_exists( $args[0], $settings ) ) {
 			wpmem_update_option( 'wpmembers_settings', $args[0], 0, true );
-			WP_CLI::success( $settings[ $args[0] ] . ' disabled' );
+			/* translators: %s is the meta key of the setting */
+			WP_CLI::success( sprintf( __( '%s disabled', 'wp-members' ), $settings[ $args[0] ] ) );
 		}
 	}
 	
@@ -264,11 +270,13 @@ class WP_Members_CLI_Settings {
 	 */
 	public function pages( $args, $assoc_args ) {
 		if ( empty( $args ) ) {
-			WP_CLI::error( 'You must specify clear|set|list', true );
+			/* translators: do not translate "clear|set|list", these are the command values */
+			WP_CLI::error( __( 'You must specify clear|set|list', 'wp-members' ), true );
 		}
 		if ( 'clear' == $args[0] ) {
 			if ( empty( $assoc_args ) ) {
-				WP_CLI::error( 'You must specify --all or --login|register|profile', true );
+				/* translators: do not translate "--all" or "--login|register|profile" (the word "or" can be translated), these are the command values */
+				WP_CLI::error( __( 'You must specify --all or --login|register|profile', 'wp-members' ), true );
 			}
 			if ( isset( $assoc_args['all'] ) ) {
 				unset( $assoc_args['all'] );
@@ -277,19 +285,20 @@ class WP_Members_CLI_Settings {
 			foreach ( $assoc_args as $page => $value ) {
 				if ( isset( $assoc_args[ $page ] ) ) {
 					wpmem_update_option( 'wpmembers_settings', 'user_pages/' . $page, '', true );
-					WP_CLI::success( ucfirst( $page ) . ' page cleared' );
+					WP_CLI::success( sprintf( __( '%s page cleared', 'wp-members' ), ucfirst( $page ) ) );
 				}	
 			}
 			return;
 		}
 		if ( 'set' == $args[0] ) {
 			if ( empty( $assoc_args ) ) {
-				WP_CLI::error( 'You must specify which page(s) to set: --login=<ID>, --register=<ID>, --profile=<ID>', true );
+				/* translators: do not translate "--login=<ID>, --register=<ID>, --profile=<ID>", these are the command values */
+				WP_CLI::error( __( 'You must specify which page(s) to set: --login=<ID>, --register=<ID>, --profile=<ID>', 'wp-members' ), true );
 			}
 			foreach ( $assoc_args as $page => $value ) {
 				if ( isset( $assoc_args[ $page ] ) ) {
 					wpmem_update_option( 'wpmembers_settings', 'user_pages/' . $page, $assoc_args[ $page ], true );
-					WP_CLI::success( ucfirst( $page ) . ' page set to ID ' . $assoc_args[ $page ] );
+					WP_CLI::success( sprintf( __( '%s page set to ID %s', 'wp-members' ), ucfirst( $page ), $assoc_args[ $page ] ) );
 				}
 			}
 			return;
