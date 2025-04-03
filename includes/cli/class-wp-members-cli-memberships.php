@@ -109,6 +109,30 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			
 			
 		}
+
+		public function add( $args, $assoc_args ) {
+
+		}
+
+		public function remove( $args, $assoc_args ) {
+			$membership = $args[0];
+
+			if ( isset( $assoc_args['ID'] ) ) {
+				$user_id = $assoc_args['ID'];
+			} elseif ( isset( $assoc_args['login'] ) ) {
+				$user = get_user_by( 'login', $assoc_args['login'] );
+				$user_id = $user->ID;
+			} elseif ( isset( $assoc_args['email'] ) ) {
+				$user = get_user_by( 'email', $assoc_args['email'] );
+				$user_id = $user->ID;
+			} else {
+				WP_CLI::error( __( 'No valid user data from inputs', 'wp-members' ) );
+			}
+
+			wpmem_remove_user_membership( $membership, $user_id );
+
+			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user_id ) );
+		}
 	}
 }
 WP_CLI::add_command( 'mem membership', 'WP_Members_CLI_Memberships' );

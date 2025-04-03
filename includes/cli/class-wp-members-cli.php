@@ -1,9 +1,10 @@
 <?php
 
-require_once 'class-wp-members-cli-memberships.php';
-require_once 'class-wp-members-cli-user.php';
-require_once 'class-wp-members-cli-settings.php';
 require_once 'class-wp-members-cli-db-tools.php';
+require_once 'class-wp-members-cli-import.php';
+require_once 'class-wp-members-cli-memberships.php';
+require_once 'class-wp-members-cli-settings.php';
+require_once 'class-wp-members-cli-user.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 

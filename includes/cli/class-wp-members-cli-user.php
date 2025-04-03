@@ -234,7 +234,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @since 3.3.5
 		 */
 		public function confirm( $args, $assoc_args ) {
-			global $wpmem;
 			$validation = $this->validate_user_id( $assoc_args['id'] );
 			if ( true === $validation ) {
 				wpmem_set_user_as_confirmed( $assoc_args['id'] );
@@ -249,8 +248,30 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				
 			} else {
 				/* translators: %s is the placeholder for user role, do not remove it. */
-				WP_CLI::line( __( 'User role: %s', 'wp-members' ), $role );
+				WP_CLI::line( sprintf( __( 'User role: %s', 'wp-members' ), $role ) );
 			}
+		}
+
+		/**
+		 * @alias set-membership
+		 */
+		public function set_membership( $args, $assoc_args ) {
+
+			// is user by id, email, or login
+			$user_by = ( isset( $assoc_args['user_by'] ) ) ? $assoc_args['user_by'] : 'login';
+			$user = get_user_by( $user_by, $args[0] );
+			if ( empty( $user ) || ! $user ) {
+				WP_CLI::error( __( 'User does not exist. Try wp user list', 'wp-members' ) );
+			}
+
+			$membership = $assoc_args['key'];
+
+			$date = ( isset( $assoc_args['date'] ) ) ? $assoc_args['date'] : false;
+
+			wpmem_set_user_membership( $membership, $user->ID, $date );
+
+			/* translators: %s is the placeholder for membership and user id, do not remove it. */
+			WP_CLI::line( sprintf( __( 'Set %s membership for user %s', 'wp-members' ), $membership, $user->user_login ) );
 		}
 	}
 }
