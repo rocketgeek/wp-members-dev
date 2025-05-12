@@ -98,9 +98,10 @@ function wpmem_init() {
 	do_action( 'wpmem_pre_init' );
 
 	/**
-	 * Load the WP_Members class.
+	 * Load initial dependencies.
 	 */
-	require_once( 'includes/class-wp-members.php' );
+	require_once 'includes/vendor/rocketgeek-utilities/loader.php';
+	require_once 'includes/class-wp-members.php';
 	
 	// Invoke the WP_Members class.
 	$wpmem = new WP_Members();
