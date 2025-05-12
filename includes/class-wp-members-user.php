@@ -1223,8 +1223,6 @@ class WP_Members_User {
 	 * @param string $set_date Formatted date should be MySQL timestamp, or simply YYYY-MM-DD.
 	 */
 	function set_user_product( $membership, $user_id = false, $set_date = false ) {
-
-		global $wpmem;
 		
 		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
 		

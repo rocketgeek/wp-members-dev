@@ -1,7 +1,6 @@
 <?php
 global $current_screen, $wpmem;
 
-//rktgk_what_is( $current_screen );
 $which = ( 'update_pending' == $wpmem->install_state ) ? 'update_pending_notice_args' : 'new_install_notice_args'; 
 
 $utms = array( 
