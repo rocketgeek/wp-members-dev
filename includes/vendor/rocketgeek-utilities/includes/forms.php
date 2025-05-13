@@ -7,15 +7,15 @@
  *
  * @package    RocketGeek_Utilities
  * @subpackage RocketGeek_Utilities_Forms
- * @version    1.1.0
+ * @version    1.2.0
  *
  * @link       https://github.com/rocketgeek/rocketgeek-utilities/
  * @author     Chad Butler <https://butlerblog.com>
  * @author     RocketGeek <https://rocketgeek.com>
- * @copyright  Copyright (c) 2024 Chad Butler
+ * @copyright  Copyright (c) 2025 Chad Butler
  * @license    Apache-2.0
  *
- * Copyright [2024] Chad Butler, RocketGeek
+ * Copyright [2025] Chad Butler, RocketGeek
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,11 +59,29 @@ function rktgk_get( $tag, $default = '', $type = 'post' ) {
 }
 endif;
 
+if ( ! function_exists( 'rktgk_get_checkbox_defaults' ) ):
+/**
+ * Gets a default pair (checked or unchecked) for checkbox values.
+ * 
+ * @since 1.2.0
+ * 
+ * @param  string  $tag
+ * @param  array   $defaults
+ * @param  string  $type
+ * @return string  $defaults[$value]
+ */
+function rktgk_get_checkbox_defaults( $tag, $defaults = array( 0, 1 ), $type = 'post' ) {
+	$value = rktgk_get( $tag, false, $type );
+	return ( false != $value ) ? $defaults[1] : $defaults[0];
+}
+endif;
+
 if ( ! function_exists( 'rktgk_get_sanitized' ) ):
 /**
  * Utility function to check if $_POST, $_GET, or $_REQUEST is valid, and sanitizes the result.
  *
  * @since 1.1.0
+ * @since ?.?.? Adds array as a possible type.
  *
  * @param  string $tag          Form field or query string param.
  * @param  string $default      Default value (optional, default: null).
@@ -73,7 +91,11 @@ if ( ! function_exists( 'rktgk_get_sanitized' ) ):
  */
 function rktgk_get_sanitized( $tag, $default = '', $request_type = 'post', $field_type = 'text' ) {
 	$pre_sanitized_tag = rktgk_get( $tag, $default, $request_type );
-	return rktgk_sanitize_field( $pre_sanitized_tag, $field_type );
+	if ( 'array' == $field_type ) {
+		return rktgk_sanitize_array( $pre_sanitized_tag );
+	} else {
+		return rktgk_sanitize_field( $pre_sanitized_tag, $field_type );
+	}
 }
 endif;
 
@@ -118,10 +140,11 @@ if ( ! function_exists( 'rktgk_sanitize_array' ) ):
  * @param  string $type The data type integer|int (default: false)
  * @return array  $data
  */
-function rktgk_sanitize_array( $data, $type = false ) {
+function rktgk_sanitize_array( $data, $type = 'text' ) {
 	if ( is_array( $data ) ) {
 		foreach( $data as $key => $val ) {
-			$data[ $key ] = ( 'integer' == $type || 'int' == $type ) ? intval( $val ) : sanitize_text_field( $val );
+			//$data[ $key ] = ( 'integer' == $type || 'int' == $type ) ? intval( $val ) : sanitize_text_field( $val );
+			$data[ $key ] = rktgk_sanitize_field( $val, $type );
 		}
 	}
 	return $data;
@@ -185,6 +208,14 @@ function rktgk_sanitize_field( $data, $type = '' ) {
 			$sanitized_data = rktgk_sanitize_class( $data );
 			break;
 
+		case 'nonce':
+			$sanitized_data = rktgk_sanitize_nonce( $data );
+			break;
+		
+		case 'kses':
+			$sanitized_data = wp_kses_post( $data );
+			break;
+
 		case 'text':
 		default:
 			$sanitized_data = sanitize_text_field( $data );
@@ -192,5 +223,11 @@ function rktgk_sanitize_field( $data, $type = '' ) {
 	}
 
 	return $sanitized_data;
+}
+endif;
+
+if ( ! function_exists( 'rktgk_sanitize_nonce' ) ):
+function rktgk_sanitize_nonce( $nonce ) {
+	return sanitize_text_field( wp_unslash( $nonce ) );
 }
 endif;
