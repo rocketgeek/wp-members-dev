@@ -543,6 +543,10 @@ class WP_Members {
 			if ( 'pwd_link' != $key || 'login_error' != $key || 'shortcodes' != $key ) {
 				$this->{$key} = $val;
 			}
+			// @todo Check to make sure we don't have an invalid entry.
+			if ( 'cssurl' == $key ) {
+				$this->{$key} = ( 'https://' == $val || 'http://' == $val ) ? '' : $this->{$key};
+			}
 		}
 
 		// Load dependent files.
@@ -745,6 +749,8 @@ class WP_Members {
 	 */
 	function load_constants() {
 		( ! defined( 'WPMEM_MOD_REG' ) ) ? define( 'WPMEM_MOD_REG', $this->mod_reg   ) : '';
+
+		// @todo these are deprecated as of PayPal extension version 0.9.9.1.
 		( ! defined( 'WPMEM_USE_EXP' ) ) ? define( 'WPMEM_USE_EXP', $this->use_exp   ) : '';
 		( ! defined( 'WPMEM_USE_TRL' ) ) ? define( 'WPMEM_USE_TRL', $this->use_trial ) : '';
 	}
@@ -1976,6 +1982,7 @@ class WP_Members {
 	 * method.
 	 * 
 	 * @since 3.5.3
+	 * @todo  Deprecate in 3.6.0, obsolete by 3.7.0 (maybe earlier)
 	 */
 	public function load_tos() {
 		// Check for anything that we should stop execution for (currently just the default tos).
