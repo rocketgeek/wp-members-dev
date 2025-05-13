@@ -369,7 +369,7 @@ class WP_Members_Shortcodes {
 					// @todo What if attribute is comma separated/multiple?
 					$membership = ( isset( $sanitized_atts['membership'] ) ) ? $sanitized_atts['membership'] : $sanitized_atts['product'];
 					$message    = ( isset( $sanitized_atts['msg'] ) && ( true === $sanitized_atts['msg'] || "true" === strtolower( $sanitized_atts['msg'] ) ) ) ? true : false;
-					$not_in     = ( isset( $sanitized_atts['not_in'] ) && "false" != $sanitized_atts['not_in'] ) ? true : false;
+					$not_in     = ( isset( $sanitized_atts['not_in'] ) && "true" == $sanitized_atts['not_in'] ) ? true : false;
 					if ( $not_in ) {
 						$do_return = ( wpmem_user_has_access( $membership ) || ! is_user_logged_in() ) ? false : true;
 					} else {
@@ -387,10 +387,12 @@ class WP_Members_Shortcodes {
 							 *
 							 * @since 3.3.0
 							 * @since 3.3.3 Changed from 'wpmem_sc_product_access_denied'
+							 * @deprecated 3.5.0 Use wpmem_sc_membership_restricted instead.
 							 *
 							 * @param array $settings.
 							 */
-							$settings = apply_filters( 'wpmem_sc_product_restricted', $settings );
+							$settings = apply_filters_deprecated( 'wpmem_sc_product_restricted', array( $settings ), '3.5.0', 'wpmem_sc_membership_restricted' );
+							$settings = apply_filters( 'wpmem_sc_membership_restricted', $settings );
 							$content  = $settings['wrapper_before'] . $settings['msg'] . $settings['wrapper_after'];
 						}
 					}

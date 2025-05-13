@@ -126,12 +126,12 @@ function wpmem_get_memberships_ids() {
  * Get membership id by slug.
  * 
  * @since 3.4.7
- * 
+ * @todo Fix for child memberships
  * @param   string  $membership_slug
  * @return  int     $ID
  */
 function wpmem_get_membership_id( $membership_slug ) {
-	$membership = get_page_by_path( $membership_slug );
+	$membership = get_page_by_path( $membership_slug, OBJECT, 'wpmem_product' );
 	return ( $membership ) ? $membership->ID: false;
 }
 

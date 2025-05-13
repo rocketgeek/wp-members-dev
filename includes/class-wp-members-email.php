@@ -483,11 +483,14 @@ class WP_Members_Email {
 					'user-ip'       => $this->settings['user_ip'],
 					'activate-user' => $this->settings['act_link'],
 					'fields'        => $field_str,
-				);			
+				);
 
 				// Add custom field shortcodes.
 				foreach ( $wpmem_fields as $meta_key => $field ) {
-					$shortcodes[ $meta_key ] = $this->settings['fields'][ $meta_key ];
+					if ( ! array_key_exists( $meta_key, $shortcodes ) ) {
+						$val = ( is_array( $field_data ) && $field['register'] ) ? $field_data[ $meta_key ] : get_user_meta( $user_id, $meta_key, true );
+						$shortcodes[ $meta_key ] = $val;
+					}
 				}
 				// @todo Instead of foreach above: $shortcodes = array_merge( $shortcodes, $this->settings['fields']);
 
