@@ -417,7 +417,7 @@ Last Row|last_row
 			<?php } ?>
 				<li>
 					<label><?php _e( 'Label href', 'wp-members' ); ?></label>
-					<input type="text" name="add_terms_check_href" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['href'] ) ? $field['href'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<input type="text" name="add_terms_check_href" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['label_href'] ) ? $field['label_href'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
 				</li>
 			</ul><br />
 			<?php if ( $mode == 'edit' ) { ?><input type="hidden" name="field_arr" value="<?php echo $meta_key; ?>" /><?php } ?>

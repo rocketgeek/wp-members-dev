@@ -546,8 +546,8 @@ class WP_Members_Forms {
 		
 		$id = ( $args['id'] ) ? ' id="' . esc_attr( $args['id'] ) . '"' : '';
 
-		$label = '<label for="' . esc_attr( $args['meta_key'] ) . '"' . $id . ' class="' . wpmem_sanitize_class( $class ) . '">' . $label_text;
-		$label = ( $args['required'] ) ? $label . $req_mark : $label;
+		$label = '<label for="' . esc_attr( $args['meta_key'] ) . '"' . $id . ' class="' . wpmem_sanitize_class( $class ) . '">' . wpmem_sanitize_field( $label_text, 'kses' );
+		$label = ( $args['required'] ) ? $label . wpmem_sanitize_field( $req_mark, 'kses' ) : $label;
 		$label = $label . '</label>';
 		
 		return $label;
