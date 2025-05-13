@@ -671,9 +671,9 @@ class WP_Members_Products {
 			'no_expire'    => wpmem_get_text( 'membership_sc_no_expire' ), // "Does not expire"
 		);
 
-		$args = shortcode_atts( $pairs, $atts, $tag );
+		$args = wpmem_sanitize_array( shortcode_atts( $pairs, $atts, $tag ), 'kses' );
 
-		$content  = $args['title_before'] . $args['title'] . $args['title_after'];
+		$content  = $args['title_before'] . esc_html( $args['title'] ) . $args['title_after'];
 		$content .= $args['list_before'];
 		foreach ( wpmem_get_user_memberships() as $key => $value ) {
 			
@@ -685,7 +685,7 @@ class WP_Members_Products {
 			}
 
 			if ( $value ) {
-				$content .= $args['item_before'] . wpmem_get_membership_name( $key ) . " - " . $exp_formatted . $args['item_after'];
+				$content .= $args['item_before'] . esc_html( wpmem_get_membership_name( $key ) ) . " - " . esc_html( $exp_formatted ) . $args['item_after'];
 			}
 		}
 		$content .= $args['list_after'];
@@ -703,7 +703,7 @@ class WP_Members_Products {
 			'item_after'   => '</li>',
 		);
 
-		$args = shortcode_atts( $pairs, $atts, $tag );
+		$args = wpmem_sanitize_array( shortcode_atts( $pairs, $atts, $tag ), 'kses' );
 
 		// Go through each membership the user has.
 		foreach ( wpmem_get_user_memberships() as $key => $value ) {
@@ -713,7 +713,7 @@ class WP_Members_Products {
 			
 			if ( $ids ) {
 
-				$membership_title = $args['title_before'] . wpmem_get_membership_name( $key ) . $args['title_after'];
+				$membership_title = $args['title_before'] . esc_html( wpmem_get_membership_name( $key ) ) . $args['title_after'];
 				$post_list = $args['list_before'];
 				foreach ( $ids as $id ) {
 					$post_title = get_the_title( $id );
