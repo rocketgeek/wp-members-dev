@@ -1231,7 +1231,7 @@ function wpmem_get_user_view_count( $view, $meta_key, $meta_value, $compare = '=
 	if ( false === $count ) {
 
 		// Get the count
-		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key=%s AND meta_value " . $compare . " \"%s\"", $meta_key, $meta_value ) );
+		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key=%s AND meta_value " . esc_sql( $compare ) . " \"%s\"", $meta_key, $meta_value ) );
 
 		// Save it in a transient
 		$transient_expires = $expires; // Value in seconds, 1 day: ( 60 * 60 * 24 );
