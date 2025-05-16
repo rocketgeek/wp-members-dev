@@ -3,13 +3,13 @@
  * The RocketGeek.com Deploy Plugin Object Class.
  *
  * @package    RocketGeek_Deploy_Plugin_v1
- * @version    1.0.4
+ * @version    1.0.5
  * @author     Chad Butler <https://butlerblog.com>
  * @author     RocketGeek <https://rocketgeek.com>
- * @copyright  Copyright (c) 2024 Chad Butler
+ * @copyright  Copyright (c) 2023-2025 Chad Butler
  * @license    Apache-2.0
  *
- * Copyright [2024] Chad Butler, RocketGeek
+ * Copyright [2025] Chad Butler, RocketGeek
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
  * @since 1.0.2 
  * @since 1.0.3 Defines all vars for PHP 8.2+ compatibility.
  * @since 1.0.4 Additional defined var ($action), add get_version().
+ * @since 1.0.5 Add default $type.
  */
 	
 
@@ -38,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'RocketGeek_Deploy_Plugin_v1' ) ) :
 class RocketGeek_Deploy_Plugin_v1 {
 
-	public $version = "1.0.4";
+	public $version = "1.0.5";
 	public $api_domain = 'https://rocketgeek.com';
 	public $theme_fields  = array( 'Name','URI','Author','AuthorURI','Version' );
 	public $plugin_fields = array( 'Name','URI','Author','AuthorURI','Version','RequiresWP','RequiresPHP' );
@@ -48,7 +49,13 @@ class RocketGeek_Deploy_Plugin_v1 {
 	public $url;
 	public $product_version;
 
-	public function __construct( $slug, $product_file, $action, $type ) {
+	/**
+	 * @param string $slug
+	 * @param string $magic_file
+	 * @param string $action
+	 * @param string $type
+	 */
+	public function __construct( $slug, $magic_file, $action, $type = 'plugin' ) {
 		$this->action = $action;
 		$this->slug   = $slug;
 		$this->type   = $type;
@@ -56,7 +63,7 @@ class RocketGeek_Deploy_Plugin_v1 {
 
 		if ( 'plugin' == $type ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-			$plugin_data = get_plugin_data( $product_file );
+			$plugin_data = get_plugin_data( $magic_file );
 			$this->product_version = $plugin_data['Version'];
 		}
 		$this->do_action();
@@ -145,7 +152,7 @@ class RocketGeek_Deploy_Plugin_v1 {
 		} else {
 			$ip = $_SERVER['REMOTE_ADDR'];
 		}
-		return $ip;
+		return sanitize_text_field( $ip );
 	}
 
 	private function check_license() {

@@ -133,8 +133,7 @@ WP-Members 3.5.3 is a feature update release. It fixes some minor bugs and adds 
 
 = 3.5.3 =
 
-* Prepares for changes in default dialogs with legacy option or new option (certain default dialogs will be removed from the admin panel by version 3.6.0).
-* Add link (href) support for field labels.
+* Add link support for field labels.
 * Add wpmem_create_form_label_args filter.
 * Add wpmem_form_label_link filter.
 * Add new CLI commands for memberships (see release notes).
@@ -142,7 +141,6 @@ WP-Members 3.5.3 is a feature update release. It fixes some minor bugs and adds 
 * Clean up new field add screen, adds register/profile as separate options (could previously only be selected on main table view), sets proper textarea for multiple checkbox settings.
 * Fixes a bug in the default TOS dialog that causes a fatal error when opening the new window.
 * Deprecated default TOS in favor of custom linked labels (old field is valid if used, but does not install as default with new install)
-* Allows option to remove dialogs that will be deprecated in 3.6.0 and begin using the (future) standard dialogs (which can be customized by filtering).
 * Adds additional output sanitizing.
 
 = 3.5.2 =

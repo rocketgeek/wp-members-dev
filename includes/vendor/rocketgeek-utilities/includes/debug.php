@@ -49,16 +49,6 @@ function rktgk_break_point( $print = 'you are here' ) {
 }
 endif;
 
-if ( ! function_exists('rktgk_write_log')):
-function rktgk_write_log( $log )  {
-    if ( is_array( $log ) || is_object( $log ) ) {
-        error_log( print_r( $log, true ) );
-    } else {
-        error_log( $log );
-    }
-}
-endif;
-
 if ( ! function_exists('rktgk_what_is')):
 function rktgk_what_is( $var, $exit = false, $output = true, $title = true ) {
 	

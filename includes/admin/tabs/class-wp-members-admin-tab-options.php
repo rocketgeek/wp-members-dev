@@ -173,7 +173,7 @@ class WP_Members_Admin_Tab_Options {
 								  </li>
 								<?php } 
 								}?></ul>
-
+							<!-- Not yet.
 								<h3><?php esc_html_e( 'New Feature Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/new-feature-settings/" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<?php
 								$rows = array(
@@ -188,7 +188,7 @@ class WP_Members_Admin_Tab_Options {
 								  </li>
 								<?php } ?>
 								</ul>
-								
+							-->	
 								<?php if ( wpmem_is_woo_active() ) { ?>
 								<h3><?php esc_html_e( 'WooCommerce Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/woocommerce-settings/" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<?php
