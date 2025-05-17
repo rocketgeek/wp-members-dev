@@ -480,7 +480,7 @@ class WP_Members_Shortcodes {
 		}
 
 		// Assemble the output and return.
-		$content = ( isset( $sanitized_args['label'] ) ) ? $sanitized_args['label'] . ' ' . $user_count : $content . ' ' . $user_count;
+		$content = ( isset( $sanitized_args['label'] ) ) ? $sanitized_args['label'] . ' ' . intval( $user_count ) : wp_kses_post( $content ) . ' ' . intval( $user_count );
 		return do_shortcode( $content );
 	}
 
