@@ -4,7 +4,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	class WP_Members_CLI_Memberships {
 
 		/**
-		 * CLI command to get membership counts.
+		 * CLI command to list memberships on the site.
 		 * @since 3.5.3
 		 */
 		public function list( $args, $assoc_args ) {
@@ -27,16 +27,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 		/**
 		 * Get membership counts
+		 * 
+		 * @alias list-count
 		 */
 		public function list_count( $args, $assoc_args ) {
 
 			if ( empty( $args ) && ! isset( $assoc_args['all'] ) && ! isset( $assoc_args['type'] ) ) {
 				$count_type = "all";
 			} else {
-				if ( isset( $assoc_args['all'] ) ) {
-					$count_type = "all";
-				} else {
+				if ( isset( $assoc_args['type'] ) ) {
 					$count_type = $assoc_args['type'];
+				} else {
+					$count_type = "all";
 				}
 			}
 
@@ -111,14 +113,26 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 
 		public function add( $args, $assoc_args ) {
+			$membership = $args[0];
+			$user_id = $this->get_user_id( $assoc_args );
 
+			wpmem_set_user_membership( $membership, $user_id );
+
+			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user_id ) );
 		}
 
 		public function remove( $args, $assoc_args ) {
 			$membership = $args[0];
+			$user_id = $this->get_user_id( $assoc_args );
 
-			if ( isset( $assoc_args['ID'] ) ) {
-				$user_id = $assoc_args['ID'];
+			wpmem_remove_user_membership( $membership, $user_id );
+
+			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user_id ) );
+		}
+
+		private function get_user_id( $assoc_args ) {
+			if ( isset( $assoc_args['id'] ) ) {
+				$user_id = $assoc_args['id'];
 			} elseif ( isset( $assoc_args['login'] ) ) {
 				$user = get_user_by( 'login', $assoc_args['login'] );
 				$user_id = $user->ID;
@@ -128,10 +142,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			} else {
 				WP_CLI::error( __( 'No valid user data from inputs', 'wp-members' ) );
 			}
-
-			wpmem_remove_user_membership( $membership, $user_id );
-
-			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user_id ) );
+			return $user_id;
 		}
 	}
 }

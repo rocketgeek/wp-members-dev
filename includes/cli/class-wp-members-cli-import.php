@@ -60,16 +60,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 				// Set user product access.
 				if ( $membership ) {
-					wpmem_set_user_product( $membership, $user_id, $date );
+					wpmem_set_user_product( esc_attr( $membership ), intval( $user_id ), esc_attr( $date ) );
 				}
 
 				if ( isset( $assoc_args['verbose'] ) ) {
 					/* translators: %s is the placeholder for the name of the membership, do not remove it. */
-					WP_CLI::line( sprintf( __( 'Set %s membership for user %s', 'wp-members' ), $membership, $user_id ) );
+					WP_CLI::line( sprintf( __( 'Set %s membership for user %s', 'wp-members' ), esc_attr( $membership ), intval( $user_id ) ) );
 					$list[] = array(
-						'user ID' => $user_id,
-						'membership' => $membership,
-						'expires' => $date,
+						'user ID' => intval( $user_id ),
+						'membership' => esc_attr( $membership ),
+						'expires' => esc_attr( $date ),
 					);
 				}
 				$x++;
