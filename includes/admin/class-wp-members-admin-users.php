@@ -372,46 +372,50 @@ class WP_Members_Admin_Users {
 			$user_counts = array();
 			foreach ( $count_metas as $key => $meta_key ) {
 				if ( 'confirmed' == $key || 'notconfirmed' == $key ) {
-					$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key=%s AND meta_value>0", $meta_key ) );
+					$count = wpmem_user_count( array( 'meta_key'=>$meta_key, 'meta_value'=>0, 'compare'=>'>' ) );
 					$count = ( 'notconfirmed' == $key ) ? $users - $count : $count;
 				}
 				if ( 'active' == $key ) {
-					$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key=%s AND meta_value=1", $meta_key ) );
+					$count = wpmem_user_count( array( 'meta_key'=>$meta_key, 'meta_value'=>1 ) );
 				}
 				if ( 'notactive' == $key || 'notexported' == $key ) {
-					$users_with_meta = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key=%s AND meta_value=1", $meta_key ) );
+					$users_with_meta = wpmem_user_count( array( 'meta_key'=>$meta_key, 'meta_value'=>1 ) );
 					$count = $users - $users_with_meta;
 				}
 				if ( 'deactivated' == $key ) {
-					$count = $wpdb->get_var( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key = 'active' AND meta_value = 0" );
+					$count = wpmem_user_count( array( 'meta_key'=>'active', 'meta_value'=>0 ) );
 				}
+
+				// @todo These should be obsolete by 3.6.0 and in the paypal extension.
 				if ( 'trial' == $key || 'subscription' == $key || 'pending' == $key ) {
-					$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key = 'exp_type' AND meta_value = \"%s\"", $key ) );
+					$count = wpmem_user_count( array( 'meta_key'=>$meta_key, 'meta_value'=>$key ) );
 				}
 				if ( 'expired' == $key ) {
 					$count = $wpdb->get_var( "SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key = 'expires' AND STR_TO_DATE( meta_value, '%m/%d/%Y' ) < CURDATE() AND meta_value != '01/01/1970'" );
 				}
+				// end @todo.
+
 				$user_counts[ $key ] = $count;
 			}
 			set_transient( 'wpmem_user_counts', $user_counts, $transient_expires );
 		}
 
 		if ( defined( 'WPMEM_EXP_MODULE' ) && 1 == $wpmem->use_exp ) {
-			$views['pending']      = esc_html__( 'Pending',       'wp-members' );
-			$views['trial']        = esc_html__( 'Trial',         'wp-members' );
-			$views['subscription'] = esc_html__( 'Subscription',  'wp-members' );
-			$views['expired']      = esc_html__( 'Expired',       'wp-members' );
+			$views['pending']      = __( 'Pending',       'wp-members' );
+			$views['trial']        = __( 'Trial',         'wp-members' );
+			$views['subscription'] = __( 'Subscription',  'wp-members' );
+			$views['expired']      = __( 'Expired',       'wp-members' );
 		}
 		if ( 1 == $wpmem->mod_reg ) {
-			$views['active']       = esc_html__( 'Activated',          'wp-members' );
-			$views['notactive']    = esc_html__( 'Pending Activation', 'wp-members' );
-			$views['deactivated']  = esc_html__( 'Deactivated',        'wp-members' );
+			$views['active']       = __( 'Activated',          'wp-members' );
+			$views['notactive']    = __( 'Pending Activation', 'wp-members' );
+			$views['deactivated']  = __( 'Deactivated',        'wp-members' );
 		}
 		if ( 1 == $wpmem->act_link ) {
-			$views['confirmed']    = esc_html__( 'Confirmed',     'wp-members' );
-			$views['notconfirmed'] = esc_html__( 'Not Confirmed', 'wp-members' );
+			$views['confirmed']    = __( 'Confirmed',     'wp-members' );
+			$views['notconfirmed'] = __( 'Not Confirmed', 'wp-members' );
 		}
-		$views['notexported']      = esc_html__( 'Not Exported',  'wp-members' );
+		$views['notexported']      = __( 'Not Exported',  'wp-members' );
 		$show = sanitize_text_field( wpmem_get( 'show', false, 'get' ) );
 		
 		foreach ( $views as $key => $view ) {
@@ -422,8 +426,8 @@ class WP_Members_Admin_Users {
 					'<a href="%s" %s>%s <span class="count">(%d)</span></a>',
 					esc_url( $link ),
 					esc_attr( $current ),
-					$view,
-					isset( $user_counts[ $key ] ) ? $user_counts[ $key ] : ''
+					esc_html( $view ),
+					isset( $user_counts[ $key ] ) ? esc_attr( $user_counts[ $key ] ) : ''
 				);
 			}
 		}
@@ -440,9 +444,7 @@ class WP_Members_Admin_Users {
 		 * }
 		 * @param string $show
 		 */
-		$views = apply_filters( 'wpmem_views_users', $views, $show );
-		
-		return $views;
+		return apply_filters( 'wpmem_views_users', $views, $show );
 	}
 
 	/**
