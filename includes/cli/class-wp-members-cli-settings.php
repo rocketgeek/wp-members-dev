@@ -59,7 +59,7 @@ class WP_Members_CLI_Settings {
 		if ( 'content' == $args[0] ) {
 
 			// @todo Add custom post types, and look for admin where all possible post types are assembled.
-			$post_types = array_merge( array( 'post', 'page' ), $wpmem->post_types );
+			$post_types = array_merge( array( 'post', 'page' ), $wpmem->admin->post_types() );
 
 			foreach( $post_types as $post_type ) {
 				foreach ( $settings as $setting => $description ) {
@@ -116,21 +116,25 @@ class WP_Members_CLI_Settings {
 	 *
 	 * @since 3.3.5
 	 * 
-	 * @alias post-types
+	 * @subcommand post-types
 	 */
 	public function post_types() {
 		global $wpmem;
 		$post_types = $wpmem->admin->post_types();
-		foreach ( $post_types as $post_type ) {
-			$enabled = ( array_key_exists( $post_type, $wpmem->post_types ) ) ? "Enabled" : "Disabled";
-			$list[] = array(
-				'Post Type' => $post_type,
-				'Value' => $enabled,
-			);
+		if ( empty( $post_types ) ) {
+			WP_CLI::line( __( 'No custom post types are available for WP-Members settings', 'wp-members' ) );
+		} else {
+			foreach ( $post_types as $post_type ) {
+				$enabled = ( array_key_exists( $post_type, $wpmem->post_types ) ) ? "Enabled" : "Disabled";
+				$list[] = array(
+					'Post Type' => $post_type,
+					'Value' => $enabled,
+				);
+			}
+			WP_CLI::line( __( 'Custom post type settings for WP-Members:', 'wp-members' ) );
+			$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Post Type', 'Value' ) );
+			$formatter->display_items( $list ); 
 		}
-		WP_CLI::line( __( 'Custom post type settings for WP-Members:', 'wp-members' ) );
-		$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Post Type', 'Value' ) );
-		$formatter->display_items( $list ); 
 	}
 	
 	/**
@@ -146,7 +150,7 @@ class WP_Members_CLI_Settings {
 	 *
 	 * @since 3.3.5
 	 * 
-	 * @alias post-type
+	 * @subcommand post-type
 	 */
 	public function post_type( $args, $assoc_args ) {
 		global $wpmem;
@@ -186,30 +190,42 @@ class WP_Members_CLI_Settings {
 	 * ## EXAMPLES
 	 *
 	 *     wp mem settings enable mod_reg
+	 * 
+	 * @todo Add options to enable content (post type) settings.
 	 */
 	public function enable( $args, $assoc_args ) {
 		global $wpmem;
 		$settings = $wpmem->admin->settings( 'options' );
-		if ( array_key_exists( $args[0], $settings ) && 'captcha' !== $args[0] ) {
-			wpmem_update_option( 'wpmembers_settings', $args[0], 1, true );
-			/* translators: %s is the meta key of the setting */
-			WP_CLI::success( sprintf( __( '%s enabled', 'wp-members' ), $settings[ $args[0] ] ) );
-		}
-		if ( array_key_exists( $args[0], $settings ) && 'captcha' === $args[0] ) {
-			switch( $args[1] ) {
-				case 'rs_captcha':
-					$which = 2;
-					break;
-				case 'recaptcha_v2':
-					$which = 3;
-					break;
-				case 'recaptcha_v3':
-					$which = 4;
-					break;
+		if ( ! array_key_exists( $args[0], $settings ) ) {
+			WP_CLI::error( sprintf( __( 'Enable <%s> is not an avilable option for this command. See <wp mem settings options> for available options', 'wp-members' ), $args[0] ) );
+		} else {
+
+			if ( 'captcha' == $args[0] ) {
+
+				if ( ! isset( $args[1] ) ) {
+					WP_CLI::error( __( 'You must specify captcha type: rs_captcha|recaptcha_v2|recaptcha_v3', 'wp-members' ) );
+				}
+
+				switch( $args[1] ) {
+					case 'rs_captcha':
+						$which = 2;
+						break;
+					case 'recaptcha_v2':
+						$which = 3;
+						break;
+					case 'recaptcha_v3':
+						$which = 4;
+						break;
+				}
+				wpmem_update_option( 'wpmembers_settings', $args[0], $which, true );
+				/* translators: %s is the meta key of the setting */
+				WP_CLI::success(  sprintf( __( '%s %s enabled', 'wp-members' ), $settings[ $args[0] ], $args[1] ) );
+			
+			} else {
+				wpmem_update_option( 'wpmembers_settings', $args[0], 1, true );
+				/* translators: %s is the meta key of the setting */
+				WP_CLI::success( sprintf( __( '%s enabled', 'wp-members' ), $settings[ $args[0] ] ) );
 			}
-			wpmem_update_option( 'wpmembers_settings', $args[0], $which, true );
-			/* translators: %s is the meta key of the setting */
-			WP_CLI::success(  sprintf( __( '%s %s enabled', 'wp-members' ), $settings[ $args[0] ], $args[1] ) );
 		}
 	}
 	
@@ -224,11 +240,16 @@ class WP_Members_CLI_Settings {
 	 * ## EXAMPLES
 	 *
 	 *     wp mem settings enable mod_reg
+	 * 
+	 * @todo Test for captcha
+	 * @todo Add options to disable content (post type) settings.
 	 */
 	public function disable( $args ) {
 		global $wpmem;
 		$settings = $wpmem->admin->settings( 'options' );
-		if ( array_key_exists( $args[0], $settings ) ) {
+		if ( ! array_key_exists( $args[0], $settings ) ) {
+			WP_CLI::error( sprintf( __( 'Disable <%s> is not an avilable option for this command. See <wp mem settings options> for available options', 'wp-members' ), $args[0] ) );
+		} else {
 			wpmem_update_option( 'wpmembers_settings', $args[0], 0, true );
 			/* translators: %s is the meta key of the setting */
 			WP_CLI::success( sprintf( __( '%s disabled', 'wp-members' ), $settings[ $args[0] ] ) );
@@ -304,13 +325,15 @@ class WP_Members_CLI_Settings {
 			return;
 		}
 		if ( 'list' == $args[0] ) {
-			global $wpmem;
+
 			$raw_settings = get_option( 'wpmembers_settings' );
-			foreach ( $wpmem->user_pages as $key => $page ) {
+			$user_pages = wpmem_user_pages();
+
+			foreach ( $user_pages as $key => $page ) {
 				$list[] = array(
 					'Page' => ucfirst( $key ),
 					'ID' => $raw_settings['user_pages'][ $key ],
-					'URL' => $wpmem->user_pages[ $key ],
+					'URL' => $page,
 				);
 			}
 			
