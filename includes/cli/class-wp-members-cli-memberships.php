@@ -3,6 +3,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	class WP_Members_CLI_Memberships {
 
+		function __construct() {
+			// Need the admin api for some CLI commands.
+			global $wpmem;
+			require_once $wpmem->path . 'includes/admin/api.php';
+		}
+
 		/**
 		 * CLI command to list memberships on the site.
 		 * @since 3.5.3
@@ -26,9 +32,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 
 		/**
-		 * Get membership counts
+		 * Get membership counts.
+		 *
+		 * ## OPTIONS
+		 *
+		 * [<meta key of membership>]
+		 * : The meta key (slug) of the membership to get data for (gets all memberships by default)
+		 *
+		 * [--type=<active|expired>]
+		 * : Get only active or expired membership count.
 		 * 
-		 * @alias list-count
+		 * [--all] 
+		 * : Gets all membership count.
+		 *
+		 * @since 3.5.3
+		 * @subcommand list-count
 		 */
 		public function list_count( $args, $assoc_args ) {
 
@@ -107,42 +125,60 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 		}
 
-		public function list_active( $args, $assoc_args ) {
-			
-			
-		}
-
+		/**
+		 * Adds a membership to a user.
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * <membership_meta_key> 
+		 * : The meta key (slug) of the membership to add to the user.
+		 * 
+		 * [--id=<user>]
+		 * : The ID of the user to add the membership to.
+		 * 
+		 * [--login=<user>]
+		 * : The login of the user to add the membership to.
+		 * 
+		 * [--email=<user>]
+		 * : The email of the user to add the membership to.
+		 * 
+		 * @since 3.5.3
+		 */
 		public function add( $args, $assoc_args ) {
 			$membership = $args[0];
-			$user_id = $this->get_user_id( $assoc_args );
+			$user = wpmem_cli_get_user( $assoc_args );
 
-			wpmem_set_user_membership( $membership, $user_id );
+			wpmem_set_user_membership( $membership, $user->ID );
 
-			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user_id ) );
+			WP_CLI::line( sprintf( __( '%s membership added to %s', 'wp-members' ), $membership, $user->user_email ) );
 		}
 
+		/**
+		 * Removes a membership to a user.
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * <membership_meta_key> 
+		 * : The meta key (slug) of the membership to remove from the user.
+		 * 
+		 * [--id=<user>]
+		 * : The ID of the user to remove the membership from.
+		 * 
+		 * [--login=<user>]
+		 * : The login of the user to remove the membership from.
+		 * 
+		 * [--email=<user>]
+		 * : The email of the user to remove the membership from.
+		 * 
+		 * @since 3.5.3
+		 */
 		public function remove( $args, $assoc_args ) {
 			$membership = $args[0];
-			$user_id = $this->get_user_id( $assoc_args );
+			$user = wpmem_cli_get_user( $assoc_args );
 
-			wpmem_remove_user_membership( $membership, $user_id );
+			wpmem_remove_user_membership( $membership, $user );
 
-			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user_id ) );
-		}
-
-		private function get_user_id( $assoc_args ) {
-			if ( isset( $assoc_args['id'] ) ) {
-				$user_id = $assoc_args['id'];
-			} elseif ( isset( $assoc_args['login'] ) ) {
-				$user = get_user_by( 'login', $assoc_args['login'] );
-				$user_id = $user->ID;
-			} elseif ( isset( $assoc_args['email'] ) ) {
-				$user = get_user_by( 'email', $assoc_args['email'] );
-				$user_id = $user->ID;
-			} else {
-				WP_CLI::error( __( 'No valid user data from inputs', 'wp-members' ) );
-			}
-			return $user_id;
+			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user->user_email ) );
 		}
 	}
 }

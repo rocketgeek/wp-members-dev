@@ -229,3 +229,23 @@ function wpmem_get_user_view_link( $name, $view, $meta_key, $meta_value, $compar
 		intval( $args['count'] )
 	);
 }
+
+/**
+ * @todo could use some additional error messaging and testing.
+ */
+function wpmem_cli_get_user( $assoc_args ) {
+
+	if ( isset( $assoc_args['id'] ) ) {
+		$user_id = $assoc_args['id'];
+		$user = get_user_by( 'ID', $assoc_args['id'] );
+	} elseif ( isset( $assoc_args['login'] ) ) {
+		$user = get_user_by( 'login', $assoc_args['login'] );
+	} elseif ( isset( $assoc_args['email'] ) ) {
+		$user = get_user_by( 'email', $assoc_args['email'] );
+	}
+	if ( $user ) {
+		return $user;
+	}
+	WP_CLI::error( __( 'No valid user data from inputs', 'wp-members' ) );
+
+}
