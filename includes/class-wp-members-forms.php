@@ -514,7 +514,7 @@ class WP_Members_Forms {
 		if ( isset( $args['label_href'] ) && '' != $args['label_href'] ) {
 
 			// Adjust placeholders.
-			$label_text = str_replace( '%', '%s', $label_text );
+			$label_text = str_replace( '%', '%s', esc_html( $label_text ) );
 
 			/**
 			 * Filters the anchor tag.
@@ -535,7 +535,9 @@ class WP_Members_Forms {
 			}
 			$anchor_tag .= ">";
 			
-			$label_text = sprintf( $label_text, $anchor_tag, '</a>' );
+			$label_text_escd = sprintf( $label_text, $anchor_tag, '</a>' );
+		} else {
+			$label_text_escd = esc_html( $label_text );
 		}
 		
 		if ( ! $args['class'] ) {
@@ -544,15 +546,15 @@ class WP_Members_Forms {
 			$class = $args['class'];
 		}
 		
-		$id = ( $args['id'] ) ? ' id="' . esc_attr( $args['id'] ) . '"' : '';
+		$id_escd = ( $args['id'] ) ? ' id="' . esc_attr( $args['id'] ) . '"' : '';
 
-		$label = '<label for="' . esc_attr( $args['meta_key'] ) . '"' . $id . ' class="' . wpmem_sanitize_class( $class ) . '">' . wpmem_sanitize_field( $label_text, 'kses' );
-		$label = ( $args['required'] ) ? $label . wpmem_sanitize_field( $req_mark, 'kses' ) : $label;
+		$label = '<label for="' . esc_attr( $args['meta_key'] ) . '"' . $id_escd . ' class="' . wpmem_sanitize_class( $class ) . '">' . $label_text_escd;
+		$label = ( $args['required'] ) ? $label . $req_mark : $label; // $req_mark text is escaped in wpmem_get_text() and then wrapped with html tag.
 		$label = $label . '</label>';
 		
 		return $label;
 	}
-	
+		
 	/**
 	 * Uploads file from the user.
 	 *
