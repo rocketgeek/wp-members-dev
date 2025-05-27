@@ -142,15 +142,45 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * [--email=<user>]
 		 * : The email of the user to add the membership to.
 		 * 
+		 * [--date=<YYYY-MM-DD>] 
+		 * : The expiration date (optional, if excluded, the default time period will be set).
+		 * 
 		 * @since 3.5.3
+		 * @since 3.5.4 Added expiration date.
 		 */
 		public function add( $args, $assoc_args ) {
-			$membership = $args[0];
+			$date = ( isset( $assoc_args['date'] ) ) ? $assoc_args['date'] : false;
 			$user = wpmem_cli_get_user( $assoc_args );
+			wpmem_set_user_membership( $args[0], $user->ID, $date );
+			WP_CLI::success( sprintf( __( '%s membership added to %s', 'wp-members' ), $args[0], $user->user_email ) );
+		}
 
-			wpmem_set_user_membership( $membership, $user->ID );
-
-			WP_CLI::line( sprintf( __( '%s membership added to %s', 'wp-members' ), $membership, $user->user_email ) );
+		/**
+		 * Updates a membership for a user.
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * <membership_meta_key> 
+		 * : The meta key (slug) of the membership to update.
+		 * 
+		 * --date=<YYYY-MM-DD>
+		 * : The expiration date (optional, if excluded, the default time period will be set).
+		 * 
+		 * [--id=<user>]
+		 * : The ID of the user to update.
+		 * 
+		 * [--login=<user>]
+		 * : The login of the user to udpate.
+		 * 
+		 * [--email=<user>]
+		 * : The email of the user to update.
+		 * 
+		 * @since 3.5.3
+		 */
+		public function update( $args, $assoc_args ) {
+			$user = wpmem_cli_get_user( $assoc_args );
+			wpmem_set_user_membership( $args[0], $user->ID, $assoc_args['date'] );
+			WP_CLI::success( sprintf( __( '%s membership update for %s', 'wp-members' ), $args[0], $user->user_email ) );			
 		}
 
 		/**
@@ -173,12 +203,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @since 3.5.3
 		 */
 		public function remove( $args, $assoc_args ) {
-			$membership = $args[0];
 			$user = wpmem_cli_get_user( $assoc_args );
-
-			wpmem_remove_user_membership( $membership, $user );
-
-			WP_CLI::line( sprintf( __( '%s membership removed from %s', 'wp-members' ), $membership, $user->user_email ) );
+			wpmem_remove_user_membership( $args[0], $user );
+			WP_CLI::success( sprintf( __( '%s membership removed from %s', 'wp-members' ), $args[0], $user->user_email ) );
 		}
 	}
 }

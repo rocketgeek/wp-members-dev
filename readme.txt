@@ -134,7 +134,11 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 = 3.5.4 =
 
 * Bug fix for register form field label links.
-* Updates to WP CLI commands, all @alias are not @subcommand (changes all underscore commands to dash/hyphen. example:  <wp mem user get_role> is now <wp mem user get-role>).
+* New API functions for user counts: `wpmem_user_count()`, `wpmem_get_user_count_by_meta()`, `wpmem_get_user_count_by_role()`.
+* Updates to WP CLI commands:
+* All @alias are now @subcommand (changes all underscore commands to dash/hyphen. example:  <wp mem user get_role> is now <wp mem user get-role>).
+* Improve and debug `wp mem import memberships` command.
+* Improve and debug `wp mem membership` commands (CLI commands to add/update/delete user memberships).
 
 = 3.5.3 =
 
