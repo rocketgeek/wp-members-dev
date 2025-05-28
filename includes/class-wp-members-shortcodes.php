@@ -965,7 +965,7 @@ class WP_Members_Shortcodes {
 			$content = ( isset( $sanitized_atts['clickable'] ) && ( true == $sanitized_atts['clickable'] || 'true' == $sanitized_atts['clickable'] ) ) ? make_clickable( $content ) : $content;
 		
 			// Display field label?
-			$content = ( isset( $fields[ $field ] ) && isset( $sanitized_atts['label'] ) && ( true == $sanitized_atts['label'] ) ) ? $fields[ $field ]['label'] . ": " . $content : $content;
+			$content = ( isset( $fields[ $field ] ) && isset( $sanitized_atts['label'] ) && ( true == $sanitized_atts['label'] ) ) ? wpmem_get_field_label( $field ) . ": " . $content : $content;
 		}
 		
 		/**
