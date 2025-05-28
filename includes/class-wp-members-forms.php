@@ -1813,7 +1813,7 @@ class WP_Members_Forms {
 
 						$row_before = ( $is_woo ) ? '<p class="woocommerce-FormRow woocommerce-FormRow--wide form-row form-row-wide">' : '<p>';
 						$label  = '<label for="' . $meta_key . '">' . __( $field['label'], 'wp-members' ) . $req . '</label>';
-						$label .= ( 'multicheckbox' == $field['type'] ) ? '<br />' : '';
+						$label .= ( 'multicheckbox' == $field['type'] || 'radio' == $field['type'] ) ? '<br />' : '';
 
 						// determine the field type and generate accordingly...
 
