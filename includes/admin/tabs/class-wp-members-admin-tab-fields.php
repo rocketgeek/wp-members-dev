@@ -461,7 +461,7 @@ Last Row|last_row
 				$wpmem_wc_checkout_fields = get_option( 'wpmembers_wcchkout_fields' );
 			}
 			if ( 1 == $wpmem->woo->add_my_account_fields ) {
-				$wpmem_wc_acct_skip = array_merge( rktgk_wc_checkout_fields(), array( 'username', 'user_login', 'user_email', 'confirm_email', 'password', 'confirm_password' ) );
+				$wpmem_wc_acct_skip = array_merge( array( 'username', 'user_login', 'user_email', 'confirm_email', 'password', 'confirm_password' ) );
 				$wpmem_wc_acct_fields = get_option( 'wpmembers_wcacct_fields' );
 			}
 			if ( 1 == $wpmem->woo->add_update_fields ) {
