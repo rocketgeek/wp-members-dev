@@ -1214,7 +1214,9 @@ function wpmem_get_users( $args = array( 'fields' => 'ID' ), $type = 'array' ) {
 /**
  * Gets a count of users.
  * 
- * @since 3.5.4 
+ * @since 3.4.5
+ * @since 3.5.3 Now in the main API (previously admin API)
+ * @since 3.5.4 Revamped.
  *  
  * @param  mixed  $args
  */
