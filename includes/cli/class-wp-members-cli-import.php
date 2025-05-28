@@ -64,6 +64,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * 
 		 * [--cols=<columns>] 
 		 * : A comma separated string of column names.
+		 * 
+		 * @since Unknown
 		 */
 		public function memberships( $args, $assoc_args ) {
 
@@ -171,12 +173,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 
 		/**
-		 * Dectivates all users in an imported CSV file.
-		 * 
-		 * @since 3.5.4
-		 * 
-		 * @todo Currently just activates, but could add assoc_args to 
-		 *       send email (does not currently by default) or set password.
+		 * Activates all users in an imported CSV file.
 		 * 
 		 * ## OPTIONS
 		 * 
@@ -197,6 +194,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * 
 		 * [--cols=<columns>] 
 		 * : A comma separated string of column names.
+		 * 
+		 * @since 3.5.4
+		 * 
+		 * @todo Currently just activates, but could add assoc_args to 
+		 *       send email (does not currently by default) or set password.
 		 */
 		public function activate( $args, $assoc_args ) {
 			$csv = $this->get_csv_from_file( $assoc_args );
@@ -263,8 +265,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		/**
 		 * Deactivates all users in an imported CSV file.
 		 * 
-		 * @since 3.5.4
-		 * 
 		 * ## OPTIONS
 		 * 
 		 * --file=<file_name> 
@@ -277,13 +277,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * : Displays verbose results.
 		 * 
 		 * [--dry-run] 
-		 * : Preview what users will be activated.
+		 * : Preview what users will be deactivated.
 		 * 
 		 * [--cleanup] 
 		 * : Deletes the import file when import is completed.
 		 * 
 		 * [--cols=<columns>] 
 		 * : A comma separated string of column names.
+		 * 
+		 * @since 3.5.4
 		 */
 		public function deactivate( $args, $assoc_args ) {
 			$csv = $this->get_csv_from_file( $assoc_args );
@@ -350,8 +352,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		/**
 		 * Confirms all users in an imported CSV file.
 		 * 
-		 * @since 3.5.4
-		 * 
 		 * ## OPTIONS
 		 * 
 		 * --file=<file_name> 
@@ -364,13 +364,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * : Displays verbose results.
 		 * 
 		 * [--dry-run] 
-		 * : Preview what users will be activated.
+		 * : Preview what users will be confirmed.
 		 * 
 		 * [--cleanup] 
 		 * : Deletes the import file when import is completed.
 		 * 
 		 * [--cols=<columns>] 
 		 * : A comma separated string of column names.
+		 * 
+		 * @since 3.5.4
 		 */
 		public function confirm( $args, $assoc_args ) {
 			$csv = $this->get_csv_from_file( $assoc_args );
@@ -435,9 +437,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 
 		/**
-		 * Confirms all users in an imported CSV file.
-		 * 
-		 * @since 3.5.4
+		 * Unonfirms all users in an imported CSV file.
 		 * 
 		 * ## OPTIONS
 		 * 
@@ -451,13 +451,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * : Displays verbose results.
 		 * 
 		 * [--dry-run] 
-		 * : Preview what users will be activated.
+		 * : Preview what users will be unconfirmed.
 		 * 
 		 * [--cleanup] 
 		 * : Deletes the import file when import is completed.
 		 * 
 		 * [--cols=<columns>] 
 		 * : A comma separated string of column names.
+		 * 
+		 * @since 3.5.4
 		 */
 		public function unconfirm( $args, $assoc_args ) {
 			$csv = $this->get_csv_from_file( $assoc_args );
@@ -521,6 +523,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 		}
 
+		/**
+		 * Gets the user ID, checks for columns in order of
+		 * ID, user_login, and user_email. 
+		 * @since 3.5.4
+		 */
 		private function get_user_id_from_row( $row ) {
 			$user_id = false;
 			// Do we have a field we can get the user by?
@@ -537,6 +544,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			return $user_id;
 		}
 
+		/**
+		 * Gets the file path info.
+		 * @since 3.5.4
+		 */
 		private function get_file_info( $assoc_args ) {
 			$file_info['name'] = $assoc_args['file'];
 			$file_path = ( isset( $assoc_args['path'] ) ) ? ABSPATH . $assoc_args['path'] : ABSPATH . 'wp-content/uploads/';
@@ -547,6 +558,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			return $file_info;
 		}
 
+		/**
+		 * Converts the CSV to a keyed array.
+		 * @since 3.5.4
+		 */
 		private function get_csv_from_file( $assoc_args ) {
 			
 			$file_info = $this->get_file_info( $assoc_args );
@@ -562,6 +577,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			return wpmem_csv_to_array( $file_info['file'], $cols );
 		}
 
+		/**
+		 * Deletes an import file when complete.
+		 * @since 3.5.4
+		 */
 		private function cleanup( $assoc_args ) {
 			$file_info = $this->get_file_info( $assoc_args );
 			/* translators: %s is the placeholder for the filename, do not remove it. */
