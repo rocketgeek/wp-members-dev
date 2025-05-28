@@ -56,10 +56,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * [--verbose] 
 		 * : Displays verbose results.
 		 * 
+		 * [--dry-run] 
+		 * : Preview what memberships will be set.
+		 * 
 		 * [--cleanup] 
 		 * : Deletes the import file when import is completed.
 		 */
 		public function memberships( $args, $assoc_args ) {
+
+			// Get memberships the site has (before we do anything).
+			$site_memberships = wpmem_get_memberships();
 
 			// Set specific criteria.
 			$membership_key = ( isset( $assoc_args['key'] ) ) ? $assoc_args['key'] : "import_membership";
@@ -70,48 +76,41 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$file_path = ( isset( $assoc_args['dir'] ) ) ? trailingslashit( trailingslashit( $file_path ) . $assoc_args['dir'] ) : $file_path;
 
+			$file = trailingslashit( $file_path ) . $file_name;
+
 			// Check if file exists.
-			if ( ! file_exists( trailingslashit( $file_path ) . $file_name ) ) {
+			if ( ! file_exists( $file ) ) {
 				WP_CLI::line( __( 'File name:', 'wp-members' ) . ' ' . $file_name );
 				WP_CLI::line( __( 'File path:', 'wp-members' ) . ' ' . $file_path );
 				WP_CLI::error( __( 'Parameters given did not return a valid file. Check your filename and path values.', 'wp-members' ) );
 			}
 
-			$file = fopen( trailingslashit( $file_path ) . $file_name, 'r' );
-
-			while ( ( $line = fgetcsv( $file ) ) !== FALSE ) {
-				//$line is an array of the csv elements
-				$imports[] = $line;
-			}
-			fclose( $file ); 
-
-			$meta_keys = array_shift( $imports );
+			$csv = wpmem_csv_to_array( $file );
 
 			$x = 0;
 			$e = 0;
-			foreach ( $imports as $import ) {
-				$keyed_values = array();
-				foreach ( $import as $key => $field ) {
-					$keyed_values[ $meta_keys[ $key ] ] = $field;
-				}
+			foreach ( $csv as $row ) {
+
+				$row = wpmem_sanitize_array( $row );
 
 				// Do we have a field we can get the user by?
 				$user_id = false;
 
 				// Do we have a field we can get the user by?
-				if ( isset( $keyed_values['ID'] ) ) {
-					$user_id = $keyed_values['ID'];
-				} elseif ( isset( $keyed_values['user_login'] ) ) {
-					$user = get_user_by( 'login', $keyed_values['user_login'] );
+				if ( isset( $row['ID'] ) ) {
+					$user_id = $row['ID'];
+				} elseif ( isset( $row['user_login'] ) ) {
+					$user = get_user_by( 'login', $row['user_login'] );
 					$user_id = $user->ID;
-				} elseif ( isset( $keyed_values['user_email'] ) ) {
-					$user = get_user_by( 'email', $keyed_values['user_email'] );
-					$user_id = $user->ID;
+					$user_id = ( $user ) ? $user->ID : false;
+				} elseif ( isset( $row['user_email'] ) ) {
+					$user = get_user_by( 'email', sanitize_email( $row['user_email'] ) );
+					$user_id = ( $user ) ? $user->ID : false;
 				}
 
 				// Set specific criteria.
-				$membership = ( isset( $keyed_values[ $membership_key ] ) ) ? $keyed_values[ $membership_key ] : false;
-				$expiration = ( isset( $keyed_values[ $expiration_key ] ) ) ? $keyed_values[ $expiration_key ] : false;
+				$membership = ( isset( $row[ $membership_key ] ) ) ? $row[ $membership_key ] : false;
+				$expiration = ( isset( $row[ $expiration_key ] ) ) ? $row[ $expiration_key ] : false;
 
 				// Set expiration date - either "false" or MySQL timestamp.
 				$date = ( $expiration ) ? date( "Y-m-d H:i:s", strtotime( $expiration ) ) : false;
@@ -120,42 +119,40 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					if ( ! $membership ) {
 						$membership = __( 'unknown', 'wp-members' );
 					}
-					//if ( isset( $assoc_args['verbose'] ) ) {	
-						/* translators: %s is the placeholder for the name of the membership, do not remove it. */
-					//	WP_CLI::line( sprintf( __( 'Error adding %s membership for unknown user', 'wp-members' ), $membership ) );
-					//}
-					$e++;
+					$e++; // Add to error count.
 				} else {
 
-					// Set user product access.
-					if ( $membership ) {
-						wpmem_set_user_membership( $membership, $user_id, $date );
-					}
+					// Does the membership exist?
+					if ( ! array_key_exists( $membership, $site_memberships ) ) {
+						$membership = __( 'unknown', 'wp-members' ) . ': ' . $membership;
+						$e++; // Add to error count.
+					} else {
 
-					//if ( isset( $assoc_args['verbose'] ) ) {
-						/* translators: %s is the placeholder for the name of the membership, do not remove it. */
-					//	WP_CLI::line( sprintf( __( 'Set %s membership for user %s', 'wp-members' ), $membership, $user_id ) );
-					//}
-					$x++;
+						// Set user product access.
+						if ( $membership && ! isset( $assoc_args['dry-run'] ) ) {
+							wpmem_set_user_membership( $membership, $user_id, $date );
+						}
+						$x++; // Add to success count.
+					}
 				}
 
-				if ( isset( $assoc_args['verbose'] ) ) {
+				if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
 					// Set columns for output.
 					$columns = array();
-					if ( isset( $keyed_values['ID'] ) ) {
+					if ( isset( $row['ID'] ) ) {
 						$list_items['user ID'] = $user_id;
 						if ( ! in_array( 'user ID', $columns ) ) {
 							$columns[] = 'user ID';
 						}
 					}
-					if ( isset( $keyed_values['user_login'] ) ) {
-						$list_items['user_login'] = $keyed_values['user_login'];
+					if ( isset( $row['user_login'] ) ) {
+						$list_items['user_login'] = $row['user_login'];
 						if ( ! in_array( 'user_login', $columns ) ) {
 							$columns[] = 'user_login';
 						}
 					}
-					if ( isset( $keyed_values['user_email'] ) ) {
-						$list_items['user_email'] = $keyed_values['user_email'];
+					if ( isset( $row['user_email'] ) ) {
+						$list_items['user_email'] = $row['user_email'];
 						if ( ! in_array( 'user_email', $columns ) ) {
 							$columns[] = 'user_email';
 						}
@@ -164,7 +161,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					if ( ! in_array( 'membership', $columns ) ) {
 							$columns[] = 'membership';
 						}
-					if ( isset( $keyed_values[ $expiration_key ] ) ) {
+					if ( isset( $row[ $expiration_key ] ) ) {
 						$list_items[ $expiration_key ] = $date;
 						if ( ! in_array( $expiration_key, $columns ) ) {
 							$columns[] = $expiration_key;
@@ -175,7 +172,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 			}
 
-			if ( isset( $assoc_args['verbose'] ) ) {
+			if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
 				$formatter = new \WP_CLI\Formatter( $assoc_args, $columns );
 				$formatter->display_items( $list );
 			}
@@ -188,12 +185,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				unlink( trailingslashit( $file_path ) . $file_name );
 			} else {
 
-				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-				WP_CLI::success( sprintf( __( 'Imported memberships for %s users with %s errors', 'wp-members' ), $x, $e ) );
+				if ( isset( $assoc_args['dry-run'] ) ) {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::line( sprintf( __( 'Import memberships for %s users with %s errors', 'wp-members' ), $x, $e ) );
+				} else {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::success( sprintf( __( 'Imported memberships for %s users with %s errors', 'wp-members' ), $x, $e ) );
+				}
 			}
-
 		}
-
 	}
 
 	WP_CLI::add_command( 'mem import', 'WP_Members_Import_CLI' );
