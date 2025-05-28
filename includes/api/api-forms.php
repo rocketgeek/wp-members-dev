@@ -487,11 +487,11 @@ function wpmem_woo_checkout_form( $checkout_fields ) {
 	$priority = apply_filters( 'wpmem_wc_checkout_field_priority_seed', 10 );
 	
 	foreach ( $fields as $meta_key => $field ) {
-		
+
 		// All field types have these.
 		$checkout_fields['order'][ $meta_key ] = array(
 			'type'     => $fields[ $meta_key ]['type'],
-			'label'    => ( 'tos' == $meta_key ) ? $wpmem->forms->get_tos_link( $field, 'woo' ) : $fields[ $meta_key ]['label'],
+			'label'    => ( 'tos' == $meta_key ) ? $wpmem->forms->get_tos_link( $field, 'woo' ) : wpmem_get_field_label( $meta_key ),
 			'required' =>  $fields[ $meta_key ]['required'],
 			'priority' => $priority,
 		);
@@ -824,10 +824,41 @@ function wpmem_is_file_field( $field_meta ) {
  * Returns the field label.
  * 
  * @since 3.5.1
+ * @since 3.5.4 Supports label_href and returns sanitized result.
  */
 function wpmem_get_field_label( $meta_key ) {
 	$fields = wpmem_fields();
-	return $fields[ $meta_key ]['label'];
+
+	$args = $fields[ $meta_key ];
+		
+	// Adjust placeholders.
+	
+	if ( isset( $args['label_href'] ) ) {
+
+		$label_text = str_replace( '%', '%s', esc_html__( $args['label'], 'wp-members' ) );
+		/**
+		 * Filters the anchor tag.
+		 * 
+		 * @since 3.5.3
+		 * 
+		 * @param  array   $atts     An array of attributes for the <a> tag.
+		 * @param  string  $meta_key Meta key of the field.
+		 */
+		$tag_atts = apply_filters( 'wpmem_form_label_link', array ( 
+			'href'   => $args['label_href'],
+			'target' => '_blank',
+		), $meta_key );
+			
+		$anchor_tag = "<a ";
+		foreach ( $tag_atts as $attribute => $value ) {
+			$anchor_tag .= ( '' != $value ) ? esc_attr( $attribute ) . '="' . esc_attr( $value ) . '" ' : esc_attr( $attribute ) . ' ';
+		}
+		$anchor_tag .= ">";
+			
+		return sprintf( $label_text, $anchor_tag, '</a>' );
+	} else {
+		return esc_html__( $args['label'], 'wp-members' );
+	}
 }
 
 /**

@@ -192,8 +192,8 @@ class WP_Members_User_Profile {
 
 					// Is the field required?
 					$req = ( $field['required'] ) ? ' <span class="description">' . esc_html__( '(required)' ) . '</span>' : '';
-					$label = '<label>' . esc_html__( $field['label'], 'wp-members' ) . $req . '</label>';
-
+					$label = '<label>' . wpmem_get_field_label( $meta ) . $req . '</label>';
+					
 					// Build the form rows for filtering.
 					$rows[ $meta ] = array(
 						'meta'         => $meta,
