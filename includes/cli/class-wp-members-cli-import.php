@@ -61,6 +61,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * 
 		 * [--cleanup] 
 		 * : Deletes the import file when import is completed.
+		 * 
+		 * [--cols=<columns>] 
+		 * : A comma separated string of column names.
 		 */
 		public function memberships( $args, $assoc_args ) {
 
@@ -71,21 +74,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$membership_key = ( isset( $assoc_args['key'] ) ) ? $assoc_args['key'] : "import_membership";
 			$expiration_key = ( isset( $assoc_args['exp'] ) ) ? $assoc_args['exp'] : "import_expires";
 
-			$file_name = $assoc_args['file'];
-			$file_path = ( isset( $assoc_args['path'] ) ) ? ABSPATH . $assoc_args['path'] : ABSPATH . 'wp-content/uploads/';
-
-			$file_path = ( isset( $assoc_args['dir'] ) ) ? trailingslashit( trailingslashit( $file_path ) . $assoc_args['dir'] ) : $file_path;
-
-			$file = trailingslashit( $file_path ) . $file_name;
-
-			// Check if file exists.
-			if ( ! file_exists( $file ) ) {
-				WP_CLI::line( __( 'File name:', 'wp-members' ) . ' ' . $file_name );
-				WP_CLI::line( __( 'File path:', 'wp-members' ) . ' ' . $file_path );
-				WP_CLI::error( __( 'Parameters given did not return a valid file. Check your filename and path values.', 'wp-members' ) );
-			}
-
-			$csv = wpmem_csv_to_array( $file );
+			// Get the file contents.
+			$csv = $this->get_csv_from_file( $assoc_args );
 
 			$x = 0;
 			$e = 0;
@@ -94,19 +84,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$row = wpmem_sanitize_array( $row );
 
 				// Do we have a field we can get the user by?
-				$user_id = false;
-
-				// Do we have a field we can get the user by?
-				if ( isset( $row['ID'] ) ) {
-					$user_id = $row['ID'];
-				} elseif ( isset( $row['user_login'] ) ) {
-					$user = get_user_by( 'login', $row['user_login'] );
-					$user_id = $user->ID;
-					$user_id = ( $user ) ? $user->ID : false;
-				} elseif ( isset( $row['user_email'] ) ) {
-					$user = get_user_by( 'email', sanitize_email( $row['user_email'] ) );
-					$user_id = ( $user ) ? $user->ID : false;
-				}
+				$user_id = $this->get_user_id_from_row( $row );
 
 				// Set specific criteria.
 				$membership = ( isset( $row[ $membership_key ] ) ) ? $row[ $membership_key ] : false;
@@ -179,19 +157,420 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( isset( $assoc_args['cleanup'] ) ) {
 				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Imported memberships for %s users with %s errors', 'wp-members' ), $x, $e ) );
-				/* translators: %s is the placeholder for the filename, do not remove it. */
-				WP_CLI::confirm( sprintf( __( 'You have selected to delete the import file %s on completion. This cannot be undone.  Do you with to continue?', 'wp-members' ), $file_name ) );
-				unlink( trailingslashit( $file_path ) . $file_name );
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Imported memberships for %s users with %s errors.', 'wp-members' ), $x, $e ) );
+				$this->cleanup( $assoc_args );
 			} else {
-
 				if ( isset( $assoc_args['dry-run'] ) ) {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::line( sprintf( __( 'Import memberships for %s users with %s errors', 'wp-members' ), $x, $e ) );
+					WP_CLI::line( sprintf( __( 'Import memberships for %s users with %s errors.', 'wp-members' ), $x, $e ) );
 				} else {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::success( sprintf( __( 'Imported memberships for %s users with %s errors', 'wp-members' ), $x, $e ) );
+					WP_CLI::success( sprintf( __( 'Imported memberships for %s users with %s errors.', 'wp-members' ), $x, $e ) );
 				}
+			}
+		}
+
+		/**
+		 * Dectivates all users in an imported CSV file.
+		 * 
+		 * @since 3.5.4
+		 * 
+		 * @todo Currently just activates, but could add assoc_args to 
+		 *       send email (does not currently by default) or set password.
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * --file=<file_name> 
+		 * : The filename of the import csv.
+		 * 
+		 * [--dir=<dir_path>] 
+		 * : Additional path value to add to ABSPATH.
+		 * 
+		 * [--verbose] 
+		 * : Displays verbose results.
+		 * 
+		 * [--dry-run] 
+		 * : Preview what users will be activated.
+		 * 
+		 * [--cleanup] 
+		 * : Deletes the import file when import is completed.
+		 * 
+		 * [--cols=<columns>] 
+		 * : A comma separated string of column names.
+		 */
+		public function activate( $args, $assoc_args ) {
+			$csv = $this->get_csv_from_file( $assoc_args );
+
+			$x = 0;
+			$e = 0;
+			foreach ( $csv as $row ) {
+				$row = wpmem_sanitize_array( $row );
+				$user_id = $this->get_user_id_from_row( $row );
+				if ( $user_id ) {
+					if ( ! isset( $assoc_args['dry-run'] ) ) {
+						wpmem_activate_user( $user_id, false, false );
+					}
+					$x++;
+				} else {
+					$e++;
+				}
+
+				if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+					// Set columns for output.
+					$columns = array();
+					if ( isset( $row['ID'] ) ) {
+						$list_items['user ID'] = $user_id;
+						if ( ! in_array( 'user ID', $columns ) ) {
+							$columns[] = 'user ID';
+						}
+					}
+					if ( isset( $row['user_login'] ) ) {
+						$list_items['user_login'] = $row['user_login'];
+						if ( ! in_array( 'user_login', $columns ) ) {
+							$columns[] = 'user_login';
+						}
+					}
+					if ( isset( $row['user_email'] ) ) {
+						$list_items['user_email'] = $row['user_email'];
+						if ( ! in_array( 'user_email', $columns ) ) {
+							$columns[] = 'user_email';
+						}
+					}
+					$list[] = $list_items;
+				}
+			}
+
+			if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+				$formatter = new \WP_CLI\Formatter( $assoc_args, $columns );
+				$formatter->display_items( $list );
+			}
+
+			if ( isset( $assoc_args['cleanup'] ) ) {
+				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as activated with %s errors.', 'wp-members' ), $x, $e ) );
+				$this->cleanup( $assoc_args );
+			} else {
+				if ( isset( $assoc_args['dry-run'] ) ) {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::line( sprintf( __( 'Set %s users as activated with %s errors.', 'wp-members' ), $x, $e ) );
+				} else {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::success( sprintf( __( 'Set %s users as activated with %s errors.', 'wp-members' ), $x, $e ) );
+				}
+			}
+		}
+
+		/**
+		 * Deactivates all users in an imported CSV file.
+		 * 
+		 * @since 3.5.4
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * --file=<file_name> 
+		 * : The filename of the import csv.
+		 * 
+		 * [--dir=<dir_path>] 
+		 * : Additional path value to add to ABSPATH.
+		 * 
+		 * [--verbose] 
+		 * : Displays verbose results.
+		 * 
+		 * [--dry-run] 
+		 * : Preview what users will be activated.
+		 * 
+		 * [--cleanup] 
+		 * : Deletes the import file when import is completed.
+		 * 
+		 * [--cols=<columns>] 
+		 * : A comma separated string of column names.
+		 */
+		public function deactivate( $args, $assoc_args ) {
+			$csv = $this->get_csv_from_file( $assoc_args );
+
+			$x = 0;
+			$e = 0;
+			foreach ( $csv as $row ) {
+				$row = wpmem_sanitize_array( $row );
+				$user_id = $this->get_user_id_from_row( $row );
+				if ( $user_id ) {
+					if ( ! isset( $assoc_args['dry-run'] ) ) {
+						wpmem_deactivate_user( $user_id );
+					}
+					$x++;
+				} else {
+					$e++;
+				}
+
+				if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+					// Set columns for output.
+					$columns = array();
+					if ( isset( $row['ID'] ) ) {
+						$list_items['user ID'] = $user_id;
+						if ( ! in_array( 'user ID', $columns ) ) {
+							$columns[] = 'user ID';
+						}
+					}
+					if ( isset( $row['user_login'] ) ) {
+						$list_items['user_login'] = $row['user_login'];
+						if ( ! in_array( 'user_login', $columns ) ) {
+							$columns[] = 'user_login';
+						}
+					}
+					if ( isset( $row['user_email'] ) ) {
+						$list_items['user_email'] = $row['user_email'];
+						if ( ! in_array( 'user_email', $columns ) ) {
+							$columns[] = 'user_email';
+						}
+					}
+					$list[] = $list_items;
+				}
+			}
+
+			if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+				$formatter = new \WP_CLI\Formatter( $assoc_args, $columns );
+				$formatter->display_items( $list );
+			}
+
+			if ( isset( $assoc_args['cleanup'] ) ) {
+				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as deactivated with %s errors.', 'wp-members' ), $x, $e ) );
+				$this->cleanup( $assoc_args );
+			} else {
+				if ( isset( $assoc_args['dry-run'] ) ) {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::line( sprintf( __( 'Set %s users as deactivated with %s errors.', 'wp-members' ), $x, $e ) );
+				} else {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::success( sprintf( __( 'Set %s users as deactivated with %s errors.', 'wp-members' ), $x, $e ) );
+				}
+			}
+		}
+
+		/**
+		 * Confirms all users in an imported CSV file.
+		 * 
+		 * @since 3.5.4
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * --file=<file_name> 
+		 * : The filename of the import csv.
+		 * 
+		 * [--dir=<dir_path>] 
+		 * : Additional path value to add to ABSPATH.
+		 * 
+		 * [--verbose] 
+		 * : Displays verbose results.
+		 * 
+		 * [--dry-run] 
+		 * : Preview what users will be activated.
+		 * 
+		 * [--cleanup] 
+		 * : Deletes the import file when import is completed.
+		 * 
+		 * [--cols=<columns>] 
+		 * : A comma separated string of column names.
+		 */
+		public function confirm( $args, $assoc_args ) {
+			$csv = $this->get_csv_from_file( $assoc_args );
+
+			$x = 0;
+			$e = 0;
+			foreach ( $csv as $row ) {
+				$row = wpmem_sanitize_array( $row );
+				$user_id = $this->get_user_id_from_row( $row );
+				if ( $user_id ) {
+					if ( ! isset( $assoc_args['dry-run'] ) ) {
+						wpmem_set_user_as_confirmed( $user_id );
+					}
+					$x++;
+				} else {
+					$e++;
+				}
+
+				if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+					// Set columns for output.
+					$columns = array();
+					if ( isset( $row['ID'] ) ) {
+						$list_items['user ID'] = $user_id;
+						if ( ! in_array( 'user ID', $columns ) ) {
+							$columns[] = 'user ID';
+						}
+					}
+					if ( isset( $row['user_login'] ) ) {
+						$list_items['user_login'] = $row['user_login'];
+						if ( ! in_array( 'user_login', $columns ) ) {
+							$columns[] = 'user_login';
+						}
+					}
+					if ( isset( $row['user_email'] ) ) {
+						$list_items['user_email'] = $row['user_email'];
+						if ( ! in_array( 'user_email', $columns ) ) {
+							$columns[] = 'user_email';
+						}
+					}
+					$list[] = $list_items;
+				}
+			}
+
+			if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+				$formatter = new \WP_CLI\Formatter( $assoc_args, $columns );
+				$formatter->display_items( $list );
+			}
+
+			if ( isset( $assoc_args['cleanup'] ) ) {
+				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as confirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				$this->cleanup( $assoc_args );
+			} else {
+				if ( isset( $assoc_args['dry-run'] ) ) {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::line( sprintf( __( 'Set %s users as confirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				} else {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::success( sprintf( __( 'Set %s users as confirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				}
+			}
+		}
+
+		/**
+		 * Confirms all users in an imported CSV file.
+		 * 
+		 * @since 3.5.4
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * --file=<file_name> 
+		 * : The filename of the import csv.
+		 * 
+		 * [--dir=<dir_path>] 
+		 * : Additional path value to add to ABSPATH.
+		 * 
+		 * [--verbose] 
+		 * : Displays verbose results.
+		 * 
+		 * [--dry-run] 
+		 * : Preview what users will be activated.
+		 * 
+		 * [--cleanup] 
+		 * : Deletes the import file when import is completed.
+		 * 
+		 * [--cols=<columns>] 
+		 * : A comma separated string of column names.
+		 */
+		public function unconfirm( $args, $assoc_args ) {
+			$csv = $this->get_csv_from_file( $assoc_args );
+
+			$x = 0;
+			$e = 0;
+			foreach ( $csv as $row ) {
+				$row = wpmem_sanitize_array( $row );
+				$user_id = $this->get_user_id_from_row( $row );
+				if ( $user_id ) {
+					if ( ! isset( $assoc_args['dry-run'] ) ) {
+						wpmem_set_user_as_unconfirmed( $user_id );
+					}
+					$x++;
+				} else {
+					$e++;
+				}
+
+				if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+					// Set columns for output.
+					$columns = array();
+					if ( isset( $row['ID'] ) ) {
+						$list_items['user ID'] = $user_id;
+						if ( ! in_array( 'user ID', $columns ) ) {
+							$columns[] = 'user ID';
+						}
+					}
+					if ( isset( $row['user_login'] ) ) {
+						$list_items['user_login'] = $row['user_login'];
+						if ( ! in_array( 'user_login', $columns ) ) {
+							$columns[] = 'user_login';
+						}
+					}
+					if ( isset( $row['user_email'] ) ) {
+						$list_items['user_email'] = $row['user_email'];
+						if ( ! in_array( 'user_email', $columns ) ) {
+							$columns[] = 'user_email';
+						}
+					}
+					$list[] = $list_items;
+				}
+			}
+
+			if ( isset( $assoc_args['verbose'] ) || isset( $assoc_args['dry-run'] ) ) {
+				$formatter = new \WP_CLI\Formatter( $assoc_args, $columns );
+				$formatter->display_items( $list );
+			}
+
+			if ( isset( $assoc_args['cleanup'] ) ) {
+				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as unconfirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				$this->cleanup( $assoc_args );
+			} else {
+				if ( isset( $assoc_args['dry-run'] ) ) {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::line( sprintf( __( 'Set %s users as unconfirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				} else {
+					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
+					WP_CLI::success( sprintf( __( 'Set %s users as unconfirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				}
+			}
+		}
+
+		private function get_user_id_from_row( $row ) {
+			$user_id = false;
+			// Do we have a field we can get the user by?
+			if ( isset( $row['ID'] ) ) {
+				$user_id = $row['ID'];
+			} elseif ( isset( $row['user_login'] ) ) {
+				$user = get_user_by( 'login', $row['user_login'] );
+				$user_id = $user->ID;
+				$user_id = ( $user ) ? $user->ID : false;
+			} elseif ( isset( $row['user_email'] ) ) {
+				$user = get_user_by( 'email', sanitize_email( $row['user_email'] ) );
+				$user_id = ( $user ) ? $user->ID : false;
+			}
+			return $user_id;
+		}
+
+		private function get_file_info( $assoc_args ) {
+			$file_info['name'] = $assoc_args['file'];
+			$file_path = ( isset( $assoc_args['path'] ) ) ? ABSPATH . $assoc_args['path'] : ABSPATH . 'wp-content/uploads/';
+
+			$file_info['path'] = ( isset( $assoc_args['dir'] ) ) ? trailingslashit( trailingslashit( $file_path ) . $assoc_args['dir'] ) : $file_path;
+
+			$file_info['file'] = trailingslashit( $file_info['path'] ) . $file_info['name'];
+			return $file_info;
+		}
+
+		private function get_csv_from_file( $assoc_args ) {
+			
+			$file_info = $this->get_file_info( $assoc_args );
+
+			// Check if file exists.
+			if ( ! file_exists( $file_info['file'] ) ) {
+				WP_CLI::line( __( 'File name:', 'wp-members' ) . ' ' . $file_info['name'] );
+				WP_CLI::line( __( 'File path:', 'wp-members' ) . ' ' . $file_info['path'] );
+				WP_CLI::error( __( 'Parameters given did not return a valid file. Check your filename and path values.', 'wp-members' ) );
+			}
+
+			$cols = ( isset( $assoc_args['cols'] ) ) ? explode( ",", $assoc_args['cols'] ) : false;
+			return wpmem_csv_to_array( $file_info['file'], $cols );
+		}
+
+		private function cleanup( $assoc_args ) {
+			$file_info = $this->get_file_info( $assoc_args );
+			/* translators: %s is the placeholder for the filename, do not remove it. */
+			WP_CLI::confirm( sprintf( __( 'You have selected to delete %s on completion. This cannot be undone. Do you with to continue?', 'wp-members' ), $file_info['name'] ) );
+			$result = unlink( $file_info['file'] );
+			if ( $result ) {
+				WP_CLI::success( sprintf( __( '%s was deleted.', 'wp-members' ), $file_info['name'] ) );
+			} else {
+				WP_CLI::success( sprintf( __( 'Unable to delete %s.', 'wp-members' ), $file_info['name'] ) );
 			}
 		}
 	}
