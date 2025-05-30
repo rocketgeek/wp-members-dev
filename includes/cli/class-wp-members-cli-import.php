@@ -38,7 +38,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$file_path = trailingslashit( trailingslashit( $file_path ) . $assoc_args['dir'] ); //2025/05/
 			}
 
-			WP_CLI::line( __( 'File path:', 'wp-members' ) . ' ' . $file_path );
+			WP_CLI::line( 'File path:' . ' ' . $file_path );
 			return;
 		}
 
@@ -97,14 +97,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 				if ( ! $user_id ) {
 					if ( ! $membership ) {
-						$membership = __( 'unknown', 'wp-members' );
+						$membership = 'unknown';
 					}
 					$e++; // Add to error count.
 				} else {
 
 					// Does the membership exist?
 					if ( ! array_key_exists( $membership, $site_memberships ) ) {
-						$membership = __( 'unknown', 'wp-members' ) . ': ' . $membership;
+						$membership = 'unknown' . ': ' . $membership;
 						$e++; // Add to error count.
 					} else {
 
@@ -159,15 +159,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( isset( $assoc_args['cleanup'] ) ) {
 				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Imported memberships for %s users with %s errors.', 'wp-members' ), $x, $e ) );
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( 'Imported memberships for %s users with %s errors.', $x, $e ) );
 				$this->cleanup( $assoc_args );
 			} else {
 				if ( isset( $assoc_args['dry-run'] ) ) {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::line( sprintf( __( 'Import memberships for %s users with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::line( sprintf( 'Import memberships for %s users with %s errors.', $x, $e ) );
 				} else {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::success( sprintf( __( 'Imported memberships for %s users with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::success( sprintf( 'Imported memberships for %s users with %s errors.', $x, $e ) );
 				}
 			}
 		}
@@ -249,15 +249,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( isset( $assoc_args['cleanup'] ) ) {
 				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as activated with %s errors.', 'wp-members' ), $x, $e ) );
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( 'Set %s users as activated with %s errors.', $x, $e ) );
 				$this->cleanup( $assoc_args );
 			} else {
 				if ( isset( $assoc_args['dry-run'] ) ) {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::line( sprintf( __( 'Set %s users as activated with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::line( sprintf( 'Set %s users as activated with %s errors.', $x, $e ) );
 				} else {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::success( sprintf( __( 'Set %s users as activated with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::success( sprintf( 'Set %s users as activated with %s errors.', $x, $e ) );
 				}
 			}
 		}
@@ -336,15 +336,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( isset( $assoc_args['cleanup'] ) ) {
 				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as deactivated with %s errors.', 'wp-members' ), $x, $e ) );
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( 'Set %s users as deactivated with %s errors.', $x, $e ) );
 				$this->cleanup( $assoc_args );
 			} else {
 				if ( isset( $assoc_args['dry-run'] ) ) {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::line( sprintf( __( 'Set %s users as deactivated with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::line( sprintf( 'Set %s users as deactivated with %s errors.', $x, $e ) );
 				} else {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::success( sprintf( __( 'Set %s users as deactivated with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::success( sprintf( 'Set %s users as deactivated with %s errors.', $x, $e ) );
 				}
 			}
 		}
@@ -423,15 +423,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( isset( $assoc_args['cleanup'] ) ) {
 				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as confirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( 'Set %s users as confirmed with %s errors.', $x, $e ) );
 				$this->cleanup( $assoc_args );
 			} else {
 				if ( isset( $assoc_args['dry-run'] ) ) {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::line( sprintf( __( 'Set %s users as confirmed with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::line( sprintf( 'Set %s users as confirmed with %s errors.', $x, $e ) );
 				} else {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::success( sprintf( __( 'Set %s users as confirmed with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::success( sprintf( 'Set %s users as confirmed with %s errors.', $x, $e ) );
 				}
 			}
 		}
@@ -510,15 +510,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( isset( $assoc_args['cleanup'] ) ) {
 				/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( __( 'Set %s users as unconfirmed with %s errors.', 'wp-members' ), $x, $e ) );
+				WP_CLI::line( WP_CLI::colorize( "%GSuccess:%n " ) . sprintf( 'Set %s users as unconfirmed with %s errors.', $x, $e ) );
 				$this->cleanup( $assoc_args );
 			} else {
 				if ( isset( $assoc_args['dry-run'] ) ) {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::line( sprintf( __( 'Set %s users as unconfirmed with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::line( sprintf( 'Set %s users as unconfirmed with %s errors.', $x, $e ) );
 				} else {
 					/* translators: %s is the placeholder for the number of memberships updated, do not remove it. */
-					WP_CLI::success( sprintf( __( 'Set %s users as unconfirmed with %s errors.', 'wp-members' ), $x, $e ) );
+					WP_CLI::success( sprintf( 'Set %s users as unconfirmed with %s errors.', $x, $e ) );
 				}
 			}
 		}
@@ -568,9 +568,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Check if file exists.
 			if ( ! file_exists( $file_info['file'] ) ) {
-				WP_CLI::line( __( 'File name:', 'wp-members' ) . ' ' . $file_info['name'] );
-				WP_CLI::line( __( 'File path:', 'wp-members' ) . ' ' . $file_info['path'] );
-				WP_CLI::error( __( 'Parameters given did not return a valid file. Check your filename and path values.', 'wp-members' ) );
+				WP_CLI::line( 'File name:' . ' ' . $file_info['name'] );
+				WP_CLI::line( 'File path:' . ' ' . $file_info['path'] );
+				WP_CLI::error( 'Parameters given did not return a valid file. Check your filename and path values.' );
 			}
 
 			$cols = ( isset( $assoc_args['cols'] ) ) ? explode( ",", $assoc_args['cols'] ) : false;
@@ -584,12 +584,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		private function cleanup( $assoc_args ) {
 			$file_info = $this->get_file_info( $assoc_args );
 			/* translators: %s is the placeholder for the filename, do not remove it. */
-			WP_CLI::confirm( sprintf( __( 'You have selected to delete %s on completion. This cannot be undone. Do you with to continue?', 'wp-members' ), $file_info['name'] ) );
+			WP_CLI::confirm( sprintf( 'You have selected to delete %s on completion. This cannot be undone. Do you with to continue?', $file_info['name'] ) );
 			$result = unlink( $file_info['file'] );
 			if ( $result ) {
-				WP_CLI::success( sprintf( __( '%s was deleted.', 'wp-members' ), $file_info['name'] ) );
+				WP_CLI::success( sprintf( '%s was deleted.', $file_info['name'] ) );
 			} else {
-				WP_CLI::success( sprintf( __( 'Unable to delete %s.', 'wp-members' ), $file_info['name'] ) );
+				WP_CLI::success( sprintf( 'Unable to delete %s.', $file_info['name'] ) );
 			}
 		}
 	}

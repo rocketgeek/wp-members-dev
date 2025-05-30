@@ -68,7 +68,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
             // Check if view already exists.
             if ( false != $this->view_exists( $view_name ) ) {
-                WP_CLI::error( __( 'View already exists. Try another name or edit existing view.', 'wp-members' ) );
+                WP_CLI::error( 'View already exists. Try another name or edit existing view.' );
             }
 
             // If there's "where", is it a field that is part of the query?
@@ -115,7 +115,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			
 			// Check that fields are actually valid wp_user fields.
             if ( $contains_bad_field ) {
-                WP_CLI::error( sprintf( __( 'Fields for %s fields contains a field that is not a valid %s field.', 'wp-members' ), $table, $table ) );
+                WP_CLI::error( sprintf( 'Fields for %s fields contains a field that is not a valid %s field.', $table, $table ) );
             }
 			
 			// Trim comma from last value.
@@ -135,7 +135,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
                     // If meta key is invalid, print error.
                     if ( ! in_array( $meta_field, $table_meta_fields ) ) {
-                        WP_CLI::error( sprintf( __( '%s is not a valid meta key in %s.', 'wp-members' ), esc_attr( $meta_field ), $this->get_meta_table( $table ) ) );
+                        WP_CLI::error( sprintf( '%s is not a valid meta key in %s.', esc_attr( $meta_field ), $this->get_meta_table( $table ) ) );
                     }
 
                     /*
@@ -196,7 +196,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
                 // Add the value. Error if not included.
                 if ( ! isset( $assoc_args['where_value'] ) ) {
-                    WP_CLI::error( __( 'A "where_value" value is required when including a comparison', 'wp-members' ) );
+                    WP_CLI::error( 'A "where_value" value is required when including a comparison' );
                 } else {
                     $sql .= ' "' . esc_sql( $assoc_args['where_value'] ) . '" ';
                 }
@@ -212,9 +212,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             $result = $wpdb->query( $sql );
 
             if ( $result ) {
-                WP_CLI::success( __( 'New view added: ', 'wp-members' ) . esc_attr( $view_name ) );
+                WP_CLI::success( 'New view added: ' . esc_attr( $view_name ) );
             } else {
-                WP_CLI::error( __( 'An unknown error occurred. View was not added.', 'wp-members' ) );
+                WP_CLI::error( 'An unknown error occurred. View was not added.' );
             }
         }
 
@@ -233,13 +233,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                 $sql = "DROP VIEW IF EXISTS " . esc_sql( $arg );
                 $result = $wpdb->query( $sql );
                 if ( $result ) {
-                    WP_CLI::success( __( 'Dropped user view: ', 'wp-members' ) . esc_attr( $arg ) );
+                    WP_CLI::success( 'Dropped user view: ' . esc_attr( $arg ) );
                 } else {
                     $errors[] = $arg;
                 }
             }
             if ( ! empty( $errors ) ) {
-                WP_CLI::error( sprintf( __( 'An unknown error occurred. The following views were not dropped: %s', 'wp-members' ), implode( ', ', $errors ) ) );
+                WP_CLI::error( sprintf( 'An unknown error occurred. The following views were not dropped: %s', implode( ', ', $errors ) ) );
             }
         }
 
@@ -257,12 +257,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                 }
 
                 /* translators: %s is the placeholder for the name of the database, do not remove it. */
-                WP_CLI::line( sprintf( __( 'List of views contained in %s', 'wp-members' ), $wpdb->dbname ) );
+                WP_CLI::line( sprintf( 'List of views contained in %s', $wpdb->dbname ) );
                 $formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Views' ) );
                 $formatter->display_items( $list );
             } else {
                 /* translators: %s is the placeholder for the name of the database, do not remove it. */
-                WP_CLI::line( sprintf( __( 'There are no views in %s', 'wp-members' ), $wpdb->dbname ) );
+                WP_CLI::line( sprintf( 'There are no views in %s', $wpdb->dbname ) );
             }
         }
 
@@ -281,7 +281,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                     $list[] = array( 'Field'=>$result );
                 }
                 /* translators: %s %s is the placeholder for the name of the database and prefix, do not remove it. */
-                WP_CLI::line( sprintf( __( 'List of meta keys contained in %s %s', 'wp-members' ), $wpdb->dbname, $wpdb->prefix . esc_attr( $args[0] ) ) );
+                WP_CLI::line( sprintf( 'List of meta keys contained in %s %s', $wpdb->dbname, $wpdb->prefix . esc_attr( $args[0] ) ) );
                 $formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Field' ) );
                 $formatter->display_items( $list );
             }
@@ -393,7 +393,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             $query = 'SELECT ROUND(SUM(LENGTH(option_value))/1024) as autoload_size FROM ' . $wpdb->prefix . 'options WHERE autoload="yes" OR autoload="on";';
             $results = $wpdb->get_results( $query );
 
-            WP_CLI::line( __( 'Autoload options size (in KiB):', 'wp-members' ) . ' ' . $results[0]->autoload_size );
+            WP_CLI::line( 'Autoload options size (in KiB):' . ' ' . $results[0]->autoload_size );
 
             $query = 'SELECT option_name, length(option_value) 
                 AS option_value_length FROM ' . $wpdb->prefix . 'options  
@@ -409,11 +409,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                     );
                 }
 
-                WP_CLI::line( __( 'List of autoload options', 'wp-members' ) );
+                WP_CLI::line( 'List of autoload options' );
                 $formatter = new \WP_CLI\Formatter( $assoc_args, array( 'Name', 'Value' ) );
                 $formatter->display_items( $list );
             } else {
-                WP_CLI::line( __( 'There were no results', 'wp-members' ) );
+                WP_CLI::line( 'There were no results' );
             }
         }
     }
