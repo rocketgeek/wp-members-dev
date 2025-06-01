@@ -137,13 +137,13 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 * Add additional form support for form field label links (native WP reg, WC forms, dashboard profile, [wpmem_field] shortcode).
 * New API functions for user counts: `wpmem_user_count()`, `wpmem_get_user_count_by_meta()`, `wpmem_get_user_count_by_role()`.
 * New API function for import: `wpmem_csv_to_array()`.
-* Updates to WP CLI commands:
-* All @alias are now @subcommand (changes all underscore commands to dash/hyphen. example:  <wp mem user get_role> is now <wp mem user get-role>).
-* Improve and debug `wp mem import memberships` command.
-* Improve and debug `wp mem membership` commands (CLI commands to add/update/delete user memberships).
-* Add WP CLI import commands for activate, deactivate, confirm, & unconfirm.
 * Improve radio field type display in native WP and WC My Account reg forms.
 * Allow native WC fields in WC My Account reg form.
+* Updates to WP CLI commands: All @alias are now @subcommand (changes all underscore commands to dash/hyphen. example:  <wp mem user get_role> is now <wp mem user get-role>).
+* Updates to WP CLI commands: Improve and debug `wp mem import memberships` command.
+* Updates to WP CLI commands: Improve and debug `wp mem membership` commands (CLI commands to add/update/delete user memberships).
+* Updates to WP CLI commands: Add import commands for activate, deactivate, confirm, & unconfirm.
+* Updates to WP CLI commands: CLI interface no longer localized (translatable), following core WP on this as the additional strings make the translation files too unwieldy.
 
 = 3.5.3 =
 
@@ -175,12 +175,10 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 * Improve stylesheet load (checks for a custom URL value rather than the "select_style" setting).
 * Review which objects are loaded and when. Improve where possible.  Moved password reset object to only load when doing a password reset.
 * Add error handling to WP_Members_Dialogs::get_text() for string keys that do not exist. If one is called, the function will return an empty string and will record the call in the error log.
-* Adds new CLI command "wp mem db autoload-size".
 * Adds wpmem_get_user_meta filter hook.
 
 = 3.5.1 =
 
-* Fixes a bug in the CLI interface that doesn't load the db tools correctly.
 * Fixes a bug in the Fields tab edit view that displays two textarea inputs for select, multiselect, multicheckbox, and radio field types.
 * Fixes a bug in the admin email notification that does not display the [fields] shortcode.
 * Fixes a bug in the Shortcodes tab that throws a PHP error on settings save.
@@ -226,7 +224,6 @@ New features:
 * Adds a resend confirmation link action in the admin (hoverlink in Users > All Users).
 * Adds default email function for emails that are not completely set up.
 * Adds direct shortcodes for [wpmem_login] and [wpmem_reg] that can be used in place of [wpmem_form] with the "login" or "reg" attributes.
-* Adds WP_CLI commands for creating and managing db views (views, create-view, drop-view).
 * Improves previous WP_CLI commands, now translation-ready and adds inline documentation (which extends to commandline help).
 * Code improvement: if user object is filtered in `wpmem_register_form_args`, the form values are based on the filtered user ID.
 * Code improvement: logout link in login shortcode uses `rawurlencode()` instead of `urlencode()`.

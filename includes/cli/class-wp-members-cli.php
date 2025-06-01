@@ -125,7 +125,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     WP_CLI::add_command( 'mem', 'WP_Members_CLI' );
 
 	// Load all subcommands
-	require_once 'class-wp-members-cli-db-tools.php';
 	require_once 'class-wp-members-cli-import.php';
 	require_once 'class-wp-members-cli-memberships.php';
 	require_once 'class-wp-members-cli-settings.php';

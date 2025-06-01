@@ -21,12 +21,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				foreach ( $memberships as $membership ) {
 					 $list[] = array(
 						 'name' => $membership['title'],
-						 'slug' => $membership['name'],
+						 'meta (slug)' => $membership['name'],
 					 );
 				}
 
 				WP_CLI::line( 'WP-Members memberships:' );
-				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'name', 'slug' ) );
+				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'name', 'meta (slug)' ) );
 				$formatter->display_items( $list );
 			}
 		}
@@ -36,7 +36,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * ## OPTIONS
 		 *
-		 * [<meta key of membership>]
+		 * [<meta>]
 		 * : The meta key (slug) of the membership to get data for (gets all memberships by default)
 		 *
 		 * [--type=<active|expired>]
@@ -78,7 +78,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						$expired_count = wpmem_get_membership_count( $membership['name'], 'expired' );
 						$total_count   = wpmem_get_membership_count( $membership['name'] );
 
-						/* translators: %s is the placeholder for the name of the membership, do not remove it. */
 						WP_CLI::line( sprintf( 'Counts for "%s" membership:', $membership['title'] ) );
 						WP_CLI::line( 'Active: ' . $active_count );
 						WP_CLI::line( 'Expired: ' . $expired_count );
@@ -163,7 +162,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * <membership_meta_key> 
 		 * : The meta key (slug) of the membership to update.
 		 * 
-		 * --date=<YYYY-MM-DD>
+		 * [--date=<YYYY-MM-DD>]
 		 * : The expiration date (optional, if excluded, the default time period will be set).
 		 * 
 		 * [--id=<user>]

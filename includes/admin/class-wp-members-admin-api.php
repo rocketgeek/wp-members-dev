@@ -684,17 +684,6 @@ class WP_Members_Admin_API {
 		return $reserved_terms;
 	}
 	
-	function settings( $which ) {
-		switch ( $which ) {
-			case 'content':
-				return array( 'block' => 'Content Restriction', 'show_excerpt' => 'Show Excerpts', 'show_login' => 'Show Login Form', 'show_reg' => 'Show Registration Form', 'autoex' => 'Auto Excerpt' );
-				break;
-			case 'options':
-				return array( 'notify' => 'Notify admin', 'mod_reg' => 'Moderate registration', 'captcha' => 'Enable registration CAPTCHA', 'warnings' => 'Ignore warning messages', 'dropins' => 'Enable dropins', 'enable_products' => 'Enable membership products', 'clone_menus' => 'Clone menus' );
-				break;
-		}
-	}
-	
 	function post_types() {
 		return get_post_types( array( 'public' => true, '_builtin' => false ), 'names', 'and' );
 	}

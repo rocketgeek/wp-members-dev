@@ -1107,6 +1107,20 @@ function wpmem_get_deactivated_users() {
 }
 
 /**
+ * Gets a list of all confirmed users.
+ *
+ * @since 3.5.4
+ * 
+ * @todo meta is a timestamp, so could add a "get all since date" process by looping
+ *       through the results and checking the date.
+ *
+ * @return array $users An array of users IDs who have the meta key active=0
+ */
+function wpmem_get_confirmed_users() {
+	return wpmem_get_users_by_meta( '_wpmem_user_confirmed', 'EXISTS' );
+}
+
+/**
  * Sets a user as validated.
  *
  * @since 3.3.5

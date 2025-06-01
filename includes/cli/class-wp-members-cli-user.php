@@ -101,7 +101,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * ## OPTIONS
 		 *
-		 * <pending|activated|deactivated>
+		 * <pending|activated|deactivated|confirmed>
 		 * : status of the user
 		 *
 		 * @subcommand list
@@ -111,25 +111,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		public function list_users( $args, $assoc_args ) {
 
 			// Accepted list args.
-			$accepted = array( 'pending', 'activated', 'deactivated' );
+			$accepted = array( 'pending', 'activated', 'deactivated', 'confirmed', 'unconfirmed' );
 
-			if ( ! in_array( $args[0], $accepted ) ) {
-				/* translators: do not translate "pending|activated|deactivated", these are the command values */
-				WP_CLI::error( 'Must include a user status from the following: pending|activated|deactivated' );
-			}
-
-			switch ( $args[0] ) {
+			$status = $args[0];
+			switch ( $status ) {
 				case 'pending':
 					$users = wpmem_get_pending_users();
-					$status = 'pending';
 					break;
 				case 'activated':
 					$users = wpmem_get_activated_users();
-					$status = 'activated';
 					break;
 				case 'deactivated':
 					$users = wpmem_get_deactivated_users();
-					$status = 'deactivated';
+					break;
+				case 'confirmed':
+					$users = wpmem_get_confirmed_users();
 					break;
 			}
 
@@ -147,7 +143,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'ID', 'username', 'email', 'status' ) );
 				$formatter->display_items( $list );
 			} else {
-				/* translators: %s is the placeholder for the user status value, do not remove it. */
 				WP_CLI::line( sprintf( 'Currently there are no %s users.', $status ) );
 			}
 		}
