@@ -134,6 +134,7 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 = 3.5.4 =
 
 * Bug fix for register form field label links.
+* Bug fix that causes [wpmem_field] shortcode option to be reset when setting other settings or updating.
 * Add additional form support for form field label links (native WP reg, WC forms, dashboard profile, [wpmem_field] shortcode).
 * New API functions for user counts: `wpmem_user_count()`, `wpmem_get_user_count_by_meta()`, `wpmem_get_user_count_by_role()`.
 * New API function for import: `wpmem_csv_to_array()`.

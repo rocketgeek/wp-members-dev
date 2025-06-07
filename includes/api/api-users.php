@@ -1053,7 +1053,7 @@ function wpmem_get_user_obj( $user ) {
  */
 function wpmem_get_users_by_meta( $meta, $value = "EXISTS" ) {
 	$args  = array( 'fields' => array( 'ID' ), 'meta_key' => esc_sql( $meta ) );
-	if ( false === $value ) {
+	if ( false == $value ) {
 		$args['meta_value'] = '';
 		$args['meta_compare'] = 'NOT EXISTS';
 	} elseif ( "EXISTS" == $value ) {
