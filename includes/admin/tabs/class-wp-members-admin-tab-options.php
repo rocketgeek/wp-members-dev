@@ -521,6 +521,9 @@ class WP_Members_Admin_Tab_Options {
 				'attrib'       => wpmem_sanitize_field( wpmem_get( 'attribution', 0 ), 'int' ),
 			);
 
+			// Make sure shortcode setting is not overwritten. @todo Is this the best way to handle this?
+			$wpmem_newsettings['shortcodes']['enable_field'] = ( isset( $wpmem->shortcodes->enable_field ) ) ? $wpmem->shortcodes->enable_field : 0;
+
 			// Build an array of post types
 			$post_arr = array( 'post', 'page' );
 			if ( isset( $wpmem->post_types ) ) {
