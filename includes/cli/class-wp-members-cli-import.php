@@ -180,6 +180,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * [--dir=<dir_path>] 
 		 * : Additional path value to add to ABSPATH.
 		 * 
+		 * [--notify] 
+		 * : Send email notification to user. Defaults to false.
+		 * 
+		 * [--pwd] 
+		 * : Sets a password for the user (used with notify). Defaults to false.
+		 * 
 		 * [--verbose] 
 		 * : Displays verbose results.
 		 * 
@@ -200,6 +206,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		public function activate( $args, $assoc_args ) {
 			$csv = $this->get_csv_from_file( $assoc_args );
 
+			$notify = ( isset( $assoc_args['notify'] ) ) ? true : false;
+			$setpwd = ( isset( $assoc_args['pwd']    ) ) ? true : false;
+
+			if ( $notify ) {
+				WP_CLI::confirm( 'You have selected to send email notification to activated users. Is this correct?' );
+			}
+
+			if ( $setpwd ) {
+				if ( $setpwd && ! $notify ) {
+					WP_CLI::confirm( 'You have selected to set user passwords without sending notification to the user.  This is not recommended.  Do you wish to continue?' );
+				} else {
+					WP_CLI::confirm( 'You have selected to set passwords when activating the user. Is this correct?' );
+				}
+			}
+
 			$x = 0;
 			$e = 0;
 			foreach ( $csv as $row ) {
@@ -207,7 +228,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$user_id = $this->get_user_id_from_row( $row );
 				if ( $user_id ) {
 					if ( ! isset( $assoc_args['dry-run'] ) ) {
-						wpmem_activate_user( $user_id, false, false );
+						wpmem_activate_user( $user_id, $notify, $setpwd );
 					}
 					$x++;
 				} else {
