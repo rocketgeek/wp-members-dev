@@ -13,25 +13,42 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * ## OPTIONS
 		 *
-		 * --id=<user_id>
+		 * [--id=<user_id>]
 		 * : The WP ID of the user to activate.
 		 *
 		 * [--notify=<boolean>]
 		 * : Whether to send notifcation to user (true if omitted).
+		 * 
+		 * [--all] 
+		 * : Activates all pending users.
 		 *
 		 * @since 3.3.5
 		 */
 		public function activate( $args, $assoc_args ) {
 
-			if ( wpmem_is_enabled( 'mod_reg' ) ) {
-				$validation = $this->validate_user_id( $assoc_args['id'] );
-			} else {
+			if ( ! wpmem_is_enabled( 'mod_reg' ) ) {
 				WP_CLI::error( 'Moderated registration is not enabled in WP-Members options.' );
 			}
 
-			if ( true == $validation ) {
+			if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['all'] ) ) {
+				WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to activate all users.' );
+			}
 
-				$notify  = ( isset( $assoc_args['notify'] ) && 'false' == $assoc_args['notify'] ) ? false : true;
+			// Sending notification? (sends notification if omitted).
+			$notify  = ( isset( $assoc_args['notify'] ) && 'false' == $assoc_args['notify'] ) ? false : true;
+
+			// Are we doing all or individual?
+			if ( isset( $assoc_args['all'] ) ) {
+				$users = wpmem_get_pending_users();
+				foreach ( $users as $user ) {
+					wpmem_activate_user( $user, $notify );
+				}
+				WP_CLI::success( 'Activated ' . count( $users ) . ' pending users.' );
+				return;
+			} 
+
+			$validation = $this->validate_user_id( $assoc_args['id'] );
+			if ( true == $validation ) {
 
 				// Is the user already activated?
 				if ( false == wpmem_is_user_activated( $assoc_args['id'] ) ) {
@@ -76,32 +93,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 
 		/**
-		 * Validates user info for activation.
-		 *
-		 * @since 3.3.5
-		 */
-		private function validate_user_id( $user_id ) {
-			
-			$user_id = ( isset( $user_id ) ) ? $user_id : false;
-
-			if ( $user_id ) {
-				// Is the user ID and actual user?
-				if ( wpmem_is_user( $user_id ) ) {
-					return true;
-				} else {
-					WP_CLI::error( 'Invalid user ID. Please specify a valid user. Try `wp user list`.' );
-				}
-			} else {
-				WP_CLI::error( 'No user id specified. Must specify user id as --id=123' );
-			}
-		}
-
-		/**
 		 * Lists users by activation state.
 		 *
 		 * ## OPTIONS
 		 *
-		 * <pending|activated|deactivated|confirmed>
+		 * <pending|activated|deactivated|confirmed|unconfirmed>
 		 * : status of the user
 		 *
 		 * @subcommand list
@@ -127,6 +123,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				case 'confirmed':
 					$users = wpmem_get_confirmed_users();
 					break;
+				case 'unconfirmed':
+					$users = wpmem_get_users_by_meta( '_wpmem_user_confirmed', false );
+					break;
 			}
 
 			if ( ! empty( $users ) ) {
@@ -145,36 +144,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			} else {
 				WP_CLI::line( sprintf( 'Currently there are no %s users.', $status ) );
 			}
-		}
-
-		/**
-		 * Gets a list of pending users.
-		 *
-		 * @subcommand get-pending
-		 * @since 3.3.5
-		 */
-		public function get_pending() {
-			$this->list_users( array( 'pending' ), array() );
-		}
-
-		/**
-		 * Gets a list of activated users.
-		 *
-		 * @subcommand get-activated
-		 * @since 3.3.5
-		 */
-		public function get_activated() {
-			$this->list_users( array( 'activated' ), array() );
-		}
-
-		/**
-		 * Gets a list of deactivated users.
-		 *
-		 * @subcommand get-deactivated
-		 * @since 3.3.5
-		 */
-		public function get_deactivated() {
-			$this->list_users( array( 'deactivated' ), array() );
 		}
 
 		/**
@@ -214,16 +183,41 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * ## OPTIONS
 		 *
-		 * --id=<user_id>
+		 * [--id=<user_id>]
 		 * : The WP ID of the user to confirm.
+		 * 
+		 * [--all] 
+		 * : Marks all users as confirmed.
 		 *
 		 * @since 3.3.5
 		 */
 		public function confirm( $args, $assoc_args ) {
-			$validation = $this->validate_user_id( $assoc_args['id'] );
-			if ( true == $validation ) {
-				wpmem_set_user_as_confirmed( $assoc_args['id'] );
-				WP_CLI::success( 'User confirmed' );
+			if ( ! wpmem_is_enabled( 'act_link' ) ) {
+				WP_CLI::error( 'User confirmation is not enabled in WP-Members options.' );
+			}
+
+			if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['all'] ) ) {
+				WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to confirm all users.' );
+			}
+
+			// Are we doing all or individual?
+			if ( isset( $assoc_args['all'] ) ) {
+				$users = wpmem_get_users_by_meta( '_wpmem_user_confirmed', false );
+				if ( $users ) {
+					foreach ( $users as $user ) {
+						wpmem_set_user_as_confirmed( $user );
+					}
+					WP_CLI::success( 'Marked ' . count( $users ) . ' users as confirmed.' );
+					return;
+				} else {
+					WP_CLI::error( 'There are no unconfirmed users' );
+				}
+			} else {
+				$validation = $this->validate_user_id( $assoc_args['id'] );
+				if ( true == $validation ) {
+					wpmem_set_user_as_confirmed( $assoc_args['id'] );
+					WP_CLI::success( 'User confirmed' );
+				}
 			}
 		}
 		
@@ -262,7 +256,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'roles' ) );
 				$formatter->display_items( $list );
 			} else {
-				/* translators: %s is the placeholder for user role, do not remove it. */
 				WP_CLI::line( sprintf( 'User role: %s', $role ) );
 			}
 		}
@@ -285,8 +278,28 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			wpmem_set_user_membership( $membership, $user->ID, $date );
 
-			/* translators: %s is the placeholder for membership and user id, do not remove it. */
 			WP_CLI::line( sprintf( 'Set %s membership for user %s', $membership, $user->user_login ) );
+		}
+
+		/**
+		 * Validates user info for action.
+		 *
+		 * @since 3.3.5
+		 */
+		private function validate_user_id( $user_id ) {
+			
+			$user_id = ( isset( $user_id ) ) ? $user_id : false;
+
+			if ( $user_id ) {
+				// Is the user ID and actual user?
+				if ( wpmem_is_user( $user_id ) ) {
+					return true;
+				} else {
+					WP_CLI::error( 'Invalid user ID. Please specify a valid user. Try `wp user list`.' );
+				}
+			} else {
+				WP_CLI::error( 'No user id specified. Must specify user id as --id=123' );
+			}
 		}
 
 		/**
@@ -298,7 +311,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @param          $all
 		 */
 		private function display_user_detail( $user, $all ) {
-			/* translators: %s is the placeholder for the user email name, do not remove it. */
+
 			WP_CLI::line( sprintf( 'User: %s', $user->user_email) );
 
 			$values = wpmem_user_data( $user->ID, $all );
