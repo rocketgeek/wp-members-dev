@@ -43,7 +43,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 
 		/**
-		 * Import memberships
+		 * Import memberships from a CSV file.
 		 * 
 		 * ## OPTIONS
 		 *
@@ -197,11 +197,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * 
 		 * [--cols=<columns>] 
 		 * : A comma separated string of column names.
-		 * 
-		 * @since 3.5.4
-		 * 
-		 * @todo Currently just activates, but could add assoc_args to 
-		 *       send email (does not currently by default) or set password.
 		 */
 		public function activate( $args, $assoc_args ) {
 			$csv = $this->get_csv_from_file( $assoc_args );
@@ -588,13 +583,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @since 3.5.4
 		 */
 		private function cleanup( $assoc_args ) {
-			$file_info = $this->get_file_info( $assoc_args );
-			WP_CLI::confirm( sprintf( 'You have selected to delete %s on completion. This cannot be undone. Do you with to continue?', $file_info['name'] ) );
-			$result = unlink( $file_info['file'] );
-			if ( $result ) {
-				WP_CLI::success( sprintf( '%s was deleted.', $file_info['name'] ) );
-			} else {
-				WP_CLI::success( sprintf( 'Unable to delete %s.', $file_info['name'] ) );
+			// Don't delete if it's a dry run.
+			if ( ! isset( $assoc_args['dry-run'] ) ) {
+				$file_info = $this->get_file_info( $assoc_args );
+				WP_CLI::confirm( sprintf( 'You have selected to delete %s on completion. This cannot be undone. Do you with to continue?', $file_info['name'] ) );
+				$result = unlink( $file_info['file'] );
+				if ( $result ) {
+					WP_CLI::success( sprintf( '%s was deleted.', $file_info['name'] ) );
+				} else {
+					WP_CLI::success( sprintf( 'Unable to delete %s.', $file_info['name'] ) );
+				}
 			}
 		}
 	}

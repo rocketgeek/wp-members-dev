@@ -14,13 +14,22 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * ## OPTIONS
 		 *
 		 * [--id=<user_id>]
-		 * : The WP ID of the user to activate.
+		 * : Activate user by user ID.
+		 * 
+		 * [--login=<user_login>] 
+		 * : Activate user by login (username).
+		 * 
+		 * [--email=<user_email>] 
+		 * : Activate user by email.
 		 *
 		 * [--notify=<boolean>]
 		 * : Whether to send notifcation to user (true if omitted).
 		 * 
 		 * [--all] 
 		 * : Activates all pending users.
+		 * 
+		 * [--deactivated] 
+		 * : Activates all deactivated users (instead of pending) when using --all.
 		 *
 		 * @since 3.3.5
 		 */
@@ -30,8 +39,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				WP_CLI::error( 'Moderated registration is not enabled in WP-Members options.' );
 			}
 
-			if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['all'] ) ) {
-				WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to activate all users.' );
+			if ( ! isset( $assoc_args['all'] ) ) {
+				if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['login'] ) && ! isset( $assoc_args['email'] ) ) {
+					WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to activate all users.' );
+				}
 			}
 
 			// Sending notification? (sends notification if omitted).
@@ -39,30 +50,32 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Are we doing all or individual?
 			if ( isset( $assoc_args['all'] ) ) {
-				$users = wpmem_get_pending_users();
+				if ( isset( $assoc_args['deactivated'] ) ) {
+					WP_CLI::confirm( 'This will set all deactivated users as activated. Are you sure?' );
+				} else {
+					WP_CLI::confirm( 'This will set all pending users as activated. Are you sure?' );
+				}
+				$users = ( isset( $assoc_args['deactivated'] ) ) ? wpmem_get_deactivated_users() : wpmem_get_pending_users();
 				foreach ( $users as $user ) {
 					wpmem_activate_user( $user, $notify );
 				}
-				WP_CLI::success( 'Activated ' . count( $users ) . ' pending users.' );
+				WP_CLI::success( 'Activated ' . count( $users ) . ' users.' );
 				return;
-			} 
+			}
 
-			$validation = $this->validate_user_id( $assoc_args['id'] );
-			if ( true == $validation ) {
+			// If doing an individual user (wpmem_cli_get_user() throws its own error if invalid).
+			$user = wpmem_cli_get_user( $assoc_args );
 
-				// Is the user already activated?
-				if ( false == wpmem_is_user_activated( $assoc_args['id'] ) ) {
-
-					wpmem_activate_user( $assoc_args['id'], $notify );
-					WP_CLI::success( 'User activated.' );
-					if ( $notify ) {
-						WP_CLI::success( 'Email notification sent to user.' );
-					}
-				} else {
-					WP_CLI::error( 'User is already activated.' );
+			// Is the user already activated?
+			if ( false == wpmem_is_user_activated($user->ID ) ) {
+				// If valid user and not activated, activate.
+				wpmem_activate_user( $user->ID, $notify );
+				WP_CLI::success( 'User activated.' );
+				if ( $notify ) {
+					WP_CLI::success( 'Email notification sent to user.' );
 				}
 			} else {
-				WP_CLI::error( $validation );
+				WP_CLI::error( 'User is already activated.' );
 			}
 		}
 
@@ -71,25 +84,65 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * ## OPTIONS
 		 *
-		 * --id=<user_id>
-		 * : The WP ID of the user to deactivate.
+		 * [--id=<user_id>]
+		 * : Deactivate user by user ID.
+		 * 
+		 * [--login=<user_login>] 
+		 * : Dectivate user by login (username).
+		 * 
+		 * [--email=<user_email>] 
+		 * : Dectivate user by email.
+		 * 
+		 * [--all] 
+		 * : Deactivates all activated users (automatically excludes admin role).
+		 * 
+		 * [--admin]
+		 * : Include admin role accounts when deactivating all users.
 		 *
 		 * @since 3.3.5
 		 */
 		public function deactivate( $args, $assoc_args ) {
 
-			if ( wpmem_is_enabled( 'mod_reg' ) ) {
-				$validation = $this->validate_user_id( $assoc_args['id'] );
-			} else {
+			if ( ! wpmem_is_enabled( 'mod_reg' ) ) {
 				WP_CLI::error( 'Moderated registration is not enabled in WP-Members options.' );
 			}
-			
-			if ( true == $validation ) {
-				wpmem_deactivate_user( $assoc_args['id'] );
-				WP_CLI::success( 'User deactivated.' );
-			} else {
-				WP_CLI::error( $validation );
-			}		
+
+			if ( ! isset( $assoc_args['all'] ) ) {
+				if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['login'] ) && ! isset( $assoc_args['email'] ) ) {
+					WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to deactivate all users.' );
+				}
+			}
+
+			// Are we doing all or individual?
+			if ( isset( $assoc_args['all'] ) ) {
+				if ( isset( $assoc_args['admin'] ) ) {
+					WP_CLI::confirm( 'This will set all activated users (including administrators) as deactivated. Are you sure?' );
+				} else {
+					WP_CLI::confirm( 'This will set all activated users as deactivated. Are you sure?' );
+				}
+				
+				$users = wpmem_get_activated_users();
+				$x = 0;
+				foreach ( $users as $user ) {
+					$user_roles = wpmem_get_user_role( $user, true ); // To make sure we don't deactivate admins unintentionally.
+					if ( isset( $assoc_args['admin'] ) ) {
+						wpmem_deactivate_user( $user );
+						$x++;
+					} else {
+						if ( ! in_array( 'administrator', $user_roles ) ) {
+							wpmem_deactivate_user( $user );
+							$x++;
+						}
+					}
+				}
+				WP_CLI::success( 'Dectivated ' . $x . ' users.' );
+				return;
+			} 
+
+			// If doing an individual user (wpmem_cli_get_user() throws its own error if invalid).
+			$user = wpmem_cli_get_user( $assoc_args );
+			wpmem_deactivate_user( $user->ID );
+			WP_CLI::success( 'User deactivated.' );	
 		}
 
 		/**
@@ -184,7 +237,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * ## OPTIONS
 		 *
 		 * [--id=<user_id>]
-		 * : The WP ID of the user to confirm.
+		 * : Confirm user by user ID.
+		 * 
+		 * [--login=<user_login>] 
+		 * : Confirm user by login (username).
+		 * 
+		 * [--email=<user_email>] 
+		 * : Confirm user by email.
 		 * 
 		 * [--all] 
 		 * : Marks all users as confirmed.
@@ -196,12 +255,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				WP_CLI::error( 'User confirmation is not enabled in WP-Members options.' );
 			}
 
-			if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['all'] ) ) {
-				WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to confirm all users.' );
+			if ( ! isset( $assoc_args['all'] ) ) {
+				if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['login'] ) && ! isset( $assoc_args['email'] ) ) {
+					WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to confirm all users.' );
+				}
 			}
 
 			// Are we doing all or individual?
 			if ( isset( $assoc_args['all'] ) ) {
+				WP_CLI::confirm( 'This will set all unconfirmed users as confirmed. Are you sure?' );
+				// Get all unconfirmed users.
 				$users = wpmem_get_users_by_meta( '_wpmem_user_confirmed', false );
 				if ( $users ) {
 					foreach ( $users as $user ) {
@@ -213,10 +276,69 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					WP_CLI::error( 'There are no unconfirmed users' );
 				}
 			} else {
-				$validation = $this->validate_user_id( $assoc_args['id'] );
-				if ( true == $validation ) {
-					wpmem_set_user_as_confirmed( $assoc_args['id'] );
+				// If doing an individual user (wpmem_cli_get_user() throws its own error if invalid).
+				$user = wpmem_cli_get_user( $assoc_args );
+				if ( $user ) {
+					wpmem_set_user_as_confirmed( $user->ID );
 					WP_CLI::success( 'User confirmed' );
+				}
+			}
+		}
+
+		/**
+		 * Manually set a user as unconfirmed.
+		 *
+		 * ## OPTIONS
+		 *
+		 * [--id=<user_id>]
+		 * : Unonfirm user by user ID.
+		 * 
+		 * [--login=<user_login>] 
+		 * : Unonfirm user by login (username).
+		 * 
+		 * [--email=<user_email>] 
+		 * : Unonfirm user by email.
+		 * 
+		 * [--all] 
+		 * : Marks all users as unconfirmed.
+		 *
+		 * @since 3.3.5
+		 */
+		public function unconfirm( $args, $assoc_args ) {
+			if ( ! wpmem_is_enabled( 'act_link' ) ) {
+				WP_CLI::error( 'User confirmation is not enabled in WP-Members options.' );
+			}
+
+			if ( ! isset( $assoc_args['all'] ) ) {
+				if ( ! isset( $assoc_args['id'] ) && ! isset( $assoc_args['login'] ) && ! isset( $assoc_args['email'] ) ) {
+					WP_CLI::error( 'Missing required parameter. Specify user ID with --id=<user_id> or --all to confirm all users.' );
+				}
+			}
+
+			// Are we doing all or individual?
+			if ( isset( $assoc_args['all'] ) ) {
+				WP_CLI::confirm( 'This will set all confirmed users as unconfirmed. Are you sure?' );
+				$users = wpmem_get_confirmed_users();
+				if ( $users ) {
+					$x=0;
+					foreach ( $users as $user ) {
+						$user_roles = wpmem_get_user_role( $user, true ); // To make sure we don't deactivate admins unintentionally.
+						if ( ! in_array( 'administrator', $user_roles ) ) {
+							wpmem_set_user_as_unconfirmed( $user );
+							$x++;
+						}
+					}
+					WP_CLI::success( 'Marked ' . $x . ' users as unconfirmed.' );
+					return;
+				} else {
+					WP_CLI::error( 'There are no confirmed users' );
+				}
+			} else {
+				// If doing an individual user (wpmem_cli_get_user() throws its own error if invalid).
+				$user = wpmem_cli_get_user( $assoc_args );
+				if ( $user ) {
+					wpmem_set_user_as_unconfirmed( $user->ID );
+					WP_CLI::success( 'User unconfirmed' );
 				}
 			}
 		}
@@ -279,27 +401,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			wpmem_set_user_membership( $membership, $user->ID, $date );
 
 			WP_CLI::line( sprintf( 'Set %s membership for user %s', $membership, $user->user_login ) );
-		}
-
-		/**
-		 * Validates user info for action.
-		 *
-		 * @since 3.3.5
-		 */
-		private function validate_user_id( $user_id ) {
-			
-			$user_id = ( isset( $user_id ) ) ? $user_id : false;
-
-			if ( $user_id ) {
-				// Is the user ID and actual user?
-				if ( wpmem_is_user( $user_id ) ) {
-					return true;
-				} else {
-					WP_CLI::error( 'Invalid user ID. Please specify a valid user. Try `wp user list`.' );
-				}
-			} else {
-				WP_CLI::error( 'No user id specified. Must specify user id as --id=123' );
-			}
 		}
 
 		/**

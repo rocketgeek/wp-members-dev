@@ -246,6 +246,6 @@ function wpmem_cli_get_user( $assoc_args ) {
 	if ( $user ) {
 		return $user;
 	}
-	WP_CLI::error( __( 'No valid user data from inputs', 'wp-members' ) );
+	WP_CLI::error( __( 'No valid user data from inputs given. Try [wp user list] to find a valid user.', 'wp-members' ) );
 
 }
