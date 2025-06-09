@@ -289,7 +289,14 @@ class WP_Members_Admin_Tab_Options {
 									</li><?php
 								} ?>
 								<h3><?php esc_html_e( 'Stylesheet' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#styles" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
-								  <?php $wpmem_cssurl = ( $wpmem->select_style == 'default' ) ? '' : $wpmem->cssurl; ?>
+								  <?php
+								  if ( $wpmem->cssurl != trailingslashit( $wpmem->url ) . 'assets/css/forms/generic-no-float.min.css'
+								    && $wpmem->cssurl != trailingslashit( $wpmem->url ) . 'assets/css/forms/generic-no-float.css' ) {
+									$wpmem_cssurl = $wpmem->cssurl;
+								  } else {
+									$wpmem_cssurl = '';
+								  }
+								  ?>
 								  <div id="wpmem_stylesheet_custom">
 									  <p><?php _e( 'The plugin has a standard stylesheet. To use it, leave the following option empty. To use a custom stylesheet, enter its URL below.', 'wp-members' ); ?></p>
 									  <li>
@@ -487,10 +494,7 @@ class WP_Members_Admin_Tab_Options {
 				$logurl = $wpmem_settings_logpage;
 			}
 
-			$wpmem_settings_cssurl = esc_url( $_POST['wpmem_settings_cssurl'] );
-			$cssurl = ( '' != $wpmem_settings_cssurl ) ? trim( $wpmem_settings_cssurl ) : '';
-
-			$wpmem_settings_style = ( '' != $cssurl ) ? 'use_custom' : 'default';
+			$wpmem_settings_cssurl_sanitized = esc_url_raw( $_POST['wpmem_settings_cssurl'] );
 
 			$wpmem_newsettings = array(
 				'version' => $wpmem->version,
@@ -516,8 +520,7 @@ class WP_Members_Admin_Tab_Options {
 					'add_update_fields'     => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_add_woo_update_fields',     0 ), 'int' ),
 					'product_restrict'      => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_add_restrict_woo_products', 0 ), 'int' ),
 				),
-				'cssurl'       => ( $cssurl ) ? $cssurl : '',
-				'select_style' => $wpmem_settings_style,
+				'cssurl'       => ( '' != $wpmem_settings_cssurl_sanitized ) ? trim( $wpmem_settings_cssurl_sanitized ) : '',
 				'attrib'       => wpmem_sanitize_field( wpmem_get( 'attribution', 0 ), 'int' ),
 			);
 

@@ -281,6 +281,7 @@ class WP_Members {
 	 * Container for stylesheet setting.
 	 *
 	 * @since  3.2.7
+	 * @deprecated 3.5.4
 	 * @access public
 	 * @var    string
 	 */
@@ -558,7 +559,7 @@ class WP_Members {
 		// Load user pages (login, register, user profile).
 		$this->load_user_pages();
 		
-		// Set the stylesheet. @todo "select_style" will be obsolete in 3.6.0 (maybe earlier).
+		// Set the stylesheet.
 		$this->cssurl = ( '' != $settings['cssurl'] ) ? $this->cssurl : $this->url . 'assets/css/forms/generic-no-float' . wpmem_get_suffix() . '.css';
 		
 		$this->forms       = new WP_Members_Forms;         // Load forms.

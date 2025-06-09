@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Initialize constants.
 define( 'WPMEM_VERSION',    '3.5.4.b.2' );
-define( 'WPMEM_DB_VERSION', '2.4.1' );
+define( 'WPMEM_DB_VERSION', '2.4.2' );
 define( 'WPMEM_PATH', plugin_dir_path( __FILE__ ) ); // @todo Fairly certain this is obsolete.
 
 // Initialize the plugin.

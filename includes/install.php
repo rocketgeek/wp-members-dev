@@ -303,7 +303,6 @@ function wpmem_install_settings() {
 			'login'    => '',
 		),
 		'cssurl'          => '',
-		'select_style'    => 'default', // @todo Schedule for deprecation.
 		'attrib'          => 0,
 		'post_types'      => array(),
 		'form_tags'       => array( 'default' => 'Registration Default' ),
@@ -411,6 +410,7 @@ function wpmem_upgrade_fields() {
  *
  * @since 3.2.7
  * @since 3.5.0 Selector no longer available, so there's only one default, otherwise custom.
+ * @since 3.5.4 Remove obsolete "select_style".
  *
  * @param array $settings
  */
@@ -418,28 +418,33 @@ function wpmem_upgrade_style_setting( $settings ) {
 
 	$url = plugin_dir_url ( __DIR__ );
 
-	if ( 'generic-no-float' == $settings['select_style'] ) {
-		// This is the default style.
-		$settings['cssurl'] = '';
-		$settings['select_style'] = 'default';
-	} else {
-		// If there is a custom URL, keep it.
-		if ( 'use_custom' == $settings['select_style'] ) {
-			$settings['cssurl'] = $settings['cssurl'];
-			$settings['select_style'] = 'use_custom';
-		} else {
-			// If it is from the selector but not default, set to "use_custom" and set the url.
-			// NOTE: Set select_style last because we're using the saved value to build the cssurl setting first.
-			$settings['cssurl'] = trailingslashit( $url ) . 'assets/css/forms/' . $settings['select_style'] . '.min.css';
-			$settings['select_style'] = 'use_custom';
+	if ( version_compare( $settings['version'], '3.5.0', '<' ) ) {
+
+		switch ( $settings['select_style'] ) {
+			case 'use_custom':
+				$settings['cssurl'] = $settings['cssurl'];
+				break;
+			
+			case 'generic-no-float':
+				// This is the default style, so we can blank the custom setting.
+				$settings['cssurl'] = '';
+				break;
+			
+			default:
+				$settings['cssurl'] = trailingslashit( $url ) . 'assets/css/forms/' . $settings['select_style'] . '.min.css';
+				break;
 		}
 	}
 
-	// Fix invalid style setting from previous upgrades (3.5.0 - 3.5.2)
-	if ( $settings['cssurl'] = trailingslashit( $url ) . 'assets/css/forms/default.min.css' || $settings['cssurl'] = trailingslashit( $url ) . 'assets/css/forms/default.css' ) {
+	// Fix invalid style setting from previous upgrades (3.5.0 - 3.5.3)
+	if ( $settings['cssurl'] == trailingslashit( $url ) . 'assets/css/forms/default.min.css' 
+	  || $settings['cssurl'] == trailingslashit( $url ) . 'assets/css/forms/default.css' 
+	  || $settings['cssurl'] == trailingslashit( $url ) . 'assets/css/forms/generic-no-float.min.css' 
+	  || $settings['cssurl'] == trailingslashit( $url ) . 'assets/css/forms/generic-no-float.css' ) {
 		$settings['cssurl'] = '';
-		$settings['select_style'] = 'default';
 	}
+
+	unset( $settings['select_style'] );
 
 	return $settings;
 }
