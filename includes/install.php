@@ -157,10 +157,10 @@ function wpmem_upgrade_settings() {
 	$wpmem_settings = wpmem_upgrade_style_setting( $wpmem_settings );
 
 	// Change 3.4.9 field shortcode option.
-	if ( ! isset( $wpmem_settings['shortcode'] ) ) {
-		$field_sc = get_option( 'wpmem_enable_fields_sc' );
-		$wpmem_settings['shortcodes']['enable_field'] = ( $field_sc ) ? intval( $field_sc ) : 2;
-		delete_option( 'wpmem_enable_fields_sc' );
+	$field_sc = get_option( 'wpmem_enable_field_sc' );
+	if ( $field_sc ) {
+		$wpmem_settings['shortcodes']['enable_field'] = intval( $field_sc );
+		delete_option( 'wpmem_enable_field_sc' );
 	}
 	
 	// Version number should be updated no matter what.

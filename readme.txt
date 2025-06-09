@@ -135,6 +135,8 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 
 * Bug fix for register form field label links.
 * Bug fix that causes [wpmem_field] shortcode option to be reset when setting other settings or updating.
+* Bug fix for maintaining [wpmem_field] shortcode setting on upgrade from pre-3.5.x version.
+* Bug fix for updating stylesheet settings, especially if upgrading from pre-3.5.x version.
 * Deprecated `$wpmem->select_style`.  This is part of the custom stylesheet settings/options, but is no longer needed.  Using only `$wpmem->cssurl` going forward will make upgrading easier for those who use a custom stylesheet.  This change should be transparent for all upgrades.
 * Add additional form support for form field label links (native WP reg, WC forms, dashboard profile, [wpmem_field] shortcode).
 * New API functions for user counts: `wpmem_user_count()`, `wpmem_get_user_count_by_meta()`, `wpmem_get_user_count_by_role()`.

@@ -137,7 +137,7 @@ class WP_Members_Admin_Tab_Shortcodes {
 
 		$wpmem->shortcodes->enable_field = $wpmem_settings['shortcodes']['enable_field'];
 
-		return esc_html__( 'WP-Members shorcode settings were updated', 'wp-members' );
+		return esc_html__( 'WP-Members shortcode settings were updated', 'wp-members' );
 	}
 
 } // End of file.
