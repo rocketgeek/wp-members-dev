@@ -206,6 +206,69 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			wpmem_remove_user_membership( $args[0], $user );
 			WP_CLI::success( sprintf( '%s membership removed from %s', $args[0], $user->user_email ) );
 		}
+
+		/**
+		 * Create a new membership.
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * --title=<title>
+		 * : The membership title (readable), use quotes if title has whitespace ("The Title").
+		 * 
+		 * --name=<meta>
+		 * : The membership meta key.
+		 * 
+		 * [--status=<status>] 
+		 * : Published status.
+		 * ---
+		 * default: publish
+		 * options:
+		 *    - publish
+		 *    - draft
+		 * ---
+		 * 
+		 * [--author=<user_id>] 
+		 * : User ID of the author (defaults to site admin user ID).
+		 * 
+		 */
+		public function create( $args, $assoc_args ) {
+
+			/**
+			 * 	wpmem_create_membership( $args ): {
+			*     @type string $title      User readable name of membership.
+			*     @type string $name       Sanitized title of the membership to be used as the meta key.
+			*     @type string $status     Published status: publish|draft (default: publish)
+			*     @type int    $author     User ID of membership author, Optional, defaults to site admin.
+			*     @type array  $meta_input
+			*         Meta fields for membership CPT (not all are required).
+			* 
+			*         @type string $name         The sanitized title of the membership.
+			*         @type string $default
+			*         @type string $role         Roles if a role is required.
+			*         @type string $expires      Expiration period if used (num|per).
+			*         @type int    $no_gap       If renewal is "no gap" renewal.
+			*         @type string $fixed_period (start|end|grace_num|grace_per)
+			*         @type int    $set_default_{$key}
+			*         @type string $message      Custom message for restriction.
+			*         @type int    $child_access If membership hierarchy is used.
+			*     }
+			 */
+
+			$top_level_args = [ 'title', 'name', 'status', 'author' ];
+			// @todo Will need some validation here so we don't blow things up.
+			foreach ( $assoc_args as $key => $arg ) {
+				if ( in_array( $key, $top_level_args ) ) {
+					$mem_args[ $key ] = $arg;
+				}
+			}
+
+			// @todo Assemble meta input
+			
+			$result = wpmem_create_membership( $mem_args );
+			if ( is_wp_error( $result ) ) {
+				WP_CLI::error( 'There was an error creating the membership.' );
+			}
+		}
 	}
 }
 WP_CLI::add_command( 'mem membership', 'WP_Members_CLI_Memberships' );
