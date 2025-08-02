@@ -5,6 +5,7 @@ class WP_Members_WooCommerce_Integration {
     public $add_checkout_fields;
     public $add_update_fields;
     public $product_restrict;
+    public $use_pwd_reset;
 
     public function __construct( $wpmem ) {
 
@@ -12,6 +13,7 @@ class WP_Members_WooCommerce_Integration {
             'add_my_account_fields' => 0,
             'add_checkout_fields'   => 0,
             'add_update_fields'     => 0,
+            'use_pwd_reset'         => 0,
             'product_restrict'      => 0,
         );
 
@@ -50,8 +52,16 @@ class WP_Members_WooCommerce_Integration {
             add_filter( 'woocommerce_form_field_checkbox',      'wpmem_form_field_wc_custom_field_types', 10, 4 );
         }
 
+        if ( 1 == $this->use_pwd_reset ) {
+            add_filter( 'wpmem_forgot_link', array( $this, 'use_pwd_reset' ) );
+        }
+
         if ( 1 == $this->product_restrict ) { // if ( wpmem_is_enabled( 'woo/product_restrict' ) ) {
             add_filter( 'woocommerce_is_purchasable', 'wpmem_woo_is_purchasable', PHP_INT_MAX, 2 );
         }
+    }
+
+    public function use_pwd_reset( $link ) {
+        return wc_lostpassword_url();
     }
 }

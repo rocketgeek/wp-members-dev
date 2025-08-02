@@ -195,6 +195,7 @@ class WP_Members_Admin_Tab_Options {
 									$woo_options[] = array(esc_html__('WooCommerce Checkout', 'wp-members' ),'wpmem_settings_add_woo_checkout_fields',esc_html__('Add WP-Members fields to WooCommerce registration during checkout','wp-members'),'add_checkout_fields');
 									$woo_options[] = array(esc_html__('WooCommerce My Account', 'wp-members' ),'wpmem_settings_add_woo_my_account_fields',esc_html__('Add WP-Members fields to WooCommerce My Account registration','wp-members'),'add_my_account_fields');
 									$woo_options[] = array(esc_html__('WooCommerce Update', 'wp-members' ),'wpmem_settings_add_woo_update_fields',esc_html__('Add WP-Members fields to WooCommerce My Account user profile update','wp-members'),'add_update_fields');
+									$woo_options[] = array(esc_html__('Password Reset', 'wp-members' ),'wpmem_settings_use_woo_pwd_reset',esc_html__('Use the WooCommerce password reset (must use WC My Account page for profile)','wp-members'),'use_pwd_reset');
 									$woo_options[] = array(esc_html__('Restrict Product Purchase', 'wp-members' ),'wpmem_settings_add_restrict_woo_products',esc_html__('If a WooCommerce product is restricted, it will not be purchasable','wp-members'),'product_restrict');
 								?>
 								<ul><?php
@@ -518,6 +519,7 @@ class WP_Members_Admin_Tab_Options {
 					'add_checkout_fields'   => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_add_woo_checkout_fields',   0 ), 'int' ),
 					'add_my_account_fields' => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_add_woo_my_account_fields', 0 ), 'int' ),
 					'add_update_fields'     => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_add_woo_update_fields',     0 ), 'int' ),
+					'use_pwd_reset'         => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_use_woo_pwd_reset',         0 ), 'int' ),
 					'product_restrict'      => wpmem_sanitize_field( wpmem_get( 'wpmem_settings_add_restrict_woo_products', 0 ), 'int' ),
 				),
 				'cssurl'       => ( '' != $wpmem_settings_cssurl_sanitized ) ? trim( $wpmem_settings_cssurl_sanitized ) : '',
