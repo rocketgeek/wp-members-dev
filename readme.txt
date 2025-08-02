@@ -131,20 +131,24 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 
 == Changelog ==
 
+= 3.5.5 =
+
+* Bug fix for `wpmem_get_user_count_by_role()` that causes it to return a total count of all users no matter the role requested.
+* Add support to switch WP-Members password reset link over to WooCommerce link.
+* Code improvement to consolidate `wpmem_logout_link` filter instances into `wpmem_logout_link()` function. 
+* Security patches from 3.5.4.1 and 3.5.4.2.
+
 = 3.5.4 =
 
 * Bug fix for register form field label links.
 * Bug fix that causes [wpmem_field] shortcode option to be reset when setting other settings or updating.
 * Bug fix for maintaining [wpmem_field] shortcode setting on upgrade from pre-3.5.x version.
 * Bug fix for updating stylesheet settings, especially if upgrading from pre-3.5.x version.
-* Bug fix for `wpmem_get_user_count_by_role()` that causes it to return a total count of all users no matter the role requested.
 * Deprecated `$wpmem->select_style`.  This is part of the custom stylesheet settings/options, but is no longer needed.  Using only `$wpmem->cssurl` going forward will make upgrading easier for those who use a custom stylesheet.  This change should be transparent for all upgrades.
 * Add additional form support for form field label links (native WP reg, WC forms, dashboard profile, [wpmem_field] shortcode).
-* Add support to switch WP-Members password reset link over to WooCommerce link.
 * New API functions for user counts: `wpmem_user_count()`, `wpmem_get_user_count_by_meta()`, `wpmem_get_user_count_by_role()`.
 * New API function for import: `wpmem_csv_to_array()`.
 * Code improvement to radio field type display in native WP and WC My Account reg forms.
-* Code improvement to consolidate `wpmem_logout_link` filter instances into `wpmem_logout_link()` function. 
 * Allow native WC fields in WC My Account reg form.
 * Updates to WP CLI commands: All @alias are now @subcommand (changes all underscore commands to dash/hyphen. example:  <wp mem user get_role> is now <wp mem user get-role>).
 * Updates to WP CLI commands: Improve and debug `wp mem import memberships` command.
