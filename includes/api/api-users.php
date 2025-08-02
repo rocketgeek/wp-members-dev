@@ -1280,6 +1280,6 @@ function wpmem_get_user_count_by_meta( $meta_key, $meta_value, $compare = '=' ) 
  */
 function wpmem_get_user_count_by_role( $role ) {
 	$users = count_users();
-	return ( 'all' == $role ) ? $users['avail_roles'][ $role ] : $users['total_users'];
+	return ( 'all' == $role ) ? $users['total_users'] : $users['avail_roles'][ $role ];
 }
 // End of file.
