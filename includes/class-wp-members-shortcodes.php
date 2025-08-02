@@ -1082,6 +1082,7 @@ class WP_Members_Shortcodes {
 	 * @since 3.1.7
 	 * @since 3.2.0 Moved to WP_Members_Shortcodes::login_link().
 	 * @since 3.4.6 Using wpmem_get_login_link() and wpmem_get_reg_link() adds id and class attributes to HTML tag.
+	 * @since 3.5.5 Only allow specific HTML tag attributes in the shortcode.
 	 *
 	 * @param  array  $atts {
 	 *     The shortcode attributes.
@@ -1095,9 +1096,17 @@ class WP_Members_Shortcodes {
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
 
+		// Only allow specific HTML tag attributes to be included in the shortcode.
 		if ( isset( $sanitized_atts ) && ! empty( $sanitized_atts ) ) {
+			$allowed_atts = array( 'id', 'class', 'href' );
+			foreach ( $sanitized_atts as $key => $value ) {
+				if ( ! array_key_exists( $key, $allowed_atts ) ) {
+					unset( $sanitized_atts[ $key ] );
+				}
+			}
 			$args['attributes'] = $sanitized_atts;
 		}
+
 		if ( 'wpmem_reg_link' == $tag ) {
 			$args['content'] = ( isset( $content ) && '' != $content ) ? $content : esc_html__( 'Register' );
 			return do_shortcode( wpmem_get_reg_link( $args ) );
