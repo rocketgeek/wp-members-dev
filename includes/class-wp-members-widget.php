@@ -427,9 +427,6 @@ class widget_wpmemwidget extends WP_Widget {
 
 			global $user_login; 
 
-			/** This filter is defined in /includes/api/api.php */
-			$logout = apply_filters( 'wpmem_logout_link', add_query_arg( 'a', 'logout', $url ) );
-
 			// Defaults.
 			$defaults = array(
 				'user_login'     => $user_login,
@@ -464,7 +461,7 @@ class widget_wpmemwidget extends WP_Widget {
 			$args = wp_parse_args( $args, $defaults );
 
 			// Generate the message string.
-			$str = $args['wrapper_before'] . $args['status_text'] . '<a href="' . esc_url_raw( $logout ) . '">' . esc_html( $args['link_text'] ) . '</a>' . $args['wrapper_after'];
+			$str = $args['wrapper_before'] . $args['status_text'] . '<a href="' . esc_url_raw( wpmem_logout_link() ) . '">' . esc_html( $args['link_text'] ) . '</a>' . $args['wrapper_after'];
 
 			/**
 			 * Filter the sidebar user login status.

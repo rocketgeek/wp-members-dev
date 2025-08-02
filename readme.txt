@@ -142,7 +142,8 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 * Add additional form support for form field label links (native WP reg, WC forms, dashboard profile, [wpmem_field] shortcode).
 * New API functions for user counts: `wpmem_user_count()`, `wpmem_get_user_count_by_meta()`, `wpmem_get_user_count_by_role()`.
 * New API function for import: `wpmem_csv_to_array()`.
-* Improve radio field type display in native WP and WC My Account reg forms.
+* Code improvement to radio field type display in native WP and WC My Account reg forms.
+* Code improvement to consolidate `wpmem_logout_link` filter instances into `wpmem_logout_link()` function. 
 * Allow native WC fields in WC My Account reg form.
 * Updates to WP CLI commands: All @alias are now @subcommand (changes all underscore commands to dash/hyphen. example:  <wp mem user get_role> is now <wp mem user get-role>).
 * Updates to WP CLI commands: Improve and debug `wp mem import memberships` command.
