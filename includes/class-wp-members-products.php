@@ -473,22 +473,39 @@ class WP_Members_Products {
 	 * Get all posts tagged to a specified product.
 	 *
 	 * @since 3.3.0
+	 * @since 3.5.5 Added arguments for ordering the query results.
 	 *
 	 * @global  stdClass      $wpdb
 	 *
 	 * @param   string        $product_meta
+	 * @param   string        $order_by id|title|date
+	 * @param   string        $order asc|desc
 	 * @return  array|boolean $post_ids if not empty, otherwise false
 	 */
-	function get_all_posts( $product_meta ) {
+	function get_all_posts( $product_meta, $order_by = 'id', $order = 'ASC' ) {
 		global $wpdb;
-		$results = $wpdb->get_results( $wpdb->prepare( "
-			SELECT post_id 
-			FROM {$wpdb->postmeta} 
-			WHERE meta_key = %s
-			", $this->post_stem . $product_meta ), ARRAY_N );
-		foreach ( $results as $result ) {
-			$post_ids[] = $result[0];
+
+		if ( $order_by ) {
+		
+			$order_by = ( $order_by != 'id' ) ? 'post_' . $order_by : 'ID';
+
+			$sql = 'SELECT m.post_id
+					FROM ' . $wpdb->postmeta . ' m 
+					JOIN ' . $wpdb->posts . ' p ON (m.post_id = p.ID AND m.meta_key = "' . esc_sql( $this->post_stem . $product_meta ) . '" ) 
+					ORDER BY ' . $order_by . ' ' . strtoupper( $order ) . ';';
+
+			$results = $wpdb->get_results( $sql, ARRAY_N );
+
 		}
+		
+		foreach ( $results as $result ) {
+			// Since the query is by meta, check if post actually exists so we don't included orphaned IDs.
+			if ( get_post_status( $result[0] ) ) {
+				// If it exists, add it to the array of IDs.
+				$post_ids[] = $result[0];
+			}
+		}
+		
 		return ( ! empty( $post_ids ) ) ? $post_ids : false;
 	}
 	
@@ -699,8 +716,10 @@ class WP_Members_Products {
 			'title_after'  => '</h2>',
 			'list_before'  => '<ul>',
 			'list_after'   => '</ul>',
-			'item_before'  => '<li>',
+			'item_before'  => '<li id=%s>',
 			'item_after'   => '</li>',
+			'order_by'     => 'title',
+			'order'        => 'asc',
 		);
 
 		$args = shortcode_atts( $pairs, $atts, $tag );
@@ -709,16 +728,30 @@ class WP_Members_Products {
 		foreach ( wpmem_get_user_memberships() as $key => $value ) {
 			
 			// Get a list of content for this membership.
-			$ids = wpmem_get_membership_post_list( $key );
+			$ids = wpmem_get_membership_post_list( $key, $args['order_by'], $args['order'] );
 			
 			if ( $ids ) {
 
 				$membership_title = wp_kses_post( $args['title_before'] ) . esc_html( wpmem_get_membership_name( $key ) ) . wp_kses_post( $args['title_after'] );
 				$post_list = wp_kses_post( $args['list_before'] );
 				foreach ( $ids as $id ) {
-					$post_list .= wp_kses_post( $args['item_before'] );
-					$post_list .= '<a href="' . esc_url( get_permalink( $id ) ) . '">' . esc_html( get_the_title( $id ) ) . '</a>';
-					$post_list .= wp_kses_post( $args['item_after'] );
+
+					$permalink   = get_permalink( intval( $id ) );
+					$title       = get_the_title( intval( $id ) );
+					$list_before = wp_kses_post( sprintf( $args['item_before'], 'membership_posts_' . intval( $id ) ) );
+					$list_item   = '<a href="' . esc_url( $permalink ) . '">' . esc_html( $title ) . '</a>';
+					$list_after  = wp_kses_post( $args['item_after'] );
+					$item        = $list_before . $list_item . $list_after;
+					/**
+					 * Filter the list item.
+					 * 
+					 * @since 3.5.5 as experimental (meaning "subject to change")
+					 * 
+					 * @param  string
+					 * @param  array
+					 */
+					$list_item = apply_filters( 'wpmem_show_membership_posts_sc_list_item', $item, array( 'list_before'=>$list_before, 'list_after'=>$list_after, 'list_item'=>$list_item, 'id'=>$id, 'title'=>$title, 'permalink'=>$permalink ) );
+					$post_list .= $list_item;
 				}
 				$post_list .= wp_kses_post( $args['list_after'] );
 				

@@ -134,7 +134,10 @@ WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds 
 = 3.5.5 =
 
 * Bug fix for `wpmem_get_user_count_by_role()` that causes it to return a total count of all users no matter the role requested.
-* Add support to switch WP-Members password reset link over to WooCommerce link.
+* Add support to switch WP-Members password reset link over to WooCommerce link (adds new setting, updates db version).
+* Add sorting to [wpmem_user_membership_posts] shortcode.
+* Add sorting arguments to `wpmem_get_membership_post_list()` function.
+* Add `wpmem_show_membership_posts_sc_list_item` filter for [wpmem_user_membership_posts] shortcode output.
 * Code improvement to consolidate `wpmem_logout_link` filter instances into `wpmem_logout_link()` function. 
 * Security patches from 3.5.4.1 and 3.5.4.2.
 

@@ -33,13 +33,15 @@ function wpmem_get_product_post_list( $product_key ) {
  *
  * @since 3.4.5
  *
- * @global  stdClass  $wpmem
- * @param   string    $membership_key
- * @return  array
+ * @global  stdClass      $wpmem
+ * @param   string        $membership_key
+ * @param   string        $order_by title|date
+ * @param   string        $order asc|desc
+ * @return  array|boolean $post_ids if not empty, otherwise false
  */
-function wpmem_get_membership_post_list( $membership_key ) {
+function wpmem_get_membership_post_list( $membership_key, $order_by = false, $order = 'ASC'  ) {
 	global $wpmem;
-	return $wpmem->membership->get_all_posts( $membership_key );
+	return $wpmem->membership->get_all_posts( $membership_key, $order_by, $order  );
 }
 
 /**
