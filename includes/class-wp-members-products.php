@@ -492,6 +492,7 @@ class WP_Members_Products {
 			$sql = 'SELECT m.post_id
 					FROM ' . $wpdb->postmeta . ' m 
 					JOIN ' . $wpdb->posts . ' p ON (m.post_id = p.ID AND m.meta_key = "' . esc_sql( $this->post_stem . $product_meta ) . '" ) 
+					WHERE p.post_status = "publish" 
 					ORDER BY ' . $order_by . ' ' . strtoupper( $order ) . ';';
 
 			$results = $wpdb->get_results( $sql, ARRAY_N );
@@ -499,11 +500,7 @@ class WP_Members_Products {
 		}
 		
 		foreach ( $results as $result ) {
-			// Since the query is by meta, check if post actually exists so we don't included orphaned IDs.
-			if ( get_post_status( $result[0] ) ) {
-				// If it exists, add it to the array of IDs.
-				$post_ids[] = $result[0];
-			}
+			$post_ids[] = $result[0];
 		}
 		
 		return ( ! empty( $post_ids ) ) ? $post_ids : false;
