@@ -143,23 +143,24 @@ class WP_Members_User_Profile {
 					// Is this an image or a file?
 					if ( 'file' == $field['type'] || 'image' == $field['type'] ) {
 						$empty_file = '<span class="description">' . esc_html__( 'None' ) . '</span>';
+						$sanitized_val = intval( $val );
 						if ( 'file' == $field['type'] ) {
-							$attachment_url = wp_get_attachment_url( $val );
+							$attachment_url = wp_get_attachment_url( $sanitized_val );
 							$input = ( $attachment_url ) ? '<a href="' . esc_url( $attachment_url ) . '">' . esc_url_raw( $attachment_url ) . '</a>' : $empty_file;
 						} else {
-							$attachment_url = wp_get_attachment_image( $val, 'medium' );
+							$attachment_url = wp_get_attachment_image( $sanitized_val, 'medium' );
 							if ( 'admin' == $display ) {
-								$edit_url = admin_url( 'upload.php?item=' . $val );
-								$input = ( $attachment_url ) ? '<a href="' . esc_url( $edit_url ) . '">' . esc_url_raw( $attachment_url ) . '</a>' : $empty_file;
+								$edit_url = admin_url( 'upload.php?item=' . $sanitized_val );
+								$input = ( $attachment_url ) ? '<a href="' . esc_url( $edit_url ) . '">' . wp_kses_post( $attachment_url ) . '</a>' : $empty_file;
 							} else {
-								$input = ( $attachment_url ) ? esc_url_raw( $attachment_url ) : $empty_file;
+								$input = ( $attachment_url ) ? wp_kses_post( $attachment_url ) : $empty_file;
 							}
 						}
 						$input.= '<br />' . wpmem_get_text( 'profile_upload' ) . '<br />';
 						$input.= wpmem_form_field( array(
 							'name'    => $meta, 
 							'type'    => $field['type'], 
-							'value'   => $val, 
+							'value'   => $sanitized_val, 
 							'compare' => $valtochk,
 						) );
 					} else {
