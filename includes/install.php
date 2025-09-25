@@ -714,7 +714,7 @@ class WP_Members_Installer {
 		global $wpmem;
 
 		$show_release_notes = true;
-		$release_notes_link = "https://rocketgeek.com/release-announcements/wp-members-3-5-3/";
+		$release_notes_link = "https://rocketgeek.com/release-announcements/wp-members-3-5-5/";
 
 		if ( 'new_install' == $wpmem->install_state ) {
 			$notice_heading = __( 'Thank you for installing WP-Members, the original WordPress membership plugin.', 'wp-members' );
