@@ -587,9 +587,9 @@ class WP_Members {
 		 */
 		do_action_deprecated( 'wpmem_settings_loaded', array(), '3.2.0', 'wpmem_after_init' );
 	
-		// Preload the expiration module, if available.
+		// @deprecated 3.5.5, kept for legacy purposes. Preload the expiration module, if available.
 		$exp_active = ( function_exists( 'wpmem_exp_init' ) || function_exists( 'wpmem_set_exp' ) ) ? true : false;
-		define( 'WPMEM_EXP_MODULE', $exp_active ); 
+		define( 'WPMEM_EXP_MODULE', $exp_active ); // @deprecated 3.5.5, kept for legacy purposes.
 	
 		// Load actions and filters.
 		$this->load_hooks();

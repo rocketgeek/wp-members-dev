@@ -586,7 +586,7 @@ Last Row|last_row
 				|| 'wpmem_reg_ip' == $key 
 				|| ( '_wpmem_user_confirmed' == $key && 1 == $wpmem->act_link ) 
 				|| ( 'active' == $key && 1 == $wpmem->mod_reg ) 
-				|| defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 && ( 'exp_type' == $key || 'expires' == $key ) ) {
+				|| wpmem_is_exp_enabled() && $wpmem->use_exp == 1 && ( 'exp_type' == $key || 'expires' == $key ) ) {
 				$user_screen_items[ $key ] = array( 'label' => esc_html__( $item, 'wp-members' ), 'meta' => $key,
 					'userscrn' => wpmem_form_field( "wpmem_fields_uscreen[{$key}]", 'checkbox', $item, $ut_checked ),
 				);

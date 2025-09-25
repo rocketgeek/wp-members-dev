@@ -158,7 +158,7 @@ class WP_Members_Admin_Tab_Options {
 								} ?>
 								</ul>
 								<?php
-								if ( WPMEM_EXP_MODULE == true ) {
+								if ( wpmem_is_exp_enabled() ) {
 									$rows = array( 
 										array(esc_html__('Enable PayPal','wp-members'),'wpmem_settings_time_exp',esc_html__('Requires payment through PayPal following registration','wp-members'),'use_exp'),
 										array(esc_html__('Trial period','wp-members'),'wpmem_settings_trial',esc_html__('Allows for a trial period before PayPal payment is required','wp-members'),'use_trial'),

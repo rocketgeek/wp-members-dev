@@ -434,7 +434,7 @@ class WP_Members_User_Profile {
 				}
 			}
 
-			if ( defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 ) {
+			if ( wpmem_is_exp_enabled() && $wpmem->use_exp == 1 ) {
 				if ( function_exists( 'wpmem_a_extenduser' ) ) {
 					wpmem_a_extenduser( $user_id );
 				}
@@ -563,7 +563,7 @@ class WP_Members_User_Profile {
 		 * If registration is moderated, this doesn't show 
 		 * if user is not active yet.
 		 */
-		if ( defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 ) {
+		if ( wpmem_is_exp_enabled() && $wpmem->use_exp == 1 ) {
 			if ( ( $wpmem->mod_reg == 1 &&  get_user_meta( $user_id, 'active', true ) == 1 ) || ( $wpmem->mod_reg != 1 ) ) {
 				if ( function_exists( 'wpmem_a_extend_user' ) ) {
 					wpmem_a_extend_user( $user_id );

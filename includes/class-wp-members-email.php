@@ -144,8 +144,8 @@ class WP_Members_Email {
 		$this->settings['user_login']    = stripslashes( $user->user_login );
 		$this->settings['user_email']    = stripslashes( $user->user_email );
 		$this->settings['blogname']      = wp_specialchars_decode( get_option ( 'blogname' ), ENT_QUOTES );
-		$this->settings['exp_type']      = ( defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'exp_type', true ) : '';
-		$this->settings['exp_date']      = ( defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'expires',  true ) : '';
+		$this->settings['exp_type']      = ( wpmem_is_exp_enabled() && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'exp_type', true ) : '';
+		$this->settings['exp_date']      = ( wpmem_is_exp_enabled() && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'expires',  true ) : '';
 		$this->settings['wpmem_profile'] = esc_url( $wpmem->user_pages['profile'] );
 		$this->settings['wpmem_reg']     = esc_url( $wpmem->user_pages['register'] );
 		$this->settings['wpmem_login']   = esc_url( $wpmem->user_pages['login'] );
@@ -364,8 +364,8 @@ class WP_Members_Email {
 		$this->settings['user_ip']       = ( is_array( $field_data ) ) ? $field_data['wpmem_reg_ip'] : get_user_meta( $user_id, 'wpmem_reg_ip', true );
 		$this->settings['reg_link']      = esc_url( get_user_meta( $user_id, 'wpmem_reg_url', true ) );
 		$this->settings['act_link']      = esc_url( add_query_arg( 'user_id', $user_id, get_admin_url( '', 'user-edit.php' ) ) );
-		$this->settings['exp_type']      = ( defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'exp_type', true ) : '';
-		$this->settings['exp_date']      = ( defined( 'WPMEM_EXP_MODULE' ) && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'expires',  true ) : '';
+		$this->settings['exp_type']      = ( wpmem_is_exp_enabled() && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'exp_type', true ) : '';
+		$this->settings['exp_date']      = ( wpmem_is_exp_enabled() && $wpmem->use_exp == 1 ) ? get_user_meta( $user_id, 'expires',  true ) : '';
 		$this->settings['do_shortcodes'] = true;
 		$this->settings['add_footer']    = true;
 		$this->settings['footer']        = ( 1 == $this->html ) ? wpautop( wpmem_get_email_settings( 'wpmembers_email_footer' ) ) : wpmem_get_email_settings( 'wpmembers_email_footer' );

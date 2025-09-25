@@ -295,7 +295,7 @@ class WP_Members_User_Export {
 		if ( wpmem_is_enabled( 'act_link' ) ) {
 			$export_fields['_wpmem_user_confirmed'] = esc_html__( 'Confirmed?', 'wp-members' );
 		}
-		if ( defined( 'WPMEM_EXP_MODULE' ) && wpmem_is_enabled( 'use_exp' ) ) {
+		if ( wpmem_is_exp_enabled() && wpmem_is_enabled( 'use_exp' ) ) {
 			$export_fields['exp_type'] = esc_html__( 'Subscription', 'wp-members' );
 			$export_fields['expires']  = esc_html__( 'Expires', 'wp-members' );
 		}

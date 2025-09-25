@@ -776,4 +776,15 @@ function wpmem_show_post_restriction( $post_id, $icon = false, $echo = false ) {
         }
     }
 }
+
+/**
+ * Checks if the WP-Members PayPal extension is activated.
+ * 
+ * @since 3.5.5
+ * 
+ * @return boolean
+ */
+function wpmem_is_exp_enabled() {
+	return ( function_exists( 'wpmem_exp_init' ) || function_exists( 'wpmem_set_exp' ) ) ? true : false;
+}
 // End of file.

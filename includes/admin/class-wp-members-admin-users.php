@@ -400,7 +400,7 @@ class WP_Members_Admin_Users {
 			set_transient( 'wpmem_user_counts', $user_counts, $transient_expires );
 		}
 
-		if ( defined( 'WPMEM_EXP_MODULE' ) && 1 == $wpmem->use_exp ) {
+		if ( wpmem_is_exp_enabled() && 1 == $wpmem->use_exp ) {
 			$views['pending']      = __( 'Pending',       'wp-members' );
 			$views['trial']        = __( 'Trial',         'wp-members' );
 			$views['subscription'] = __( 'Subscription',  'wp-members' );
