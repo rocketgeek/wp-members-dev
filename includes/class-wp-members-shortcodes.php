@@ -981,7 +981,7 @@ class WP_Members_Shortcodes {
 		 */
 		$content = apply_filters( 'wpmem_field_shortcode', $content, $sanitized_atts, $field );
 
-		return do_shortcode( $content );
+		return $content;
 	}
 
 	/**
