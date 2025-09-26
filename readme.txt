@@ -107,7 +107,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.4 is a feature update release. It fixes some minor bugs and adds new filters and some additional features. WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds new filters and some additional features. WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==

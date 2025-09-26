@@ -166,10 +166,11 @@ if ( ! function_exists( 'rktgk_sanitize_field' ) ):
  * @since 1.0.1 Added text, url, array, class as accepted $type
  *
  * @param  string $data
- * @param  string $type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class) Default:text
+ * @param  string $type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses) Default:text
+ * @param  string $xtra Extra data based on type.
  * @return string $sanitized_data
  */
-function rktgk_sanitize_field( $data, $type = '' ) {
+function rktgk_sanitize_field( $data, $type = '', $xtra = null ) {
 
 	switch ( $type ) {
 
@@ -201,7 +202,7 @@ function rktgk_sanitize_field( $data, $type = '' ) {
 			break;
 			
 		case 'url':
-			$sanitized_data = sanitize_url( $data );
+			$sanitized_data = ( 'raw' == $xtra ) ? sanitize_url_raw( $data ) : sanitize_url( $data );
 			break;
 		
 		case 'class':
@@ -213,7 +214,7 @@ function rktgk_sanitize_field( $data, $type = '' ) {
 			break;
 		
 		case 'kses':
-			$sanitized_data = wp_kses_post( $data );
+			$sanitized_data = ( 'post' == $xtra ) ? wp_kses_post( $data ) : wp_kses( $data, $xtra );
 			break;
 
 		case 'text':
