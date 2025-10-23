@@ -1606,9 +1606,11 @@ class WP_Members {
 	 * @since 3.2.0
 	 */
 	public function do_loginout_script() {
-		$logout = wpmem_logout_link();
-		?><script type="text/javascript">
-			jQuery('.wpmem_loginout').html('<a class="login_button" href="<?php echo esc_url( $logout ); ?>"><?php echo wpmem_get_text( 'menu_logout' ); ?></a>');
+		$logout = wpmem_logout_link(); ?>
+		<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery('.wpmem_loginout').html('<a class="login_button" href="<?php echo esc_url( $logout ); ?>"><?php echo wpmem_get_text( 'menu_logout' ); ?></a>');
+			});
 		</script><?php
 	}
 		
@@ -1964,6 +1966,15 @@ class WP_Members {
 		return ( is_wp_error( $this->error ) && $this->error->has_errors() ) ? true : false;
 	}
 
+	/**
+	 * Loads the activation object if enabled.
+	 * 
+	 * @since Unknown
+	 * 
+	 * @todo Can this be evaluated for loading based only when specifically
+	 *       needed for the actual processed used?
+	 * @todo Apart from the above, can this load at load_dependent_classes()?
+	 */
 	public function after_wpmem_loaded() {
 		if ( wpmem_is_enabled( 'act_link' ) ) {
 			$this->act_newreg = new WP_Members_Validation_Link;
