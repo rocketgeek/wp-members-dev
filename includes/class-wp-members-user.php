@@ -85,8 +85,8 @@ class WP_Members_User {
 	 * @since 3.4.0
 	 */
 	public function load_user_products() {
-		if ( is_user_logged_in() ) {
-			$this->access = wpmem_get_user_products( get_current_user_id() );
+		if ( is_user_logged_in() && wpmem_is_enabled( 'enable_products' ) ) {
+			$this->access = wpmem_get_user_memberships( get_current_user_id() );
 		}
 	}
 	
@@ -1052,58 +1052,61 @@ class WP_Members_User {
 	 *       user is current but does not have a required role (if BOTH an expiration and role
 	 *       product). Maybe add role checking to the expiration block if both exist.
 	 *
-	 * @global object $wpmem
 	 * @param  mixed  $membership Accepts a single membership slug/meta, or an array of multiple memberships.
 	 * @param  int    $user_id (optional)
 	 * @return bool   $access
 	 */
 	public function has_access( $membership, $user_id = false ) {
-		global $wpmem;
+
+		// If the user is not logged in and there is no user id, there's nothing to check.
 		if ( ! is_user_logged_in() && ! $user_id ) {
 			return false;
 		}
-		
-		// Product must be an array.
+
+		// Current user or requested user?
+		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
+
+		// Membership must be an array.
 		$membership_array = ( ! is_array( $membership ) ) ? explode( ",", $membership ) : $membership;
 
+		// Get the membership hierarchy.
 		$membership_array = $this->get_membership_stack( $membership_array );
-
-		// Current user or requested user.
-		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
 		
-		// Load user memberships array.
-		$memberships = ( false == $user_id ) ? $this->access : wpmem_get_user_memberships( $user_id );
+		// What memberships does the user have?.
+		$memberships = wpmem_get_user_memberships( $user_id );
 
 		// Start by assuming no access.
-		$access  = false;
+		$access = false;
 
-		// Start checking memberships. If the user has a valid membership, quit checking.
+		// Start checking memberships. If a valid membership is found, quit checking (break).
 		foreach ( $membership_array as $prod ) {
-			$expiration_product = false;
-			$role_product = false;
+
 			// Does the user have this membership?
 			if ( isset( $memberships[ $prod ] ) ) {
-				// Is this an expiration membership?
-				if ( isset( $wpmem->membership->memberships[ $prod ]['expires'][0] ) && ! is_bool( $memberships[ $prod ] ) ) {
-					$expiration_product = true;  
+				// Is this a role membership?
+				if ( wpmem_get_membership_role( $prod ) ) {
+					// Does user have the required role?
+					if ( wpmem_user_has_role( wpmem_get_membership_role( $prod ) ) ) {
+						// Is it an expiration membership? If not, they're OK at this point.
+						if ( ! $expiration_product ) {
+							$access = true;
+							break;
+						} else {
+							// If an expiration membership, is the user current?
+							if ( $this->is_current( $memberships[ $prod ] ) ) {
+								$access = true;
+								break;
+							}
+						}
+					}
+				} elseif ( wpmem_is_membership_expirable( $prod ) ) {
+					// If an expiration membership, is the user current?
 					if ( $this->is_current( $memberships[ $prod ] ) ) {
 						$access = true;
 						break;
-					}
-				}
-				// Is this a role membership?
-				if ( '' != wpmem_get_membership_role( $prod ) ) {
-					$role_product = true;
-					if ( $memberships[ $prod ] && wpmem_user_has_role( wpmem_get_membership_role( $prod ) ) ) {
-						if ( $expiration_product && ! $this->is_current( $memberships[ $prod ] ) ) {
-							$access = false;
-							break;
-						}
-						$access = true;
-						break;
-					}
-				}
-				if ( ! $expiration_product && ! $role_product && $memberships[ $prod ] ) {
+					}				
+				} else {
+					// No required role, no expiry, and user has membership.
 					$access = true;
 					break;
 				}
