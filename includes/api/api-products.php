@@ -166,12 +166,13 @@ function wpmem_get_membership_slug( $membership_id ) {
  * Get the role required by a membership (if any).
  * 
  * @since 3.5.0
+ * @since 3.5.5 Return false if no role.
  * 
  * @param  string  $slug  The membership slug (meta key).
  */
 function wpmem_get_membership_role( $membership_slug ) {
 	global $wpmem;
-	return ( isset( $wpmem->membership->memberships[ $membership_slug ]['role'] ) ) ? $wpmem->membership->memberships[ $membership_slug ]['role'] : '';
+	return ( isset( $wpmem->membership->memberships[ $membership_slug ]['role'] ) ) ? $wpmem->membership->memberships[ $membership_slug ]['role'] : false;
 }
 
 /**
