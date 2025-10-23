@@ -280,6 +280,21 @@ function wpmem_is_user_activated( $user_id = false ) {
 }
 
 /**
+ * Checks if a user is specifically deactivated.
+ * Note: this is not the same as not activated.
+ * 
+ * @since 3.5.5
+ * 
+ * @param  int    $user_id
+ * @return bool
+ */
+function wpmem_is_user_deactivated( $user_id ) {
+	$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
+	$status  = get_user_meta( $user_id, 'active', true );
+	return ( 2 == $status ) ? true : false;
+}
+
+/**
  * Gets an array of the user's registration data.
  *
  * Returns an array keyed by meta keys of the user's registration data for
@@ -445,7 +460,28 @@ function wpmem_get_user_expiration( $product_key = false, $user_id = false, $for
     $memberships = wpmem_get_user_memberships( $user_id );
 	$product_key = ( false == $product_key ) ? key( $memberships ) : $product_key;
     $exp_date = ( is_numeric( $memberships[ $product_key ] ) ) ? $memberships[ $product_key ] : strtotime( $memberships[ $product_key ] );
+	$exp_date = ( $format ) ? wpmem_format_date( array( 'date'=>$exp_date, 'date_format'=>$format ) ) : $exp_date;
     return $exp_date;
+}
+
+function wpmem_get_user_time_remaining( $product_key = false, $user_id = false, $interval = 'days' ) {
+	$user_id = ( false === $user_id ) ? get_current_user_id() : $user_id;
+	$expires = wpmem_get_user_expiration( $product_key, $user_id, 'Y-m-d' );
+	$target_date = new DateTime( $expires );
+	$current_date = new DateTime();
+	$date_diff = $current_date->diff( $target_date );
+	switch( $interval ) {
+		case 'months':
+			return $date_diff->months;
+			break;
+		default:
+			return $date_diff->days;
+			break;
+	}
+}
+
+function wpmem_prorate_membership( $args ) {
+		
 }
 
 /**
