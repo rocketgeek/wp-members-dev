@@ -138,8 +138,15 @@ WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds 
 * Add support to switch WP-Members password reset link over to WooCommerce link (adds new setting, updates db version).
 * Add sorting to [wpmem_user_membership_posts] shortcode.
 * Add sorting arguments to `wpmem_get_membership_post_list()` function.
+* Add date format support for `wpmem_get_user_expiration()` function.
 * Add `wpmem_show_membership_posts_sc_list_item` filter for [wpmem_user_membership_posts] shortcode output.
+* Add `wpmem_is_user_deactivated()` API function.
+* Add `wpmem_get_user_time_remaining()` API function to check for remaining time on memberships.
+* Add WP CLI commands for checking remaining time on memberships.
+* Update `wpmem_get_membership_role()` to return false (rather than null) if no role for the membership.
 * Code improvement to consolidate `wpmem_logout_link` filter instances into `wpmem_logout_link()` function. 
+* Code improvement in user_has_access() logic with better handling of role-based memberships.
+* Code improvement for wpmem_user_has_access(), better handling of role validation.
 * Security patches from 3.5.4.1, 3.5.4.2, and 3.4.5.3.
 
 = 3.5.4 =
