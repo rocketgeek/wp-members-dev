@@ -269,6 +269,7 @@ class WP_Members_Shortcodes {
 	 * @since 3.2.0 Added attributes for meta key/value pairs.
 	 * @since 3.2.3 Added product attribute.
 	 * @since 3.3.0 Added compare attribute for meta key/value compare (=|!=).
+	 * @since 3.5.5 Added attribute for display on various states of [wpmem_profile].
 	 *
 	 * @global object $wpmem The WP_Members object.
 	 *
@@ -399,8 +400,11 @@ class WP_Members_Shortcodes {
 				}
 
 				// Prevents display if the current page is the user profile and an action is being handled.
-				if ( ( wpmem_current_url( true, false ) == wpmem_profile_url() ) && isset( $_GET['a'] ) ) {
-					$do_return = false;
+				if ( ( wpmem_current_url( true, false ) == wpmem_profile_url() ) ) {
+
+					if ( isset( $_GET['a'] ) ) {
+						$do_return = false;
+					}
 				}
 
 				// Adds optional wrapper.
