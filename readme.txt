@@ -142,7 +142,8 @@ WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds 
 * Add `wpmem_show_membership_posts_sc_list_item` filter for [wpmem_user_membership_posts] shortcode output.
 * Add `wpmem_is_user_deactivated()` API function.
 * Add `wpmem_get_user_time_remaining()` API function to check for remaining time on memberships.
-* Add WP CLI commands for checking remaining time on memberships.
+* Add WP CLI command for checking remaining time on memberships.
+* Add WP CLI command for listing user memberships.
 * Update `wpmem_get_membership_role()` to return false (rather than null) if no role for the membership.
 * Code improvement to consolidate `wpmem_logout_link` filter instances into `wpmem_logout_link()` function. 
 * Code improvement in `has_access()` logic with better handling of role-based memberships.
