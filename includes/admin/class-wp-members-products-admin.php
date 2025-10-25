@@ -28,6 +28,10 @@ class WP_Members_Products_Admin {
 		if ( 1 == $wpmem->enable_products ) {
 			add_filter( 'manage_wpmem_product_posts_columns',       array( $this, 'columns_heading' ) );
 			add_action( 'manage_wpmem_product_posts_custom_column', array( $this, 'columns_content' ), 10, 2 );
+
+			add_action( 'restrict_manage_posts', array( $this, 'filter_by_membership' ) );
+			add_action( 'pre_get_posts',         array( $this, 'membership_filter'    ) );
+
 			add_action( 'add_meta_boxes',                  array( $this, 'meta_boxes' ) );
 			add_action( 'page_attributes_misc_attributes', array( $this, 'membership_attributes' ) );
 			add_action( 'save_post',                       array( $this, 'save_details' ) );
@@ -117,6 +121,52 @@ class WP_Members_Products_Admin {
 			case 'last_updated':
 				echo date_i18n( get_option( 'date_format' ), strtotime( esc_attr( $post->post_modified ) ) );
 				break;
+		}
+	}
+
+	/**
+	 * Adds filter option for Posts > All Posts to filter by membership.
+	 * 
+	 * @since 3.5.5
+	 */
+	function filter_by_membership() {
+
+		global $typenow, $wpmem;
+
+		// Only do this for managed post types.
+		if ( 'post' == $typenow || 'page' == $typenow || array_key_exists( $typenow, $wpmem->post_types ) ) {
+
+			$memberships = wpmem_get_memberships();
+			
+			// Only continue if there are memberships.
+			if ( ! empty( $memberships ) ) {
+
+				$sanitized_value = wpmem_get_sanitized( 'membership_filter', '', 'get' );
+				echo '<select name="membership_filter">';
+				echo '<option value="">' . esc_html__( 'Filter by membership', 'wp-members' ) . '</option>';
+				foreach ( $memberships as $membership_meta => $membership_vals ) {
+					printf(
+						'<option value="%s"%s>%s</option>',
+						esc_attr( $membership_vals['name'] ),
+						$membership_vals['name'] == $sanitized_value ? ' selected="selected"' : '',
+						esc_html( $membership_vals['title'] )
+					);
+				}
+				echo '</select>';
+			}
+		}
+	}
+
+	/**
+	 * Filters the Posts > All Posts view by membership.
+	 * 
+	 * @since 3.5.5
+	 */
+	function membership_filter( $query ) {
+		global $pagenow;
+		if ( is_admin() && $pagenow == 'edit.php' && wpmem_get( 'membership_filter', false, 'get' ) ) {
+			$query->query_vars['meta_key'] = '_wpmem_products_' . wpmem_get_sanitized( 'membership_filter', false, 'get' );
+			$query->query_vars['meta_value'] = 1;
 		}
 	}
 

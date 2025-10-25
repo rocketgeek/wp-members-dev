@@ -202,6 +202,8 @@ class WP_Members_Admin_API {
 			add_action( 'manage_posts_custom_column', array( 'WP_Members_Admin_Posts', 'columns_content' ), 10, 2 );
 			add_filter( 'manage_pages_columns',       array( 'WP_Members_Admin_Posts', 'columns'     ) );
 			add_action( 'manage_pages_custom_column', array( 'WP_Members_Admin_Posts', 'columns_content' ), 10, 2 );
+			add_action( 'restrict_manage_posts',      array( 'WP_Members_Admin_Posts', 'filter_by_restriction' ) );
+			add_action( 'pre_get_posts',              array( 'WP_Members_Admin_Posts', 'restriction_filter'    ) );
 			add_action( 'admin_footer-edit.php',      array( 'WP_Members_Admin_Posts', 'bulk_action' ) );
 			add_action( 'load-edit.php',              array( 'WP_Members_Admin_Posts', 'page_load'   ) );
 			add_action( 'admin_notices',              array( 'WP_Members_Admin_Posts', 'notices'     ) );

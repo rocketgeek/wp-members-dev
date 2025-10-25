@@ -353,6 +353,106 @@ class WP_Members_Admin_Posts {
 	}
 
 	/**
+	 * Adds filter option for Posts > All Posts to filter by restriction.
+	 * 
+	 * @since 3.5.5
+	 */
+	static function filter_by_restriction() {
+
+		global $typenow, $wpmem;
+
+		// Only do this for managed post types.
+		if ( 'post' == $typenow || 'page' == $typenow || array_key_exists( $typenow, $wpmem->post_types ) ) {
+
+			$restrictions = array( 
+				'unrestricted' => __( 'Unrestricted', 'wp-members' ),
+				'restricted'   => __( 'Restricted', 'wp-members' ),
+				'hidden'       => __( 'Hidden', 'wp-members' ),
+			);
+			
+			$sanitized_value = wpmem_get_sanitized( 'restriction_filter', '', 'get' );
+			echo '<select name="restriction_filter">';
+			echo '<option value="">' . esc_html__( 'Filter by restriction', 'wp-members' ) . '</option>';
+			foreach ( $restrictions as $restriction_meta => $restriction_vals ) {
+				printf(
+					'<option value="%s"%s>%s</option>',
+					esc_attr( $restriction_meta ),
+					$restriction_meta == $sanitized_value ? ' selected="selected"' : '',
+					esc_html( $restriction_vals )
+				);
+			}
+			echo '</select>';
+		}
+	}
+
+	/**
+	 * Filters the Posts > All Posts view by restriction.
+	 * 
+	 * @since 3.5.5
+	 */
+	static function restriction_filter( $query ) {
+		global $pagenow, $wpmem;
+
+		// What post type is being handled here?
+		$post_type = wpmem_get_sanitized( 'post_type', false, 'get' );
+		// Get the restriction filter value.
+		$restriction_filter = wpmem_get_sanitized( 'restriction_filter', false, 'get' );
+		
+		if ( is_admin() && $pagenow == 'edit.php' && $restriction_filter ) {
+
+			// Switch based on value.
+			switch ( $restriction_filter ) {
+				case 'unrestricted':
+					if ( 0 == $wpmem->block[ $post_type ] ) {
+						$meta_query[] = array( 
+							'relation' => 'OR',
+							array( 
+								'key'     => '_wpmem_block',
+								'compare' => 'NOT EXISTS',
+							),
+							array( 
+								'key'     => '_wpmem_block',
+								'value'   => 0,
+								'compare' => '='
+							)
+						);
+						$query->set( 'meta_query', $meta_query );
+					} else {
+						$query->query_vars['meta_key'] = '_wpmem_block';
+						$query->query_vars['meta_value'] = 0;
+					}
+					break;
+				case 'restricted':
+					if ( 1 == $wpmem->block[ $post_type ] ) {
+						$meta_query[] = array( 
+							'relation' => 'OR',
+							array( 
+								'key'     => '_wpmem_block',
+								'compare' => 'NOT EXISTS',
+							),
+							array( 
+								'key'     => '_wpmem_block',
+								'value'   => 1,
+								'compare' => '='
+							)
+						);
+						$query->set( 'meta_query', $meta_query );
+					} else {
+						$query->query_vars['meta_key'] = '_wpmem_block';
+						$query->query_vars['meta_value'] = 1;
+					}
+					break;
+				case 'hidden':
+					$query->query_vars['meta_key'] = '_wpmem_block';
+					$query->query_vars['meta_value'] = 2;
+					break;
+			}
+		}
+
+		//rktgk_what_is( $query, true );
+	}
+
+	/**
 	 * Sets custom block status for a post.
 	 *
 	 * @since 3.2.0

@@ -3,7 +3,7 @@ Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 4.0
 Tested up to: 6.8
-Stable tag: 3.5.4
+Stable tag: 3.5.4.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 The original WordPress membership plugin with content restriction, user login, custom registration fields, user profiles, and more.
@@ -135,13 +135,15 @@ WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds 
 
 * Bug fix for `wpmem_get_user_count_by_role()` that causes it to return a total count of all users no matter the role requested.
 * Bug fix for image field display in profile.
+* Add filter to view posts by restriction status (i.e. Posts > All Posts view).
+* Add filter to view posts by membership status (i.e. Posts > All Posts view).
 * Add support to switch WP-Members password reset link over to WooCommerce link (adds new setting, updates db version).
 * Add sorting to [wpmem_user_membership_posts] shortcode.
 * Add sorting arguments to `wpmem_get_membership_post_list()` function.
 * Add date format support for `wpmem_get_user_expiration()` function.
 * Add `wpmem_show_membership_posts_sc_list_item` filter for [wpmem_user_membership_posts] shortcode output.
 * Add `wpmem_is_user_deactivated()` API function.
-* Add `wpmem_get_user_time_remaining()` API function to check for remaining time on memberships.
+* Add `wpmem_get_user_time_remaining()` API function to check for remaining time on memberships. 
 * Add WP CLI command for checking remaining time on memberships.
 * Add WP CLI command for listing user memberships.
 * Update `wpmem_get_membership_role()` to return false (rather than null) if no role for the membership.
