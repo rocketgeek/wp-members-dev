@@ -159,7 +159,7 @@ class WP_Members_Admin_API {
 		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Dialogs',    'do_tab' ), 10 );
 		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Emails',     'do_tab' ), 15 );
 		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_Shortcodes', 'do_tab' ), 16 );
-		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_About',      'do_tab' ), 17 );
+		add_action( 'wpmem_admin_do_tab',             array( 'WP_Members_Admin_Tab_About',      'do_tab' ), 99 );
 		
 		// If user has a role that cannot edit users, set profile actions for non-admins.
 		
