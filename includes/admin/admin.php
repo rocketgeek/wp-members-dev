@@ -47,7 +47,18 @@ function wpmem_admin() {
 	if ( $wpmem->dropins ) {
 		add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Tab_Dropins', 'add_tab' )       );
 		add_action( 'wpmem_admin_do_tab', array( 'WP_Members_Admin_Tab_Dropins', 'do_tab'  ), 1, 1 );
-	} ?>
+	} 
+	
+	// @todo Adds tab for updating filesystem if /wpmembers/user_files/ exists.
+	$uploads = wp_upload_dir();
+	$deprecated_folder = trailingslashit( $uploads['basedir'] ) . 'wpmembers/user_files';
+	if ( is_dir( $deprecated_folder ) ) {
+		include_once $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-filesystem-upgrade.php';
+		add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Filesystem_Upgrade', 'add_tab' )      );
+		add_action( 'wpmem_admin_do_tab', array( 'WP_Members_Admin_Filesystem_Upgrade', 'do_tab' ), 17 );
+	}
+	
+	?>
 
 	<div class="wrap">
 		<?php 

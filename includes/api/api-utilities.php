@@ -336,13 +336,7 @@ function wpmem_create_file( $args ) {
  */
 function wpmem_get_upload_base() {
 	global $wpmem;
-	if ( isset( $wpmem->upload_base ) ) {
-		return $wpmem->upload_base;
-	} else {
-		/** This filter is defined in class-wp-members-forms.php */
-		$args = apply_filters( 'wpmem_user_upload_dir', array( 'wpmem_dir' => "wpmembers" ) );
-		return $args['wpmem_dir'];
-	}
+	return ( isset( $wpmem->upload_base ) ) ? $wpmem->upload_base : "wpmembers";
 }
 
 /**
@@ -369,6 +363,31 @@ function wpmem_upload_dir() {
         'wpmem_user_files_dir' => $wpmem_user_files_dir
     );
 }
+
+/**
+ * Creates a randomized file name.
+ * 
+ * @since 3.5.5
+ * 
+ * @param  string  $filename
+ * @return string  $key.$ext
+ */
+function wpmem_hash_file_name( $filename ) {
+	// How long a random string do we want?
+	$hash_len = 24;
+	
+	// Get the file extension.
+	$ext = pathinfo( $filename, PATHINFO_EXTENSION );
+	
+	if ( preg_match( '/^[a-f0-9]{'. $hash_len . '}-.*/', $filename ) ) {
+		$filename = substr( $filename, $hash_len + 1 );
+	}
+
+	$key = sha1( random_bytes(32) );
+	$key = substr( $key, 0, $hash_len );
+
+	return "$key.$ext";	
+	}
 
 /**
  * Reads a csv file to a keyed array.

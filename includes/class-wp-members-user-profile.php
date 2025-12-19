@@ -145,12 +145,13 @@ class WP_Members_User_Profile {
 						$empty_file = '<span class="description">' . esc_html__( 'None' ) . '</span>';
 						$sanitized_val = intval( $val );
 						if ( 'file' == $field['type'] ) {
-							$attachment_url = wp_get_attachment_url( $sanitized_val );
-							$input = ( $attachment_url ) ? '<a href="' . esc_url( $attachment_url ) . '">' . esc_url_raw( $attachment_url ) . '</a>' : $empty_file;
+							$attachment_url = wp_get_attachment_url( $val );
+							$attachment_path = get_attached_file( $val );
+							$input = ( $attachment_url ) ? '<a href="' . esc_url( $attachment_url ) . '">' . esc_html( basename( $attachment_path ) ) . '</a>' : $empty_file;
 						} else {
-							$attachment_url = wp_get_attachment_image( $sanitized_val, 'medium' );
+							$attachment_url = wp_get_attachment_image( $val, 'medium' );
 							if ( 'admin' == $display ) {
-								$edit_url = admin_url( 'upload.php?item=' . $sanitized_val );
+								$edit_url = admin_url( 'upload.php?item=' . $val );
 								$input = ( $attachment_url ) ? '<a href="' . esc_url( $edit_url ) . '">' . wp_kses_post( $attachment_url ) . '</a>' : $empty_file;
 							} else {
 								$input = ( $attachment_url ) ? wp_kses_post( $attachment_url ) : $empty_file;
@@ -386,7 +387,7 @@ class WP_Members_User_Profile {
 			} elseif ( $field['type'] == 'checkbox' ) {
 				$fields[ $meta ] = wpmem_get_sanitized( $meta, '' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_text_field( $_POST[ $meta ] ) : '';
 			} elseif ( $field['type'] == 'multiselect' || $field['type'] == 'multicheckbox' ) {
-				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wp_unslash( $_POST[ $meta ] ) ) : '';
+				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wpmem_sanitize_array( $_POST[ $meta ] ) ) : '';
 			} elseif ( $field['type'] == 'textarea' ) {
 				$fields[ $meta ] = wpmem_get_sanitized( $meta, '', 'post', 'textarea' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_textarea_field( $_POST[ $meta ] ) : '';
 			}
