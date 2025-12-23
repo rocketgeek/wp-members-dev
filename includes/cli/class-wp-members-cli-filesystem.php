@@ -11,6 +11,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$wpmem->filesystem = new WP_Members_Update_Filesystem_Class;
 		}
 
+		/**
+		 * List files that need to be moved.
+		 * 
+		 * ## OPTIONS
+		 * 
+		 * [--page=<page>]
+		 * : Current page of results to display. Default is 1.
+		 * 
+		 * [--per_page=<per_page>]
+		 * : Number of results to display per page. Default is 20.
+		 * 
+		 * ## EXAMPLES
+		 * 
+		 *    wp mem fs-upgrade list --page=1 --per_page=10
+		 */
 		public function list( $args, $assoc_args ) {
 			global $wpmem;
 			$files_to_move = $wpmem->filesystem->get_file_list();
@@ -52,6 +67,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 		}
 
+		/**
+		 * Move files to new directory structure.
+		 * 
+		 * ## EXAMPLES
+		 * 
+		 *    wp mem fs-upgrade move
+		 */
 		public function move( $args, $assoc_args ) {
 			
 			WP_CLI::line( 'This will move all files in the WP-Members uploads directory to a new directory structure.' );
@@ -64,13 +86,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( ! empty( $wpmem->filesystem->get_errors() ) ) {
 				WP_CLI::error( 'There were errors' );
 				foreach ( $wpmem->filesystem->get_errors() as $user_id => $error ) {
+					$user = get_userdata( $user_id );
 					$list[] = array(
 						'user_id' => $user_id,
+						'user_email' => $user->user_email,
 						'error' => $error
 					);
 				}
 				WP_CLI::line( 'Attempts to move uploads for the following user IDs returned an error:' );
-				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'user_id', 'error' ) );
+				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'user_id', 'user_email', 'error' ) );
 				$formatter->display_items( $list );
 			} else {
 				WP_CLI::line( WP_CLI::colorize( '%gNo errors during move.%n' ) );
@@ -79,6 +103,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 		}
 
+		/**
+		 * Delete old uploads directory.
+		 * 
+		 * ## EXAMPLES
+		 * 
+		 *    wp mem fs-upgrade delete
+		 */
 		public function delete( $args, $assoc_args ) {
 			global $wpmem;
 			WP_CLI::confirm( 'This will delete all files in uploads/wpmembers/user_files/ and cannot be undone. Are you sure?' );
