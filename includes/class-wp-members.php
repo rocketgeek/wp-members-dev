@@ -478,6 +478,15 @@ class WP_Members {
 	public $admin;
 
 	/**
+	 * Handle the filesystem.
+	 * 
+	 * @since 3.5.5
+	 * @access public
+	 * @var object
+	 */
+	public $filesystem;
+
+	/**
 	 * Objects for premium extensions.
 	 * 
 	 * @access public

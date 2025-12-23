@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WP_Members_API {
 
+	public $file_user_id; // A container for the uploaded file user ID.
+
 	/**
 	 * Plugin initialization function.
 	 *
@@ -233,5 +235,117 @@ class WP_Members_API {
 	public function is_field_in_wp_users( $meta ) {
 		return ( in_array( $meta, $this->get_wp_users_fields() ) ) ? true : false;
 	}
+
+	/**
+	 * Uploads file from the user.
+	 *
+	 * @since 3.1.0
+	 * @since 3.5.5 Moved to API class.
+	 *
+	 * @param  array    $file
+	 * @param  int      $user_id
+	 * @return int|bool
+	 */
+	function do_file_upload( $file = array(), $user_id = false ) {
+		
+		// Filter the upload directory.
+		add_filter( 'upload_dir', array( &$this, 'file_upload_dir' ) );
+		add_filter( 'sanitize_file_name', 'wpmem_hash_file_name' );
+		
+		// Set up user ID for use in upload process.
+		$this->file_user_id = ( $user_id ) ? $user_id : 0;
 	
+		// Get WordPress file upload processing scripts.
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once( ABSPATH . 'wp-admin/includes/media.php' );
+		
+		$file_return = wp_handle_upload( $file, array( 'test_form' => false ) );
+
+		remove_filter( 'sanitize_file_name', 'wpmem_hash_file_name' );
+	
+		if ( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
+			return false;
+		} else {
+	
+			$attachment = array(
+				'post_mime_type' => $file_return['type'],
+				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file['name'] ) ),
+				'post_content'   => '',
+				'post_status'    => 'inherit',
+				'guid'           => $file_return['url'],
+				'post_author'    => ( $user_id ) ? $user_id : '',
+			);
+	
+			$attachment_id = wp_insert_attachment( $attachment, $file_return['file'] );
+	
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+			$attachment_data = wp_generate_attachment_metadata( $attachment_id, $file_return['file'] );
+			wp_update_attachment_metadata( $attachment_id, $attachment_data );
+	
+			if ( 0 < intval( $attachment_id ) ) {
+				// Returns an array with file information.
+				return $attachment_id;
+			}
+		}
+	
+		return false;
+	} // End upload_file()
+	
+	/**
+	 * Sets the file upload directory.
+	 *
+	 * This is a filter function for upload_dir.
+	 *
+	 * @link https://codex.wordpress.org/Plugin_API/Filter_Reference/upload_dir
+	 *
+	 * @since 3.1.0
+	 * @since 3.5.5 Moved to API class.
+	 * @since 3.5.5 Updated to add a randomized hash to the user directories.
+	 *
+	 * @param  array $param {
+	 *     The directory information for upload.
+	 *
+	 *     @type string $path
+	 *     @type string $url
+	 *     @type string $subdir
+	 *     @type string $basedir
+	 *     @type string $baseurl
+	 *     @type string $error
+	 * }
+	 * @return array $param
+	 */
+	function file_upload_dir( $param ) {
+		
+		$user_id  = ( isset( $this->file_user_id ) ) ? $this->file_user_id : null;
+
+		$file_dir = wpmem_get_file_dir_hash();
+		$user_dir = wpmem_get_user_dir_hash( $user_id );
+
+		$args = array(
+			'user_id'    => $user_id,
+			'wpmem_dir'  => wpmem_get_upload_base(),
+			'user_dir'   => trailingslashit( $file_dir ) . $user_dir,
+			'basedir'    => $param['basedir'],
+			'baseurl'    => $param['baseurl'],
+			'file_hash'  => $file_dir,
+			'user_hash'  => $user_dir,
+		);
+		
+		/**
+		 * Filter the user directory elements.
+		 *
+		 * @since 3.1.0
+		 * @since 3.5.5 Added base vals and hashes to args.
+		 *
+		 * @param array $args
+		 */
+		$args = apply_filters( 'wpmem_user_upload_dir', $args );
+
+		$param['subdir'] = '/' . $args['wpmem_dir'] . '/' . $args['user_dir'];
+		$param['path']   = $args['basedir'] . '/' . $args['wpmem_dir'] . '/' . $args['user_dir'];
+		$param['url']    = $args['baseurl'] . '/' . $args['wpmem_dir'] . '/' . $args['user_dir'];
+	
+		return $param;
+	}
+
 } // End of WP_Members_Utilties class.

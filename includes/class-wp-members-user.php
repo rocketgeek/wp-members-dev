@@ -913,7 +913,7 @@ class WP_Members_User {
 			if ( ( 'file' == $field['type'] || 'image' == $field['type'] ) && isset( $_FILES[ $meta_key ] ) && is_array( $_FILES[ $meta_key ] ) ) {
 				if ( ! empty( $_FILES[ $meta_key ]['name'] ) ) {
 					// Upload the file and save it as an attachment.
-					$file_post_id = $wpmem->forms->do_file_upload( $_FILES[ $meta_key ], $user_id );
+					$file_post_id = $wpmem->api->do_file_upload( $_FILES[ $meta_key ], $user_id );
 					// Save the attachment ID as user meta.
 					update_user_meta( $user_id, $meta_key, $file_post_id );
 					// Add attachment ID to post data array.

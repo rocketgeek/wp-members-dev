@@ -611,7 +611,8 @@ function wpmem_update_user_dirs() {
 
 	$upload_vars = wpmem_upload_dir();
 
-	$users_to_check = get_users( array( 'fields'=>'ID' ));
+	// @todo See comments below.
+	// $users_to_check = get_users( array( 'fields'=>'ID' ));
 
 	if ( file_exists( $upload_vars['wpmem_user_files_dir'] ) ) {
 
@@ -629,6 +630,9 @@ function wpmem_update_user_dirs() {
 		) );
 	}
 
+	// User files are being moved in bulk and this will be handled in the move.
+	// Left the above to create the new dir and setup.
+	/*
 	if ( file_exists( $upload_vars['wpmem_user_files_dir'] ) ) {
 
 		// Loop through users to update user dirs.
@@ -643,6 +647,7 @@ function wpmem_update_user_dirs() {
 			}
 		}
 	}
+	*/
 }
 
 function wpmem_update_autoload_options() {

@@ -355,7 +355,7 @@ function wpmem_upload_dir() {
     $upload_vars  = wp_upload_dir( null, false );
 	$base_dir = $upload_vars['basedir'];
 	$wpmem_base_dir = trailingslashit( trailingslashit( $base_dir ) . wpmem_get_upload_base() );
-	$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+	$wpmem_user_files_dir = $wpmem_base_dir . trailingslashit( wpmem_get_file_dir_hash() );
     return array( 
         'upload_vars'          => $upload_vars,
         'base_dir'             => $base_dir,
@@ -374,7 +374,7 @@ function wpmem_upload_dir() {
  */
 function wpmem_hash_file_name( $filename ) {
 	// How long a random string do we want?
-	$hash_len = 24;
+	$hash_len = 36;
 	
 	// Get the file extension.
 	$ext = pathinfo( $filename, PATHINFO_EXTENSION );
@@ -385,9 +385,73 @@ function wpmem_hash_file_name( $filename ) {
 
 	$key = sha1( random_bytes(32) );
 	$key = substr( $key, 0, $hash_len );
+	
+	$filename = "$key.$ext";
+	/**
+	 * Filter the hashed file name.
+	 * 
+	 * @since 3.5.5
+	 * 
+	 * @param string $filename
+	 * @param int    $hash_len
+	 * @param string $key
+	 * @param string $ext
+	 */
+	return apply_filters( 'wpmem_hashed_file_name', $filename, $hash_len, $key, $ext );	
+}
 
-	return "$key.$ext";	
+/**
+ * Gets or creates a user directory hash.
+ * 
+ * @since 3.5.5
+ * 
+ * @param  int    $user_id
+ * @return string $user_dir_hash
+ */
+function wpmem_get_user_dir_hash( $user_id ) {
+	$hash_len = 36;
+	$user_dir_hash = get_user_meta( $user_id, 'wpmem_user_dir_hash', true );
+	if ( ! $user_dir_hash ) {		
+		$uid_len = strlen( $user_id );
+		$user_dir_hash = $user_id . wp_generate_password( ( $hash_len-$uid_len ), false, false );
+		update_user_meta( $user_id, 'wpmem_user_dir_hash', $user_dir_hash );
 	}
+	/**
+	 * Filter the user directory hash.
+	 * 
+	 * @since 3.5.5
+	 * 
+	 * @param string $user_dir_hash
+	 * @param int    $hash_len
+	 * @param int    $user_id
+	 */
+	return apply_filters( 'wpmem_user_dir_hash', $user_dir_hash, $hash_len, $user_id );
+}
+
+/**
+ * Gets or creates the file directory hash.
+ * 
+ * @since 3.5.5
+ * 
+ * @return string $dir_hash
+ */
+function wpmem_get_file_dir_hash() {
+	$hash_len = 36;
+	$dir_hash = get_option( 'wpmem_file_dir_hash' );
+	if ( ! $dir_hash ) {
+		$dir_hash = wp_generate_password( $hash_len, false, false );
+		update_option( 'wpmem_file_dir_hash', $dir_hash );
+	}
+	/**
+	 * Filter the file directory hash.
+	 * 
+	 * @since 3.5.5
+	 * 
+	 * @param string $dir_hash
+	 * @param int    $hash_len
+	 */
+	return apply_filters( 'wpmem_file_dir_hash', 'user_files_' . $dir_hash, $hash_len );
+}
 
 /**
  * Reads a csv file to a keyed array.

@@ -43,7 +43,7 @@ class WP_Members_Admin_Filesystem_Upgrade {
 	 * @return array       The updated array of tabs for the admin panel.
 	 */
 	public static function add_tab( $tabs ) {
-		return array_merge( $tabs, array( 'filesystem-upgrade' => 'Filesystem' ) );
+		return array_merge( $tabs, array( 'filesystem-upgrade' => esc_html__( 'Filesystem', 'wp-members' ) ) );
 	}
 
 	/**
@@ -56,25 +56,27 @@ class WP_Members_Admin_Filesystem_Upgrade {
 	 */
 	static function build_settings() { 
 
-		global $wpmem_filesystem_upgrade;
-		$wpmem_filesystem_upgrade = New WP_Members_Update_Filesystem_Class();
+		global $wpmem;
+		require_once $wpmem->path . 'includes/class-wp-members-filesystem.php';
+		$wpmem->filesystem = New WP_Members_Update_Filesystem_Class();
 
 		// Check how many files to move.
-		$files_to_move = $wpmem_filesystem_upgrade->get_file_list();
+		$files_to_move = $wpmem->filesystem->get_file_list();
 		$num_to_move = count( $files_to_move );
 
 		if ( isset( $_POST['update-filesystem-confirm'] ) && 'move' == $_POST['update-filesystem-confirm'] ) {
-			$wpmem_filesystem_upgrade->update_filesystem();
-			$wpmem_filesystem_upgrade->moves_complete = true;
+			$wpmem->filesystem->update_filesystem();
+			$wpmem->filesystem->set_move_complete( true );
+			update_option( 'wpmem_upgrade_filesystem_move_complete', 1, false );
 		} ?>
 
 		<div class="wrap">
 			<form name="update-filesystem-form" id="update-filesystem-form" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 			<?php wp_nonce_field( 'wpmem-upgrade-filesystem' ); ?>
-			<h2>Upgrade the WP-Members filesystem</h2>
+			<h2><?php esc_html_e( 'Upgrade the WP-Members filesystem', 'wp-members' ); ?></h2>
 			<?php
 
-		if ( ! empty( $wpmem_filesystem_upgrade->errors ) ) { ?>
+		if ( ! empty( $wpmem->filesystem->get_errors() ) ) { ?>
 			<p>
 				File moves were attempted.  The table below displays user ID folders that were not moved.
 				This may be all existing files or only some.  You should verify by checking 
@@ -91,22 +93,30 @@ class WP_Members_Admin_Filesystem_Upgrade {
 					<th id="user_id" style="width:68px">User ID</th>
 					<th id="error">Error</th>
 				</tr>
-			<?php foreach ( $wpmem_filesystem_upgrade->errors as $user_id => $error ) {
+			<?php foreach ( $wpmem->filesystem->get_errors() as $user_id => $error ) {
 				echo '<tr><td>' . $user_id . '</td><td>' . $error . '</td></tr>';
 			} ?>
 			</table>
-		<?php } elseif ( $wpmem_filesystem_upgrade->moves_complete ) { ?>
+		<?php } elseif ( $wpmem->filesystem->is_move_complete() ) { ?>
 			<p>Filesystem was updated.</p>
-			<p>Once you have confirmed your moves and you are satisfied that things are correct, 
-				you will need to delete the original directory and files.<br />
-				<a href="<?php echo esc_url( admin_url() . '/options-general.php?page=wpmem-settings&tab=filesystem-upgrade' ); ?>">Continue to the initial screen
-				and select the delete option</a>.
-			</p>
+			<?php
+				// Get an updated count.
+				$files_to_move = $wpmem->filesystem->get_file_list(); 
+				$num_to_move = count( $files_to_move );
+				if ( $num_to_move > 0 ) {
+				echo '<p>There are ' . $num_to_move . ' files that were not moved. You may run step 1 again to
+				attempt to move these, or you may need to move them manually.';
+			} ?>
+			<p>If you wish to proceed to step 2 to delete the original directories and files you may do so below.</p>
+			<h3>Step 2: Delete old filesystem</h3>
+			<input type="radio" id="delete" name="update-filesystem-confirm" value="delete" /> Delete the old filesystem.<br>
+			<?php submit_button(); ?>
 		<?php } elseif ( isset( $_POST['update-filesystem-confirm'] ) && 'delete' == $_POST['update-filesystem-confirm'] ) {
 			// Clean up (delete) old dir.
-			$rmdir = $wpmem_filesystem_upgrade->delete_directory( trailingslashit( $wpmem_filesystem_upgrade->basedir ) . 'wpmembers/user_files' );
+			$rmdir = $wpmem->filesystem->delete_directory( trailingslashit( $wpmem->filesystem->basedir ) . 'wpmembers/user_files' );
 			if ( $rmdir ) {
 				echo '<p>Deletion was successful.</p>';
+				delete_option( 'wpmem_upgrade_filesystem_move_complete' );
 			} else {
 				echo '<p>Deletion was not successful. You may need to check directory permissions and/or delete the folder manually</p>';
 			} ?>
@@ -120,12 +130,16 @@ class WP_Members_Admin_Filesystem_Upgrade {
 				</p>
 				<p>
 					The upgrade process is two steps:
-					1. Move the current files to a new structure.
-					2. Delete the old files and directory.
+					<ol>
+					<li>Move the current files to a new structure.</li>
+					<li>Delete the old files and directory.</li>
+					</ol>
 				</p>
 				<p>
-					Please make sure you have backed up your database as well 
-					as your filesystem in case you need to roll back.
+					This process will move uploaded user files and delete the 
+					previous directories.  It cannot be undone. <strong>Please 
+					make sure you have backed up the database and the filesystem
+					before running these actions</strong>.
 				</p>
 				
 			</div>
@@ -133,199 +147,24 @@ class WP_Members_Admin_Filesystem_Upgrade {
 			<input type="radio" id="move" name="update-filesystem-confirm" value="move" /> Move the current filesystem.<br>
 			<p>
 				There are <?php echo $num_to_move; ?> files to move.<br/>
-				Make sure you have backed up your database and filesystem.
 			</p>
+			<?php
+			$step_1_done = get_option( 'wpmem_upgrade_filesystem_move_complete' );
+			if ( $step_1_done ) { ?>
 			<h3>Step 2: Delete old filesystem</h3>
 			<input type="radio" id="delete" name="update-filesystem-confirm" value="delete" /> Delete the old filesystem.<br>
 			<p>
 				Make sure you have run step 1 above first.<br/>
-				Make sure you have backed up your database and filesystem.
+				Make sure step 1 indicates there are no files to move or 
+				you are satisfied that all files have been move to new directories.
 			</p>
+			<?php } ?>
 			<input type="hidden" name="wpmem_admin_a" value="update_filesystem" />
 			<?php submit_button();
 		} ?>
 			</form>
 		</div><!-- #post-box -->
 		<?php
-	}
-}
-
-class WP_Members_Update_Filesystem_Class {
-	
-	public $errors = array();
-	public $uploads = array();
-	public $basedir;
-	public $baseurl;
-	public $moves_complete = false;
-
-	function __construct() {
-		$this->uploads = wp_upload_dir();
-		$this->basedir = $this->uploads['basedir'];
-		$this->baseurl = $this->uploads['baseurl'];
-	}
-
-	function get_file_list() {
-		global $wpdb;
-		return $wpdb->get_results( 'SELECT ID, post_author, post_title, guid FROM ' . $wpdb->posts . ' WHERE post_type = "attachment" AND guid LIKE "%wpmembers/user_files/%";' );
-	}
-	
-	function update_filesystem() {
-
-		$results = $this->get_file_list();
-	
-		// If there are results, they need to move.
-		if ( $results ) {
-
-			// How long of a hash?
-			$hash_len = 24;
-			
-			$dir_hash = get_option( 'wpmem_file_dir_hash' );
-			if ( ! $dir_hash ) {
-				$dir_hash = wp_generate_password( $hash_len, false, false );
-				update_option( 'wpmem_file_dir_hash', $dir_hash );
-			}
-
-			$new_dir_location = trailingslashit( '/wpmembers/user_files_' . $dir_hash );
-			// If new_dir_location does not exist, create it.
-			if ( ! is_dir( $this->basedir . $new_dir_location ) ) {
-				mkdir( $this->basedir . $new_dir_location, 0755, true );
-				// Add indexes and htaccess
-				wpmem_create_file( array(
-					'path'     => $this->basedir . $new_dir_location,
-					'name'     => 'index.php',
-					'contents' => "<?php // Silence is golden."
-				) );
-				wpmem_create_file( array(
-					'path'     => $this->basedir . $new_dir_location,
-					'name'     => '.htaccess',
-					'contents' => "Options -Indexes"
-				) );
-			}
-
-			foreach ( $results as $result ) {
-
-				$user_id = $result->post_author;
-				$guid = $result->guid;
-				
-				// User ID dir
-				$user_dir_hash = get_user_meta( $user_id, 'wpmem_user_dir_hash', true );
-				if ( ! $user_dir_hash ) {		
-					$uid_len = strlen( $user_id );
-					$user_dir_hash = $user_id . wp_generate_password( ( $hash_len-$uid_len ), false, false );
-					update_user_meta( $user_id, 'wpmem_user_dir_hash', $user_dir_hash );
-				}
-
-				// File name
-				$ext = pathinfo( $guid, PATHINFO_EXTENSION );
-				$key = sha1( random_bytes(24) );
-				$key = substr( $key, 0, $hash_len );
-
-				$new_dir = $new_dir_location . trailingslashit( $user_dir_hash ) . $key;
-
-				// Move location.
-				$new_file_path = $this->basedir . $new_dir . "." . $ext;
-
-				$do_move = $this->move_attachment_file( $result->ID, $new_file_path );
-
-				if ( is_wp_error( $do_move ) ) {
-					$this->errors[ $user_id ] = $do_move->get_error_message();
-				}
-			}
-		}
-	}
-
-	// this one from grok.
-	/**
-	 * Move/rename a media attachment file and update WordPress metadata.
-	 *
-	 * @param int    $attachment_id The ID of the attachment post.
-	 * @param string $new_file_path Absolute path to the new location (including filename).
-	 *
-	 * @return bool|WP_Error True on success, WP_Error on failure.
-	 */
-	function move_attachment_file( $attachment_id, $new_file_path ) {
-		// Verify it's a valid attachment
-		if ( get_post_type( $attachment_id ) !== 'attachment' ) {
-			return new WP_Error( 'invalid_attachment', 'Invalid attachment ID.' );
-		}
-
-		// Get current absolute file path
-		$old_file_path = get_attached_file( $attachment_id );
-		if ( ! file_exists( $old_file_path ) ) {
-			$error = new WP_Error( 'file_missing', 'Original file not found.' );
-			if ( is_wp_error( $error ) ) {
-				// Try if it's http
-				$old_file_path = str_replace( trailingslashit( $this->baseurl ), '', $old_file_path );
-				if ( ! file_exists( $old_file_path ) ) {
-					// Still an error.
-					return $error;
-				}
-			}
-		}
-
-		// Ensure destination directory exists
-		$new_dir = dirname( $new_file_path );
-		if ( ! file_exists( $new_dir ) ) {
-			if ( ! wp_mkdir_p( $new_dir ) ) {
-				return new WP_Error( 'dir_create_failed', 'Could not create destination directory.' );
-			}
-		}
-
-		// Move the original file
-		if ( ! rename( $old_file_path, $new_file_path ) ) {
-			return new WP_Error( 'move_failed', 'Failed to move the main file.' );
-		}
-
-		// Update the main attached file path (relative to uploads dir)
-		$new_relative_path = str_replace( trailingslashit( $this->basedir ), '', $new_file_path );
-		update_attached_file( $attachment_id, $new_relative_path );
-
-		// For images: regenerate metadata (updates paths for all thumbnail sizes)
-		// This also moves the thumbnail files if needed (rename handles it via metadata update)
-		if ( wp_attachment_is_image( $attachment_id ) ) {
-			$new_metadata = wp_generate_attachment_metadata( $attachment_id, $new_file_path );
-			wp_update_attachment_metadata( $attachment_id, $new_metadata );
-		}
-
-		// Optional: Update the GUID (rarely needed, but can help in some cases)
-		wp_update_post( array( 'ID' => $attachment_id, 'guid' => trailingslashit( $this->basedir ) . $new_relative_path ) );
-
-		wpmem_create_file( array(
-			'path'     => $new_dir,
-			'name'     => 'index.php',
-			'contents' => "<?php // Silence is golden."
-		) );
-
-		return true;
-	}
-
-	// From https://www.scientecheasy.com/2025/09/delete-directory-in-php.html/
-	function delete_directory( $dir ) {
-		// Check if the given path is actually a directory.
-		if ( ! is_dir( $dir ) ) {
-			return false; // If it's not a directory, it will stop execution.
-		}
-
-		// Get all files and folders inside the directory.
-		$items = scandir( $dir );
-		// Apply loop through each item in the directory.
-		foreach ( $items as $item ) {
-			// Skip the special entries "." (current directory) and ".." (parent directory)
-			if ( $item == '.' || $item == '..' ) {
-				continue;
-			}
-			// Build the full path of the current item.
-			$path = $dir . DIRECTORY_SEPARATOR . $item;
-
-			// If the item is a directory, call this function recursively.
-			if ( is_dir( $path ) ) {
-				$this->delete_directory( $path );
-			} else { // If the item is a file, delete it.
-				unlink( $path );
-			}
-		}
-		// After all files and subdirectories are deleted, remove the main directory.
-		return rmdir( $dir );
 	}
 }
 // End of file.
