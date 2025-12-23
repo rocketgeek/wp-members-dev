@@ -98,10 +98,10 @@ function rktgk_get_sub_str( $needle, $haystack, $position = 'after', $keep_needl
 	} else {
 		if ( 'before' == $position ) {
 			$new = ( substr( $haystack, 0, $pos ) );
-			$new = ( $keep_needle ) ? $string . $needle : $new;
+			$new = ( $keep_needle ) ? $needle . $new : $new;
 		} elseif ( 'after' == $position ) {
 			$new = ( substr( $haystack, $pos+strlen( $needle ) ) );
-			$new = ( $keep_needle ) ? $needle . $string : $new;
+			$new = ( $keep_needle ) ? $needle . $new : $new;
 		} elseif ( 'split' == $position ) {
 			$before = ( substr( $haystack, 0, $pos ) );
 			$after  = ( substr( $haystack, $pos+strlen( $needle ) ) );
