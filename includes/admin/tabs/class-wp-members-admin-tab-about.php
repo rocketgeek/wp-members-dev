@@ -22,6 +22,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Members_Admin_Tab_About {
 
     /**
+     * Adds the About tab.
+     * 
+     * @param  array $tabs The existing admin tabs.
+     * @return array       The modified admin tabs.
+     */
+    static function add_tab( $tabs ) {
+        $tabs['about'] = esc_html__( 'About WP-Members', 'wp-members' );
+        return $tabs;
+    }
+
+    /**
      * Creates the About tab.
      *
      * @since 3.1.1

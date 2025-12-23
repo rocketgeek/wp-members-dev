@@ -394,7 +394,6 @@ class WP_Members_Admin_API {
 			'dialogs'    => esc_html__( 'Dialogs', 'wp-members' ),
 			'emails'     => esc_html__( 'Emails', 'wp-members' ),
 			'shortcodes' => esc_html__( 'Shortcodes', 'wp-members' ),
-			'about'      => esc_html__( 'About WP-Members', 'wp-members' )
 		);
 	}
 
@@ -701,7 +700,7 @@ class WP_Members_Admin_API {
 
 			$upload_vars  = wp_upload_dir( null, false );
 			$wpmem_base_dir = trailingslashit( trailingslashit( $upload_vars['basedir'] ) . wpmem_get_upload_base() );
-			$wpmem_user_files_dir = $wpmem_base_dir . 'user_files/';
+			$wpmem_user_files_dir = $wpmem_base_dir . trailingslashit( wpmem_get_file_dir_hash() );
 
 			if ( file_exists( $wpmem_user_files_dir ) ) {
 				// If there is a user file dir, check/self-heal htaccess/index files.

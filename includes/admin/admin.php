@@ -40,6 +40,8 @@ function wpmem_admin() {
 
 	global $wpmem;
 
+	add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Tab_About', 'add_tab' ), 99 );
+
 	if ( $wpmem->captcha ) {
 		add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Tab_Captcha', 'add_tab' )      );
 		add_action( 'wpmem_admin_do_tab', array( 'WP_Members_Admin_Tab_Captcha', 'do_tab' ), 1, 1 );
@@ -48,14 +50,14 @@ function wpmem_admin() {
 		add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Tab_Dropins', 'add_tab' )       );
 		add_action( 'wpmem_admin_do_tab', array( 'WP_Members_Admin_Tab_Dropins', 'do_tab'  ), 1, 1 );
 	} 
-	
+
 	// @todo Adds tab for updating filesystem if /wpmembers/user_files/ exists.
 	$uploads = wp_upload_dir();
 	$deprecated_folder = trailingslashit( $uploads['basedir'] ) . 'wpmembers/user_files';
 	if ( is_dir( $deprecated_folder ) ) {
 		include_once $wpmem->path . 'includes/admin/tabs/class-wp-members-admin-tab-filesystem-upgrade.php';
-		add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Filesystem_Upgrade', 'add_tab' )      );
-		add_action( 'wpmem_admin_do_tab', array( 'WP_Members_Admin_Filesystem_Upgrade', 'do_tab' ), 17 );
+		add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Filesystem_Upgrade', 'add_tab' ), 98 );
+		add_action( 'wpmem_admin_do_tab', array( 'WP_Members_Admin_Filesystem_Upgrade', 'do_tab' ),  98 );
 	}
 	
 	?>
