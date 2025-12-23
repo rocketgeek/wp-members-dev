@@ -2,8 +2,8 @@
 Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 4.0
-Tested up to: 6.8
-Stable tag: 3.5.4.3
+Tested up to: 6.9
+Stable tag: 3.5.4.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 The original WordPress membership plugin with content restriction, user login, custom registration fields, user profiles, and more.
@@ -149,7 +149,7 @@ WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds 
 * Update `wpmem_get_membership_role()` to return false (rather than null) if no role for the membership.
 * Code improvement to consolidate `wpmem_logout_link` filter instances into `wpmem_logout_link()` function. 
 * Code improvement in `has_access()` logic with better handling of role-based memberships.
-* Security patches from 3.5.4.1, 3.5.4.2, and 3.4.5.3.
+* Security patches from 3.5.4.1, 3.5.4.2, 3.5.4.3, 3.5.4.4, and 3.5.4.5
 
 = 3.5.4 =
 
