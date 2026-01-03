@@ -225,6 +225,9 @@ class WP_Members_Admin_API {
 
 		add_action( 'current_screen', array( $this, 'check_user_folders_for_index' ) );
 
+		// Check for any upgrade notices.
+		add_filter( 'wpmem_admin_notices', array( $this, 'check_for_upgrade_notices' ) );
+
 	} // End of load_hooks()
 
 	/**
@@ -246,10 +249,18 @@ class WP_Members_Admin_API {
 	 */
 	function do_admin_notices() {
 		global $wpmem;
+		/**
+		 * Filter admin notices.
+		 * 
+		 * @since 3.5.5
+		 * 
+		 * @param array $wpmem->admin_notices Array of admin notices to display.
+		 */
+		$wpmem->admin_notices = apply_filters( 'wpmem_admin_notices', $wpmem->admin_notices );
 		if ( $wpmem->admin_notices ) {
 			foreach ( $wpmem->admin_notices as $key => $value ) {
-				echo '<div class="notice notice-' . $value['type'] . ' is-dismissible"> 
-					<p><strong>' . $value['notice'] . '</strong></p>
+				echo '<div class="notice notice-' . esc_attr( $value['type'] ) . ' is-dismissible"> 
+					<p><strong>' . wp_kses_post( $value['notice'] ) . '</strong></p>
 				</div>';
 				
 			}
@@ -721,6 +732,35 @@ class WP_Members_Admin_API {
 				) );
 			}
 		}
+	}
+
+	function check_for_upgrade_notices( $notices ) {
+
+		// Check for deprecated folder system.
+		$uploads = wp_upload_dir();
+		$deprecated_folder = trailingslashit( $uploads['basedir'] ) . 'wpmembers/user_files';
+		if ( is_dir( $deprecated_folder ) ) {
+			$notice_dismissed = get_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
+			if ( ! $notice_dismissed ) {
+				$notices['deprecated_foldersystem'] = array(
+					'notice' => __( 'The /wpmembers/user_files/ folder is deprecated. Please <a href="' . esc_url( trailingslashit( admin_url() ) . 'options-general.php?page=wpmem-settings&tab=filesystem-upgrade' ) . '">go to the settings page</a> to either upgrade or permanently remove this message.', 'wp-members' ),
+					'type'   => 'warning',
+				);
+			}
+			if ( 'update_filesystem' == wpmem_get( 'wpmem_admin_a' ) ) {
+				if ( false == wpmem_get( 'wpmem_dismiss_filesystem_upgrade_notice' ) ) {
+					$notices['deprecated_foldersystem'] = array(
+						'notice' => __( 'The /wpmembers/user_files/ folder is deprecated. Please <a href="' . esc_url( trailingslashit( admin_url() ) . 'options-general.php?page=wpmem-settings&tab=filesystem-upgrade' ) . '">go to the settings page</a> to either upgrade or permanently remove this message.', 'wp-members' ),
+						'type'   => 'warning',
+					);
+				} elseif ( 1 == wpmem_get( 'wpmem_dismiss_filesystem_upgrade_notice' ) ) {
+					unset( $notices['deprecated_foldersystem'] );
+				}
+			}
+		}
+
+		// Return any notices.
+		return $notices;
 	}
 
 } // End of WP_Members_Admin_API class.

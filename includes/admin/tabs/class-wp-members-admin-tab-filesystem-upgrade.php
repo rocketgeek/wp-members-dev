@@ -63,13 +63,19 @@ class WP_Members_Admin_Filesystem_Upgrade {
 		// Check how many files to move.
 		$files_to_move = $wpmem->filesystem->get_file_list();
 		$num_to_move = count( $files_to_move );
-
+		if ( isset( $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) && 1 == $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) {
+			update_option( 'wpmem_dismiss_filesystem_upgrade_notice', intval( wpmem_get( 'wpmem_dismiss_filesystem_upgrade_notice', 0, 'post' ) ), false );
+		} else {
+			if ( isset( $_POST['wpmem_admin_a'] ) && 'update_filesystem' == $_POST['wpmem_admin_a'] && ! isset( $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) ) {
+				delete_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
+			}
+		}
 		if ( isset( $_POST['update-filesystem-confirm'] ) && 'move' == $_POST['update-filesystem-confirm'] ) {
 			$wpmem->filesystem->update_filesystem();
 			$wpmem->filesystem->set_move_complete( true );
 			update_option( 'wpmem_upgrade_filesystem_move_complete', 1, false );
-		} ?>
-
+		}
+		?>
 		<div class="wrap">
 			<form name="update-filesystem-form" id="update-filesystem-form" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 			<?php wp_nonce_field( 'wpmem-upgrade-filesystem' ); ?>
@@ -116,7 +122,8 @@ class WP_Members_Admin_Filesystem_Upgrade {
 			$rmdir = $wpmem->filesystem->delete_directory( trailingslashit( $wpmem->filesystem->basedir ) . 'wpmembers/user_files' );
 			if ( $rmdir ) {
 				echo '<p>Deletion was successful.</p>';
-				delete_option( 'wpmem_upgrade_filesystem_move_complete' );
+				delete_option( 'wpmem_upgrade_filesystem_move_complete'  );
+				delete_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
 			} else {
 				echo '<p>Deletion was not successful. You may need to check directory permissions and/or delete the folder manually</p>';
 			} ?>
@@ -124,7 +131,7 @@ class WP_Members_Admin_Filesystem_Upgrade {
 		<?php } else { ?>
 			<div style="width:500px;">
 				<p>
-					Your current configuration indicates that you have uploaded files within the WP-Members 
+					Your current configuration indicates that there are uploaded files within the WP-Members 
 					filesystem in a deprecated configuration.  You have the option to move these files. However, 
 					this cannot be reversed or undone.    
 				</p>
@@ -141,7 +148,22 @@ class WP_Members_Admin_Filesystem_Upgrade {
 					make sure you have backed up the database and the filesystem
 					before running these actions</strong>.
 				</p>
-				
+				<p>
+					There is a more thorough explanation of this process
+					<a href="https://rocketgeek.com/release-announcements/wp-members-3-5-4-5-release-notes/">here</a>. 
+					Alternative to using this admin panel process, there is a 
+					<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/fields/upgrade-the-wp-members-uploaded-files-using-wp-cli/">WP-CLI process</a> 
+					for doing this upgrade.
+				</p>
+				<p>
+					If you chose to either not proceed with the move or do it at 
+					a later time, you can permanently disable the admin notice by 
+					checking the box below.<br />
+					<?php 
+					$dismiss_upgrade_notice = get_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
+					$checked = ( $dismiss_upgrade_notice || isset( $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) ) ? true : false ?>
+					<input type="checkbox" name="wpmem_dismiss_filesystem_upgrade_notice" value="1" <?php checked( 1, $checked ); ?> /> Permanently dismiss the admin notice.
+				</p>
 			</div>
 			<h3>Step 1: Move the filesystem</h3>
 			<input type="radio" id="move" name="update-filesystem-confirm" value="move" /> Move the current filesystem.<br>
