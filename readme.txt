@@ -3,7 +3,7 @@ Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 3.5.4.5
+Stable tag: 3.5.5.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 The original WordPress membership plugin with content restriction, user login, custom registration fields, user profiles, and more.
@@ -107,7 +107,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds new filters and some additional features. WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.5.1 is a bug fix release. WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds new filters and some additional features.  WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -130,6 +130,10 @@ WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds 
 
 
 == Changelog ==
+
+= 3.5.5.1 =
+
+* Bug fix for checking expiration memberships that require a specific role.  The bug from 3.5.5 causes a user with the role to be viewed as having access even if they are expireed.
 
 = 3.5.5 =
 

@@ -3,7 +3,7 @@
 Plugin Name: WP-Members
 Plugin URI:  https://rocketgeek.com
 Description: WP access restriction and user registration.  For more information on plugin features, refer to <a href="https://rocketgeek.com/plugins/wp-members/docs/">the online Users Guide</a>. A <a href="https://rocketgeek.com/plugins/wp-members/quick-start-guide/">Quick Start Guide</a> is also available. WP-Members(tm) is a trademark of butlerblog.com.
-Version:     3.5.5
+Version:     3.5.5.1
 Author:      Chad Butler
 Author URI:  https://butlerblog.com/
 Text Domain: wp-members
@@ -12,7 +12,7 @@ License:     GPLv3
 */
 
 /*  
-	Copyright (c) 2006-2025  Chad Butler
+	Copyright (c) 2006-2026  Chad Butler
 
 	The name WP-Members(tm) is a trademark of butlerblog.com
 
@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Initialize constants.
-define( 'WPMEM_VERSION',    '3.5.5' );
+define( 'WPMEM_VERSION',    '3.5.5.1' );
 define( 'WPMEM_DB_VERSION', '2.4.3' );
 define( 'WPMEM_PATH', plugin_dir_path( __FILE__ ) ); // @todo Fairly certain this is obsolete.
 
