@@ -1088,7 +1088,7 @@ class WP_Members_User {
 					// Does user have the required role?
 					if ( wpmem_user_has_role( wpmem_get_membership_role( $prod ) ) ) {
 						// Is it an expiration membership? If not, they're OK at this point.
-						if ( ! $expiration_product ) {
+						if ( ! wpmem_is_membership_expirable( $prod ) ) {
 							$access = true;
 							break;
 						} else {
