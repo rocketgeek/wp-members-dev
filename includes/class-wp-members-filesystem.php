@@ -157,8 +157,16 @@ class WP_Members_Update_Filesystem_Class {
 		$old_file_path = get_attached_file( $attachment_id );
 		if ( ! file_exists( $old_file_path ) ) {
 			$error = new WP_Error( 'file_missing', 'Original file not found.' );
-			if ( is_wp_error( $error ) ) {
-				// Try if it's http
+			if ( is_wp_error( $error ) ) { // Try if it's https
+				// First, equalize the https and http baseurls.
+				if ( str_contains( $this->baseurl, 'https://' ) ) {
+					// If baseurl is https, change old file path to https for comparison.
+					$old_file_path = str_replace( 'http://', 'https://', $old_file_path );
+				} elseif ( str_contains( $this->baseurl, 'http://' ) ) {
+					// If baseurl is http, change old file path to http for comparison.
+					$old_file_path = str_replace( 'https://', 'http://', $old_file_path );
+				}
+				// Then, try again to see if the file exists.
 				$old_file_path = str_replace( trailingslashit( $this->baseurl ), '', $old_file_path );
 				if ( ! file_exists( $old_file_path ) ) {
 					// Still an error.
