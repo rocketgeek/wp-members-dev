@@ -131,6 +131,10 @@ WP-Members 3.5.5.1 is a bug fix release. WP-Members 3.5.5 is a feature update re
 
 == Changelog ==
 
+= 3.5.5.2 =
+
+* Improves file path update in 3.5.5 to equalize https/http when checking if a file to be moved exists. This allows it to check url paths in the attachment meta data that may have been improperly set or were set in http and not updated if the site was changed to https.
+
 = 3.5.5.1 =
 
 * Bug fix for checking expiration memberships that require a specific role.  The bug from 3.5.5 causes a user with the role to be viewed as having access even if they are expireed.
