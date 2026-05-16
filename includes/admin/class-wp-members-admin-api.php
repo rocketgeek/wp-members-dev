@@ -182,7 +182,6 @@ class WP_Members_Admin_API {
 			add_action( 'wpmem_user_deactivated',     array( 'WP_Members_Admin_Users', 'set_deactivated_user' ) );
 			add_filter( 'user_row_actions',           array( 'WP_Members_Admin_Users', 'insert_hover_links' ), 10, 2 );
 			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_activate'   ), 7 );
-			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_expiration' ), 8 );
 			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_ip'         ), 9 );
 			if ( wpmem_is_enabled( 'enable_products' ) ) {
 				//add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_product' ), 10 );
@@ -212,7 +211,7 @@ class WP_Members_Admin_API {
 		}
 		
 		if ( ! is_multisite() && current_user_can( 'manage_options' ) ) {
-			add_action('wp_dashboard_setup', 'butlerblog_dashboard_widget');
+			add_action('wp_dashboard_setup', 'wpmem_dashboard_widget');
 		}
 
 		add_action( 'wpmem_after_admin_init', array( 'WP_Members_Admin_Tab_Fields', 'update'          ) );
