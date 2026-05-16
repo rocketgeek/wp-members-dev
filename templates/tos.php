@@ -2,7 +2,7 @@
 /**
  * WP-Members TOS Page
  *
- * Generates teh Terms of Service pop-up.
+ * Generates the Terms of Service pop-up.
  * 
  * This file is part of the WP-Members plugin by Chad Butler
  * You can find out more about this plugin at https://rocketgeek.com
