@@ -3,7 +3,7 @@ Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 4.0
 Tested up to: 6.9
-Stable tag: 3.5.5.1
+Stable tag: 3.5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 The original WordPress membership plugin with content restriction, user login, custom registration fields, user profiles, and more.
@@ -107,7 +107,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.5.1 is a bug fix release. WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds new filters and some additional features.  WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.6 is a security release. WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds new filters and some additional features.  WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -131,13 +131,11 @@ WP-Members 3.5.5.1 is a bug fix release. WP-Members 3.5.5 is a feature update re
 
 == Changelog ==
 
-= 3.5.5.2 =
+= 3.5.6 =
 
-* Improves file path update in 3.5.5 to equalize https/http when checking if a file to be moved exists. This allows it to check url paths in the attachment meta data that may have been improperly set or were set in http and not updated if the site was changed to https.
-
-= 3.5.5.1 =
-
+* Security update to [wpmem_user_membership_posts] shortcode. Limits the "order" and "order by" options in the shortcode.
 * Bug fix for checking expiration memberships that require a specific role.  The bug from 3.5.5 causes a user with the role to be viewed as having access even if they are expireed.
+* Improves file path update in 3.5.5 to equalize https/http when checking if a file to be moved exists. This allows it to check url paths in the attachment meta data that may have been improperly set or were set in http and not updated if the site was changed to https.
 
 = 3.5.5 =
 

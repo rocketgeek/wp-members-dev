@@ -109,6 +109,11 @@ function wpmem_uninstall_options() {
 	// These should not exist following 3.5.0 upgrade, but check them anyway.
 	delete_option( 'wpmembers_install_state' );
 	delete_option( 'wpmem_enable_field_sc' );
+
+	// These should be cleared.
+	delete_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
+	delete_option( 'wpmem_upgrade_filesystem_move_complete' );
+
 	// For pre-3.x settings that may remain.
 	delete_option( 'wpmembers_msurl'  );
 	delete_option( 'wpmembers_regurl' );
