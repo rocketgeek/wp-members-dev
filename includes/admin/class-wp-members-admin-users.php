@@ -25,27 +25,27 @@ class WP_Members_Admin_Users {
 			var $j = jQuery.noConflict();
 			$j(document).ready(function() {
 		<?php if ( wpmem_is_enabled( 'act_link' ) ) { ?>
-			$j('<option>').val('resend_welcome').text('<?php _e( 'Resend welcome email', 'wp-members' )?>').appendTo("select[name='action']");
-			$j('<option>').val('confirm').text('<?php _e( 'Confirm', 'wp-members' )?>').appendTo("select[name='action']");
-			$j('<option>').val('unconfirm').text('<?php _e( 'Unconfirm', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<option>').val('resend_welcome').text('<?php esc_html_e( 'Resend welcome email', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<option>').val('confirm').text('<?php esc_html_e( 'Confirm', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<option>').val('unconfirm').text('<?php esc_html_e( 'Unconfirm', 'wp-members' )?>').appendTo("select[name='action']");
 		<?php } ?>
 		<?php if ( wpmem_is_enabled( 'mod_reg' ) ) { ?>
-			$j('<option>').val('activate').text('<?php _e( 'Activate', 'wp-members' )?>').appendTo("select[name='action']");
-			$j('<option>').val('deactivate').text('<?php _e( 'Deactivate', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<option>').val('activate').text('<?php esc_html_e( 'Activate', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<option>').val('deactivate').text('<?php esc_html_e( 'Deactivate', 'wp-members' )?>').appendTo("select[name='action']");
 		<?php } ?>
-			$j('<option>').val('export').text('<?php _e( 'Export', 'wp-members' )?>').appendTo("select[name='action']");
-			$j('<input id="export_all" name="export_all" class="button action" type="submit" value="<?php _e( 'Export All Users', 'wp-members' ); ?>" />').appendTo(".top .bulkactions");
+			$j('<option>').val('export').text('<?php esc_html_e( 'Export', 'wp-members' )?>').appendTo("select[name='action']");
+			$j('<input id="export_all" name="export_all" class="button action" type="submit" value="<?php esc_html_e( 'Export All Users', 'wp-members' ); ?>" />').appendTo(".top .bulkactions");
 		<?php if ( wpmem_is_enabled( 'act_link' ) ) { ?>
-			$j('<option>').val('resend_welcome').text('<?php _e( 'Resend welcome email', 'wp-members' )?>').appendTo("select[name='action2']");
-			$j('<option>').val('confirm').text('<?php _e( 'Confirm', 'wp-members' )?>').appendTo("select[name='action2']");
-			$j('<option>').val('unconfirm').text('<?php _e( 'Unconfirm', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<option>').val('resend_welcome').text('<?php esc_html_e( 'Resend welcome email', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<option>').val('confirm').text('<?php esc_html_e( 'Confirm', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<option>').val('unconfirm').text('<?php esc_html_e( 'Unconfirm', 'wp-members' )?>').appendTo("select[name='action2']");
 		<?php } ?>
 		<?php if ( wpmem_is_enabled( 'mod_reg' ) ) { ?>
-			$j('<option>').val('activate').text('<?php _e( 'Activate', 'wp-members' )?>').appendTo("select[name='action2']");
-			$j('<option>').val('deactivate').text('<?php _e( 'Deactivate', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<option>').val('activate').text('<?php esc_html_e( 'Activate', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<option>').val('deactivate').text('<?php esc_html_e( 'Deactivate', 'wp-members' )?>').appendTo("select[name='action2']");
 		<?php } ?>
-			$j('<option>').val('export').text('<?php _e( 'Export', 'wp-members' )?>').appendTo("select[name='action2']");
-			$j('<input id="export_all" name="export_all" class="button action" type="submit" value="<?php _e( 'Export All Users', 'wp-members' ); ?>" />').appendTo(".bottom .bulkactions");
+			$j('<option>').val('export').text('<?php esc_html_e( 'Export', 'wp-members' )?>').appendTo("select[name='action2']");
+			$j('<input id="export_all" name="export_all" class="button action" type="submit" value="<?php esc_html_e( 'Export All Users', 'wp-members' ); ?>" />').appendTo(".bottom .bulkactions");
 		});
 		</script><?php
 	}
@@ -117,7 +117,6 @@ class WP_Members_Admin_Users {
 
 		// If exporting all users, do it, then exit.
 		if ( current_user_can( 'list_users' ) && wpmem_get( 'export_all', false, 'request' ) ) {
-			$today = date( "Y-m-d" ); 
 			wpmem_export_users();
 			exit();
 		}
@@ -140,7 +139,7 @@ class WP_Members_Admin_Users {
 				// Get the users.
 				if ( isset( $_REQUEST['users'] ) ) {
 
-					$users = $_REQUEST['users'];
+					$users = wp_unslash( $_REQUEST['users'] );
 
 					// Update the users.
 					$x = 0;
@@ -169,17 +168,22 @@ class WP_Members_Admin_Users {
 
 					switch ( $action ) {
 						case 'activate':
+							/* translators: placeholder displays an integer. */
 							$msg = urlencode( sprintf( esc_html__( '%s users activated', 'wp-members' ), intval( $x ) ) );
 							break;
 						case 'deactivate':
+							/* translators: placeholder displays an integer. */
 							$msg = urlencode( sprintf( esc_html__( '%s users deactivated', 'wp-members' ), intval( $x ) ) );
 						case 'confirm':
+							/* translators: placeholder displays an integer. */
 							$msg = urlencode( sprintf( esc_html__( '%s users confirmed', 'wp-members' ), intval( $x ) ) );
 							break;
 						case 'unconfirm':
+							/* translators: placeholder displays an integer. */
 							$msg = urlencode( sprintf( esc_html__( '%s users unconfirmed', 'wp-members' ), intval( $x ) ) );
 							break;
 						case 'resend_welcome':
+							/* translators: placeholder displays an integer. */
 							$msg = urlencode( sprintf( esc_html__( 'Resent welcome to %s users', 'wp-members' ), intval( $x ) ) );
 					}
 
@@ -198,7 +202,7 @@ class WP_Members_Admin_Users {
 				check_admin_referer( 'activate-user' );
 
 				// Get the user.
-				$user_id = filter_var( $_REQUEST['user'], FILTER_VALIDATE_INT );
+				$user_id = wpmem_get_sanitized( 'user', false, 'request', 'integer' );
 
 				// Check to see if the user is already activated, if not, activate.
 				if ( $user_id == get_current_user_id() ) {
@@ -207,11 +211,13 @@ class WP_Members_Admin_Users {
 				} elseif ( 'activate-single' == $action && false == wpmem_is_user_activated( $user_id ) ) {
 					wpmem_activate_user( $user_id );
 					$user_info = get_userdata( $user_id );
+					/* translators: placeholder displays the user's username. */
 					$msg = urlencode( sprintf( esc_html__( "%s activated", 'wp-members' ), $user_info->user_login ) );
 
 				} elseif ( 'deactivate-single' == $action ) {
 					wpmem_deactivate_user( $user_id );
 					$user_info = get_userdata( $user_id );
+					/* translators: placeholder displays the user's username. */
 					$msg = urlencode( sprintf( esc_html__( "%s deactivated", 'wp-members' ), $user_info->user_login ) );
 
 				} else {
@@ -228,7 +234,7 @@ class WP_Members_Admin_Users {
 				check_admin_referer( 'confirm-user' );
 
 				// Get the user.
-				$user_id = filter_var( $_REQUEST['user'], FILTER_VALIDATE_INT );
+				$user_id = wpmem_get_sanitized( 'user', false, 'request', 'integer' );
 
 				// Check to see if the user is already activated, if not, activate.
 				if ( $user_id == get_current_user_id() ) {
@@ -237,11 +243,13 @@ class WP_Members_Admin_Users {
 				} elseif ( 'confirm-single' == $action && false === wpmem_is_user_confirmed( $user_id ) ) {
 					wpmem_set_user_as_confirmed( $user_id );
 					$user_info = get_userdata( $user_id );
+					/* translators: placeholder displays the user's username. */
 					$msg = urlencode( sprintf( esc_html__( "%s confirmed", 'wp-members' ), $user_info->user_login ) );
 
 				} elseif ( 'unconfirm-single' == $action ) {
 					wpmem_set_user_as_unconfirmed( $user_id );
 					$user_info = get_userdata( $user_id );
+					/* translators: placeholder displays the user's username. */
 					$msg = urlencode( sprintf( esc_html__( "%s unconfirmed", 'wp-members' ), $user_info->user_login ) );
 
 				} else {
