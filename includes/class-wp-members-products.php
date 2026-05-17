@@ -478,24 +478,33 @@ class WP_Members_Products {
 	 * @global  stdClass      $wpdb
 	 *
 	 * @param   string        $product_meta
-	 * @param   string        $order_by id|title|date
+	 * @param   string        $order_by ID|title|date|name|modified
 	 * @param   string        $order asc|desc
 	 * @return  array|boolean $post_ids if not empty, otherwise false
 	 */
-	function get_all_posts( $product_meta, $order_by = 'id', $order = 'ASC' ) {
+	function get_all_posts( $product_meta, $order_by = 'ID', $order = 'ASC' ) {
 		global $wpdb;
 
 		if ( $order_by ) {
-		
-			$order_by = ( $order_by != 'id' ) ? 'post_' . $order_by : 'ID';
 
-			$sql = 'SELECT m.post_id
-					FROM ' . $wpdb->postmeta . ' m 
-					JOIN ' . $wpdb->posts . ' p ON (m.post_id = p.ID AND m.meta_key = "' . esc_sql( $this->post_stem . $product_meta ) . '" ) 
-					WHERE p.post_status = "publish" 
-					ORDER BY ' . $order_by . ' ' . strtoupper( $order ) . ';';
+			// Whitelist allowed $order and $order_by values.
+			$allowed_order    = array( 'ASC', 'DESC' );
+			$allowed_order_by = array( 'ID', 'title', 'date', 'name', 'modified' );
+			
+			$order    = in_array( strtoupper( $order ), $allowed_order, true ) ? $order : 'ASC';
+			$order_by = in_array( strtolower( $order_by ), $allowed_order_by, true ) ? $order_by : 'ID';
+			
+			// Add post stem to order by value.
+			$order_by = ( $order_by != 'ID' ) ? 'post_' . $order_by : 'ID';
 
-			$results = $wpdb->get_results( $sql, ARRAY_N );
+			$results = $wpdb->get_results( $wpdb->prepare(
+				'SELECT m.post_id
+				FROM ' . $wpdb->postmeta . ' m
+				JOIN ' . $wpdb->posts . ' p ON (m.post_id = p.ID AND m.meta_key = %s )
+				WHERE p.post_status = "publish"
+				ORDER BY p.' . $order_by . ' ' . $order . ';',
+				$this->post_stem . $product_meta
+			), ARRAY_N );
 
 		}
 		
