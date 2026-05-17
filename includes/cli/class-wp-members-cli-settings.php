@@ -4,6 +4,12 @@
  *
  * @since 3.3.5
  */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
 class WP_Members_CLI_Settings {
 	
 	/**

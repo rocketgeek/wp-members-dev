@@ -13,6 +13,11 @@
  * @copyright 2006-2026
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
 /**
  * Returns the wp_mail from address (if set).
  *

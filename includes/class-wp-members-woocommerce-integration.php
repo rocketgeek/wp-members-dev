@@ -1,4 +1,17 @@
 <?php
+/**
+ * The WP_Members_WooCommerce_Integration Class.
+ *
+ * @package WP-Members
+ * @subpackage WP_Members_WooCommerce_Integration Object Class
+ * @since Unknown
+ */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
 class WP_Members_WooCommerce_Integration {
 
     public $add_my_account_fields;

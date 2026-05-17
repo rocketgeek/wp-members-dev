@@ -136,10 +136,11 @@ class WP_Members_Admin_Users {
 				// Validate nonce.
 				check_admin_referer( 'bulk-users' );
 
-				// Get the users.
-				if ( isset( $_REQUEST['users'] ) ) {
+				// Get users for action.
+				$users = wpmem_get_sanitized( 'users', false, 'request', 'array');
 
-					$users = wp_unslash( $_REQUEST['users'] );
+				// If users are selected.
+				if ( $users ) {
 
 					// Update the users.
 					$x = 0;
@@ -265,7 +266,7 @@ class WP_Members_Admin_Users {
 				check_admin_referer( 'resend-user' );
 
 				// Get the user.
-				$user_id = filter_var( $_REQUEST['user'], FILTER_VALIDATE_INT );
+				$user_id = wpmem_get_sanitized( 'user', false, 'request', 'integer' );
 
 				// Send welcome message.
 				wpmem_email_to_user( array( 
@@ -275,6 +276,7 @@ class WP_Members_Admin_Users {
 
 				// Get user data for admin notice.
 				$user_info = get_userdata( $user_id );
+				/* translators: placeholder displays the user's email. */
 				$msg = urlencode( sprintf( esc_html__( "Resent welcome message to %s", 'wp-members' ), $user_info->user_email ) );
 				$sendback = add_query_arg( array( 'activated' => $msg ), $sendback );
 				break;
@@ -319,8 +321,8 @@ class WP_Members_Admin_Users {
 	static function admin_notices() {
 
 		global $pagenow, $user_action_msg;
-		 if( $pagenow == 'users.php' && isset( $_REQUEST['activated'] ) ) {
-			$message = esc_html( $_REQUEST['activated'] );
+		if( $pagenow == 'users.php' && isset( $_REQUEST['activated'] ) ) {
+			$message = wp_unslash( $_REQUEST['activated'] );
 			echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
 		}
 

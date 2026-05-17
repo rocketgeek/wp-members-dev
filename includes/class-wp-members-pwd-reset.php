@@ -1,4 +1,9 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
 /**
  * An object class for WP-Members Password Reset.
  *
@@ -113,7 +118,7 @@ class WP_Members_Pwd_Reset {
 			if ( $form_submitted ) {
 				
 				// Verify nonce.
-				if ( ! wp_verify_nonce( $_REQUEST['_wpmem_pwdchange_nonce'], 'wpmem_shortform_nonce' ) ) {
+				if ( ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_pwdchange_nonce', false, 'request', 'text' ), 'wpmem_shortform_nonce' ) ) {
 					$errors->add( 'reg_generic', $this->error_msg( 'reg_generic', wpmem_get_text( 'reg_generic' ) ) );
 				}
 

@@ -1,4 +1,9 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
 global $current_screen, $wpmem;
 
 $which = ( 'update_pending' == $wpmem->install_state ) ? 'update_pending_notice_args' : 'new_install_notice_args'; 

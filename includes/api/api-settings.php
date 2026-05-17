@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 
 /**
  * Checks if requested setting is enabled.
