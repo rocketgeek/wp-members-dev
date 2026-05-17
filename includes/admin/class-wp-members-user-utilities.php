@@ -1,4 +1,16 @@
 <?php
+/**
+ * The WP_Members Admin User Utilities Class.
+ *
+ * @package WP-Members
+ * @subpackage WP_Members Admin Users Object Class
+ * @since Unknown
+ */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 
 class WP_Members_User_Utilities {
 
@@ -105,12 +117,14 @@ class WP_Members_User_Utilities {
 
         if ( self::get_activate_all_complete() ) {
             $class   = 'notice notice-success';
+            /* translators: placeholder displays an integer. */
             $message = sprintf( esc_html__( "%s users were marked as activated", 'wp-members' ), self::get_activate_all_complete() );
 
             printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
         }
         if ( self::get_confirm_all_complete() ) {
             $class   = 'notice notice-success';
+            /* translators: placeholder displays an integer. */
             $message = sprintf( esc_html__( "%s users were marked as confirmed", 'wp-members' ), self::get_confirm_all_complete() );
 
             printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
@@ -121,7 +135,7 @@ class WP_Members_User_Utilities {
         echo "<h1>" . esc_html__( 'WP-Members User Utilities', 'wp-members' ) . "</h1>";
 
         $form_post = ( function_exists( 'wpmem_admin_form_post_url' ) ) ? wpmem_admin_form_post_url() : '';
-        echo '<form name="wpmem-user-utilities" id="wpmem-user-utilities" method="post" action="' . $form_post . '">';
+        echo '<form name="wpmem-user-utilities" id="wpmem-user-utilities" method="post" action="' . esc_url_raw( $form_post ) . '">';
 
         if ( wpmem_is_enabled( 'mod_reg' ) ) {
             echo '<h2>' . esc_html__( 'Moderated Registration', 'wp-members' ) . '</h2>';

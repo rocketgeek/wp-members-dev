@@ -85,7 +85,7 @@ function wpmem_a_do_warnings( $did_update ) {
 
 		echo '<div class="error"><p><strong>' . esc_html( $strong_msg ) . '</strong></p><ul style="list-style:initial; margin:5px 20px">';
 		foreach ( $active_warnings as $warning ) {
-			echo esc_html( $warning );
+			echo wp_kses( $warning, 'post' );
 		}
 		echo '</ul>';
 		echo '<p>' . esc_html( $remain_msg )  . '</p></div>';
@@ -110,22 +110,22 @@ function wpmem_a_warning_msg( $msg ) {
 
 	case 'users_can_register':
 		$strong_msg = __( 'Your WP settings allow anyone to register - this is not the recommended setting.', 'wp-members' );
-		/* translators: placeholders here are for some an <a href> html tag. */
-		$remain_msg = sprintf( __( 'You can %s change this here %s making sure the box next to "Anyone can register" is unchecked.', 'wp-members'), '<a href="options-general.php" target="_blank">', '</a>' );
+		/* translators: placeholders here are for an <a href> html tag. */
+		$remain_msg = sprintf( __( 'You can %1$s change this here %2$s making sure the box next to "Anyone can register" is unchecked.', 'wp-members'), '<a href="options-general.php" target="_blank">', '</a>' );
 		$span_msg   = __( 'If you do not want users to register through wp-login.php, uncheck this option.', 'wp-members' );
 		break;
 
 	case 'comment_registration':
 		$strong_msg = __( 'Your WP settings allow anyone to comment - this is not the recommended setting.', 'wp-members' );
-		/* translators: placeholders here are for some an <a href> html tag. */
-		$remain_msg = sprintf( __( 'You can %s change this here %s by checking the box next to "Users must be registered and logged in to comment."', 'wp-members' ), '<a href="options-discussion.php" target="_blank">', '</a>' );
+		/* translators: placeholders here are for an <a href> html tag. */
+		$remain_msg = sprintf( __( 'You can %1$s change this here %2$s by checking the box next to "Users must be registered and logged in to comment."', 'wp-members' ), '<a href="options-discussion.php" target="_blank">', '</a>' );
 		$span_msg   = __( 'If you do not want non-registered users to comment, change this setting.', 'wp-members' );
 		break;
 
 	case 'rss_use_excerpt':
 		$strong_msg = __( 'Your WP settings allow full text rss feeds - this is not the recommended setting.', 'wp-members' );
-		/* translators: placeholders here are for some an <a href> html tag. */
-		$remain_msg = sprintf( __( 'You can %s change this here %s by changing "For each article in a feed, show" to "Summary."', 'wp-members' ), '<a href="options-reading.php" target="_blank">' , '</a>' );
+		/* translators: placeholders here are for an <a href> html tag. */
+		$remain_msg = sprintf( __( 'You can %1$s change this here %2$s by changing "For each article in a feed, show" to "Summary."', 'wp-members' ), '<a href="options-reading.php" target="_blank">' , '</a>' );
 		$span_msg   = __( 'Full text feeds allow your protected content in an RSS reader.', 'wp-members' );
 		break;
 
@@ -178,7 +178,7 @@ function wpmem_a_meta_box() {
 			<?php esc_html_e( 'Thank you for using WP-Members', 'wp-members' ); ?>&trade;!<br /><br />
 			<?php esc_html_e( 'A plugin developed by', 'wp-members' ); ?>&nbsp;<a href="http://butlerblog.com">Chad Butler</a><br />
 			<?php esc_html_e( 'Follow', 'wp-members' ); ?> ButlerBlog: <a href="http://feeds.butlerblog.com/butlerblog" target="_blank">RSS</a> | <a href="http://www.twitter.com/butlerblog" target="_blank">Twitter</a><br />
-			Copyright &copy; 2006-<?php echo date("Y"); ?><br /><br />
+			Copyright &copy; 2006-<?php echo esc_html( gmdate("Y") ); ?><br /><br />
 			Premium support and installation service <a href="https://rocketgeek.com/about/site-membership-subscription/">available at rocketgeek.com</a>.
 			</i></p>
 		</div>
@@ -216,7 +216,10 @@ function wpmem_a_rss_box() {
 function wpmem_a_rating_box() {
 	?><div class="postbox">
 		<h3><?php esc_html_e( 'Like WP-Members?', 'wp-members' ); ?></h3>
-		<div class="inside"><?php echo sprintf( esc_html__( 'If you like WP-Members please give it a %s&#9733;&#9733;&#9733;&#9733;&#9733;%s rating. Thanks!!', 'wp-members' ), '<a href="https://wordpress.org/support/plugin/wp-members/reviews?rate=5#new-post">', '</a>' ); ?></div>
+		<div class="inside"><?php
+			/* translators: placeholders here are for an <a href> html tag. */
+			echo sprintf( esc_html__( 'If you like WP-Members please give it a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. Thanks!!', 'wp-members' ), '<a href="https://wordpress.org/support/plugin/wp-members/reviews?rate=5#new-post">', '</a>' ); 
+		?></div>
 	</div><?php
 }
 
