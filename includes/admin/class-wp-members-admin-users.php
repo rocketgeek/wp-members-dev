@@ -167,25 +167,27 @@ class WP_Members_Admin_Users {
 						}
 					}
 
+					$i = intval( $x );
+
 					switch ( $action ) {
 						case 'activate':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users activated', 'wp-members' ), intval( $x ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user activated', '%s users activated', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'deactivate':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users deactivated', 'wp-members' ), intval( $x ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user deactivated', '%s users deactivated', $i, 'wp-members' ), $i ) ) );
 						case 'confirm':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users confirmed', 'wp-members' ), intval( $x ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user confirmed', '%s users confirmed', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'unconfirm':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users unconfirmed', 'wp-members' ), intval( $x ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user unconfirmed', '%s users unconfirmed', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'resend_welcome':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( 'Resent welcome to %s users', 'wp-members' ), intval( $x ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( 'Resent welcome to %s user', 'Resent welcome to %s users', $i, 'wp-members' ), $i ) ) );
 					}
 
 				} else {
