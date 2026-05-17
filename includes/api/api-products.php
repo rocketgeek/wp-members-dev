@@ -22,10 +22,12 @@
  *
  * @global  stdClass  $wpmem
  * @param   string    $product_key
+ * @param   string        $order_by ID|title|date|name|modified
+ * @param   string        $order asc|desc
  * @return  array
  */
-function wpmem_get_product_post_list( $product_key ) {
-	return wpmem_get_membership_post_list( $product_key );
+function wpmem_get_product_post_list( $product_key, $order_by = 'ID', $order = 'ASC' ) {
+	return wpmem_get_membership_post_list( $product_key, $order_by, $order );
 }
 
 /**
@@ -35,11 +37,11 @@ function wpmem_get_product_post_list( $product_key ) {
  *
  * @global  stdClass      $wpmem
  * @param   string        $membership_key
- * @param   string        $order_by title|date
+ * @param   string        $order_by ID|title|date|name|modified
  * @param   string        $order asc|desc
  * @return  array|boolean $post_ids if not empty, otherwise false
  */
-function wpmem_get_membership_post_list( $membership_key, $order_by = false, $order = 'ASC'  ) {
+function wpmem_get_membership_post_list( $membership_key, $order_by = 'ID', $order = 'ASC'  ) {
 	global $wpmem;
 	return $wpmem->membership->get_all_posts( $membership_key, $order_by, $order  );
 }
@@ -489,4 +491,25 @@ function wpmem_get_expiration_period( $membership, $raw = false ) {
 	} else {
 		return false;
 	}
+}
+
+/**
+ * Gets an array of expiring user IDs.
+ * 
+ * @since 3.5.7
+ * 
+ * @param array $interval Array with keys 'number' and 'period' (i.e. array( 'number' => 1, 'period' => 'month' ) to get users with memberships expiring in 1 month).
+ * @return object
+ */
+function wpmem_get_expiring_users( $interval ) {
+	global $wpdb;
+	$sql = "SELECT user_id, meta_value, FROM_UNIXTIME(`meta_value`,'%Y-%m-%d') as 'date_expires'
+	FROM {$wpdb->usermeta}
+	WHERE meta_key IN ({$this->product_metas})
+	AND CURDATE() = DATE_SUB( FROM_UNIXTIME(`meta_value`,'%Y-%m-%d'), INTERVAL " . esc_sql( $interval['number'] ) . " " . esc_sql( $interval['period'] ) . " )
+	GROUP BY user_id;";
+
+	$results = $wpdb->get_results( $sql, 'OBJECT' );
+	
+	return $results;
 }
