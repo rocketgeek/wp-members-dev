@@ -1899,11 +1899,21 @@ class WP_Members {
 	 */
 	function load_default_tos() {
 		// Check for custom template or load default.
-		$custom_template = get_stylesheet_directory() . '/wp-members/templates/tos.php';
+		wpmem_load_template( 'tos' );
+	}
+
+	/**
+	 * Load template.
+	 * 
+	 * @since 3.3.7
+	 */
+	public function load_template( $template_name ) {
+		// Check for custom template or load default.
+		$custom_template = trailingslashit( get_stylesheet_directory() ) . 'wp-members/templates/' . esc_attr( $template_name ) . '.php';
 		if ( file_exists( $custom_template ) ) {
 			require_once $custom_template;
 		} else {
-			require_once $this->path . 'templates/tos.php';
+			require_once trailingslashit( $this->path ) . 'templates/' . esc_attr( $template_name ) . '.php';
 		}
 	}
 

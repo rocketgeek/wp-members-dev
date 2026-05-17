@@ -787,4 +787,14 @@ function wpmem_show_post_restriction( $post_id, $icon = false, $echo = false ) {
 function wpmem_is_exp_enabled() {
 	return ( function_exists( 'wpmem_exp_init' ) || function_exists( 'wpmem_set_exp' ) ) ? true : false;
 }
+
+/**
+ * Loads a wpmem template.
+ * 
+ * @since 3.5.7
+ */
+function wpmem_load_template( $template_name ) {
+	global $wpmem;
+	$wpmem->load_template( $template_name );
+}
 // End of file.
