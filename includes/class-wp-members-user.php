@@ -638,6 +638,9 @@ class WP_Members_User {
 		 * @since 3.5.0
 		 * 
 		 * @param  boolean  $send_notification
+		 * @param int       $user_id
+		 * @param array     $wpmem_fields
+		 * @param array     $this->post_data
 		 */
 		$send_notification = apply_filters( 'wpmem_enable_admin_notification', $send_notification, $user_id, wpmem_fields(), $this->post_data );
 		if ( $send_notification ) {
@@ -1254,9 +1257,15 @@ class WP_Members_User {
 		update_user_meta( $user_id, '_wpmem_products', $user_products );
 
 		/**
-		 * Fires when a user product has been set.
+		 * Fires when a user product has been set (deprecated).
+		 * @deprecated 3.5.7 Use wpmem_user_membership_set instead
+		 */
+		do_action_deprecated( 'wpmem_user_product_set', array( $user_id, $membership, $new_value, $prev_value, $renew ), '3.5.7', 'wpmem_user_membership_set', 'wpmem_user_product_set is deprecated since 3.5.7. User wpmem_user_membership_set instead.' );
+		/**
+		 * Fires when a user membership has been set.
 		 *
 		 * @since 3.3.0
+		 * @since 3.5.7 Replaces deprecated wpmem_user_product_set action.
 		 *
 		 * @param  int    $user_id
 		 * @param  string $membership
@@ -1264,7 +1273,7 @@ class WP_Members_User {
 		 * @param  string $prev_value
 		 * @param  bool   $renew
 		 */
-		do_action( 'wpmem_user_product_set', $user_id, $membership, $new_value, $prev_value, $renew );
+		do_action( 'wpmem_user_membership_set', $user_id, $membership, $new_value, $prev_value, $renew );
  
 	}
 	
@@ -1273,21 +1282,36 @@ class WP_Members_User {
 	 *
 	 * @since 3.2.0
 	 * @since 3.3.0 Updated for new single meta, keeps legacy array for rollback.
+	 * @since 3.3.7 Added wpmem_user_membership_removed action hook.
 	 *
 	 * @param string $membership
 	 * @param int    $user_id
 	 */
 	function remove_user_product( $membership, $user_id = false ) {
-		global $wpmem;
 		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
 		
 		// @todo Legacy version.
-		$user_products = get_user_meta( $user_id, '_wpmem_products', true );
-		$user_products = ( $user_products ) ? $user_products : array();
-		if ( $user_products ) {
-			unset( $user_products[ $membership ] );
-			update_user_meta( $user_id, '_wpmem_products', $user_products );
+		$user_memberships = get_user_meta( $user_id, '_wpmem_products', true );
+		$user_memberships = ( $user_memberships ) ? $user_memberships : array();
+		if ( $user_memberships ) {
+			// Store previous value for the action hook.
+			$prev_memberships = $user_memberships;
+			// Remove product from array and update meta.
+			unset( $user_memberships[ $membership ] );
+			update_user_meta( $user_id, '_wpmem_products', $user_memberships );
 		}
+		
+		/**
+		 * Fires when a user product is removed.
+		 * 
+		 * @since 3.5.7
+		 * 
+		 * @param  int    $user_id
+		 * @param  string $membership
+		 * @param  mixed  $prev_memberships The user's previous memberships before removal.
+		 * @param array   $user_memberships The user's remaining memberships after removal.
+		 */
+		do_action( 'wpmem_user_membership_removed', $user_id, $membership, $prev_memberships, $user_memberships );
 		
 		// @todo New version.
 		return delete_user_meta( $user_id, '_wpmem_products_' . $membership );

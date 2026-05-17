@@ -131,6 +131,11 @@ WP-Members 3.5.6 is a security release. WP-Members 3.5.5 is a feature update rel
 
 == Changelog ==
 
+= 3.5.7 =
+
+* `wpmem_user_membership_set` action replaces `wpmem_user_product_set`.
+* Added `wpmem_user_membership_removed` action hook.
+
 = 3.5.6 =
 
 * Security update to [wpmem_user_membership_posts] shortcode. Limits the "order" and "order by" options in the shortcode.
