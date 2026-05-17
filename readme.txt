@@ -135,6 +135,7 @@ WP-Members 3.5.6 is a security release. WP-Members 3.5.5 is a feature update rel
 
 * `wpmem_user_membership_set` action replaces `wpmem_user_product_set`.
 * Added `wpmem_user_membership_removed` action hook.
+* Fixes a bug in the `redirect_to` param of the [wpmem_form register] shortcode.
 
 = 3.5.6 =
 

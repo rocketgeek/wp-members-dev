@@ -178,6 +178,7 @@ class WP_Members_Shortcodes {
 				} else {
 					$args['echo'] = false;
 					$args['redirect'] = ( isset( $args['redirect'] ) ) ? $args['redirect'] : ( ( isset( $args['redirect_to'] ) ) ? $args['redirect_to'] : wpmem_current_url() );
+					
 					$content = wpmem_wp_login_form( $args );
 				}
 				break;
@@ -186,10 +187,18 @@ class WP_Members_Shortcodes {
 
 				// Set up register form args.
 				$reg_form_args = array( 'tag' => 'new' );
-				if ( isset( $redirect_to ) ) {
-					$reg_form_args['redirect_to'] = $redirect_to;
+				
+				// Check for alternate attribute names for redirect url.
+				if ( isset( $args['redirect'] ) ) {
+					$args['redirect_to'] = $args['redirect'];
+					unset( $args['redirect'] );
 				}
-
+				
+				// Set redirect.
+				if ( isset( $args['redirect_to'] ) ) {
+					$reg_form_args['redirect_to'] = $args['redirect_to'];
+				}
+				
 				if ( is_user_logged_in()  && '1' != $customizer ) {
 					/*
 					 * If the user is logged in, return any nested content (if any)
