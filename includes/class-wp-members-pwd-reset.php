@@ -179,11 +179,13 @@ class WP_Members_Pwd_Reset {
 			
 			// Get the stored key.
 			$key = get_password_reset_key( $user );
-
 			if ( is_wp_error( $key ) ) {
-				$error_string = $key->get_error_message();
-				$link = "The following error occured generating the password reset key:
-					" . $error_string;
+				$link = "An error occured generating the password reset key.\r\n
+					Please notify the site administrator of the following:\r\n
+					" . $key->get_error_code() . "\r\n
+					" . $key->get_error_message();
+
+				$sanitized_link = esc_html( $link );
 			} else {
 
 				$query_args = array(
@@ -209,9 +211,9 @@ class WP_Members_Pwd_Reset {
 				 * @param  object  $user
 				 */
 				$link = apply_filters( 'wpmem_pwd_reset_email_link', $link, $query_args, $user );
-			}
 
-			$sanitized_link = esc_url_raw( $link );
+				$sanitized_link = esc_url_raw( $link );
+			}
 
 			// Does email body have the [reset_link] shortcode?
 			if ( strpos( $arr['body'], '[reset_link]' ) ) {
