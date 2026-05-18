@@ -53,8 +53,10 @@ class WP_Members_Admin_Tab_Options {
 
 		/** This filter is documented in wp-members/includes/class-wp-members-email.php */
 		$admin_email = apply_filters( 'wpmem_notify_addr', get_option( 'admin_email' ) );
-		$chg_email   = sprintf( esc_html__( '%sChange%s or %sFilter%s this address', 'wp-members' ), '<a href="' . site_url( 'wp-admin/options-general.php', 'admin' ) . '">', '</a>', '<a href="https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/wpmem_notify_addr/">', '</a>' );
-		$help_link   = sprintf( esc_html__( 'See the %sUsers Guide on plugin options%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
+		/* translators: %1$s & %2$s is replaced with a link to the admin email settings, %3$s & %4$s is replaced with a link to the filter hooks documentation. */
+		$chg_email   = sprintf( __( '%1$sChange%2$s or %3$sFilter%4$s this address', 'wp-members' ), '<a href="' . site_url( 'wp-admin/options-general.php', 'admin' ) . '">', '</a>', '<a href="https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/wpmem_notify_addr/">', '</a>' );
+		/* translators: %1$s & %2$s is replaced with a link to the users guide options documentation. */
+		$help_link   = sprintf( __( 'See the %1$sUsers Guide on plugin options%2$s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
 
 		// Build an array of post types
 		$post_types = $wpmem->admin->post_types();
@@ -77,7 +79,7 @@ class WP_Members_Admin_Tab_Options {
 				<div class="postbox">
 					<h3><span><?php esc_html_e( 'Need help?', 'wp-members' ); ?></span></h3>
 					<div class="inside">
-						<p><strong><i><?php echo $help_link; ?></i></strong></p>
+						<p><strong><i><?php echo wp_kses( $help_link, 'post' ); ?></i></strong></p>
 						<p><button id="opener">Get Settings Information</button></p>
 					</div>
 				</div>
@@ -89,7 +91,7 @@ class WP_Members_Admin_Tab_Options {
 					<div class="postbox">
 						<h3><span><?php esc_html_e( 'Manage Options', 'wp-members' ); ?></span></h3>
 						<div class="inside">
-							<form name="updatesettings" id="updatesettings" method="post" action="<?php echo wpmem_admin_form_post_url(); ?>">
+							<form name="updatesettings" id="updatesettings" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url() ); ?>">
 							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
 								<h3><?php esc_html_e( 'Content', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#content" target="_blank" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<ul>
@@ -106,12 +108,12 @@ class WP_Members_Admin_Tab_Options {
 										 <?php
 										$block  = ( isset( $wpmem->block[ $key ] ) ) ? $wpmem->block[ $key ] : '';
 										$values = array(
-											esc_html__( 'Do not restrict', 'wp-members' ) . '|0',
-											esc_html__( 'Restrict', 'wp-members' ) . '|1',
-											// @todo Future development. esc_html__( 'Hide', 'wp-members' ) . '|2',
+											__( 'Do not restrict', 'wp-members' ) . '|0',
+											__( 'Restrict', 'wp-members' ) . '|1',
+											// @todo Future development. __( 'Hide', 'wp-members' ) . '|2',
 										);
-										echo wpmem_form_field( 'wpmem_block_' . $key, 'select', $values, $block ); ?>
-										<span><?php echo $val; ?></span><?php // @todo - this needs to be translatable. ?>
+										wpmem_form_field_echo( 'wpmem_block_' . $key, 'select', $values, $block ); ?>
+										<span><?php echo esc_html( $val ); ?></span>
 									</li>
 									<?php $i++;
 									}
@@ -120,10 +122,10 @@ class WP_Members_Admin_Tab_Options {
 								// Show Excerpts, Login Form, and Registration Form option groups.
 
 								$option_group_array = array( 
-									'show_excerpt' => esc_html__( 'Show Excerpts', 'wp-members' ), 
-									'show_login'   => esc_html__( 'Show Login Form', 'wp-members' ), 
-									'show_reg'     => esc_html__( 'Show Registration Form', 'wp-members' ),
-									'autoex'       => esc_html__( 'Auto Excerpt:', 'wp-members' ),
+									'show_excerpt' => __( 'Show Excerpts', 'wp-members' ), 
+									'show_login'   => __( 'Show Login Form', 'wp-members' ), 
+									'show_reg'     => __( 'Show Registration Form', 'wp-members' ),
+									'autoex'       => __( 'Auto Excerpt:', 'wp-members' ),
 								);
 
 								foreach ( $option_group_array as $item_key => $item_val ) {
@@ -133,7 +135,7 @@ class WP_Members_Admin_Tab_Options {
 										if ( $key == 'post' || $key == 'page' || ( isset( $wpmem->post_types ) && array_key_exists( $key, $wpmem->post_types ) ) ) {
 										?>
 										<li<?php echo ( $i == $len - 1 ) ? ' style="border-bottom:1px solid #eee;"' : ''; ?>>
-											<label><?php echo ( $i == 0 ) ? $item_val : '&nbsp;'; ?></label>
+											<label><?php echo ( $i == 0 ) ? esc_html( $item_val ) : '&nbsp;'; ?></label>
 										<?php if ( 'autoex' == $item_key ) { 
 											if ( isset( $wpmem->{$item_key}[ $key ] ) && $wpmem->{$item_key}[ $key ]['enabled'] == 1 ) {
 												$setting = 1; 
@@ -144,12 +146,12 @@ class WP_Members_Admin_Tab_Options {
 												$ex_len  = '';
 												$ex_text = ''; 
 											}
-											echo wpmem_form_field( 'wpmem_' . $item_key . '_' . $key, 'checkbox', '1', $setting ); ?> <span><?php echo $val; ?></span>&nbsp;&nbsp;&nbsp;&nbsp;
-											<span><?php esc_html_e( 'Number of words in excerpt:', 'wp-members' ); ?> </span><input name="wpmem_autoex_<?php echo $key; ?>_len" type="text" size="5" value="<?php echo $ex_len; ?>" />&nbsp;&nbsp;&nbsp;&nbsp;
-											<span><?php esc_html_e( 'Custom read more link (optional):', 'wp-members' ); ?> </span><input name="wpmem_autoex_<?php echo $key; ?>_text" type="text" size="5" value="<?php echo $ex_text; ?>" />
+											wpmem_form_field_echo( 'wpmem_' . $item_key . '_' . $key, 'checkbox', '1', $setting ); ?> <span><?php echo esc_html( $val ); ?></span>&nbsp;&nbsp;&nbsp;&nbsp;
+											<span><?php esc_html_e( 'Number of words in excerpt:', 'wp-members' ); ?> </span><input name="wpmem_autoex_<?php echo esc_attr( $key ); ?>_len" type="text" size="5" value="<?php echo esc_attr( $ex_len ); ?>" />&nbsp;&nbsp;&nbsp;&nbsp;
+											<span><?php esc_html_e( 'Custom read more link (optional):', 'wp-members' ); ?> </span><input name="wpmem_autoex_<?php echo esc_attr( $key ); ?>_text" type="text" size="5" value="<?php echo esc_attr( $ex_text ); ?>" />
 										<?php } else {
 											$setting = ( isset( $wpmem->{$item_key}[ $key ] ) ) ? $wpmem->{$item_key}[ $key ] : 0; 
-											echo wpmem_form_field( 'wpmem_' . $item_key . '_' . $key, 'checkbox', '1', $setting ); ?> <span><?php echo $val; ?></span>
+											wpmem_form_field_echo( 'wpmem_' . $item_key . '_' . $key, 'checkbox', '1', $setting ); ?> <span><?php echo esc_html( $val ); ?></span>
 										<?php } ?>
 										</li>
 										<?php $i++;
@@ -160,16 +162,16 @@ class WP_Members_Admin_Tab_Options {
 								<?php
 								if ( wpmem_is_exp_enabled() ) {
 									$rows = array( 
-										array(esc_html__('Enable PayPal','wp-members'),'wpmem_settings_time_exp',esc_html__('Requires payment through PayPal following registration','wp-members'),'use_exp'),
-										array(esc_html__('Trial period','wp-members'),'wpmem_settings_trial',esc_html__('Allows for a trial period before PayPal payment is required','wp-members'),'use_trial'),
+										array(__('Enable PayPal','wp-members'),'wpmem_settings_time_exp',__('Requires payment through PayPal following registration','wp-members'),'use_exp'),
+										array(__('Trial period','wp-members'),'wpmem_settings_trial',__('Allows for a trial period before PayPal payment is required','wp-members'),'use_trial'),
 									); ?>
 								<h3><?php esc_html_e( 'Subscription Settings', 'wp-members' ); ?></h3>	
 								<ul><?php
 								foreach ( $rows as $row ) { ?>
 								  <li>
-									<label><?php echo $row[0]; ?></label>
-									<?php echo wpmem_form_field( $row[1], 'checkbox', '1', $wpmem->{$row[3]} ); ?>&nbsp;&nbsp;
-									<?php if ( $row[2] ) { ?><span class="description"><?php echo $row[2]; ?></span><?php } ?>
+									<label><?php echo esc_html( $row[0] ); ?></label>
+									<?php wpmem_form_field_echo( $row[1], 'checkbox', '1', $wpmem->{$row[3]} ); ?>&nbsp;&nbsp;
+									<?php if ( $row[2] ) { ?><span class="description"><?php echo esc_html( $row[2] ); ?></span><?php } ?>
 								  </li>
 								<?php } 
 								}?></ul>
@@ -183,8 +185,8 @@ class WP_Members_Admin_Tab_Options {
 								?><ul><?php
 								foreach ( $rows as $key => $row ) { ?>
 								  <li>
-									<label><?php echo $row[0]; ?></label>
-									<?php echo wpmem_form_field( $row[1], 'checkbox', '1', $checkbox_value ); ?>
+									<label><?php echo esc_html( $row[0] ); ?></label>
+									<?php wpmem_form_field_echo( $row[1], 'checkbox', '1', $checkbox_value ); ?>
 								  </li>
 								<?php } ?>
 								</ul>
@@ -192,21 +194,21 @@ class WP_Members_Admin_Tab_Options {
 								<?php if ( wpmem_is_woo_active() ) { ?>
 								<h3><?php esc_html_e( 'WooCommerce Settings', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/woocommerce-settings/" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<?php
-									$woo_options[] = array(esc_html__('WooCommerce Checkout', 'wp-members' ),'wpmem_settings_add_woo_checkout_fields',esc_html__('Add WP-Members fields to WooCommerce registration during checkout','wp-members'),'add_checkout_fields');
-									$woo_options[] = array(esc_html__('WooCommerce My Account', 'wp-members' ),'wpmem_settings_add_woo_my_account_fields',esc_html__('Add WP-Members fields to WooCommerce My Account registration','wp-members'),'add_my_account_fields');
-									$woo_options[] = array(esc_html__('WooCommerce Update', 'wp-members' ),'wpmem_settings_add_woo_update_fields',esc_html__('Add WP-Members fields to WooCommerce My Account user profile update','wp-members'),'add_update_fields');
-									$woo_options[] = array(esc_html__('Password Reset', 'wp-members' ),'wpmem_settings_use_woo_pwd_reset',esc_html__('Use the WooCommerce password reset (must use WC My Account page for profile)','wp-members'),'use_pwd_reset');
-									$woo_options[] = array(esc_html__('Restrict Product Purchase', 'wp-members' ),'wpmem_settings_add_restrict_woo_products',esc_html__('If a WooCommerce product is restricted, it will not be purchasable','wp-members'),'product_restrict');
+									$woo_options[] = array(__('WooCommerce Checkout', 'wp-members' ),'wpmem_settings_add_woo_checkout_fields',__('Add WP-Members fields to WooCommerce registration during checkout','wp-members'),'add_checkout_fields');
+									$woo_options[] = array(__('WooCommerce My Account', 'wp-members' ),'wpmem_settings_add_woo_my_account_fields',__('Add WP-Members fields to WooCommerce My Account registration','wp-members'),'add_my_account_fields');
+									$woo_options[] = array(__('WooCommerce Update', 'wp-members' ),'wpmem_settings_add_woo_update_fields',__('Add WP-Members fields to WooCommerce My Account user profile update','wp-members'),'add_update_fields');
+									$woo_options[] = array(__('Password Reset', 'wp-members' ),'wpmem_settings_use_woo_pwd_reset',__('Use the WooCommerce password reset (must use WC My Account page for profile)','wp-members'),'use_pwd_reset');
+									$woo_options[] = array(__('Restrict Product Purchase', 'wp-members' ),'wpmem_settings_add_restrict_woo_products',__('If a WooCommerce product is restricted, it will not be purchasable','wp-members'),'product_restrict');
 								?>
 								<ul><?php
 								foreach ( $woo_options as $key => $row ) { ?>
 								  <li>
-									<label><?php echo $row[0]; ?></label>
+									<label><?php echo esc_html( $row[0] ); ?></label>
 									<?php 
 										$checkbox_value = ( isset( $wpmem->woo->{$row[3]} ) ) ? $wpmem->woo->{$row[3]} : 0;
-										echo wpmem_form_field( $row[1], 'checkbox', '1', $checkbox_value );
+										wpmem_form_field_echo( $row[1], 'checkbox', '1', $checkbox_value );
 									?>&nbsp;&nbsp;
-									<span class="description"><?php echo $row[2]; ?></span>
+									<span class="description"><?php echo esc_html( $row[2] ); ?></span>
 								  </li>
 								<?php } ?>
 								</ul>
@@ -222,28 +224,31 @@ class WP_Members_Admin_Tab_Options {
 								$conf_link_start = '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#confirm" target="_blank">';
 								$conf_link_end   = '</a>';
 								$rows = array(
-									array(esc_html__('Enable memberships', 'wp-members'),'wpmem_settings_products',sprintf(esc_html__('Enables creation of different %s membership products %s','wp-members'),$mem_link_start,$mem_link_end),'enable_products'),
-									array(esc_html__('Clone menus','wp-members'),'wpmem_settings_menus',esc_html__('Enables logged in menus','wp-members'),'clone_menus'),
-									array(esc_html__('Notify admin','wp-members'),'wpmem_settings_notify',sprintf(esc_html__('Notify %s for each new registration? %s','wp-members'),$admin_email,$chg_email),'notify'),
-									array(esc_html__('Moderate registration','wp-members'),'wpmem_settings_moderate',esc_html__('Holds new registrations for admin approval','wp-members'),'mod_reg'),
-									array(esc_html__('Confirmation Link', 'wp-members'),'wpmem_settings_act_link',sprintf(esc_html__('Send email confirmation link on new registration. %s(Requires additional configuration)%s','wp-members'),$conf_link_start,$conf_link_end),'act_link'),
-									array(esc_html__('Ignore warning messages','wp-members'),'wpmem_settings_ignore_warnings',esc_html__('Ignores WP-Members warning messages in the admin panel','wp-members'),'warnings'),
-									//array(esc_html__('Enable dropins', 'wp-members'),'wpmem_settings_enable_dropins',sprintf(esc_html__('Enables dropins in %s', 'wp-members'), $dropin_dir),'dropins'),
-									array(esc_html__('Notifications & Diagnostics', 'wp-members' ),'wpmem_settings_optin',esc_html__('Opt in to security and updates notifications and non-sensitive diagnostics tracking', 'wp-members'),'optin'),
+									/* translators: %1$s & %2$s is replaced with a link to the membership products documentation. */
+									array(__('Enable memberships', 'wp-members'),'wpmem_settings_products',sprintf(__('Enables creation of different %1$s membership products %2$s','wp-members'),$mem_link_start,$mem_link_end),'enable_products'),
+									array(__('Clone menus','wp-members'),'wpmem_settings_menus',__('Enables logged in menus','wp-members'),'clone_menus'),
+									/* translators: %1$s replaced by the email the notification is sent to. %2$s is replaced with links to change the email and documentation about the filter. */
+									array(__('Notify admin','wp-members'),'wpmem_settings_notify',sprintf(__('Notify %1$s for each new registration? %2$s','wp-members'),$admin_email,$chg_email),'notify'),
+									array(__('Moderate registration','wp-members'),'wpmem_settings_moderate',__('Holds new registrations for admin approval','wp-members'),'mod_reg'),
+									/* translators: %1$s & %2$s is replaced with a link to the confirmation link documentation. */
+									array(__('Confirmation Link', 'wp-members'),'wpmem_settings_act_link',sprintf(__('Send email confirmation link on new registration. %1$s(Requires additional configuration)%2$s','wp-members'),$conf_link_start,$conf_link_end),'act_link'),
+									array(__('Ignore warning messages','wp-members'),'wpmem_settings_ignore_warnings',__('Ignores WP-Members warning messages in the admin panel','wp-members'),'warnings'),
+									//array(__('Enable dropins', 'wp-members'),'wpmem_settings_enable_dropins',sprintf(esc_html__('Enables dropins in %s', 'wp-members'), $dropin_dir),'dropins'),
+									array(esc_html__('Notifications & Diagnostics', 'wp-members' ),'wpmem_settings_optin',__('Opt in to security and updates notifications and non-sensitive diagnostics tracking', 'wp-members'),'optin'),
 								);
 								foreach ( $rows as $row ) { 
 									if ( $row[0] == esc_html__('Clone menus','wp-members') && 1 != $wpmem->clone_menus ) {
 										continue;
 									}?>
 								  <li>
-									<label><?php echo $row[0]; ?></label>
-									<?php echo wpmem_form_field( $row[1], 'checkbox', '1', $wpmem->{$row[3]} ); ?>&nbsp;&nbsp;
-									<?php if ( $row[2] ) { ?><span class="description"><?php echo $row[2]; ?></span><?php } ?>
+									<label><?php echo esc_html( $row[0] ); ?></label>
+									<?php wpmem_form_field_echo( $row[1], 'checkbox', '1', $wpmem->{$row[3]} ); ?>&nbsp;&nbsp;
+									<?php if ( $row[2] ) { ?><span class="description"><?php echo wp_kses( $row[2], 'post' ); ?></span><?php } ?>
 								  </li>
 								<?php } ?>
 								  <li>
 									<label><?php esc_html_e( 'Attribution', 'wp-members' ); ?></label>
-									<?php echo wpmem_form_field( 'attribution', 'checkbox', '1', $wpmem->attrib ); ?>&nbsp;&nbsp;
+									<?php wpmem_form_field_echo( 'attribution', 'checkbox', '1', $wpmem->attrib ); ?>&nbsp;&nbsp;
 									<span class="description"><?php esc_html_e( 'Attribution is appreciated!  Display "powered by" link on register form?', 'wp-members' ); ?></span>
 								  </li>
 								  <li>
@@ -256,36 +261,36 @@ class WP_Members_Admin_Tab_Options {
 									$captcha[] = esc_html__( 'reCAPTCHA v3', 'wp-members' ) . '|4';
 									$captcha[] = esc_html__( 'Really Simple CAPTCHA', 'wp-members' ) . '|2';
 									$captcha[] = esc_html__( 'hCaptcha', 'wp-members' ) . '|5';
-									echo wpmem_form_field( 'wpmem_settings_captcha', 'select', $captcha, $wpmem->captcha ); ?>
+									wpmem_form_field_echo( 'wpmem_settings_captcha', 'select', $captcha, $wpmem->captcha ); ?>
 								  </li>
 								<h3><?php esc_html_e( 'Pages' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#pages" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								  <?php
 									$user_pages = array(
 										'log' => array(
 											'url' => $wpmem->user_pages['login'],
-											'label' => esc_html__( 'Login Page:', 'wp-members' ),
-											'description' => esc_html__( 'Specify a login page (optional)', 'wp-members' ),
+											'label' => __( 'Login Page:', 'wp-members' ),
+											'description' => __( 'Specify a login page (optional)', 'wp-members' ),
 										),
 										'reg' => array(
 											'url' => $wpmem->user_pages['register'],
-											'label' => esc_html__( 'Register Page:', 'wp-members' ),
-											'description' => esc_html__( 'For creating a register link in the login form', 'wp-members' ),
+											'label' => __( 'Register Page:', 'wp-members' ),
+											'description' => __( 'For creating a register link in the login form', 'wp-members' ),
 										),
 										'ms' => array(
 											'url' => $wpmem->user_pages['profile'],
-											'label' => esc_html__( 'User Profile Page:', 'wp-members' ),
-											'description' => esc_html__( 'For creating a forgot password link in the login form', 'wp-members' ),
+											'label' => __( 'User Profile Page:', 'wp-members' ),
+											'description' => __( 'For creating a forgot password link in the login form', 'wp-members' ),
 										),
 									);
 								foreach ( $user_pages as $key => $setting ) { ?>
 									<li>
-										<label><?php echo $setting['label'] ?></label>
-										<select name="wpmem_settings_<?php echo $key; ?>page" id="wpmem_<?php echo $key; ?>page_select">
+										<label><?php echo esc_html( $setting['label'] ); ?></label>
+										<select name="wpmem_settings_<?php echo esc_attr( $key ); ?>page" id="wpmem_<?php echo esc_attr( $key ); ?>page_select">
 										<?php WP_Members_Admin_Tab_Options::page_list( $setting['url'] ); ?>
-										</select>&nbsp;<span class="description"><?php echo $setting['description']; ?></span><br />
-										<div id="wpmem_<?php echo $key; ?>page_custom">
+										</select>&nbsp;<span class="description"><?php echo esc_html( $setting['description'] ); ?></span><br />
+										<div id="wpmem_<?php echo esc_attr( $key ); ?>page_custom">
 											<label>&nbsp;</label>
-											<input class="regular-text code" type="text" name="wpmem_settings_<?php echo $key; ?>url" value="<?php echo $setting['url']; ?>" placeholder="https://" size="50" />
+											<input class="regular-text code" type="text" name="wpmem_settings_<?php echo esc_attr( $key ); ?>url" value="<?php echo esc_attr( $setting['url'] ); ?>" placeholder="https://" size="50" />
 										</div>
 									</li><?php
 								} ?>
@@ -299,10 +304,10 @@ class WP_Members_Admin_Tab_Options {
 								  }
 								  ?>
 								  <div id="wpmem_stylesheet_custom">
-									  <p><?php _e( 'The plugin has a standard stylesheet. To use it, leave the following option empty. To use a custom stylesheet, enter its URL below.', 'wp-members' ); ?></p>
+									  <p><?php esc_html_e( 'The plugin has a standard stylesheet. To use it, leave the following option empty. To use a custom stylesheet, enter its URL below.', 'wp-members' ); ?></p>
 									  <li>
 										<label><?php esc_html_e( 'Custom Stylesheet:', 'wp-members' ); ?></label>
-										<input class="regular-text code" type="text" name="wpmem_settings_cssurl" value="<?php echo $wpmem_cssurl; ?>" placeholder="https://" size="50" />
+										<input class="regular-text code" type="text" name="wpmem_settings_cssurl" value="<?php echo esc_url_raw( $wpmem_cssurl ); ?>" placeholder="https://" size="50" />
 									  </li>
 								  </div>
 									<input type="hidden" name="wpmem_admin_a" value="update_settings">
@@ -316,7 +321,7 @@ class WP_Members_Admin_Tab_Options {
 					<div class="postbox">
 						<h3><span><?php esc_html_e( 'Custom Post Types', 'wp-members' ); ?></span></h3>
 						<div class="inside">
-							<form name="updatecpts" id="updatecpts" method="post" action="<?php echo wpmem_admin_form_post_url(); ?>">
+							<form name="updatecpts" id="updatecpts" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url() ); ?>">
 							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
 								<table class="form-table">
 									<tr>
@@ -325,7 +330,7 @@ class WP_Members_Admin_Tab_Options {
 										foreach ( $post_arr as $key => $val ) {
 											if ( 'post' != $key && 'page' != $key && 'wpmem_product' != $key ) {
 												$checked = ( isset( $wpmem->post_types ) && array_key_exists( $key, $wpmem->post_types ) ) ? ' checked' : '';
-												echo '<label for="' . $key . '"><input type="checkbox" name="wpmembers_handle_cpts[]" value="' . $key . '"' . $checked . ' />' . $val . '</label><br />';
+												echo '<label for="' . esc_attr( $key ) . '"><input type="checkbox" name="wpmembers_handle_cpts[]" value="' . esc_attr( $key ) . '"' . esc_attr( $checked ) . ' />' . esc_html( $val ) . '</label><br />';
 											}
 										}
 										?></fieldset>
@@ -352,9 +357,9 @@ class WP_Members_Admin_Tab_Options {
 	<pre>
 	<textarea cols=80 rows=10 align=left wrap=soft style="width:80%;" id="supportinfo" wrap="soft"><?php
 	global $wp_version, $wpdb, $wpmem;
-	echo "WP Version: " . $wp_version . "\r\n";
-	echo "PHP Version: " . phpversion() . "\r\n";
-	echo "MySQL Version: " . $wpdb->db_version() . "\r\n";
+	echo "WP Version: " . esc_html( $wp_version ) . "\r\n";
+	echo "PHP Version: " . esc_html( phpversion() ) . "\r\n";
+	echo "MySQL Version: " . esc_html( $wpdb->db_version() ) . "\r\n";
 	wpmem_fields();
 	print_r( $wpmem );
 	
@@ -377,9 +382,9 @@ class WP_Members_Admin_Tab_Options {
 		}
 	}
 	echo "*************** Active Plugins **************** \r\n";
-	echo $active_display;
+	echo esc_html( $active_display );
 	echo "*************** Inactive Plugins **************** \r\n";
-	echo $inactive_display;
+	echo esc_html( $inactive_display );
 	?></textarea>
 	</pre>
 	<button id="select_all" class="ui-button-text"><?php esc_html_e( 'Click to Copy', 'wp-members' ); ?></button>
@@ -398,6 +403,11 @@ class WP_Members_Admin_Tab_Options {
 	 * @return string         The options updated message.
 	 */
 	static function update( $action ) {
+
+		global $wpmem;
+
+		// Check nonce.
+		check_admin_referer( 'wpmem-update-settings' );
 		
 		if ( 'update_cpts' == $action ) {
 
@@ -418,7 +428,7 @@ class WP_Members_Admin_Tab_Options {
 				}
 			}
 
-			$post_vals = ( isset( $_POST['wpmembers_handle_cpts'] ) ) ? $_POST['wpmembers_handle_cpts'] : false;
+			$post_vals = wpmem_get( 'wpmembers_handle_cpts', false );
 			if ( $post_vals ) {
 				foreach ( $post_vals as $val ) {
 					$cpts[ $val ] = sanitize_text_field( $post_arr[ $val ] );
@@ -462,37 +472,32 @@ class WP_Members_Admin_Tab_Options {
 			return esc_html__( 'Custom Post Type settings were updated', 'wp-members' );
 			
 		} else {
-			
-			global $wpmem;
 
-			// Check nonce.
-			check_admin_referer( 'wpmem-update-settings' );
-
-			$wpmem_settings_msurl  = ( $_POST['wpmem_settings_mspage'] == 'use_custom' ) ? esc_url( $_POST['wpmem_settings_msurl'] ) : '';
-			$wpmem_settings_mspage = ( $_POST['wpmem_settings_mspage'] == 'use_custom' ) ? '' : wpmem_sanitize_field( $_POST['wpmem_settings_mspage'], 'int' );
+			$wpmem_settings_msurl  = ( wpmem_get( 'wpmem_settings_mspage', false ) == 'use_custom' ) ? wpmem_get_sanitized( 'wpmem_settings_msurl', false, 'post', 'url' ) : '';
+			$wpmem_settings_mspage = ( wpmem_get( 'wpmem_settings_mspage', false ) == 'use_custom' ) ? '' : wpmem_get_sanitized( 'wpmem_settings_mspage', false, 'post', 'int' );
 			if ( $wpmem_settings_msurl != '' && $wpmem_settings_msurl != 'use_custom' && ! $wpmem_settings_mspage ) {
 				$msurl = trim( $wpmem_settings_msurl );
 			} else {
 				$msurl = $wpmem_settings_mspage;
 			}
 
-			$wpmem_settings_regurl  = ( $_POST['wpmem_settings_regpage'] == 'use_custom' ) ? esc_url( $_POST['wpmem_settings_regurl'] ) : '';
-			$wpmem_settings_regpage = ( $_POST['wpmem_settings_regpage'] == 'use_custom' ) ? '' : wpmem_sanitize_field( $_POST['wpmem_settings_regpage'], 'int' );
+			$wpmem_settings_regurl  = ( wpmem_get( 'wpmem_settings_regpage', false ) == 'use_custom' ) ? wpmem_get_sanitized( 'wpmem_settings_regurl', false, 'post', 'url' ) : '';
+			$wpmem_settings_regpage = ( wpmem_get( 'wpmem_settings_regpage', false ) == 'use_custom' ) ? '' : wpmem_get_sanitized( 'wpmem_settings_regpage', false, 'post', 'int' );
 			if ( $wpmem_settings_regurl != '' && $wpmem_settings_regurl != 'use_custom' && ! $wpmem_settings_regpage ) {
 				$regurl = trim( $wpmem_settings_regurl );
 			} else {
 				$regurl = $wpmem_settings_regpage;
 			}
 
-			$wpmem_settings_logurl  = ( $_POST['wpmem_settings_logpage'] == 'use_custom' ) ? esc_url( $_POST['wpmem_settings_logurl'] ) : '';
-			$wpmem_settings_logpage = ( $_POST['wpmem_settings_logpage'] == 'use_custom' ) ? '' : wpmem_sanitize_field( $_POST['wpmem_settings_logpage'], 'int' );
+			$wpmem_settings_logurl  = ( wpmem_get( 'wpmem_settings_logpage', false ) == 'use_custom' ) ? wpmem_get_sanitized( 'wpmem_settings_logurl', false, 'post', 'url' ) : '';
+			$wpmem_settings_logpage = ( wpmem_get( 'wpmem_settings_logpage', false ) == 'use_custom' ) ? '' : wpmem_get_sanitized( 'wpmem_settings_logpage', false, 'post', 'int' );
 			if ( '' != $wpmem_settings_logurl && 'use_custom' != $wpmem_settings_logurl && ! $wpmem_settings_logpage ) {
 				$logurl = trim( $wpmem_settings_logurl );
 			} else {
 				$logurl = $wpmem_settings_logpage;
 			}
 
-			$wpmem_settings_cssurl_sanitized = esc_url_raw( $_POST['wpmem_settings_cssurl'] );
+			$wpmem_settings_cssurl_sanitized = esc_url_raw( wpmem_get( 'wpmem_settings_cssurl', '' ) );
 
 			$wpmem_newsettings = array(
 				'version' => $wpmem->version,
@@ -553,12 +558,12 @@ class WP_Members_Admin_Tab_Options {
 					$post_var = 'wpmem_' . $option_group_item . '_' . $post_type;
 					if ( $option_group_item == 'autoex' ) {
 						// Auto excerpt is an array.
-						$arr[ $post_type ]['enabled'] = ( isset( $_POST[ $post_var ]           ) ) ? wpmem_sanitize_field( $_POST[ $post_var ], 'int' ) : 0;
-						$arr[ $post_type ]['length']  = ( isset( $_POST[ $post_var . '_len'  ] ) ) ? ( ( $_POST[ $post_var . '_len' ] == '' ) ? 0 : wpmem_sanitize_field( $_POST[ $post_var . '_len' ], 'int' ) ) : '';
-						$arr[ $post_type ]['text']    = ( isset( $_POST[ $post_var . '_text' ] ) ) ? sanitize_text_field( $_POST[ $post_var . '_text' ] ) : '';
+						$arr[ $post_type ]['enabled'] = wpmem_get_sanitized( $post_var, 0, 'post', 'int' );
+						$arr[ $post_type ]['length']  = wpmem_get_sanitized( $post_var . '_len', 0, 'post', 'int' );
+						$arr[ $post_type ]['text']    = wpmem_get_sanitized( $post_var . '_text', '' );
 					} else {
 						// All other settings are 0|1.
-						$arr[ $post_type ] = ( isset( $_POST[ $post_var ] ) ) ? wpmem_sanitize_field( $_POST[ $post_var ], 'int' ) : 0;
+						$arr[ $post_type ] = wpmem_get_sanitized( $post_var, 0, 'post', 'int' );
 					}
 				}
 				$wpmem_newsettings[ $option_group_item ] = $arr;
@@ -671,10 +676,10 @@ class WP_Members_Admin_Tab_Options {
 		$selected = false;
 		foreach ( $list as $name => $location ) {
 			$selected = ( $location == $style ) ? true : $selected;
-			echo '<option value="' . $location . '" ' . selected( $location, $style ) . '>' . $name . "</option>\n";
+			echo '<option value="' . esc_attr( $location ) . '" ' . selected( $location, $style ) . '>' . esc_html( $name ) . "</option>\n";
 		}
 		$selected = ( ! $selected ) ? ' selected' : '';
-		echo '<option value="use_custom"' . $selected . '>' . esc_html__( 'USE CUSTOM URL BELOW', 'wp-members' ) . '</option>';
+		echo '<option value="use_custom"' . esc_attr( $selected ) . '>' . esc_html__( 'USE CUSTOM URL BELOW', 'wp-members' ) . '</option>';
 
 		return;
 	}
@@ -694,18 +699,18 @@ class WP_Members_Admin_Tab_Options {
 		$selected = ( '' == $val ) ? 'select a page' : false;
 		$pages    = get_pages();
 
-		echo '<option value=""'; echo ( 'select a page' == $selected ) ? ' selected' : ''; echo '>'; echo esc_attr( esc_html__( 'Select a page', 'wp-members' ) ); echo '</option>';
+		echo '<option value=""'; echo ( 'select a page' == $selected ) ? ' selected' : ''; echo '>'; echo esc_html__( 'Select a page', 'wp-members' ); echo '</option>';
 
 		foreach ( $pages as $page ) {
 			$selected = ( get_page_link( $page->ID ) == $val ) ? true : $selected; //echo "VAL: " . $val . ' PAGE LINK: ' . get_page_link( $page->ID );
-			$option   = '<option value="' . $page->ID . '"' . selected( get_page_link( $page->ID ), $val, 'select' ) . '>';
-			$option  .= $page->post_title;
+			$option   = '<option value="' . esc_attr( $page->ID ) . '"' . esc_attr( selected( get_page_link( $page->ID ), $val, 'select' ) ) . '>';
+			$option  .= esc_html( $page->post_title );
 			$option  .= '</option>';
 			echo $option;
 		}
 		if ( $show_custom_url ) {
 			$selected = ( ! $selected ) ? ' selected' : '';
-			echo '<option value="use_custom"' . $selected . '>' . esc_html__( 'USE CUSTOM URL BELOW', 'wp-members' ) . '</option>'; 
+			echo '<option value="use_custom"' . esc_attr( $selected ) . '>' . esc_html__( 'USE CUSTOM URL BELOW', 'wp-members' ) . '</option>'; 
 		}
 	}
 

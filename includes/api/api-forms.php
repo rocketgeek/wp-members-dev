@@ -235,6 +235,19 @@ function wpmem_woo_register_form() {
 
 /**
  * Alias for $wpmem->create_form_field().
+ * 
+ * This function is used to create form fields for WP-Members forms. It is a 
+ * wrapper for the create_form_field() method in the WP_Members_Forms class. 
+ * It accepts an array of arguments that define the field's properties and 
+ * returns the HTML for the form field.
+ * 
+ * All variables are sanitized and escaped for safe output.
+ * 
+ * Note: The original pluggable version of this function used a $type, $value, 
+ * $valtochk, and $class params. This function should (1) no longer be 
+ * considered pluggable and (2) should pass all arguments in the form if a 
+ * single array. The previous methods are maintained for legacy reasons, but 
+ * should be updated to apply to the current function documentation.
  *
  * @since 3.1.2
  * @since 3.2.0 Accepts wpmem_create_formfield() arguments.
@@ -277,6 +290,15 @@ function wpmem_form_field( $name, $type=null, $value=null, $valtochk=null, $clas
 		);
 	}
 	return $wpmem->forms->create_form_field( $args );
+}
+
+/**
+ * Function to output wpmem_form_field()
+ * 
+ * @since 3.5.7
+ */
+function wpmem_form_field_echo( $name, $type=null, $value=null, $valtochk=null, $class='textbox' ) {
+	echo wpmem_form_field( $name, $type, $value, $valtochk, $class );
 }
 
 /**
