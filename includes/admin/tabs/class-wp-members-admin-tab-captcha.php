@@ -85,7 +85,7 @@ class WP_Members_Admin_Tab_Captcha {
 						<h3><?php esc_html_e( 'Manage CAPTCHA Options', 'wp-members' ); ?></h3>
 						<div class="inside">
 							<form name="updatecaptchaform" id="updatecaptchaform" method="post" action="<?php echo wpmem_admin_form_post_url(); ?>">
-							<?php wp_nonce_field( 'wpmem-update-captcha' ); ?>
+							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
 								<table class="form-table">
 									<tr valign="top">
 										<th><?php esc_html_e( 'CAPTCHA Type', 'wp-members' ); ?></th>
@@ -267,9 +267,6 @@ class WP_Members_Admin_Tab_Captcha {
 	public static function update() {
 		
 		global $wpmem;
-		
-		// Check nonce.
-		check_admin_referer( 'wpmem-update-captcha' );
 
 		$settings     = get_option( 'wpmembers_captcha' );
 		$update_type  = sanitize_text_field( wpmem_get( 'wpmem_recaptcha_type', '' ) );

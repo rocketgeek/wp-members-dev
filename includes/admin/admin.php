@@ -36,9 +36,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function wpmem_admin() {
 
-	$did_update = ( isset( $_POST['wpmem_admin_a'] ) ) ? wpmem_admin_action( sanitize_text_field( $_POST['wpmem_admin_a'] ) ) : false;
-
 	global $wpmem;
+
+	if ( isset( $_POST['wpmem_admin_a'] ) ) {
+		check_admin_referer( 'wpmem-update-settings' );
+		$did_update = wpmem_admin_action( sanitize_text_field( $_POST['wpmem_admin_a'] ) );
+	} else {
+		$did_update = false;
+	}
 
 	add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Tab_About', 'add_tab' ), 99 );
 

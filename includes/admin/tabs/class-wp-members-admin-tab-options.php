@@ -317,7 +317,7 @@ class WP_Members_Admin_Tab_Options {
 						<h3><span><?php esc_html_e( 'Custom Post Types', 'wp-members' ); ?></span></h3>
 						<div class="inside">
 							<form name="updatecpts" id="updatecpts" method="post" action="<?php echo wpmem_admin_form_post_url(); ?>">
-							<?php wp_nonce_field( 'wpmem-update-cpts' ); ?>
+							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
 								<table class="form-table">
 									<tr>
 										<th scope="row"><?php esc_html_e( 'Add to WP-Members Settings', 'wp-members' ); ?></th>
@@ -400,9 +400,6 @@ class WP_Members_Admin_Tab_Options {
 	static function update( $action ) {
 		
 		if ( 'update_cpts' == $action ) {
-			
-			// Check nonce.
-			check_admin_referer( 'wpmem-update-cpts' );
 
 			// Get the main settings array as it stands.
 			$wpmem_newsettings = get_option( 'wpmembers_settings' );

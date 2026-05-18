@@ -66,7 +66,7 @@ class WP_Members_Admin_Tab_Shortcodes {
 						<div class="inside">
 							<form name="updateshortcodesform" id="updateshortcodesform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 							<?php 
-                            wp_nonce_field( 'wpmem-update-shortcodes' );
+                            wp_nonce_field( 'wpmem-update-settings' );
                             $wpmem_enable_field_sc = $wpmem->shortcodes->enable_field; 
                             $wpmem_enable_field_sc = ( $wpmem_enable_field_sc ) ? $wpmem_enable_field_sc : 0;
                             $sc_notice_start = '<a href="https://rocketgeek.com/plugins/wp-members/docs/shortcodes/field-shortcodes/#security" target="_blank">';
@@ -121,9 +121,6 @@ class WP_Members_Admin_Tab_Shortcodes {
 	static function update() {
 
 		global $wpmem;
-
-		// Check nonce.
-		check_admin_referer( 'wpmem-update-shortcodes' );
 
 		$wpmem_settings = get_option( 'wpmembers_settings' );
 

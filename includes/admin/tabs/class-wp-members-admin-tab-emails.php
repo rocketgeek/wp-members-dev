@@ -63,7 +63,7 @@ class WP_Members_Admin_Tab_Emails {
 							</p>
 							<hr />
 							<form name="updateemailform" id="updateemailform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
-							<?php wp_nonce_field( 'wpmem-update-emails' ); ?>
+							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
 								<table class="form-table"> 
 									<tr valign="top"> 
 										<th scope="row"><?php esc_html_e( 'Set a custom email address', 'wp-members' ); ?></th> 
@@ -130,9 +130,6 @@ class WP_Members_Admin_Tab_Emails {
 	static function update() {
 
 		global $wpmem;
-
-		// Check nonce.
-		check_admin_referer( 'wpmem-update-emails' );
 
 		// Update the email address (if applicable).
 		if ( $wpmem->email->from    != $_POST['wp_mail_from'] || $wpmem->email->from_name != $_POST['wp_mail_from_name'] || $wpmem->email->html != wpmem_get( 'wpmem_email_html', 0 ) ) {

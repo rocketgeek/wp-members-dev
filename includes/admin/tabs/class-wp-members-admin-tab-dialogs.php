@@ -68,7 +68,7 @@ class WP_Members_Admin_Tab_Dialogs {
 						<div class="inside">
 							<p><?php printf( esc_html__( 'You can customize the text for dialogs and error messages. Simple HTML is allowed %s etc.', 'wp-members' ), '- &lt;p&gt;, &lt;b&gt;, &lt;i&gt;,' ); ?></p>
 							<form name="updatedialogform" id="updatedialogform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
-							<?php wp_nonce_field( 'wpmem-update-dialogs' ); ?>
+							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
 								<table class="form-table">
 								<?php 
 								if ( ! empty ( $wpmem->admin->dialogs ) ) {
@@ -113,9 +113,6 @@ class WP_Members_Admin_Tab_Dialogs {
 	static function update() {
 
 		global $wpmem;
-
-		// Check nonce.
-		check_admin_referer( 'wpmem-update-dialogs' );
 
 		if ( ! empty ( $wpmem->admin->dialogs ) ) {
 			$wpmem->admin->dialog_update();
