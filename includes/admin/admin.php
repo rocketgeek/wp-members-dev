@@ -39,8 +39,13 @@ function wpmem_admin() {
 	global $wpmem;
 
 	if ( isset( $_POST['wpmem_admin_a'] ) ) {
-		check_admin_referer( 'wpmem-update-settings' );
-		$did_update = wpmem_admin_action( sanitize_text_field( $_POST['wpmem_admin_a'] ) );
+		$did_update = check_admin_referer( 'wpmem-update-settings' );
+		if ( ! $did_update ) {
+			wp_die( __( 'Security check failed. Please try again.', 'wp-members' ) );
+		} else {
+			// @todo There may be a legacy reason for keeping it this way, primarily with add-ons.
+			$did_update = wpmem_admin_action( sanitize_text_field( wp_unslash( $_POST['wpmem_admin_a'] ) ) );
+		}
 	} else {
 		$did_update = false;
 	}
