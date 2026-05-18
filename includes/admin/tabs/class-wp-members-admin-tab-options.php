@@ -628,10 +628,10 @@ class WP_Members_Admin_Tab_Options {
 			}
 		}
 
-		if ( isset( $_POST['wpmem_settings_optin'] ) && 0 == $wpmem->optin ) {
+		if ( wpmem_get( 'wpmem_settings_optin', false ) && 0 == $wpmem->optin ) {
 			update_option( 'wpmembers_optin', 1, false );
 			$wpmem->optin = 1;
-		} elseif ( ! isset( $_POST['wpmem_settings_optin'] ) && 1 == $wpmem->optin ) {
+		} elseif ( ! wpmem_get( 'wpmem_settings_optin', false ) && 1 == $wpmem->optin ) {
 			update_option( 'wpmembers_optin', 0, false );
 			$wpmem->optin = 0;
 		}
@@ -703,10 +703,9 @@ class WP_Members_Admin_Tab_Options {
 
 		foreach ( $pages as $page ) {
 			$selected = ( get_page_link( $page->ID ) == $val ) ? true : $selected; //echo "VAL: " . $val . ' PAGE LINK: ' . get_page_link( $page->ID );
-			$option   = '<option value="' . esc_attr( $page->ID ) . '"' . esc_attr( selected( get_page_link( $page->ID ), $val, 'select' ) ) . '>';
-			$option  .= esc_html( $page->post_title );
-			$option  .= '</option>';
-			echo $option;
+			echo '<option value="' . esc_attr( $page->ID ) . '"' . esc_attr( selected( get_page_link( $page->ID ), $val, 'select' ) ) . '>';
+			echo esc_html( $page->post_title );
+			echo '</option>';
 		}
 		if ( $show_custom_url ) {
 			$selected = ( ! $selected ) ? ' selected' : '';
