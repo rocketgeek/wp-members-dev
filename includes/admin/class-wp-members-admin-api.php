@@ -631,7 +631,7 @@ class WP_Members_Admin_API {
 			wp_enqueue_script( 'jquery-ui-core' );       // enqueue jQuery UI Core
 			wp_enqueue_script( 'jquery-ui-datepicker' ); // enqueue jQuery UI Datepicker
 			if ( ! wp_style_is( 'jquery-ui-style', 'enqueued' ) ) {
-				wp_register_style( 'jquery-ui-style', wpmem_get_plugin_url() . 'includes/vendor/jquery-ui/css/jquery-ui' . wpmem_get_suffix() . '.css' );
+				wp_register_style( 'jquery-ui-style', wpmem_get_plugin_url() . 'includes/vendor/jquery-ui/css/jquery-ui' . wpmem_get_suffix() . '.css', false, '1.14.0', 'all' );
 			}
 			wp_enqueue_style( 'jquery-ui-style' ); 
 		}
