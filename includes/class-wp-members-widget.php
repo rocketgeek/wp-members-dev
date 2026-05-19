@@ -47,7 +47,7 @@ class widget_wpmemwidget extends WP_Widget {
 			<input id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" value="<?php echo esc_attr( $instance['title'] ); ?>" style="width:95%;" />
 		</p>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>"><?php _e( 'Redirect to (optional):', 'wp-members' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>"><?php esc_html_e( 'Redirect to (optional):', 'wp-members' ); ?></label>
 			<input id="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'redirect_to' ) ); ?>" value="<?php echo esc_attr( $instance['redirect_to'] ); ?>" style="width:95%;" />
 		</p>
 		<?php
@@ -64,8 +64,8 @@ class widget_wpmemwidget extends WP_Widget {
 		$instance = $old_instance;
 
 		// Strip tags for title to remove HTML.
-		$instance['title']       = strip_tags( $new_instance['title'] );
-		$instance['redirect_to'] = strip_tags( $new_instance['redirect_to'] );
+		$instance['title']       = wp_strip_all_tags( $new_instance['title'] );
+		$instance['redirect_to'] = wp_strip_all_tags( $new_instance['redirect_to'] );
 
 		return $instance;
 	}
@@ -79,7 +79,7 @@ class widget_wpmemwidget extends WP_Widget {
 	function widget( $args, $instance ) {
 
 		$redirect_to = ( array_key_exists( 'redirect_to', $instance ) ) ? $instance['redirect_to'] : '';
-		$title       = ( array_key_exists( 'title',       $instance ) ) ? $instance['title']       : esc_html__( 'Login Status', 'wp-members' );
+		$title       = ( array_key_exists( 'title',       $instance ) ) ? $instance['title']       : __( 'Login Status', 'wp-members' );
 		$customizer  = ( is_customize_preview() ) ? get_theme_mod( 'wpmem_show_logged_out_state', false ) : false;
 		
 		/** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
@@ -108,13 +108,13 @@ class widget_wpmemwidget extends WP_Widget {
 		 */
 		$id = apply_filters( 'wpmem_widget_id', 'wp-members', $instance, $this->id_base  );
 		
-		echo $args['before_widget'];
+		echo wp_kses( $args['before_widget'], 'post' );
 		echo '<div id="' . esc_attr( $id ) . '">';
-		echo $args['before_title'] . esc_attr( $title ) . $args['after_title'];
+		echo wp_kses( $args['before_title'], 'post' ) . esc_html( $title ) . wp_kses( $args['after_title'], 'post' );
 		// The Widget
 		$this->do_sidebar( $redirect_to, $customizer ); 
 		echo '</div>';
-		echo $args['after_widget'];
+		echo wp_kses( $args['after_widget'], 'post' );
 	}
 	
 	/**

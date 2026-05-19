@@ -294,7 +294,7 @@ class WP_Members_Admin_API {
 	
 		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $links as $link ) {
-			echo $link;
+			echo wp_kses( $link, 'post' );
 		}
 		echo '</h2>';
 	}
@@ -354,7 +354,7 @@ class WP_Members_Admin_API {
 		$settings = $this->dialogs;
 		foreach ( $settings as $dialog ) {
 			if ( isset( $_POST[ $dialog['name'] . '_dialog' ] ) ) {
-				$settings[ $dialog['name'] ] = wp_kses( $_POST[ $dialog['name'] . '_dialog' ], 'post' );
+				$settings[ $dialog['name'] ] = wp_kses( wp_unslash( $_POST[ $dialog['name'] . '_dialog' ] ), 'post' );
 			}
 		}
 
@@ -740,16 +740,18 @@ class WP_Members_Admin_API {
 		$deprecated_folder = trailingslashit( $uploads['basedir'] ) . 'wpmembers/user_files';
 		if ( is_dir( $deprecated_folder ) ) {
 			$notice_dismissed = get_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
+			/* translators: %1$s opening anchor tag, %2$s closing anchor tag */
+			$notice_text = sprintf( __( 'The /wpmembers/user_files/ folder is deprecated. Please %1$sgo to the settings page%2$s to either upgrade or permanently remove this message.', 'wp-members' ), '<a href="' . esc_url( trailingslashit( admin_url() ) . 'options-general.php?page=wpmem-settings&tab=filesystem-upgrade' ) . '">', '</a>' );
 			if ( ! $notice_dismissed ) {
 				$notices['deprecated_foldersystem'] = array(
-					'notice' => __( 'The /wpmembers/user_files/ folder is deprecated. Please <a href="' . esc_url( trailingslashit( admin_url() ) . 'options-general.php?page=wpmem-settings&tab=filesystem-upgrade' ) . '">go to the settings page</a> to either upgrade or permanently remove this message.', 'wp-members' ),
+					'notice' => $notice_text,
 					'type'   => 'warning',
 				);
 			}
 			if ( 'update_filesystem' == wpmem_get( 'wpmem_admin_a' ) ) {
 				if ( false == wpmem_get( 'wpmem_dismiss_filesystem_upgrade_notice' ) ) {
 					$notices['deprecated_foldersystem'] = array(
-						'notice' => __( 'The /wpmembers/user_files/ folder is deprecated. Please <a href="' . esc_url( trailingslashit( admin_url() ) . 'options-general.php?page=wpmem-settings&tab=filesystem-upgrade' ) . '">go to the settings page</a> to either upgrade or permanently remove this message.', 'wp-members' ),
+						'notice' => $notice_text,
 						'type'   => 'warning',
 					);
 				} elseif ( 1 == wpmem_get( 'wpmem_dismiss_filesystem_upgrade_notice' ) ) {
