@@ -24,7 +24,7 @@ if ( 'finalize' == wpmem_get( 'wpmem_onboarding_action' ) ) {
 		<p>WP-Members installs some basic defaults to get you started. Be sure to review <a href="<?php echo admin_url(); ?>options-general.php?page=wpmem-settings">the plugin's default setup here</a>.
 		There are links to related documentation in the plugin settings.  There are also some helpful links below.</p>     
 	<?php } ?>
-	<ul>
+	<ul><?php /* translators: %s: WP-Members version number */ ?>
 		<li>&raquo; <a href="<?php echo $release_notes_link . "?" . http_build_query( $utms ); ?>" target="_blank"><?php printf( esc_html__( 'WP-Members version %s release notes', 'wp-members' ), $wpmem->version ); ?></a></li>
 		<li>&raquo; <a href="https://rocketgeek.com/plugins/wp-members/docs/?<?php echo http_build_query( $utms ); ?>" target="_blank"><?php _e( 'WP-Members documentation', 'wp-members' ); ?></a></li>
 	</ul>  

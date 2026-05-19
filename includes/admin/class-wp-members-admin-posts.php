@@ -122,8 +122,9 @@ class WP_Members_Admin_Posts {
 
 		global $pagenow, $post_type;
 		if ( $pagenow == 'edit.php' && isset( $_REQUEST['a'] ) ) {
-			$msg = ( $_REQUEST['a'] == 'block' ) ? sprintf( esc_html__( '%s restricted', 'wp-members' ), $post_type ) : sprintf( esc_html__( '%s unrestricted', 'wp-members' ), $post_type );
-			echo '<div class="updated"><p>' . esc_html( $_REQUEST['n'] ) . ' ' . esc_html( $msg ) . '</p></div>';
+			/* translators: %s: Name of post type being restricted/unrestricted */
+			$msg = ( $_REQUEST['a'] == 'block' ) ? sprintf( __( '%s restricted', 'wp-members' ), $post_type ) : sprintf( __( '%s unrestricted', 'wp-members' ), $post_type );
+			echo '<div class="updated"><p>' . esc_html( wp_unslash( $_REQUEST['n'] ) ) . ' ' . esc_html( $msg ) . '</p></div>';
 		}
 	}
 
@@ -161,8 +162,8 @@ class WP_Members_Admin_Posts {
 				 * @since 2.9.0
 				 *
 				 * @param Post restriction title.
-				 */
-				$post_title = apply_filters( 'wpmem_admin_' . $key . '_meta_title', sprintf( esc_html__( '%s Restriction', 'wp-members' ), $post_type->labels->singular_name ) );
+				 *//* translators: %s: Post type name */
+				$post_title = apply_filters( 'wpmem_admin_' . esc_attr( $key ) . '_meta_title', sprintf( esc_html__( '%s Restriction', 'wp-members' ), $post_type->labels->singular_name ) );
 
 				add_meta_box( 'wpmem-block-meta-id', $post_title, array( 'WP_Members_Admin_Posts', 'block_meta' ), $key, 'side', 'high'
 					// ,array( '__back_compat_meta_box' => true, ) // @todo Convert to Block and declare this for backwards compat ONLY!

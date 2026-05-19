@@ -870,6 +870,7 @@ Last Row|last_row
 				if ( $action == 'add_field' ) {
 					if ( ! $add_field_err_msg ) {
 						array_push( $wpmem_fields, $arr );
+						/* translators: %s: Field label being added */
 						$did_update = sprintf( esc_html__( '%s was added', 'wp-members' ), esc_html( $_POST['add_name'] ) );
 					} else {
 						$did_update = $add_field_err_msg;
@@ -883,6 +884,7 @@ Last Row|last_row
 							}
 						}
 					}
+					/* translators: %s: Field label being updated */
 					$did_update =  sprintf( esc_html__( '%s was updated', 'wp-members' ), esc_html( stripslashes( $add_name ) ) );
 					$did_update.= '<p><a href="' . esc_url( add_query_arg( array( 'page' => 'wpmem-settings', 'tab' => 'fields' ), get_admin_url() . 'options-general.php' ) ) . '">&laquo; ' . esc_html__( 'Return to Fields Table', 'wp-members' ) . '</a></p>';
 				}
