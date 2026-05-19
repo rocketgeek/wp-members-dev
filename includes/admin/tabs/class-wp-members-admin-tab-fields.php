@@ -70,12 +70,11 @@ class WP_Members_Admin_Tab_Fields {
 			$delete_fields = wpmem_sanitize_array( wpmem_get( 'delete' ) );?>
 
 			<?php if ( empty( $delete_fields ) ) { ?>
-				<p><?php _e( 'No fields selected for deletion', 'wp-members' ); ?></p>
+				<p><?php esc_html_e( 'No fields selected for deletion', 'wp-members' ); ?></p>
 			<?php } else { ?>
-				<p><?php _e( 'Are you sure you want to delete the following fields?', 'wp-members' ); ?></p>
+				<p><?php esc_html_e( 'Are you sure you want to delete the following fields?', 'wp-members' ); ?></p>
 				<?php foreach ( $delete_fields as $meta ) {
-					$meta = esc_html( $meta );
-					echo esc_html( $wpmem->fields[ $meta ]['label'] ) . ' (meta key: ' . $meta . ')<br />';
+					echo esc_html( $wpmem->fields[ $meta ]['label'] ) . ' (meta key: ' . esc_attr( $meta ) . ')<br />';
 				} ?>
 				<form name="<?php echo esc_attr( $delete_action ); ?>" id="<?php echo esc_attr( $delete_action ); ?>" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>">
 					<?php wp_nonce_field( 'wpmem-confirm-delete' ); ?>
@@ -103,7 +102,7 @@ class WP_Members_Admin_Tab_Fields {
 			}
 
 			if ( $did_update ) { ?>
-				<div id="message" class="updated fade"><p><strong><?php echo $did_update; ?></strong></p></div>
+				<div id="message" class="updated fade"><p><strong><?php echo esc_html( $did_update ); ?></strong></p></div>
 			<?php } 
 			if ( $edit_meta || $add_meta ) {
 				$mode = ( $edit_meta ) ? sanitize_text_field( wpmem_get( 'mode', false, 'get' ) ) : 'add';
@@ -111,9 +110,9 @@ class WP_Members_Admin_Tab_Fields {
 			} else {
 				self::build_field_table();
 			} ?>
-			<h3><span><?php _e( 'Need help?', 'wp-members' ); ?></span></h3>
+			<h3><span><?php esc_html_e( 'Need help?', 'wp-members' ); ?></span></h3>
 			<div class="inside">
-				<strong><i><a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/fields/" target="_blank"><?php _e( 'Field Manager Documentation', 'wp-members' ); ?></a></i></strong>
+				<strong><i><a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/fields/" target="_blank"><?php esc_html_e( 'Field Manager Documentation', 'wp-members' ); ?></a></i></strong>
 			</div>
 			<?php
 		}
@@ -140,84 +139,82 @@ class WP_Members_Admin_Tab_Fields {
 			$field['checkbox_label'] = ''; // fixes unset variable at 308/309 since $field would not be set.
 		}
 		$form_action = ( $mode == 'edit' ) ? 'editfieldform' : 'addfieldform'; 
-		$span_optional = '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>';
-		$span_required = '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; 
 		$form_submit = array( 'mode' => $mode ); 
 		if ( isset( $_GET['field'] ) ) {
 			$form_submit['field'] = $meta_key; 
 		} ?>
-		<h3 class="title"><?php ( $mode == 'edit' ) ? _e( 'Edit Field', 'wp-members' ) : _e( 'Add a Field', 'wp-members' ); ?></h3>
-		<form name="<?php echo $form_action; ?>" id="<?php echo $form_action; ?>" method="post" action="<?php echo wpmem_admin_form_post_url( $form_submit ); ?>">
+		<h3 class="title"><?php ( $mode == 'edit' ) ? esc_html_e( 'Edit Field', 'wp-members' ) : esc_html_e( 'Add a Field', 'wp-members' ); ?></h3>
+		<form name="<?php echo esc_attr( $form_action ); ?>" id="<?php echo esc_attr( $form_action ); ?>" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url( $form_submit ) ); ?>">
 			<?php wp_nonce_field( 'wpmem_add_field' ); ?>
 			<ul>
 				<li>
-					<label><?php _e( 'Field Label', 'wp-members' ); ?> <?php echo $span_required; ?></label>
-					<input type="text" name="add_name" value="<?php echo ( $mode == 'edit' ) ? $field['label'] : false; ?>" class="regular-text" required />
-					<?php _e( 'The name of the field as it will be displayed to the user.', 'wp-members' ); ?>
+					<label><?php esc_html_e( 'Field Label', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
+					<input type="text" name="add_name" value="<?php echo ( $mode == 'edit' ) ? esc_attr( $field['label'] ) : false; ?>" class="regular-text" required />
+					<?php esc_html_e( 'The name of the field as it will be displayed to the user.', 'wp-members' ); ?>
 				</li>
 				<li>
-					<label><?php _e( 'Meta Key', 'wp-members' ); ?> <?php echo $span_required; ?></label>
+					<label><?php esc_html_e( 'Meta Key', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
 					<?php if ( $mode == 'edit' ) { 
-						echo "<span>$meta_key</span>"; ?>
-						<input type="hidden" name="add_option" value="<?php echo $meta_key; ?>" required /> 
+						echo "<span>" . esc_html( $meta_key ) . "</span>"; ?>
+						<input type="hidden" name="add_option" value="<?php echo esc_url( $meta_key ); ?>" required /> 
 					<?php } else { ?>
 						<input type="text" name="add_option" value="" class="regular-text" />
-						<?php _e( 'The database meta value for the field. It must be unique and contain no spaces (underscores are ok).', 'wp-members' ); ?>
+						<?php esc_html_e( 'The database meta value for the field. It must be unique and contain no spaces (underscores are ok).', 'wp-members' ); ?>
 					<?php } ?>
 				</li>
 				<li>
-					<label><?php _e( 'Field Type', 'wp-members' ); ?></label>
+					<label><?php esc_html_e( 'Field Type', 'wp-members' ); ?></label>
 					<?php if ( $mode == 'edit' ) {
-						echo '<span>' . $field['type'] . '</span>'; ?>
-						<input type="hidden" name="add_type" value="<?php echo $field['type']; ?>" /> 							
+						echo '<span>' . esc_html( $field['type'] ) . '</span>'; ?>
+						<input type="hidden" name="add_type" value="<?php echo esc_attr( $field['type'] ); ?>" /> 							
 					<?php } else { ?>
 						<select name="add_type" id="wpmem_field_type_select">
-							<option value="text"><?php          _e( 'text',              'wp-members' ); ?></option>
-							<option value="email"><?php         _e( 'email',             'wp-members' ); ?></option>
-							<option value="textarea"><?php      _e( 'textarea',          'wp-members' ); ?></option>
-							<option value="checkbox"><?php      _e( 'checkbox',          'wp-members' ); ?></option>
-							<option value="multicheckbox"><?php _e( 'multiple checkbox', 'wp-members' ); ?></option>
-							<option value="select"><?php        _e( 'select (dropdown)', 'wp-members' ); ?></option>
-							<option value="multiselect"><?php   _e( 'multiple select',   'wp-members' ); ?></option>
-							<option value="radio"><?php         _e( 'radio group',       'wp-members' ); ?></option>
-							<option value="password"><?php      _e( 'password',          'wp-members' ); ?></option>
-							<option value="image"><?php         _e( 'image',             'wp-members' ); ?></option>
-							<option value="file"><?php          _e( 'file',              'wp-members' ); ?></option>
-							<option value="url"><?php           _e( 'url',               'wp-members' ); ?></option>
-							<option value="number"><?php        _e( 'number',            'wp-members' ); ?></option>
-							<option value="date"><?php          _e( 'date',              'wp-members' ); ?></option>
-							<option value="timestamp"><?php     _e( 'timestamp',         'wp-members' ); ?></option>
-							<option value="hidden"><?php        _e( 'hidden',            'wp-members' ); ?></option>
+							<option value="text"><?php          esc_html_e( 'text',              'wp-members' ); ?></option>
+							<option value="email"><?php         esc_html_e( 'email',             'wp-members' ); ?></option>
+							<option value="textarea"><?php      esc_html_e( 'textarea',          'wp-members' ); ?></option>
+							<option value="checkbox"><?php      esc_html_e( 'checkbox',          'wp-members' ); ?></option>
+							<option value="multicheckbox"><?php esc_html_e( 'multiple checkbox', 'wp-members' ); ?></option>
+							<option value="select"><?php        esc_html_e( 'select (dropdown)', 'wp-members' ); ?></option>
+							<option value="multiselect"><?php   esc_html_e( 'multiple select',   'wp-members' ); ?></option>
+							<option value="radio"><?php         esc_html_e( 'radio group',       'wp-members' ); ?></option>
+							<option value="password"><?php      esc_html_e( 'password',          'wp-members' ); ?></option>
+							<option value="image"><?php         esc_html_e( 'image',             'wp-members' ); ?></option>
+							<option value="file"><?php          esc_html_e( 'file',              'wp-members' ); ?></option>
+							<option value="url"><?php           esc_html_e( 'url',               'wp-members' ); ?></option>
+							<option value="number"><?php        esc_html_e( 'number',            'wp-members' ); ?></option>
+							<option value="date"><?php          esc_html_e( 'date',              'wp-members' ); ?></option>
+							<option value="timestamp"><?php     esc_html_e( 'timestamp',         'wp-members' ); ?></option>
+							<option value="hidden"><?php        esc_html_e( 'hidden',            'wp-members' ); ?></option>
 						<?php if ( $wpmem->enable_products ) { ?>
-							<option value="membership"><?php    _e( 'membership',        'wp-members' ); ?></option>
+							<option value="membership"><?php    esc_html_e( 'membership',        'wp-members' ); ?></option>
 						<?php } ?>
 						</select>
 					<?php } ?>
 				</li>
 				<li>
-					<label><?php _e( 'Registration', 'wp-members' ); ?></label>
+					<label><?php esc_html_e( 'Registration', 'wp-members' ); ?></label>
 					<?php if ( 'username' != $meta_key && 'user_email' != $meta_key ) { ?>
 					<input type="checkbox" name="add_display" value="y" <?php echo ( $mode == 'edit' ) ? checked( true, $field['register'] ) : false; ?> />
 					<?php } else { ?>
-					<span><?php _e( 'This field is always displayed', 'wp-members' ); ?></span>
+					<span><?php esc_html_e( 'This field is always displayed', 'wp-members' ); ?></span>
 					<input type="hidden" name="add_display" value="y" />
 					<?php } ?>
 				</li>
 				<li>
-				<label><?php _e( 'Profile', 'wp-members' ); ?></label>
+				<label><?php esc_html_e( 'Profile', 'wp-members' ); ?></label>
 					<?php if ( 'username' != $meta_key && 'user_email' != $meta_key ) { ?>
 					<input type="checkbox" name="add_profile" value="y" <?php echo ( $mode == 'edit' ) ? checked( true, $field['profile'] ) : false; ?> />
 					<?php } else { ?>
-					<span><?php _e( 'This field cannot be changed', 'wp-members' ); ?></span>
+					<span><?php esc_html_e( 'This field cannot be changed', 'wp-members' ); ?></span>
 					<input type="hidden" name="add_profile" value="y" />
 					<?php } ?>
 				</li>
 				<li>
-					<label><?php _e( 'Required?', 'wp-members' ); ?></label>
+					<label><?php esc_html_e( 'Required?', 'wp-members' ); ?></label>
 					<?php if ( 'username' != $meta_key && 'user_email' != $meta_key ) { ?>
 					<input type="checkbox" name="add_required" value="y" <?php echo ( $mode == 'edit' ) ? checked( true, $field['required'] ) : false; ?> />
 					<?php } else { ?>
-					<span><?php _e( 'This field is always required', 'wp-members' ); ?></span>
+					<span><?php esc_html_e( 'This field is always required', 'wp-members' ); ?></span>
 					<input type="hidden" name="add_required" value="y" />
 					<?php } ?>
 				</li>
@@ -235,8 +232,8 @@ class WP_Members_Admin_Tab_Fields {
 			if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'text', 'number', 'date' ) ) ) ) ) {
 				echo ( $mode == 'add' ) ? '<div id="wpmem_default_value">' : '';
 				<li>
-					<label><?php _e( 'Default value', 'wp-members' ); ?></label>
-					<input type="text" name="add_default_value" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['default_value'] ) ? $field['default_value'] : false ) : false; ?>" /> <?php echo __( 'This will pre-populate the field with a default value. Leave empty if no default value is desired', 'wp-members' ) . ' ' . $span_optional; ?>
+					<label><?php esc_html_e( 'Default value', 'wp-members' ); ?></label>
+					<input type="text" name="add_default_value" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['default_value'] ) ? $field['default_value'] : false ) : false; ?>" /> <?php echo __( 'This will pre-populate the field with a default value. Leave empty if no default value is desired', 'wp-members' ) . ' ' . '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 				echo ( $mode == 'add' ) ? '</div>' : '';
 			}
@@ -245,32 +242,32 @@ class WP_Members_Admin_Tab_Fields {
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'text', 'password', 'email', 'url', 'number', 'date', 'textarea', 'timestamp' ) ) ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_placeholder">' : ''; ?>
 				<li>
-					<label><?php _e( 'Placeholder', 'wp-members' ); ?></label>
-					<input type="text" name="add_placeholder" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['placeholder'] ) ? $field['placeholder'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Placeholder', 'wp-members' ); ?></label>
+					<input type="text" name="add_placeholder" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['placeholder'] ) ? esc_attr( $field['placeholder'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'text', 'password', 'email', 'url', 'date', 'timestamp' ) ) ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_pattern">' : ''; ?>
 				<li>
-					<label><?php _e( 'Pattern', 'wp-members' ); ?></label>
-					<input type="text" name="add_pattern" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['pattern'] ) ? $field['pattern'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Pattern', 'wp-members' ); ?></label>
+					<input type="text" name="add_pattern" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['pattern'] ) ? esc_attr( $field['pattern'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'text', 'password', 'email', 'url', 'number', 'date', 'timestamp' ) ) ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_title">' : ''; ?>
 				<li>
-					<label><?php _e( 'Title', 'wp-members' ); ?></label>
-					<input type="text" name="add_title" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['title'] ) ? $field['title'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Title', 'wp-members' ); ?></label>
+					<input type="text" name="add_title" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['title'] ) ? esc_attr( $field['title'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'timestamp' ) ) ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_date_format">' : ''; ?>
 				<li>
-					<label><?php _e( 'PHP Date Format', 'wp-members' ); ?></label>
-					<input type="text" name="add_timestamp_display" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['timestamp_display'] ) ? $field['timestamp_display'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'PHP Date Format', 'wp-members' ); ?></label>
+					<input type="text" name="add_timestamp_display" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['timestamp_display'] ) ? esc_attr( $field['timestamp_display'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
@@ -278,55 +275,55 @@ class WP_Members_Admin_Tab_Fields {
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'number', 'date' ) ) ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_min_max">' : ''; ?>
 				<li>
-					<label><?php _e( 'Minimum Value', 'wp-members' ); ?></label>
-					<input type="text" name="add_min" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['min'] ) ? $field['min'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Minimum Value', 'wp-members' ); ?></label>
+					<input type="text" name="add_min" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['min'] ) ? esc_attr( $field['min'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 				<li>
-					<label><?php _e( 'Maximum Value', 'wp-members' ); ?></label>
-					<input type="text" name="add_max" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['max'] ) ? $field['max'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Maximum Value', 'wp-members' ); ?></label>
+					<input type="text" name="add_max" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['max'] ) ? esc_attr( $field['max'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( in_array( $field['type'], array( 'textarea' ) ) ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_rows_cols">' : ''; ?>
 				<li>
-					<label><?php _e( 'Rows', 'wp-members' ); ?></label>
-					<input type="number" name="add_rows" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['rows'] ) ? $field['rows'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Rows', 'wp-members' ); ?></label>
+					<input type="number" name="add_rows" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['rows'] ) ? esc_attr( $field['rows'] ) : '' ) : ''; ?>" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 				<li>
-					<label><?php _e( 'Columns', 'wp-members' ); ?></label>
-					<input type="number" name="add_cols" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['cols'] ) ? $field['cols'] : false ) : false; ?>" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Columns', 'wp-members' ); ?></label>
+					<input type="number" name="add_cols" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['cols'] ) ? esc_attr( $field['cols'] ) : '' ) : ''; ?>" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'file' || $field['type'] == 'image' ) ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_file_info">' : ''; ?>
 				<li>
-					<label><?php _e( 'Accepted file types:', 'wp-members' ); ?></label>
-					<input type="text" name="add_file_value" value="<?php echo ( $mode == 'edit' && ( $field['type'] == 'file' || $field['type'] == 'image' ) ) ? $field['file_types'] : false; ?>" class="regular-text" />
+					<label><?php esc_html_e( 'Accepted file types:', 'wp-members' ); ?></label>
+					<input type="text" name="add_file_value" value="<?php echo ( $mode == 'edit' && ( $field['type'] == 'file' || $field['type'] == 'image' ) ) ? esc_attr( $field['file_types'] ) : ''; ?>" class="regular-text" />
 				</li>
 				<li>
 					<label>&nbsp;</label>
-					<span class="description"><?php _e( 'Accepted file types should be set like this: jpg|jpeg|png|gif', 'wp-members' ); ?></span>
+					<span class="description"><?php esc_html_e( 'Accepted file types should be set like this: jpg|jpeg|png|gif', 'wp-members' ); ?></span>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && $field['type'] == 'checkbox' ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_checkbox_info">' : ''; ?>
 				<li>
-					<label><?php _e( 'Checked by default?', 'wp-members' ); ?></label>
+					<label><?php esc_html_e( 'Checked by default?', 'wp-members' ); ?></label>
 					<input type="checkbox" name="add_checked_default" value="y" <?php echo ( $mode == 'edit' && $field['type'] == 'checkbox' ) ? checked( true, $field['checked_default'] ) : false; ?> />
 				</li>
 				<li>
-					<label><?php _e( 'HTML label position', 'wp-members' ); ?></label>
+					<label><?php esc_html_e( 'HTML label position', 'wp-members' ); ?></label>
 					<select name="add_checkbox_label">
-						<option value="0" <?php selected( $field['checkbox_label'], 0 ); ?>><?php _e( 'Before the input tag', 'wp-members' ); ?></option>
-						<option value="1" <?php selected( $field['checkbox_label'], 1 ); ?>><?php _e( 'After the input tag', 'wp-members' ); ?></option>
-					</select> <span class="description"><?php _e( 'Selecting "after" will generally display the label to the right of the checkbox', 'wp-members' ); ?></span>
+						<option value="0" <?php echo esc_attr( selected( $field['checkbox_label'], 0 ) ); ?>><?php esc_html_e( 'Before the input tag', 'wp-members' ); ?></option>
+						<option value="1" <?php echo esc_attr( selected( $field['checkbox_label'], 1 ) ); ?>><?php esc_html_e( 'After the input tag', 'wp-members' ); ?></option>
+					</select> <span class="description"><?php esc_html_e( 'Selecting "after" will generally display the label to the right of the checkbox', 'wp-members' ); ?></span>
 				</li>
 				<li>
-					<label><?php _e( 'Stored value if checked:', 'wp-members' ); ?></label>
-					<input type="text" name="add_checked_value" id="add_checked_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'checkbox' ) ? $field['checked_value'] : false; ?>" class="regular-text" /> <span class="req"><?php _e( '(required)', 'wp-members' ); ?></span>
+					<label><?php esc_html_e( 'Stored value if checked:', 'wp-members' ); ?></label>
+					<input type="text" name="add_checked_value" id="add_checked_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'checkbox' ) ? esc_attr( $field['checked_value'] ) : ''; ?>" class="regular-text" /> <span class="req"><?php esc_html_e( '(required)', 'wp-members' ); ?></span>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } 
@@ -346,26 +343,26 @@ class WP_Members_Admin_Tab_Fields {
 				}
 				?>
 				<li>
-					<label><?php _e( 'Stored values delimiter:', 'wp-members' ); ?></label>
+					<label><?php esc_html_e( 'Stored values delimiter:', 'wp-members' ); ?></label>
 					<select name = "add_delimiter_value">
-						<option value="|" <?php selected( '|', $delimiter ); ?>>pipe "|"</option>
-						<option value="," <?php selected( ',', $delimiter ); ?>>comma ","</option>
+						<option value="|" <?php echo esc_attr( selected( '|', $delimiter ) ); ?>>pipe "|"</option>
+						<option value="," <?php echo esc_attr( selected( ',', $delimiter ) ); ?>>comma ","</option>
 					</select>
 				</li>
 				<?php echo ( $mode == 'add' ) ? '</div>' : '';
 				} ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'select' || $field['type'] == 'multiselect' ) ) ) { ?>
 				<li id="add_dropdown_value">
-					<label style="vertical-align:top"><?php _e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo $span_required; ?></label>
+					<label style="vertical-align:top"><?php esc_html_e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
 					<textarea name="add_dropdown_value" rows="8" cols="60"><?php
 	// Accomodate editing the current dropdown values or create dropdown value example.
 	if ( $mode == 'edit' ) {
 	for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
 	// If the row contains commas (i.e. 1,000-10,000), wrap in double quotes.
 	if ( strstr( $field['values'][ $row ], ',' ) ) {
-	echo '"' . $field['values'][ $row ]; echo ( $row == count( $field['values'] )- 1  ) ? '"' : "\",\n";
+	echo '"' . esc_attr( $field['values'][ $row ] ) . '"'; echo ( $row == count( $field['values'] )- 1  ) ? '"' : "\",\n";
 	} else {
-	echo $field['values'][ $row ]; echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
+	echo esc_attr( $field['values'][ $row ] ); echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
 	} }
 					} else { ?>
 ---- Select One ----|,
@@ -378,16 +375,16 @@ Last Row|last_row
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'radio' || $field['type'] == 'multicheckbox' ) ) ) { ?>
 				<li id="add_radio_value" >
-					<label style="vertical-align:top"><?php _e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo $span_required; ?></label>
+					<label style="vertical-align:top"><?php esc_html_e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
 					<textarea name="add_radio_value" rows="8" cols="60"><?php
 	// Accomodate editing the current radio values or create radio value example.
 	if ( $mode == 'edit' ) {
 	for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
 	// If the row contains commas (i.e. 1,000-10,000), wrap in double quotes.
 	if ( strstr( $field['values'][ $row ], ',' ) ) {
-	echo '"' . $field['values'][ $row ]; echo ( $row == count( $field['values'] )- 1  ) ? '"' : "\",\n";
+	echo '"' . esc_attr( $field['values'][ $row ] ) . '"'; echo ( $row == count( $field['values'] )- 1  ) ? '"' : "\",\n";
 	} else {
-	echo $field['values'][ $row ]; echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
+	echo esc_attr( $field['values'][ $row ] ); echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
 	} }
 					} else { ?>
 Choice One|choice_one,
@@ -399,28 +396,28 @@ Last Row|last_row
 			<?php } ?>
 				<li>
 					<label>&nbsp;</label>
-					<span class="description"><?php _e( 'Options should be Option Name|option_value,', 'wp-members' ); ?></span>
+					<span class="description"><?php esc_html_e( 'Options should be Option Name|option_value,', 'wp-members' ); ?></span>
 				</li>
 				<li>
 					<label>&nbsp;</label>
-					<span class="description"><a href="https://rocketgeek.com/plugins/wp-members/docs/registration/choosing-fields/" target="_blank"><?php _e( 'Visit plugin site for more information', 'wp-members' ); ?></a></span>
+					<span class="description"><a href="https://rocketgeek.com/plugins/wp-members/docs/registration/choosing-fields/" target="_blank"><?php esc_html_e( 'Visit plugin site for more information', 'wp-members' ); ?></a></span>
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && $field['type'] == 'hidden' ) ) { ?>
 			<?php echo ( $mode == 'add' ) ? '<div id="wpmem_hidden_info">' : ''; ?>
 				<li>
-					<label><?php _e( 'Value', 'wp-members' ); ?> <?php echo $span_required; ?></label>
-					<input type="text" name="add_hidden_value" id="add_hidden_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'hidden' ) ? $field['value'] : ''; ?>" class="regular-text" />
+					<label><?php esc_html_e( 'Value', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
+					<input type="text" name="add_hidden_value" id="add_hidden_value" value="<?php echo ( $mode == 'edit' && $field['type'] == 'hidden' ) ? esc_attr( $field['value'] ) : ''; ?>" class="regular-text" />
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
 				<li>
-					<label><?php _e( 'Label href', 'wp-members' ); ?></label>
-					<input type="text" name="add_terms_check_href" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['label_href'] ) ? $field['label_href'] : false ) : false; ?>" class="regular-text" /> <?php echo $span_optional; ?>
+					<label><?php esc_html_e( 'Label href', 'wp-members' ); ?></label>
+					<input type="text" name="add_terms_check_href" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['label_href'] ) ? esc_attr( $field['label_href'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
 			</ul><br />
-			<?php if ( $mode == 'edit' ) { ?><input type="hidden" name="field_arr" value="<?php echo $meta_key; ?>" /><?php } ?>
+			<?php if ( $mode == 'edit' ) { ?><input type="hidden" name="field_arr" value="<?php echo esc_attr( $meta_key ); ?>" /><?php } ?>
 			<?php if ( 'add' == $mode ) {
 					$ids = array();
 					foreach ( $fields as $f ) {
@@ -622,14 +619,13 @@ Last Row|last_row
 
 		$table = new WP_Members_Fields_Table();
 
-		$heading     = esc_html__( 'Manage Fields', 'wp-members' );
 		//$description = esc_html__( 'Displaying fields for:', 'wp-members' );
 		//$which_form  = $wpmem->form_tags[ $wpmem->admin->current_form ];
 
 		echo '<div class="wrap">';
-		printf( '<h3 class="title">%s</h3>', $heading );
+		echo '<h3 class="title">' . esc_html__( 'Manage Fields', 'wp-members' ) . '</h3>';
 		//printf( '<p>%s <strong>%s</strong></p>', $description, $which_form );
-		printf( '<form name="updatefieldform" id="updatefieldform" method="post" action="%s">', wpmem_admin_form_post_url() );
+		echo '<form name="updatefieldform" id="updatefieldform" method="post" action="' . esc_url( wpmem_admin_form_post_url() ) . '">';
 
 		$table->items = $field_items;
 		$table->prepare_items(); 
@@ -910,13 +906,13 @@ Last Row|last_row
 
 		// Check nonce.
 		if ( ! check_admin_referer( 'wpmem_settings_nonce', 'nonce' ) ) {
-			_e( 'The link has expired. Please reload the page, or make sure your request originates from the WP-Members Fields tab.', 'wp-members' );
+			esc_html_e( 'The link has expired. Please reload the page, or make sure your request originates from the WP-Members Fields tab.', 'wp-members' );
 			die();
 		}
 
 		// Check user caps in case this is hit by a non-admin user.
 		if ( ! current_user_can( 'manage_options' ) ) {
-			_e( 'User lacks required capability to make this change.', 'wp-members' );
+			esc_html_e( 'User lacks required capability to make this change.', 'wp-members' );
 			die();
 		}
 
@@ -941,7 +937,7 @@ Last Row|last_row
 		update_option( 'wpmembers_fields', $wpmem_new_fields, false ); 
 
 		// Indicate successful transaction.
-		_e( 'Form field order updated.', 'wp-members' );
+		esc_html_e( 'Form field order updated.', 'wp-members' );
 
 		die(); // This is required to return a proper result.
 

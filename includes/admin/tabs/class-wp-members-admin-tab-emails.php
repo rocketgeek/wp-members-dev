@@ -74,7 +74,7 @@ class WP_Members_Admin_Tab_Emails {
 										<td><input type="text" name="wp_mail_from_name" size="40" value="<?php echo esc_attr( stripslashes( $wpmem->email->from_name ) ); ?>" />&nbsp;<span class="description"><?php esc_html_e( '(optional)', 'wp-members' ); ?> John Smith</span></td>
 									</tr>
 									<tr valign="top">
-										<th scope="row"><?php _e( 'Send HTML email', 'wp-members' ); ?></th>
+										<th scope="row"><?php esc_html_e( 'Send HTML email', 'wp-members' ); ?></th>
 										<td><input type="checkbox" name="wpmem_email_html" value="1" <?php checked( $wpmem->email->html, 1, true ); ?> /></td>
 									</tr>
 									<tr><td colspan="2"><hr /></td></tr>
@@ -90,7 +90,7 @@ class WP_Members_Admin_Tab_Emails {
 										'body_value' => $arr,
 									); ?>
 									<tr valign="top">
-										<th scope="row"><strong><?php echo esc_html__( "Email Signature", 'wp-members' ); ?></strong> <span class="description"><?php _e( '(optional)', 'wp-members' ); ?></span></th>
+										<th scope="row"><strong><?php echo esc_html__( "Email Signature", 'wp-members' ); ?></strong> <span class="description"><?php esc_html_e( '(optional)', 'wp-members' ); ?></span></th>
 										<td><?php self::do_email_editor( $footer_args ); ?></td>
 									</tr>
 									<tr><td colspan="2"><hr /></td></tr>

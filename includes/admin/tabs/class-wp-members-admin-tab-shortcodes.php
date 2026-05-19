@@ -124,7 +124,7 @@ class WP_Members_Admin_Tab_Shortcodes {
 		global $wpmem;
 
 		if ( ! check_admin_referer( 'wpmem-update-settings' ) ) {
-			wp_die( __( 'Security check failed. Please try again.', 'wp-members' ) );
+			wp_die( esc_html__( 'Security check failed. Please try again.', 'wp-members' ) );
 		}
 
 		$wpmem_settings = get_option( 'wpmembers_settings' );
