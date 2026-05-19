@@ -420,18 +420,27 @@ class WP_Members_Products {
 			'name'                  => $plural,
 			'singular_name'         => $singular,
 			'menu_name'             => esc_html__( 'Memberships', 'wp-members' ),
+			/* translators: %s is replaced with the plural membership ("Memberships"). */
 			'all_items'             => sprintf( esc_html__( 'All %s', 'wp-members' ), $plural ),
+			/* translators: %s is replaced with the singular membership ("Membership"). */
 			'add_new_item'          => sprintf( esc_html__( 'Add New %s', 'wp-members' ), $singular ),
 			'add_new'               => esc_html__( 'Add New', 'wp-members' ),
+			/* translators: %s is replaced with the singular membership ("Membership"). */
 			'new_item'              => sprintf( esc_html__( 'New %s', 'wp-members' ), $singular ),
+			/* translators: %s is replaced with the singular membership ("Membership"). */
 			'edit_item'             => sprintf( esc_html__( 'Edit %s', 'wp-members' ), $singular ),
+			/* translators: %s is replaced with the singular membership ("Membership"). */
 			'update_item'           => sprintf( esc_html__( 'Update %s', 'wp-members' ), $singular ),
+			/* translators: %s is replaced with the singular membership ("Membership"). */
 			'view_item'             => sprintf( esc_html__( 'View %s', 'wp-members' ), $singular ),
+			/* translators: %s is replaced with the plural membership ("Memberships"). */
 			'view_items'            => sprintf( esc_html__( 'View %s', 'wp-members' ), $plural ),
+			/* translators: %s is replaced with the plural membership ("Memberships"). */
 			'search_items'          => sprintf( esc_html__( 'Search %s', 'wp-members' ), $plural ),
 			'not_found'             => esc_html__( 'Not found', 'wp-members' ),
 			'not_found_in_trash'    => esc_html__( 'Not found in Trash', 'wp-members' ),
 			'insert_into_item'      => esc_html__( 'Insert into item', 'wp-members' ),
+			/* translators: %s is replaced with the singular membership ("Membership"). */
 			'publish'               => sprintf( esc_html__( 'Save %s Details', 'wp-members' ), $singular ),
 			'attributes'            => esc_html__( 'Membership Attributes', 'wp-members' ),
 		);

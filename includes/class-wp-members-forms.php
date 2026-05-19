@@ -2225,15 +2225,16 @@ class WP_Members_Forms {
 
 		// If filtered value is not the default label, use that, otherwise use label.
 		// @note: if default changes, this check must change.
-		if ( __( 'Please indicate that you agree to the %s Terms of Service %s', 'wp-members' ) == $tos_link_text ) {
+		/* translators: %1$s is replaced with the TOS link. */
+		if ( __( 'Please indicate that you agree to the %1$s Terms of Service %2$s', 'wp-members' ) == $tos_link_text ) {
 			if ( __( 'TOS', 'wp-members' ) != $field['label'] && __( 'Terms of Service', 'wp-members' ) != $field['label'] ) {
 				$tos_link_text = $field['label'];
 			}
 		}
 
-		// If tos string does not contain link identifiers (%s), wrap the whole string.
-		if ( ! strpos( $tos_link_text, '%s' ) ) {
-			$tos_link_text = '%s' . $tos_link_text . '%s';
+		// If tos string does not contain link identifiers (%1$s), wrap the whole string.
+		if ( ! strpos( $tos_link_text, '%1$s' ) ) {
+			$tos_link_text = '%1$s' . $tos_link_text . '%2$s';
 		}
 		
 		return sprintf( $tos_link_text, $tos_link_tag, '</a>' );
@@ -2257,7 +2258,7 @@ class WP_Members_Forms {
 	 */
 	function apply_label_link( $meta_key, $args ) {
 		// Adjust placeholders.
-		$label_text = str_replace( '%', '%s', esc_html( __( $args['label'], 'wp-members' ) ) );
+		$label_text = str_replace( '%', '%s', esc_html__( $args['label'], 'wp-members' ) );
 
 		/**
 		 * Filters the anchor tag.
@@ -2268,7 +2269,7 @@ class WP_Members_Forms {
 		 * @param  string  $meta_key Meta key of the field.
 		 */
 		$tag_atts = apply_filters( 'wpmem_form_label_link', array ( 
-			'href'   => $args['label_href'],
+			'href'   => esc_url_raw( $args['label_href'] ),
 			'target' => '_blank',
 		), $meta_key );
 		

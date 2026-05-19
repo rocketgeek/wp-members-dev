@@ -161,8 +161,9 @@ class WP_Members_Menus {
 			<div class="field-wpmem_nav_menu wpmem_nav_menu_field description-wide" style="margin: 5px 0; <?php echo $hidden;?>">
 			<?php if ( empty( $display_products ) ) { 
 				$add_product_url = esc_url( admin_url( 'post-new.php?post_type=wpmem_product' ) );	
+			/* translators: %1$s is replaced with a link to add membership products, %2$s is the closing link tag */
 			?>
-			<span class="description"><?php echo sprintf( esc_html__( "%sAdd membership products%s to restrict menu to a membership", 'wp-members' ), '<a href="' . $add_product_url . '">', '</a>' ); ?></span>	
+			<span class="description"><?php echo sprintf( esc_html__( '%1$sAdd membership products%2$s to restrict menu to a membership', 'wp-members' ), '<a href="' . esc_url_raw( $add_product_url ) . '">', '</a>' ); ?></span>	
 			<?php } else { ?>
 			<span class="description"><?php echo esc_html__( "Restrict menu item to a membership product", 'wp-members' ); ?></span>
 			<br />
