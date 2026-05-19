@@ -95,7 +95,7 @@ class WP_Members_Captcha {
 	 * @since  3.3.0  Replaces wpmem_inc_recaptcha().
 	 * @since  3.3.5  Accepts API public key for static use.
 	 *
-	 * @global stdCalss $wpmem
+	 * @global stdClass $wpmem
 	 * @param  string   $key  Your reCAPTCHA public key.
 	 * @return string   $html HTML for reCAPTCHA display.
 	 */

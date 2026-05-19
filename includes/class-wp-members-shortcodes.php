@@ -408,12 +408,9 @@ class WP_Members_Shortcodes {
 					}
 				}
 
-				// Prevents display if the current page is the user profile and an action is being handled.
+				// Prevents display if the current page is the user profile and an action is being handled through URL query string.
 				if ( ( wpmem_current_url( true, false ) == wpmem_profile_url() ) ) {
-
-					if ( isset( $_GET['a'] ) ) {
-						$do_return = false;
-					}
+					$do_return = ( wpmem_get( 'a', false, 'get' ) ) ? false : $do_return;
 				}
 
 				// Adds optional wrapper.
