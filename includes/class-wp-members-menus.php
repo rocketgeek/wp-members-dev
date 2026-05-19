@@ -161,32 +161,33 @@ class WP_Members_Menus {
 			<div class="field-wpmem_nav_menu wpmem_nav_menu_field description-wide" style="margin: 5px 0; <?php echo $hidden;?>">
 			<?php if ( empty( $display_products ) ) { 
 				$add_product_url = esc_url( admin_url( 'post-new.php?post_type=wpmem_product' ) );	
-			/* translators: %1$s is replaced with a link to add membership products, %2$s is the closing link tag */
 			?>
-			<span class="description"><?php echo sprintf( esc_html__( '%1$sAdd membership products%2$s to restrict menu to a membership', 'wp-members' ), '<a href="' . esc_url_raw( $add_product_url ) . '">', '</a>' ); ?></span>	
+			<span class="description">
+				<?php /* translators: %1$s is replaced with a link to add membership products, %2$s is the closing link tag */
+				echo sprintf( esc_html__( '%1$sAdd membership products%2$s to restrict menu to a membership', 'wp-members' ), '<a href="' . esc_url_raw( $add_product_url ) . '">', '</a>' ); ?></span>	
 			<?php } else { ?>
-			<span class="description"><?php echo esc_html__( "Restrict menu item to a membership product", 'wp-members' ); ?></span>
-			<br />
-			<?php
+				<span class="description"><?php echo esc_html__( "Restrict menu item to a membership product", 'wp-members' ); ?></span>
+				<br />
+				<?php
 
-			$i = 1;
+				$i = 1;
 
-			/* Loop through each of the available memberships. */
-			foreach ( $display_products as $key => $product ) {
+				/* Loop through each of the available memberships. */
+				foreach ( $display_products as $key => $product ) {
 
-				/* If the memberships has been selected, make sure it's checked. */
-				$checked = checked( true, ( is_array( $checked_products ) && in_array( $key, $checked_products ) ), false );
-				?>
+					/* If the memberships has been selected, make sure it's checked. */
+					$checked = checked( true, ( is_array( $checked_products ) && in_array( $key, $checked_products ) ), false );
+					?>
 
-				<div class="wpmem-product-input" style="float: left; width: 33.3%; margin: 2px 0;">
-				<input type="checkbox" name="wpmem_product[<?php echo $item->ID ;?>][<?php echo $i; ?>]" id="wpmem_product-<?php echo $key; ?>-for-<?php echo $item->ID ;?>" <?php echo $checked; ?> value="<?php echo $key; ?>" />
-				<label for="wpmem_product-<?php echo $key; ?>-for-<?php echo $item->ID ;?>">
-				<?php echo esc_html( $product['title'] ); ?>
-				<?php $i++; ?>
-				</label>
-				</div>
+					<div class="wpmem-product-input" style="float: left; width: 33.3%; margin: 2px 0;">
+					<input type="checkbox" name="wpmem_product[<?php echo $item->ID ;?>][<?php echo $i; ?>]" id="wpmem_product-<?php echo $key; ?>-for-<?php echo $item->ID ;?>" <?php echo $checked; ?> value="<?php echo $key; ?>" />
+					<label for="wpmem_product-<?php echo $key; ?>-for-<?php echo $item->ID ;?>">
+					<?php echo esc_html( $product['title'] ); ?>
+					<?php $i++; ?>
+					</label>
+					</div>
 
-			<?php } 
+				<?php } 
 			} ?>
 			</div>
 		<?php } ?>
