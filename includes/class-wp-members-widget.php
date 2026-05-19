@@ -40,6 +40,16 @@ class widget_wpmemwidget extends WP_Widget {
 			'redirect_to' => '',
 		);
 		$instance = wp_parse_args( ( array ) $instance, $defaults );
+
+		// If $redirect_to is set, make sure it's a valid URL.
+		if ( $instance['redirect_to'] != '' ) {
+			if ( ! wp_http_validate_url( $instance['redirect_to'] ) ) {
+				// If it's not a valid URL, try setting a permalink.
+				$redirect_to_escd = esc_html( rktgk_get_permalink_by_slug( $instance['redirect_to'] ) );	
+			} else {
+				$redirect_to_escd = esc_url_raw( $instance['redirect_to'] );
+			}
+		}
 		
 		// Title input. ?>
 		<p>
@@ -48,7 +58,7 @@ class widget_wpmemwidget extends WP_Widget {
 		</p>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>"><?php esc_html_e( 'Redirect to (optional):', 'wp-members' ); ?></label>
-			<input id="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'redirect_to' ) ); ?>" value="<?php echo esc_attr( $instance['redirect_to'] ); ?>" style="width:95%;" />
+			<input id="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'redirect_to' ) ); ?>" value="<?php echo $redirect_to_escd; ?>" style="width:95%;" />
 		</p>
 		<?php
 	}
@@ -108,13 +118,13 @@ class widget_wpmemwidget extends WP_Widget {
 		 */
 		$id = apply_filters( 'wpmem_widget_id', 'wp-members', $instance, $this->id_base  );
 		
-		echo wp_kses( $args['before_widget'], 'post' );
+		echo $args['before_widget'];
 		echo '<div id="' . esc_attr( $id ) . '">';
-		echo wp_kses( $args['before_title'], 'post' ) . esc_html( $title ) . wp_kses( $args['after_title'], 'post' );
+		echo $args['before_title'] . esc_html( $title ) . $args['after_title'];
 		// The Widget
 		$this->do_sidebar( $redirect_to, $customizer ); 
 		echo '</div>';
-		echo wp_kses( $args['after_widget'], 'post' );
+		echo $args['after_widget'];
 	}
 	
 	/**
@@ -283,8 +293,16 @@ class widget_wpmemwidget extends WP_Widget {
 				$form.= $add_to_form;
 			}
 
+			// If $redirect_to is set, make sure it's a valid URL.
+			if ( $redirect_to != '' ) {
+				if ( ! wp_http_validate_url( $redirect_to ) ) {
+					// If it's not a valid URL, try setting a permalink.
+					$redirect_to = rktgk_get_permalink_by_slug( $redirect_to );	
+				}
+			}
+
 			$hidden = '<input type="hidden" name="rememberme" value="forever" />' . $args['n'] .
-					'<input type="hidden" name="redirect_to" value="' . ( ( $redirect_to ) ? esc_url( $redirect_to ) : $esc_post_to ) . '" />' . $args['n'] .
+					'<input type="hidden" name="redirect_to" value="' . ( ( $redirect_to ) ? esc_url_raw( $redirect_to ) : $esc_post_to ) . '" />' . $args['n'] .
 					'<input type="hidden" name="a" value="login" />' . $args['n'] .
 					'<input type="hidden" name="slog" value="true" />';
 			/**
