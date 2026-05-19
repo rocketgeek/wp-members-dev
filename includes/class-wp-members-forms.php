@@ -2225,16 +2225,16 @@ class WP_Members_Forms {
 
 		// If filtered value is not the default label, use that, otherwise use label.
 		// @note: if default changes, this check must change.
-		/* translators: %1$s is replaced with the TOS link. */
-		if ( __( 'Please indicate that you agree to the %1$s Terms of Service %2$s', 'wp-members' ) == $tos_link_text ) {
+		/* translators: %s is replaced with the TOS link. */
+		if ( __( 'Please indicate that you agree to the %s Terms of Service %s', 'wp-members' ) == $tos_link_text ) {
 			if ( __( 'TOS', 'wp-members' ) != $field['label'] && __( 'Terms of Service', 'wp-members' ) != $field['label'] ) {
 				$tos_link_text = $field['label'];
 			}
 		}
 
-		// If tos string does not contain link identifiers (%1$s), wrap the whole string.
-		if ( ! strpos( $tos_link_text, '%1$s' ) ) {
-			$tos_link_text = '%1$s' . $tos_link_text . '%2$s';
+		// If tos string does not contain link identifiers (%s), wrap the whole string.
+		if ( ! strpos( $tos_link_text, '%s' ) ) {
+			$tos_link_text = '%s' . esc_html( $tos_link_text ) . '%s';
 		}
 		
 		return sprintf( $tos_link_text, $tos_link_tag, '</a>' );
