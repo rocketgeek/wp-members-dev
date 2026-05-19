@@ -296,6 +296,8 @@ function wpmem_form_field( $name, $type=null, $value=null, $valtochk=null, $clas
  * Function to output wpmem_form_field()
  * 
  * @since 3.5.7
+ * 
+ * @param string|array  $args  See wpmem_form_field() for accepted arguments.
  */
 function wpmem_form_field_echo( $name, $type=null, $value=null, $valtochk=null, $class='textbox' ) {
 	echo wpmem_form_field( $name, $type, $value, $valtochk, $class );
@@ -321,6 +323,17 @@ function wpmem_form_field_echo( $name, $type=null, $value=null, $valtochk=null, 
 function wpmem_form_label( $args ) {
 	global $wpmem;
 	return $wpmem->forms->create_form_label( $args );
+}
+
+/**
+ * Function to output wpmem_form_label()
+ * 
+ * @since 3.5.7
+ * 
+ * @param array  $args See wpmem_form_label() for accepted arguments.
+ */
+function wpmem_form_label_echo( $args ) {
+	echo wpmem_form_label( $args );	
 }
 
 /**

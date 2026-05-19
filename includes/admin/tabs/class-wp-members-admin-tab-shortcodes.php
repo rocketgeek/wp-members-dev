@@ -87,7 +87,8 @@ class WP_Members_Admin_Tab_Shortcodes {
                                 <tr>
                                     <td><input type="radio" name="wpmem_enable_field_sc" id="wpmem_enable_field_sc_3" value="2" <?php checked( $wpmem_enable_field_sc, 2 ); ?> /></td>
                                     <td><label><?php esc_html_e('Fully enabled', 'wp-members'); ?></label>
-                                    <span class="description"><?php printf(esc_html__('%sSee docs for security implications%s.','wp-members'),$sc_notice_start,'</a>'); ?></span></td>
+									<?php /* translators: %1$s & %2$s are replaced with a link to the documentation on security implications of enabling the shortcode. */ ?>
+                                    <span class="description"><?php printf(esc_html__('%1$sSee docs for security implications%2$s.','wp-members'),$sc_notice_start,'</a>'); ?></span></td>
                                 </tr>
                                 <?php // @todo Future expansion ?>
                                 <!--<tr>
@@ -121,6 +122,10 @@ class WP_Members_Admin_Tab_Shortcodes {
 	static function update() {
 
 		global $wpmem;
+
+		if ( ! check_admin_referer( 'wpmem-update-settings' ) ) {
+			wp_die( __( 'Security check failed. Please try again.', 'wp-members' ) );
+		}
 
 		$wpmem_settings = get_option( 'wpmembers_settings' );
 
