@@ -509,8 +509,8 @@ class WP_Members_Admin_Users {
 
 		// Makes WP-Members columns sortable.
 		// @todo - finish debugging class or add sortable functions to users.php.
-		// require_once( $wpmem->path . 'admin/includes/class-wp-members-sortable-user-columns.php' );
-		// new WP_Members_Sortable_User_Columns( $wpmem_user_columns );
+		//require_once( trailingslashit( $wpmem->path ) . 'includes/admin/class-wp-members-sortable-user-columns.php' );
+		//new WP_Members_Sortable_User_Columns( $wpmem_user_columns );
 
 		return $columns;
 	} 
@@ -581,6 +581,28 @@ class WP_Members_Admin_Users {
 		 */
 		$value = apply_filters( 'wpmem_user_column_content', $value, $column_name, $user_id );
 		return $value;
+	}
+
+	static function sortable_columns( $columns ) {
+
+		$sortable_columns = get_option( 'wpmembers_urfields' );
+		if ( $sortable_columns ) {
+
+			/**
+			 * Filter the sortable columns before they are merged.
+			 *
+			 * @since 3.5.7
+			 *
+			 * @param array
+			 */
+			$sortable_columns = apply_filters( 'wpmem_sortable_user_columns', $sortable_columns );
+
+			foreach ( $sortable_columns as $key => $value ) {
+				$columns[ $key ] = ( 'user_id' == $key ) ? 'ID' : $key;
+			}
+		}
+
+		return $columns;
 	}
 
 	/**

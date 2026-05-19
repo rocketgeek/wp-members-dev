@@ -81,7 +81,7 @@ class WP_Members_Admin_Tab_Fields {
 					<?php wp_nonce_field( 'wpmem-confirm-delete' ); ?>
 					<input type="hidden" name="delete_fields" value="<?php echo esc_attr( implode( ",", $delete_fields ) ); ?>" />
 					<input type="hidden" name="dodelete" value="delete_confirmed" />
-					<?php submit_button( 'Delete Fields' ); ?>
+					<?php submit_button( esc_html__( 'Delete Fields', 'wp-members' ) ); ?>
 				</form><?php
 			}
 		} else {
@@ -453,6 +453,8 @@ Last Row|last_row
 
 		$wpmem_ut_fields_skip = array( 'username', 'user_email', 'confirm_email', 'password', 'confirm_password' );	
 		$wpmem_ut_fields = get_option( 'wpmembers_utfields' );
+		$wpmem_ur_fields_skip = array( 'username', 'user_email', 'confirm_email', 'password', 'confirm_password' );	
+		$wpmem_ur_fields = get_option( 'wpmembers_urfields' );
 		$wpmem_us_fields_skip = array( 'username', 'user_email', 'confirm_email', 'password', 'confirm_password' );	
 		$wpmem_us_fields = get_option( 'wpmembers_usfields' );
 		if ( wpmem_is_woo_active() ) {
@@ -484,6 +486,7 @@ Last Row|last_row
 
 				$meta = $field[2];
 				$ut_checked = ( ( $wpmem_ut_fields ) && ( array_key_exists( $meta, $wpmem_ut_fields ) ) ) ? $meta : false;
+				$ur_checked = ( ( $wpmem_ur_fields ) && ( array_key_exists( $meta, $wpmem_ur_fields ) ) ) ? $meta : false;
 				$us_checked = ( ( $wpmem_us_fields ) && ( array_key_exists( $meta, $wpmem_us_fields ) ) ) ? $meta : false;
 
 				if ( wpmem_is_woo_active() ) {
@@ -525,6 +528,12 @@ Last Row|last_row
 					'type' => 'checkbox',
 					'value' => $field[1],
 					'compare' => ( ( $ut_checked == $meta ) ? $field[1] : false ) 
+				) ) : '';
+				$item['usersort'] = ( ! in_array( $meta, $wpmem_ur_fields_skip ) ) ? wpmem_form_field( array(
+					'name' => "wpmem_fields_usrsort[" . $meta . "]",
+					'type' => 'checkbox',
+					'value' => $field[1],
+					'compare' => ( ( $ur_checked == $meta ) ? $field[1] : false ) 
 				) ) : '';
 				$item['usearch']  = ( ! in_array( $meta, $wpmem_us_fields_skip ) ) ? wpmem_form_field( array(
 					'name' => "wpmem_fields_usearch[" . $meta . "]",
@@ -581,6 +590,7 @@ Last Row|last_row
 
 		foreach ( $extra_user_screen_items as $key => $item ) {
 			$ut_checked = ( ( $wpmem_ut_fields ) && ( in_array( $item, $wpmem_ut_fields ) ) ) ? $item : '';
+			$ur_checked = ( ( $wpmem_ur_fields ) && ( in_array( $item, $wpmem_ur_fields ) ) ) ? $item : '';
 			if ( 'user_id' == $key
 				|| 'user_registered' == $key 
 				|| 'wpmem_reg_ip' == $key 
@@ -589,6 +599,7 @@ Last Row|last_row
 				|| wpmem_is_exp_enabled() && $wpmem->use_exp == 1 && ( 'exp_type' == $key || 'expires' == $key ) ) {
 				$user_screen_items[ $key ] = array( 'label' => esc_html__( $item, 'wp-members' ), 'meta' => $key,
 					'userscrn' => wpmem_form_field( "wpmem_fields_uscreen[{$key}]", 'checkbox', $item, $ut_checked ),
+					'usersort' => wpmem_form_field( "wpmem_fields_usrsort[{$key}]", 'checkbox', $item, $ur_checked ),
 				);
 			}
 		}
@@ -602,6 +613,7 @@ Last Row|last_row
 				'req'      => '',
 				'profile'  => '',
 				'userscrn' => $screen_item['userscrn'],
+				'usersort' => $screen_item['usersort'],
 				'usearch'  => '',
 				'edit'     => '',
 				'sort'     => '',
@@ -675,6 +687,11 @@ Last Row|last_row
 
 				// Update user search fields.
 				update_option( 'wpmembers_usfields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_usearch', array() ) ), false );
+		
+				// Update user sort fields.
+				update_option( 'wpmembers_urfields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_usrsort', array() ) ), false );
+
+				// Update Woo fields.
 				if ( wpmem_is_woo_active() ) {
 					if ( 1 == $wpmem->woo->add_checkout_fields ) {
 						update_option( 'wpmembers_wcchkout_fields', wpmem_sanitize_array( wpmem_get( 'wpmem_fields_wcchkout', array() ) ), false );
@@ -753,7 +770,8 @@ Last Row|last_row
 				// Error check for reserved terms.
 				$reserved_terms = wpmem_wp_reserved_terms();
 				if ( in_array( strtolower( $add_option ), $reserved_terms ) ) {
-					$add_field_err_msg = sprintf( esc_html__( 'Sorry, "%s" is a <a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">reserved term</a>. Field was not added.', 'wp-members' ), $add_option );
+					/* translators: 1. Meta key that is a reserved term, 2. Link to WordPress Codex page on reserved terms, 3. Closing link tag */
+					$add_field_err_msg = sprintf( esc_html__( 'Sorry, "%1$s" is a %2$sreserved term%3$s. Field was not added.', 'wp-members' ), $add_option, '<a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">', '</a>' );
 				}
 
 				// Error check option name for spaces and replace with underscores.

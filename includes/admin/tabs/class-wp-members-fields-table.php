@@ -94,6 +94,7 @@ class WP_Members_Fields_Table extends WP_List_Table {
 		}
 
 		$columns['userscrn'] = '<input name="wpmem_all_fields_uscreen" type="checkbox" id="wpmem_all_fields_uscreen" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> '   . esc_html__( 'Users',        'wp-members' );
+		$columns['usersort'] = '<input name="wpmem_all_fields_usrsort" type="checkbox" id="wpmem_all_fields_usrsort" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> '   . esc_html__( 'Sort',         'wp-members' );
 		$columns['usearch']  = '<input name="wpmem_all_fields_usearch" type="checkbox" id="wpmem_all_fields_usearch" value="1" data-tooltip="' . esc_html__( 'Click to check all', 'wp-members' ) . '"> '   . esc_html__( 'Search',       'wp-members' );
 		
 		$columns['edit'] = '';
@@ -171,11 +172,11 @@ class WP_Members_Fields_Table extends WP_List_Table {
 	function single_row( $columns ) {
 		if ( in_array( $columns['meta'], $this->excludes ) ) {
 			echo '<tr id="' . esc_attr( $columns['meta'] ) . '" class="nodrag nodrop">';
-			echo $this->single_row_columns( $columns );
+			$this->single_row_columns( $columns );
 			echo "</tr>\n";
 		} else {
 			echo '<tr id="list_items_' . esc_attr( $columns['order'] ) . '" class="list_item" list_item="' . esc_attr( $columns['order'] ) . '">';
-			echo $this->single_row_columns( $columns );
+			$this->single_row_columns( $columns );
 			echo "</tr>\n";
 		}
 	}

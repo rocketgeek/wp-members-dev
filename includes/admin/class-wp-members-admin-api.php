@@ -172,17 +172,18 @@ class WP_Members_Admin_API {
 		add_action( 'show_user_profile',              array( 'WP_Members_User_Profile', '_profile_tabs' ), 99 );
 
 		if ( current_user_can( 'list_users' ) ) {
-			add_action( 'admin_footer-users.php',     array( 'WP_Members_Admin_Users', 'bulk_user_action' ) );
-			add_action( 'load-users.php',             array( 'WP_Members_Admin_Users', 'page_load' ) );
-			add_action( 'admin_notices',              array( 'WP_Members_Admin_Users', 'admin_notices' ) );
-			add_filter( 'views_users',                array( 'WP_Members_Admin_Users', 'views' ) );
-			add_filter( 'manage_users_columns',       array( 'WP_Members_Admin_Users', 'add_user_column' ) );
-			add_filter( 'manage_users_custom_column', array( 'WP_Members_Admin_Users', 'add_user_column_content' ), 10, 3 );
-			add_action( 'wpmem_user_activated',       array( 'WP_Members_Admin_Users', 'set_activated_user' ) );
-			add_action( 'wpmem_user_deactivated',     array( 'WP_Members_Admin_Users', 'set_deactivated_user' ) );
-			add_filter( 'user_row_actions',           array( 'WP_Members_Admin_Users', 'insert_hover_links' ), 10, 2 );
-			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_activate'   ), 7 );
-			add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_ip'         ), 9 );
+			add_action( 'admin_footer-users.php',        array( 'WP_Members_Admin_Users', 'bulk_user_action' ) );
+			add_action( 'load-users.php',                array( 'WP_Members_Admin_Users', 'page_load' ) );
+			add_action( 'admin_notices',                 array( 'WP_Members_Admin_Users', 'admin_notices' ) );
+			add_filter( 'views_users',                   array( 'WP_Members_Admin_Users', 'views' ) );
+			add_filter( 'manage_users_columns',          array( 'WP_Members_Admin_Users', 'add_user_column' ) );
+			add_filter( 'manage_users_custom_column',    array( 'WP_Members_Admin_Users', 'add_user_column_content' ), 10, 3 );
+			add_filter( 'manage_users_sortable_columns', array( 'WP_Members_Admin_Users', 'sortable_columns' ) );
+			add_action( 'wpmem_user_activated',          array( 'WP_Members_Admin_Users', 'set_activated_user' ) );
+			add_action( 'wpmem_user_deactivated',        array( 'WP_Members_Admin_Users', 'set_deactivated_user' ) );
+			add_filter( 'user_row_actions',              array( 'WP_Members_Admin_Users', 'insert_hover_links' ), 10, 2 );
+			add_action( 'wpmem_admin_after_profile',     array( 'WP_Members_User_Profile', '_show_activate'   ), 7 );
+			add_action( 'wpmem_admin_after_profile',     array( 'WP_Members_User_Profile', '_show_ip'         ), 9 );
 			if ( wpmem_is_enabled( 'enable_products' ) ) {
 				//add_action( 'wpmem_admin_after_profile',  array( 'WP_Members_User_Profile', '_show_product' ), 10 );
 			}
