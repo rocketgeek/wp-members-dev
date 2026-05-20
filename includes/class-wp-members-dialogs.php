@@ -115,8 +115,8 @@ class WP_Members_Dialogs {
 			'register_heading'     => esc_html__( 'New User Registration', 'wp-members' ),
 			'register_username'    => esc_html__( 'Choose a Username', 'wp-members' ),
 			'register_rscaptcha'   => esc_html__( 'Input the code:', 'wp-members' ),
-			/* translators: %1$s & %2$s are opening and closing links to the TOS. */
-			'register_tos'         => esc_html__( 'Please indicate that you agree to the %1$s Terms of Service %2$s', 'wp-members' ), // @note: if default changes, default check after wpmem_tos_link_txt must change.
+			/* translators: %s are the opening and closing links to the TOS. */
+			'register_tos'         => esc_html__( 'Please indicate that you agree to the %s Terms of Service %s', 'wp-members' ), // @note: if default changes, default check after wpmem_tos_link_txt must change.
 			'register_clear'       => esc_html__( 'Reset Form', 'wp-members' ),
 			'register_submit'      => esc_html__( 'Register', 'wp-members' ),
 			'register_req_mark'    => '<span class="req">*</span>',

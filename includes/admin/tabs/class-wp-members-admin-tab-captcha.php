@@ -59,13 +59,10 @@ class WP_Members_Admin_Tab_Captcha {
 	 */
 	public static function build_settings() {
 
-		// Global settings.
+		// Globals.
 		global $wpmem, $wpmem_updated_captcha_type;
-
-		$wpmem_captcha = get_option( 'wpmembers_captcha' );
-		$url           = home_url();
-		/* translators: %1$s & %2$s are replaced with a link to the Users Guide on CAPTCHA settings. */
-		$help_link     = sprintf( __( 'See the %1$sUsers Guide on CAPTCHA%2$s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/registration/using-captcha/" target="_blank">', '</a>' );	
+		// Settings.
+		$wpmem_captcha = get_option( 'wpmembers_captcha' );		
 		?>
 		<div class="metabox-holder has-right-sidebar">
 
@@ -74,7 +71,10 @@ class WP_Members_Admin_Tab_Captcha {
 				<div class="postbox">
 					<h3><span><?php esc_html_e( 'Need help?', 'wp-members' ); ?></span></h3>
 					<div class="inside">
-						<strong><i><?php echo wp_kses( $help_link, 'post' ); ?></i></strong>
+						<strong><i><?php 
+							/* translators: %s replaced with a link to the Users Guide on CAPTCHA settings. */
+							printf( esc_html__( 'See the %sUsers Guide on CAPTCHA%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/registration/using-captcha/" target="_blank">', '</a>' );
+						?></i></strong>
 					</div>
 				</div>
 			</div> <!-- .inner-sidebar -->
@@ -204,9 +204,9 @@ class WP_Members_Admin_Tab_Captcha {
 										<tr>
 											<th scope="row"><?php esc_html_e( 'Image type', 'wp-members' ); ?></th>
 											<td><select name="img_type">
-												<option<?php echo ( $args['img_type'] == 'png' ) ? ' selected' : ''; ?>>png</option>
-												<option<?php echo ( $args['img_type'] == 'gif' ) ? ' selected' : ''; ?>>gif</option>
-												<option<?php echo ( $args['img_type'] == 'jpg' ) ? ' selected' : ''; ?>>jpg</option>
+												<option<?php echo esc_attr( ( $args['img_type'] == 'png' ) ? ' selected' : '' ); ?>>png</option>
+												<option<?php echo esc_attr( ( $args['img_type'] == 'gif' ) ? ' selected' : '' ); ?>>gif</option>
+												<option<?php echo esc_attr( ( $args['img_type'] == 'jpg' ) ? ' selected' : '' ); ?>>jpg</option>
 												</select>
 											</td>
 										</tr><?php
