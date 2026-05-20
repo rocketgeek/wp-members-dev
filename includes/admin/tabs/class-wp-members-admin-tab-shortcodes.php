@@ -66,10 +66,9 @@ class WP_Members_Admin_Tab_Shortcodes {
 						<div class="inside">
 							<form name="updateshortcodesform" id="updateshortcodesform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 							<?php 
-                            wp_nonce_field( 'wpmem-update-settings' );
+                            wp_nonce_field( 'wpmem_update_shortcodes', 'wpmem_nonce' );
                             $wpmem_enable_field_sc = $wpmem->shortcodes->enable_field; 
                             $wpmem_enable_field_sc = ( $wpmem_enable_field_sc ) ? $wpmem_enable_field_sc : 0;
-                            $sc_notice_start = '<a href="https://rocketgeek.com/plugins/wp-members/docs/shortcodes/field-shortcodes/#security" target="_blank">';
                             ?>
                             <h3>WP-Members <?php esc_html_e( 'Shortcodes', 'wp-members' ); ?></h3>
                             <p><?php esc_html_e('&#91;wpmem_field&#93; shortcode settings:', 'wp-members'); ?></p>
@@ -87,8 +86,13 @@ class WP_Members_Admin_Tab_Shortcodes {
                                 <tr>
                                     <td><input type="radio" name="wpmem_enable_field_sc" id="wpmem_enable_field_sc_3" value="2" <?php checked( $wpmem_enable_field_sc, 2 ); ?> /></td>
                                     <td><label><?php esc_html_e('Fully enabled', 'wp-members'); ?></label>
-									<?php /* translators: %1$s & %2$s are replaced with a link to the documentation on security implications of enabling the shortcode. */ ?>
-                                    <span class="description"><?php printf(esc_html__('%1$sSee docs for security implications%2$s.','wp-members'),$sc_notice_start,'</a>'); ?></span></td>
+                                    <span class="description"><?php 
+										/* translators: %s are replaced with a link to the documentation on security implications of enabling the shortcode. */
+										printf( esc_html__('%sSee docs for security implications%s.','wp-members'),
+											'<a href="https://rocketgeek.com/plugins/wp-members/docs/shortcodes/field-shortcodes/#security" target="_blank">',
+											'</a>'
+										); 
+									?></span></td>
                                 </tr>
                                 <?php // @todo Future expansion ?>
                                 <!--<tr>
@@ -123,7 +127,7 @@ class WP_Members_Admin_Tab_Shortcodes {
 
 		global $wpmem;
 
-		if ( ! check_admin_referer( 'wpmem-update-settings' ) ) {
+		if ( ! check_admin_referer( 'wpmem_update_shortcodes', 'wpmem_nonce' ) ) {
 			wp_die( esc_html__( 'Security check failed. Please try again.', 'wp-members' ) );
 		}
 
