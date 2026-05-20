@@ -823,20 +823,19 @@ class WP_Members_Products_Admin {
 
 					// If user has date, display that; otherwise placeholder
 					$date_value  = ( isset( $user_products[ $key ] ) && 1 != $user_products[ $key ] && 0 != $user_products[ $key ] && '' != $user_products[ $key ] ) ? date( 'Y-m-d', $user_products[ $key ] ) : "";
-					$placeholder = ( ! isset( $user_products[ $key ] ) ) ? 'placeholder="' . esc_html__( 'Expiration date (optional)', 'wp-members' ) . '" ' : '';
-					$product_date_field = ' <input type="text" name="_wpmem_membership_expiration_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" class="wpmem_datepicker" ' . esc_attr( $placeholder ) . ' />';
+					$placeholder = ( ! isset( $user_products[ $key ] ) ) ? 'placeholder="' . __( 'Expiration date (optional)', 'wp-members' ) . '" ' : '';
 
 					if ( isset( $user_products[ $key ] ) ) {
 						echo '<td align="center"><span id="wpmem_product_enabled" class="dashicons dashicons-yes"></span></td>';
 						if ( $user_products[ $key ] != 1 ) {
-							echo '<td>' . wp_kses( $product_date_field, 'post' ). '</td>';
+							echo '<td> <input type="text" name="_wpmem_membership_expiration_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" class="wpmem_datepicker" ' . esc_attr( $placeholder ) . ' /></td>';
 						} else {
 							echo '<td>&nbsp;</td>';
 						}
 					} else {
 						if ( isset( $value['expires'] ) && ! empty( $value['expires'] ) ) {
 							echo '<td><span id="wpmem_product_enabled" class="dashicons"></span></td>';
-							echo '<td>' . wp_kses( $product_date_field, 'post' ) . '</td>';
+							echo '<td> <input type="text" name="_wpmem_membership_expiration_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" class="wpmem_datepicker" ' . esc_attr( $placeholder ) . ' /></td>';
 						} else {
 							echo '<td>&nbsp;</td>';
 						}
@@ -854,8 +853,8 @@ class WP_Members_Products_Admin {
 				</script>
 				<?php
 			} else {
-				/* translators: %1$s & %2$s are replaced with the link to create memberships. */
-				echo '<p>' . sprintf( esc_html__( 'No memberships have been created. %1$sCreate new memberships here%2$s', 'wp-members' ), '<a href="' . esc_url( admin_url() ) . 'edit.php?post_type=wpmem_product">', '</a>' );
+				/* translators: %s are replaced with the link to create memberships. */
+				echo '<p>' . sprintf( esc_html__( 'No memberships have been created. %sCreate new memberships here%s', 'wp-members' ), '<a href="' . esc_url( admin_url() ) . 'edit.php?post_type=wpmem_product">', '</a>' );
 			}
 		}
 	}

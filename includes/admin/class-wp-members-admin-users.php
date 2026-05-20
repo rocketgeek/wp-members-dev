@@ -172,22 +172,32 @@ class WP_Members_Admin_Users {
 					switch ( $action ) {
 						case 'activate':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( esc_html( sprintf( _n( '%s user activated', '%s users activated', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users activated', 'wp-members' ), intval( $x ) ) );
+							// @todo When we upgrade to 3.6 and update translations.
+							// $msg = urlencode( esc_html( sprintf( _n( '%s user activated', '%s users activated', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'deactivate':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( esc_html( sprintf( _n( '%s user deactivated', '%s users deactivated', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users deactivated', 'wp-members' ), intval( $x ) ) );
+							// @todo When we upgrade to 3.6 and update translations.
+							// $msg = urlencode( esc_html( sprintf( _n( '%s user deactivated', '%s users deactivated', $i, 'wp-members' ), $i ) ) );
 						case 'confirm':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( esc_html( sprintf( _n( '%s user confirmed', '%s users confirmed', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users confirmed', 'wp-members' ), intval( $x ) ) );
+							// @todo When we upgrade to 3.6 and update translations.
+							// $msg = urlencode( esc_html( sprintf( _n( '%s user confirmed', '%s users confirmed', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'unconfirm':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( esc_html( sprintf( _n( '%s user unconfirmed', '%s users unconfirmed', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( sprintf( esc_html__( '%s users unconfirmed', 'wp-members' ), intval( $x ) ) );
+							// @todo When we upgrade to 3.6 and update translations.
+							// $msg = urlencode( esc_html( sprintf( _n( '%s user unconfirmed', '%s users unconfirmed', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'resend_welcome':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( esc_html( sprintf( _n( 'Resent welcome to %s user', 'Resent welcome to %s users', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( sprintf( esc_html__( 'Resent welcome to %s users', 'wp-members' ), intval( $x ) ) );
+							// @todo When we upgrade to 3.6 and update translations.
+							// $msg = urlencode( esc_html( sprintf( _n( 'Resent welcome to %s user', 'Resent welcome to %s users', $i, 'wp-members' ), $i ) ) );
 					}
 
 				} else {
@@ -323,8 +333,8 @@ class WP_Members_Admin_Users {
 	static function admin_notices() {
 
 		global $pagenow, $user_action_msg;
-		if( $pagenow == 'users.php' && isset( $_REQUEST['activated'] ) ) {
-			$message = wp_unslash( $_REQUEST['activated'] );
+		if ( $pagenow == 'users.php' && isset( $_REQUEST['activated'] ) ) {
+			$message = wpmem_get_sanitized( 'activated', false, 'request' );
 			echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
 		}
 
