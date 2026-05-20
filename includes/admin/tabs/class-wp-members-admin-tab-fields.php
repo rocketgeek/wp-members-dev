@@ -102,7 +102,7 @@ class WP_Members_Admin_Tab_Fields {
 			}
 
 			if ( $did_update ) { ?>
-				<div id="message" class="updated fade"><p><strong><?php echo esc_html( $did_update ); ?></strong></p></div>
+				<div id="message" class="updated fade"><p><strong><?php echo wp_kses( $did_update, 'post' ); ?></strong></p></div>
 			<?php } 
 			if ( $edit_meta || $add_meta ) {
 				$mode = ( $edit_meta ) ? sanitize_text_field( wpmem_get( 'mode', false, 'get' ) ) : 'add';
@@ -766,8 +766,10 @@ Last Row|last_row
 				// Error check for reserved terms.
 				$reserved_terms = wpmem_wp_reserved_terms();
 				if ( in_array( strtolower( $add_option ), $reserved_terms ) ) {
-					/* translators: 1. Meta key that is a reserved term, 2. Link to WordPress Codex page on reserved terms, 3. Closing link tag */
-					$add_field_err_msg = sprintf( esc_html__( 'Sorry, "%1$s" is a %2$sreserved term%3$s. Field was not added.', 'wp-members' ), $add_option, '<a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">', '</a>' );
+					/* translators: 1. Meta key that is a reserved term. */
+					$add_field_err_msg = sprintf( esc_html__( 'Sorry, "%s" is a <a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">reserved term</a>. Field was not added.', 'wp-members' ), $add_option );
+					// @todo Revise the translated string.
+					// $add_field_err_msg = sprintf( esc_html__( 'Sorry, "%1$s" is a %2$sreserved term%3$s. Field was not added.', 'wp-members' ), $add_option, '<a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">', '</a>' );
 				}
 
 				// Error check option name for spaces and replace with underscores.

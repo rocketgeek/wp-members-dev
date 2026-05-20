@@ -53,11 +53,7 @@ class WP_Members_Admin_Tab_Options {
 
 		/** This filter is documented in wp-members/includes/class-wp-members-email.php */
 		$admin_email = apply_filters( 'wpmem_notify_addr', get_option( 'admin_email' ) );
-		/* translators: %1$s & %2$s is replaced with a link to the admin email settings, %3$s & %4$s is replaced with a link to the filter hooks documentation. */
-		$chg_email   = sprintf( __( '%1$sChange%2$s or %3$sFilter%4$s this address', 'wp-members' ), '<a href="' . site_url( 'wp-admin/options-general.php', 'admin' ) . '">', '</a>', '<a href="https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/wpmem_notify_addr/">', '</a>' );
-		/* translators: %1$s & %2$s is replaced with a link to the users guide options documentation. */
-		$help_link   = sprintf( __( 'See the %1$sUsers Guide on plugin options%2$s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
-
+		
 		// Build an array of post types
 		$post_types = $wpmem->admin->post_types();
 		$post_arr = array(
@@ -79,7 +75,12 @@ class WP_Members_Admin_Tab_Options {
 				<div class="postbox">
 					<h3><span><?php esc_html_e( 'Need help?', 'wp-members' ); ?></span></h3>
 					<div class="inside">
-						<p><strong><i><?php echo wp_kses( $help_link, 'post' ); ?></i></strong></p>
+						<p><strong><i>
+							<?php
+							/* translators: %s is replaced with a link to the users guide options documentation. */
+							printf( __( 'See the %sUsers Guide on plugin options%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
+							?>
+						</i></strong></p>
 						<p><button id="opener">Get Settings Information</button></p>
 					</div>
 				</div>
@@ -92,7 +93,7 @@ class WP_Members_Admin_Tab_Options {
 						<h3><span><?php esc_html_e( 'Manage Options', 'wp-members' ); ?></span></h3>
 						<div class="inside">
 							<form name="updatesettings" id="updatesettings" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url() ); ?>">
-							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
+							<?php wp_nonce_field( 'wpmem_update_options', 'wpmem_nonce' ); ?>
 								<h3><?php esc_html_e( 'Content', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#content" target="_blank" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<ul>
 								<?php
@@ -219,22 +220,68 @@ class WP_Members_Admin_Tab_Options {
 								<?php 
 								/** This filter is defined in includes/class-wp-members.php */
 								$dropin_dir = apply_filters( 'wpmem_dropin_dir', $wpmem->dropin_dir );
-								$mem_link_start = '<a href="https://rocketgeek.com/plugins/wp-members/docs/membership-products/" target="_blank">';
-								$mem_link_end   = '</a>';
-								$conf_link_start = '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#confirm" target="_blank">';
-								$conf_link_end   = '</a>';
 								$rows = array(
-									/* translators: %1$s & %2$s is replaced with a link to the membership products documentation. */
-									array(__('Enable memberships', 'wp-members'),'wpmem_settings_products',sprintf(__('Enables creation of different %1$s membership products %2$s','wp-members'),$mem_link_start,$mem_link_end),'enable_products'),
-									array(__('Clone menus','wp-members'),'wpmem_settings_menus',__('Enables logged in menus','wp-members'),'clone_menus'),
-									/* translators: %1$s replaced by the email the notification is sent to. %2$s is replaced with links to change the email and documentation about the filter. */
-									array(__('Notify admin','wp-members'),'wpmem_settings_notify',sprintf(__('Notify %1$s for each new registration? %2$s','wp-members'),$admin_email,$chg_email),'notify'),
-									array(__('Moderate registration','wp-members'),'wpmem_settings_moderate',__('Holds new registrations for admin approval','wp-members'),'mod_reg'),
-									/* translators: %1$s & %2$s is replaced with a link to the confirmation link documentation. */
-									array(__('Confirmation Link', 'wp-members'),'wpmem_settings_act_link',sprintf(__('Send email confirmation link on new registration. %1$s(Requires additional configuration)%2$s','wp-members'),$conf_link_start,$conf_link_end),'act_link'),
-									array(__('Ignore warning messages','wp-members'),'wpmem_settings_ignore_warnings',__('Ignores WP-Members warning messages in the admin panel','wp-members'),'warnings'),
+									array(
+										__('Enable memberships', 'wp-members'),
+										'wpmem_settings_products',
+										/* translators: %s is replaced with a link to the membership products documentation. */
+										sprintf(__('Enables creation of different %s membership products %s','wp-members'),
+											'<a href="https://rocketgeek.com/plugins/wp-members/docs/membership-products/" target="_blank">',
+											'</a>'
+										),
+										'enable_products'
+									),
+									array(
+										__('Clone menus','wp-members'),
+										'wpmem_settings_menus',
+										__('Enables logged in menus','wp-members'),
+										'clone_menus'
+									),
+									array(
+										__('Notify admin','wp-members'),
+										'wpmem_settings_notify',
+										/* translators: First %s replaced by the email the notification is sent to. Second is links to change the email and documentation about the filter. */
+										sprintf(__('Notify %s for each new registration? %s','wp-members'),
+											$admin_email,
+											/* translators: %s is replaced with a link to the admin email settings and a link to the filter hooks documentation. */
+											sprintf(__( '%sChange%s or %sFilter%s this address', 'wp-members' ), 
+												'<a href="' . site_url( 'wp-admin/options-general.php', 'admin' ) . '">', 
+												'</a>', 
+												'<a href="https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/wpmem_notify_addr/">', 
+												'</a>' 
+											)
+										),
+										'notify'
+									),
+									array(
+										__('Moderate registration','wp-members'),
+										'wpmem_settings_moderate',
+										__('Holds new registrations for admin approval','wp-members'),
+										'mod_reg'
+									),
+									array(
+										__('Confirmation Link', 'wp-members'),
+										'wpmem_settings_act_link',
+										/* translators: %s is replaced with a link to the confirmation link documentation. */
+										sprintf(__('Send email confirmation link on new registration. %s(Requires additional configuration)%s','wp-members'),
+											'<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#confirm" target="_blank">',
+											'</a>'
+										),
+										'act_link'
+									),
+									array(
+										__('Ignore warning messages','wp-members'),
+										'wpmem_settings_ignore_warnings',
+										__('Ignores WP-Members warning messages in the admin panel','wp-members'),
+										'warnings'
+									),
 									//array(__('Enable dropins', 'wp-members'),'wpmem_settings_enable_dropins',sprintf(esc_html__('Enables dropins in %s', 'wp-members'), $dropin_dir),'dropins'),
-									array(esc_html__('Notifications & Diagnostics', 'wp-members' ),'wpmem_settings_optin',__('Opt in to security and updates notifications and non-sensitive diagnostics tracking', 'wp-members'),'optin'),
+									array(
+										esc_html__('Notifications & Diagnostics', 'wp-members' ),
+										'wpmem_settings_optin',
+										__('Opt in to security and updates notifications and non-sensitive diagnostics tracking', 'wp-members'),
+										'optin'
+									),
 								);
 								foreach ( $rows as $row ) { 
 									if ( $row[0] == esc_html__('Clone menus','wp-members') && 1 != $wpmem->clone_menus ) {
@@ -322,7 +369,7 @@ class WP_Members_Admin_Tab_Options {
 						<h3><span><?php esc_html_e( 'Custom Post Types', 'wp-members' ); ?></span></h3>
 						<div class="inside">
 							<form name="updatecpts" id="updatecpts" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url() ); ?>">
-							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
+							<?php wp_nonce_field( 'wpmem_update_options', 'wpmem_nonce' ); ?>
 								<table class="form-table">
 									<tr>
 										<th scope="row"><?php esc_html_e( 'Add to WP-Members Settings', 'wp-members' ); ?></th>
@@ -407,7 +454,7 @@ class WP_Members_Admin_Tab_Options {
 		global $wpmem;
 
 		// Check nonce.
-		check_admin_referer( 'wpmem-update-settings' );
+		check_admin_referer( 'wpmem_update_options', 'wpmem_nonce' );
 		
 		if ( 'update_cpts' == $action ) {
 
@@ -428,10 +475,10 @@ class WP_Members_Admin_Tab_Options {
 				}
 			}
 
-			$post_vals = wpmem_get( 'wpmembers_handle_cpts', false );
+			$post_vals = wpmem_get_sanitized( 'wpmembers_handle_cpts', false, 'post', 'array' );
 			if ( $post_vals ) {
 				foreach ( $post_vals as $val ) {
-					$cpts[ $val ] = sanitize_text_field( $post_arr[ $val ] );
+					$cpts[ $val ] = sanitize_text_field( $post_arr[ esc_attr( $val ) ] );
 				}
 			} else {
 				$cpts = array();
