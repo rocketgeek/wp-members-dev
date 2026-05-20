@@ -74,7 +74,7 @@ class WP_Members_Email {
 	 *
 	 * @since 3.4.0
 	 */
-	private function load_format() {
+	public function load_format() {
 		$this->html = get_option( 'wpmembers_email_html', 0 );
 	}
 	

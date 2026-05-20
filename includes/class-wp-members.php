@@ -587,6 +587,7 @@ class WP_Members {
 		
 		// @todo Is this a temporary fix?
 		$this->email->load_from();
+		$this->email->load_format();
 		
 		/**
 		 * Fires after main settings are loaded.
