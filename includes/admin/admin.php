@@ -36,19 +36,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function wpmem_admin() {
 
-	global $wpmem;
+	$did_update = ( wpmem_get( 'wpmem_admin_a', false ) ) ? wpmem_admin_action( wpmem_get_sanitized( 'wpmem_admin_a', false, 'post' ) ) : false;
 
-	if ( isset( $_POST['wpmem_admin_a'] ) ) {
-		$did_update = check_admin_referer( 'wpmem-update-settings' );
-		if ( ! $did_update ) {
-			wp_die( __( 'Security check failed. Please try again.', 'wp-members' ) );
-		} else {
-			// @todo There may be a legacy reason for keeping it this way, primarily with add-ons.
-			$did_update = wpmem_admin_action( sanitize_text_field( wp_unslash( $_POST['wpmem_admin_a'] ) ) );
-		}
-	} else {
-		$did_update = false;
-	}
+	global $wpmem;
 
 	add_filter( 'wpmem_admin_tabs',   array( 'WP_Members_Admin_Tab_About', 'add_tab' ), 99 );
 
@@ -61,7 +51,7 @@ function wpmem_admin() {
 		add_action( 'wpmem_admin_do_tab', array( 'WP_Members_Admin_Tab_Dropins', 'do_tab'  ), 1, 1 );
 	} 
 
-	// @todo Adds tab for updating filesystem if /wpmembers/user_files/ exists.
+	// Adds tab for updating filesystem if /wpmembers/user_files/ exists.
 	$uploads = wp_upload_dir();
 	$deprecated_folder = trailingslashit( $uploads['basedir'] ) . 'wpmembers/user_files';
 	if ( is_dir( $deprecated_folder ) ) {
