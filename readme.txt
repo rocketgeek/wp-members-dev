@@ -142,7 +142,8 @@ WP-Members 3.5.6 is a security release. WP-Members 3.5.5 is a feature update rel
 * Added custom column sorting to Users > All Users.
 * Added `wpmem_sortable_user_columns` filter hook for customizing sortable columns.
 * `wpmem_user_membership_set` action replaces `wpmem_user_product_set`.
-* Code review and improvement (security audit updates).
+* Code review and improvement: security audit updates.
+* Code review and improvement: translation update, added translator comments.
 
 = 3.5.6 =
 
