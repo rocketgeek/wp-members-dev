@@ -115,3 +115,61 @@ function rktgk_get_sub_str( $needle, $haystack, $position = 'after', $keep_needl
 	return $new;
 }
 endif;
+
+/**
+ * Get permalink from a post/page slug
+ *
+ * @param string $slug The post/page slug.
+ * @param string $post_type The post type (default: 'page').
+ * @return string|false The permalink URL or false if not found.
+ */
+function rktgk_get_permalink_by_slug( $slug, $post_type = 'page' ) {
+    // Sanitize slug input
+    $slug = sanitize_title( $slug );
+
+    // Query for the post
+    $post = get_page_by_path( $slug, OBJECT, $post_type );
+
+    if ( $post ) {
+        return get_permalink( $post->ID );
+    }
+
+    return false; // Not found
+}
+
+/**
+ * Check if a given value is a valid WordPress post or page.
+ *
+ * @param mixed  $value   Post/Page ID (int) or slug/title (string).
+ * @param string $type    Optional. 'post', 'page', or 'any'. Default 'any'.
+ * @return WP_Post|false  Returns WP_Post object if found, false otherwise.
+ */
+function rktgk_is_valid_post_or_page( $value, $type = 'any' ) {
+    // Sanitize type
+    $allowed_types = array( 'any', 'post', 'page' );
+    if ( ! in_array( $type, $allowed_types, true ) ) {
+        $type = 'any';
+    }
+
+    // If numeric, treat as ID
+    if ( is_numeric( $value ) ) {
+        $post = get_post( (int) $value );
+        if ( $post && ( 'any' === $type || $post->post_type === $type ) && $post->post_status === 'publish' ) {
+            return $post;
+        }
+    }
+    // If string, treat as slug or title
+    elseif ( is_string( $value ) && $value !== '' ) {
+        // Try slug first
+        $post = get_page_by_path( sanitize_title( $value ), OBJECT, $type === 'any' ? array( 'post', 'page' ) : $type );
+        if ( ! $post ) {
+            // Try title match
+            $post = get_page_by_title( $value, OBJECT, $type === 'any' ? array( 'post', 'page' ) : $type );
+        }
+        if ( $post && $post->post_status === 'publish' ) {
+            return $post;
+        }
+    }
+
+    return false;
+}
