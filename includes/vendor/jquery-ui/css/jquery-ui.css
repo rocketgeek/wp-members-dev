@@ -729,14 +729,14 @@ a.ui-button:focus {
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-	border: 1px solid #003eff;
-	background: #007fff;
+	border: 1px solid #3858e9;
+	background: #3858e9;
 	font-weight: normal;
 	color: #ffffff;
 }
 .ui-icon-background,
 .ui-state-active .ui-icon-background {
-	border: #003eff;
+	border: #3858e9 solid 1px;
 	background-color: #ffffff;
 }
 .ui-state-active a,
