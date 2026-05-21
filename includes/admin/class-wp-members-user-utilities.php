@@ -78,7 +78,8 @@ class WP_Members_User_Utilities {
     }
 
     static function admin_page_load() {
-        if ( 'wpmem-user-utilities' == wpmem_get( 'page', false, 'get' ) && 1 == wpmem_get( 'activate-all-confirm', false ) ) {
+        $confirmed = ( 1 == wpmem_get( 'activate-all-confirm', false ) || 1 == wpmem_get( 'confirm-all-confirm', false ) ) ? true : false;
+        if ( 'wpmem-user-utilities' == wpmem_get( 'page', false, 'get' ) && $confirmed ) {
 
             // Verify nonce.
             if ( false == check_admin_referer( 'wpmem-user-utilities' ) ) {
@@ -96,13 +97,26 @@ class WP_Members_User_Utilities {
             if ( false == self::get_validation_errors() ) {
 
                 $users = get_users( array( 'fields'=>'ID' ) );
-                $count = 0;
+                $activate_count = 0;
+                $confirm_count = 0;
                 foreach ( $users as $user_id ) {
-                    //update_user_meta( $user_id, 'active', 1 );
-                    //wpmem_set_user_status( $user_id, 0 );
-                    $count++;
+                    if ( 1 == wpmem_get( 'activate-all-confirm', false ) ) {
+                        //wpmem_activate_user( $user_id, false, false );
+                        $activate_count++;
+                    }
+                    if ( 1 == wpmem_get( 'confirm-all-confirm', false ) ) {
+                        wpmem_set_user_as_confirmed( $user_id );
+                        $confirm_count++;
+                    }
                 }
-                self::set_activate_all_complete( $count );
+                if ( 1 == wpmem_get( 'activate-all-confirm', false ) && $activate_count > 0 ) {
+                    self::set_activate_all_complete();
+                    self::set_activate_all_count( $activate_count );
+                }
+                if ( 1 == wpmem_get( 'confirm-all-confirm', false ) && $confirm_count > 0 ) {
+                    self::set_confirm_all_complete();
+                    self::set_confirm_all_count( $confirm_count );
+                }
             }
         }
     }
@@ -110,32 +124,26 @@ class WP_Members_User_Utilities {
     public static function notices() {
 
         if ( false != self::get_validation_errors() ) {
-            $class   = 'notice notice-error';
-            $message = esc_html__( "Submission was invalid. No action taken.", 'wp-members' );
-            printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+            echo '<div class="notice notice-error"><p>' . esc_html__( "Submission was invalid. No action taken.", 'wp-members' ) . '</p></div>';
         }
 
         if ( self::get_activate_all_complete() ) {
-            $class   = 'notice notice-success';
             /* translators: placeholder displays an integer. */
-            $message = sprintf( esc_html__( "%s users were marked as activated", 'wp-members' ), self::get_activate_all_complete() );
-
-            printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+            $message = sprintf( esc_html__( "%s users were marked as activated", 'wp-members' ), self::get_activate_all_count() );
+            printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( $message ) );
         }
         if ( self::get_confirm_all_complete() ) {
             $class   = 'notice notice-success';
             /* translators: placeholder displays an integer. */
-            $message = sprintf( esc_html__( "%s users were marked as confirmed", 'wp-members' ), self::get_confirm_all_complete() );
-
-            printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+            $message = sprintf( esc_html__( "%s users were marked as confirmed", 'wp-members' ), self::get_confirm_all_count() );
+            printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( $message ) );
         }
     }
 
     public static function admin_page() {
         echo "<h1>" . esc_html__( 'WP-Members User Utilities', 'wp-members' ) . "</h1>";
 
-        $form_post = ( function_exists( 'wpmem_admin_form_post_url' ) ) ? wpmem_admin_form_post_url() : '';
-        echo '<form name="wpmem-user-utilities" id="wpmem-user-utilities" method="post" action="' . esc_url_raw( $form_post ) . '">';
+        echo '<form name="wpmem-user-utilities" id="wpmem-user-utilities" method="post" action="' . wpmem_admin_form_post_url() . '">';
 
         if ( wpmem_is_enabled( 'mod_reg' ) ) {
             echo '<h2>' . esc_html__( 'Moderated Registration', 'wp-members' ) . '</h2>';
@@ -150,7 +158,7 @@ class WP_Members_User_Utilities {
             echo '<p><input type="checkbox" name="confirm-all-confirm" value="1" /><label for="confirm-all-confirm">' . esc_html__( 'Confirm all users?', 'wp-members' ) . '</label></p>';
         }
         
-        echo '<p><input type="submit" name="submit" value="' . esc_html__( 'Submit' ) . '" /></p>'; // @todo Could use a wp submit button here by function.
+        submit_button();
         wp_nonce_field( 'wpmem-user-utilities' );
 
         echo '</form>';
@@ -185,4 +193,4 @@ class WP_Members_User_Utilities {
         
     }
 }
-// End of My_Activate_All_Users_Class
+// End of WP_Members_User_Utilities class.
