@@ -628,3 +628,33 @@ function wpmem_use_ssl() {
 	wpmem_write_log( 'wpmem_use_ssl() is deprecated. Use wpmem_force_ssl() instead' );
 	return ( is_ssl() ) ? 'https://' : 'http://';
 }
+
+if ( current_user_can( 'list_users' ) ) {
+	add_action( 'wpmem_admin_after_profile',  'wpmem_deprecated_show_expiration', 8 );
+}
+/**
+ * Adds user expiration to the user profile.
+ *
+ * @since 3.1.1
+ * @since 3.2.0 Moved to WP_Members_User_Profile object
+ * @deprecated 3.6.0 No replacement exists.
+ *
+ * @global object $wpmem
+ * @param  int    $user_id
+ */
+function wpmem_deprecated_show_expiration( $user_id ) {
+
+	global $wpmem;
+	/*
+	* If using subscription model, show expiration.
+	* If registration is moderated, this doesn't show 
+	* if user is not active yet.
+	*/
+	if ( wpmem_is_exp_enabled() && $wpmem->use_exp == 1 ) {
+		if ( ( $wpmem->mod_reg == 1 &&  get_user_meta( $user_id, 'active', true ) == 1 ) || ( $wpmem->mod_reg != 1 ) ) {
+			if ( function_exists( 'wpmem_a_extend_user' ) ) {
+				wpmem_a_extend_user( $user_id );
+			}
+		}
+	} 
+} 
