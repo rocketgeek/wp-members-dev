@@ -1323,4 +1323,38 @@ function wpmem_get_user_count_by_role( $role ) {
 	$users = count_users();
 	return ( 'all' == $role ) ? $users['total_users'] : $users['avail_roles'][ $role ];
 }
+
+/**
+ * Updates selected users with membership product info from import.
+ * 
+ * @since 3.5.7
+ * 
+ * @param  int $user_id
+ * @param  array $args  For future use, if needed for specific criteria. Currently not used.
+ * @todo   Work this into bulk user update for memberships.
+ */
+function wpmem_update_membership_from_import( $user_id, $args = array() ) {
+    
+	// Set specific criteria.
+	$membership_key = "membership";
+	$expiration_key = "expires";
+
+	// Get the user's membership info.
+	$membership = get_user_meta( $user_id, $membership_key, true );
+	$expiration = get_user_meta( $user_id, $expiration_key, true );
+
+	// Set expiration date - either "false" or MySQL timestamp.
+	if ( $expiration ) {
+		$date = ( 'none' == $expiration || false == $expiration ) ? false : date( "Y-m-d H:i:s", strtotime( $expiration ) );
+	} else {
+		$date = false;
+	}
+
+	// Set user membership access.
+	wpmem_set_user_membership( $membership, $user_id, $date );
+
+	// Clean up after yourself.
+	delete_user_meta( $user_id, $membership_key );
+	delete_user_meta( $user_id, $expiration_key );
+}
 // End of file.

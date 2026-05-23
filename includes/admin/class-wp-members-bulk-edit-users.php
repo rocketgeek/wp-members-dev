@@ -3,54 +3,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-/**
- * Set process to update user accordingly.
- *
- * This function will run for each user being updated in the main
- * framework script below. Breaking out the actual update process
- * makes the framework more modular so it can be adapted to multiple
- * use cases.
- *
- * For this use case, identify the actual meta keys used for the fields
- * imported with the membership slug and expiration date. The default
- * set up below is "membership" and "expires". The script will get
- * the meta values for those fields and run wpmem_set_user_product().
- * It will clean up for itself by deleting the meta values after it
- * is done.
- *
- * Because of the clean up process (deleting the meta keys it has
- * processed), if the script crashes from too many users, it can
- * be run again and will not overwrite existing processed users.
- */
-function my_update_selected_user( $user_id ) {
-    
-    // Set specific criteria.
-    $membership_key = "membership";
-    $expiration_key = "expires";
-    
-    // Get the user's membership product info.
-    $membership = get_user_meta( $user_id, $membership_key, true );
-    $expiration = get_user_meta( $user_id, $expiration_key, true );
-    
-    // Only process users who have not been processed already.
-    if ( $membership ) {
-
-        // Set expiration date - either "false" or MySQL timestamp.
-        if ( $expiration ) {
-            $date = ( 'none' == $expiration ) ? false : date( "Y-m-d H:i:s", strtotime( $expiration ) );
-        } else {
-            $date = false;
-        }
-
-        // Set user product access.
-        wpmem_set_user_product( $membership, $user_id, $date );
-
-        // Clean up after yourself.
-        delete_user_meta( $user_id, $membership_key );
-        delete_user_meta( $user_id, $expiration_key );
-        
-    }
-}
 
 /**
  * A drop-in code snippet to update all users' membership
@@ -93,14 +45,22 @@ class WP_Members_Bulk_Edit_Users {
             
         }
 
-        if ( isset( $_GET['page'] ) && 'update-all-users' == $_GET['page'] && isset( $_POST['update-all-confirm'] ) && 1 == $_POST['update-all-confirm'] ) {
+        if ( 'update-all-users' == wpmem_get( 'page' ) && 1 == wpmem_get( 'update-all-confirm' ) ) {
             $users = get_users( array( 'fields'=>'ID' ) );
             // This is where we loop through users and update them.
             foreach ( $users as $user_id ) {
                 
-                // This is the custom process.
-                my_update_selected_user( $user_id );
-                
+                switch ( $utility_state ) {
+
+                    case 'activation_confirm':
+                        update_user_meta( $user_id, 'wpmem_activated', 1 );
+                        break;
+
+                    case 'confirmation_confirm':
+                        update_user_meta( $user_id, 'wpmem_confirmed', 1 );
+                        break;
+
+                }                
             }
             $update_all_complete = true;
         }
@@ -110,11 +70,10 @@ class WP_Members_Bulk_Edit_Users {
         global $wpmem, $update_all_complete;
 
         $utility_state = wpmem_get( 'wpmem_bulk_utility_state', false, 'request' );
-        $form_post = ( function_exists( 'wpmem_admin_form_post_url' ) ) ? wpmem_admin_form_post_url() : '';
 
         echo '<div class="wrap">';
         echo "<h2>" . esc_html__( 'WP-Members Bulk User Update', 'wp-members' ) . "</h2>";
-        echo '<form name="wpmem-bulk-update-all-users" id="wpmem-bulk-update-all-users" method="post" action="' . $form_post . '">';
+        echo '<form name="wpmem-bulk-update-all-users" id="wpmem-bulk-update-all-users" method="post" action="' . wpmem_admin_form_post_url() . '">';
 
         switch ( $utility_state ) {
 
@@ -126,7 +85,7 @@ class WP_Members_Bulk_Edit_Users {
                         <option value="">Select option</option>';
                 foreach ( $this->settings as $setting => $label ) {
                     if ( 1 == $wpmem->{$setting} ) {
-                       echo '<option value="start_' . strtolower( $label ) . '">' . $label . '</option>';
+                       echo '<option value="start_' . esc_attr( strtolower( $label ) ). '">' . $label . '</option>';
                     }
                 }
                 echo '</select>
