@@ -119,7 +119,9 @@ class WP_Members_Products_Admin {
 				echo ( in_array( $post->post_name, $this->default_products ) ) ? esc_html__( 'Yes', 'wp-members' ) : '';
 				break;
 			case 'last_updated':
-				echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $post->post_modified ) ) );
+				$wp_date_format = get_option( 'date_format' );
+				$wp_time_format = get_option( 'time_format' );
+				echo esc_html( date_i18n( $wp_date_format . ' ' . $wp_time_format, strtotime( $post->post_modified ) ) );
 				break;
 		}
 	}
@@ -291,7 +293,7 @@ class WP_Members_Products_Admin {
 		
 			foreach( $this->get_post_types() as $key => $post_type ) {
 				echo '<div>';
-				echo '<input type="checkbox" name="wpmem_product_set_default_' . esc_attr( $key ) . '" id="wpmem_product_set_default_' . esc_attr( $key ) . '" value ="1" '; echo ( 1 == $this->get_meta( "wpmem_product_set_default_" . $key ) ) ? 'checked' : ''; echo ' />';
+				echo '<input type="checkbox" name="wpmem_product_set_default_' . esc_attr( $key ) . '" id="wpmem_product_set_default_' . esc_attr( $key ) . '" value ="1" '; echo esc_attr( ( 1 == $this->get_meta( "wpmem_product_set_default_" . $key ) ) ? 'checked' : '' ); echo ' />';
 				/* translators: %s is replaced with the membership name. */
 				echo '<label for="wpmem_product_set_default_' . esc_attr( $key ) . '">' . sprintf( esc_html__( 'Pre-selected by default for new %s', 'wp-members' ), esc_html( $post_type ) ) . '</label>';
 				echo '</div>';

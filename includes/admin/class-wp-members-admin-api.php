@@ -295,7 +295,7 @@ class WP_Members_Admin_API {
 	
 		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $links as $link ) {
-			echo wp_kses( $link, 'post' );
+			echo $link; // These link values are all escaped above when the $links array is built.
 		}
 		echo '</h2>';
 	}
@@ -564,13 +564,12 @@ class WP_Members_Admin_API {
 	 *
 	 * @global string $pagenow
  	 * @global string $plugin_page
- 	 * @global object $wpmem         The WP_Members Object.
 	 * @param  mixed  $args          Array of additional arguments|boolean. Default: false.
 	 * @return string $url
 	 */
 	function form_post_url( $args = false ) {
-		global $pagenow, $plugin_page, $wpmem;
-		$tab = sanitize_text_field( wpmem_get( 'tab', false, 'get' ) );
+		global $pagenow, $plugin_page;
+		$tab = wpmem_get_sanitized( 'tab', false, 'get' );
 		$params = array( 'page' => $plugin_page );
 		if ( $tab ) {
 			$params['tab'] = $tab;

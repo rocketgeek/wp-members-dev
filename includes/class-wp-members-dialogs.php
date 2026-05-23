@@ -149,11 +149,11 @@ class WP_Members_Dialogs {
 			'reg_invalid_captcha'  => esc_html__( 'CAPTCHA was not valid.', 'wp-members' ),
 			'reg_generic'          => esc_html__( 'There was an error processing the form.', 'wp-members' ),
 			'reg_captcha_err'      => esc_html__( 'There was an error with the CAPTCHA form.', 'wp-members' ),
-			/* translators: %1$s is the label for the file type field, %2$s is the list of allowed file types. */
-			'reg_file_type'        => esc_html__( 'Sorry, you can only upload the following file types for the %1$s field: %2$s.', 'wp-members' ),
+			/* translators: %s is the label for the file type field, followed by a list of allowed file types. */
+			'reg_file_type'        => esc_html__( 'Sorry, you can only upload the following file types for the %s field: %s.', 'wp-members' ),
 			'profile_update'       => esc_html__( 'Your information was updated!', 'wp-members' ),
-			/* translators: %1$s and %2$s are bold text html tags; %3$s and %4$s are opening and closing links to request a new confirmation email. */
-			'login_not_confirmed'  => esc_attr__( '%1$sERROR%2$s: Account not confirmed. %3$sRequest a new confirmation link%4$s.', 'wp-members' ),
+			/* translators: first %s are bold text html tags; second pair of %s are opening and closing links to request a new confirmation email. */
+			'login_not_confirmed'  => esc_attr__( '%sERROR%s: Account not confirmed. %sRequest a new confirmation link%s.', 'wp-members' ),
 			
 			// Links.
 			'profile_edit'         => esc_html__( 'Edit My Information', 'wp-members' ),
@@ -218,8 +218,8 @@ class WP_Members_Dialogs {
 			'membership_sc_no_expire' => esc_html__( 'Does not expire', 'wp-members' ),
 			'customizer_generic_msg'  => esc_html__( "This is a generic message to display the form message dialog in the Customizer.", 'wp-members' ),
 			'logout_sc_text' => esc_html__( 'Click here to log out.', 'wp-members' ),
-			/* translators: %1$s and %2$s are bold text html tags. */
-			'user_not_activated' => esc_html__( '%1$sERROR%2$s: User has not been activated.', 'wp-members' ),
+			/* translators: %s are bold text html tags. */
+			'user_not_activated' => esc_html__( '%sERROR%s: User has not been activated.', 'wp-members' ),
 			'validate_email_text'    => esc_html__( 'Click to validate your account: ',       'wp-members' ), 
 			'validate_success_msg'   => esc_html__( 'Thank you for validating your account.', 'wp-members' ), 
 			'validate_invalid_msg'   => esc_html__( 'Validation key was expired or invalid',  'wp-members' ), 
@@ -232,10 +232,10 @@ class WP_Members_Dialogs {
 			/* translators: %s is the label for the required field. */
 			'woo_reg_required_field' => esc_html__( '%s is a required field.', 'wp-members' ),
 			'tos_title' => esc_html__( 'Terms of Service', 'wp-members' ),
-			/* translators: %1$s and %2$s are a href tags to close the dialog. */
-			'tos_close' => esc_html__('%1$sclose%2$s', 'wp-members'),
-			/* translators: %1$s and %2$s are a href tags to print the dialog. */
-			'tos_print' => esc_html__('%1$sprint%2$s', 'wp-members'),
+			/* translators: %s are a href tags to close the dialog. */
+			'tos_close' => esc_html__('%sclose%s', 'wp-members'),
+			/* translators: %s are a href tags to print the dialog. */
+			'tos_print' => esc_html__('%sprint%s', 'wp-members'),
 
 			// @todo These replace the default password reset dialogs.
 			'pwd_reset_invalid_key'     => esc_html__( "Invalid key.", 'wp-members' ),
