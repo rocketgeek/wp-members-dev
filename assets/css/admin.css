@@ -110,8 +110,8 @@
 	border-width: 0px 1px 1px 1px; 
 }
 #wpmem_user_profile_tabs .ui-state-active {
-	border: 1px solid #3858e9; 
-	background: #3858e9;
+    border: transparent;
+    background: var(--wp-admin-theme-color);
 }
 #wpmem_user_profile_tabs .ui-state-active a {
 	color: #fff;
@@ -154,7 +154,6 @@
 }
 #wpmem-fields .column-profile,
 #wpmem-fields .column-userscrn,
-#wpmem-fields .column-usersort,
 #wpmem-fields .column-usearch {
 	width: 62px;
 	padding-left: 0px;
@@ -169,7 +168,6 @@
 #wpmem-fields .column-wcupdate input,
 #wpmem-fields .column-wcchkout input,
 #wpmem-fields .column-userscrn input,
-#wpmem-fields .column-usersort input,
 #wpmem-fields .column-usearch input {
 	margin-left: 0px;
 }
