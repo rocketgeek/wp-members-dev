@@ -1,8 +1,14 @@
 <?php
 /**
- *
+ * Handles email validation link for new user registrations.
  * 
  */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
 class WP_Members_Validation_Link {
 	
 	/**
@@ -53,6 +59,7 @@ class WP_Members_Validation_Link {
 			$this->{$key} = $value;
 		}
 		
+		add_action( 'the_content',        array( $this, 'maybe_process_validation' ) );
 		add_action( 'template_redirect',  array( $this, 'validate_key'       ) );
 		add_filter( 'authenticate',       array( $this, 'check_validated'    ), 99, 3 );
 		add_filter( 'wpmem_email_filter', array( $this, 'add_key_to_email'   ), 10, 3 );
@@ -144,6 +151,42 @@ class WP_Members_Validation_Link {
 	}
 
 	/**
+	 * Checks for validation key in the URL and starts validation process.
+	 * 
+	 * @since 3.5.7
+	 * 
+	 * @param  string $content The content to potentially replace with validation confirmation form.
+	 * @return string The original content or the validation confirmation form if validation is being processed.
+	 */
+	public function maybe_process_validation( $content ) {
+		if ( 'confirm' == wpmem_get( 'a', false, 'get' ) ) {
+			$key     = wpmem_get( 'key', false, 'get' );
+			$login   = wpmem_get( 'login', false, 'get' );
+			$content = '<div id="wpmem_email_confirm" class="wpmem-email-confirm">
+				<p>' . esc_html__( 'Please click the button below to confirm your email address and complete your registration:', 'wp-members' ) . '</p>
+				<form method="post" action="' . esc_url( wpmem_profile_url() ) . '">
+					<input type="hidden" name="a" value="confirm" />
+					<input type="hidden" name="key" value="' . esc_attr( $key ) . '" />
+					<input type="hidden" name="login" value="' . esc_attr( $login ) . '" />
+					<button type="submit" class="button">' . esc_html__( 'Confirm Email', 'wp-members' ) . '</button>
+				</form>
+			</div>';
+			/**
+			 * Filter the validation confirmation content.
+			 * 
+			 * @since 3.5.7
+			 * 
+			 * @param string $content The HTML content to display on the validation confirmation page.
+			 * @param string $key The validation key from the URL.
+			 * @param string $login The user login from the URL.
+			 */
+			$content = apply_filters( 'wpmem_validation_confirmation_form', $content, $key, $login );
+			return $content;
+		}
+		return $content;
+	}
+
+	/**
 	 * Check for a validation key and if one exists, validate and log in user.
 	 *
 	 * @since 3.3.5
@@ -151,9 +194,10 @@ class WP_Members_Validation_Link {
 	public function validate_key() {
 		
 		// Check for validation key.
-		$key   = ( 'confirm' == wpmem_get( 'a', false, 'get' ) ) ? wpmem_get( 'key',   false, 'get' ) : false;
-		$login = ( 'confirm' == wpmem_get( 'a', false, 'get' ) ) ? wpmem_get( 'login', false, 'get' ) : false;
-		
+		$key   = ( 'confirm' == wpmem_get( 'a', false ) ) ? wpmem_get( 'key',   false ) : false;
+		$login = ( 'confirm' == wpmem_get( 'a', false ) ) ? wpmem_get( 'login', false ) : false;
+
+		// Do not attempt validation if key or login is missing.
 		if ( false !== $key ) {
 
 			// Set an error container.
@@ -198,6 +242,7 @@ class WP_Members_Validation_Link {
 				$this->validated = false;
 			}
 		}
+		return;
 	}
 
 	/**
@@ -212,13 +257,13 @@ class WP_Members_Validation_Link {
 	 */
 	public function validation_success( $content ) {
 
-		if ( $this->show_success && 'confirm' == wpmem_get( 'a', false, 'get' ) && isset( $this->validated ) ) {
+		if ( $this->show_success && 'confirm' == wpmem_get( 'a', false ) && isset( $this->validated ) ) {
 
 			if ( true === $this->validated ) {
 				$msg = $this->success_message;
 				
 				if ( wpmem_is_mod_reg() ) {
-					$user = get_user_by( 'login', sanitize_user( wpmem_get( 'login', false, 'get' ) ) );
+					$user = get_user_by( 'login', sanitize_user( wpmem_get( 'login', false ) ) );
 					if ( ! wpmem_is_user_activated( $user->ID ) ) {
 						$msg = $msg . ' ' . $this->moderated_message;
 					}
