@@ -133,6 +133,7 @@ WP-Members 3.5.6 is a security release. WP-Members 3.5.5 is a feature update rel
 
 = 3.5.7 =
 
+* Fixes bugs in the bulk user edit tool to allow for activation and/or confirmation of all users.
 * Fixes a bug in the `redirect_to` param of the [wpmem_form register] shortcode.
 * Improvement of pwd reset: if link generation is an error, it will display in the email.
 * Improvement for wpmem_get_membership_post_list(), order by ID|title|date|name|modified, ID is default.
