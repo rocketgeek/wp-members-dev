@@ -224,6 +224,7 @@ class WP_Members_Dialogs {
 			'validate_success_msg'   => esc_html__( 'Thank you for validating your account.', 'wp-members' ), 
 			'validate_invalid_msg'   => esc_html__( 'Validation key was expired or invalid',  'wp-members' ), 
 			'validate_moderated_msg' => esc_html__( 'Your account is now pending approval',   'wp-members' ),
+			'validate_confirm_btn'   => esc_html__( 'Confirm', 'wp-members' ),
 			'rest_content_rendered'  => esc_html__( "You must be logged in to view this content.", 'wp-members' ),
 			'rest_excerpt_rendered'  => esc_html__( "You must be logged in to view this content.", 'wp-members' ),
 			'rest_404'               => esc_html__( 'The page you are looking for does not exist', 'wp-members' ),
@@ -403,7 +404,12 @@ class WP_Members_Dialogs {
 			if ( is_array( $dialogs[ $tag ] ) ) {
 				$msg = stripslashes( $dialogs[ $tag ]['value'] );
 			} else {
+				// wpmem_get_text() returns and escaped value using esc_html().
 				$msg = wpmem_get_text( $tag );
+				/*
+				 * If the value in the dialogs array is the same as the default, use the default (which is escaped). 
+				 * If not, use the value from the dialogs array (which may contain HTML and uses wp_kses_post()).
+				 */
 				$msg = ( $dialogs[ $tag ] == $msg ) ? $msg : wp_kses_post( __( stripslashes( $dialogs[ $tag ] ), 'wp-members' ) );
 			}
 		} elseif ( 'loginfailed' == $tag ) {
