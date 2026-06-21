@@ -295,12 +295,14 @@ function wpmem_form_field( $name, $type=null, $value=null, $valtochk=null, $clas
 /**
  * Function to output wpmem_form_field()
  * 
+ * Output is escaped in wpmem_form_field().
+ * 
  * @since 3.5.7
  * 
  * @param string|array  $args  See wpmem_form_field() for accepted arguments.
  */
 function wpmem_form_field_echo( $name, $type=null, $value=null, $valtochk=null, $class='textbox' ) {
-	echo wpmem_form_field( $name, $type, $value, $valtochk, $class );
+	echo wpmem_form_field( $name, $type, $value, $valtochk, $class ); // Output is escaped in wpmem_form_field().
 }
 
 /**
@@ -328,12 +330,14 @@ function wpmem_form_label( $args ) {
 /**
  * Function to output wpmem_form_label()
  * 
+ * Output is escaped in wpmem_form_label().
+ * 
  * @since 3.5.7
  * 
  * @param array  $args See wpmem_form_label() for accepted arguments.
  */
 function wpmem_form_label_echo( $args ) {
-	echo wpmem_form_label( $args );	
+	echo wpmem_form_label( $args );	// Output is escaped in wpmem_form_label().
 }
 
 /**
@@ -422,7 +426,7 @@ function wpmem_sanitize_array( $data, $type = false ) {
  * @global  object  $wpmem
  *
  * @param  string $data
- * @param  string $type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class) Default:text
+ * @param  string $type $type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) Default:text
  * @return string $sanitized_data
  */
 function wpmem_sanitize_field( $data, $type = 'text' ) {

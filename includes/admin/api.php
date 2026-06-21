@@ -70,6 +70,9 @@ function wpmem_admin_user_profile( $user_id ) {
 
 /**
  * Wrapper for form_post_url().
+ * 
+ * Generates the URL for posting forms in the admin panel. Uses the WP_Members_Admin_API::form_post_url() method,
+ * which returns an escaped result. If no args are passed, it defaults to the current URL.
  *
  * @since 3.1.8
  *

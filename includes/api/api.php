@@ -438,7 +438,7 @@ function wpmem_get( $tag, $default = '', $type = 'post' ) {
  * @param  string $tag          Form field or query string param.
  * @param  string $default      Default value (optional, default: null).
  * @param  string $request_type Request type (post|get|request) (optional, default:post).
- * @param  string $field_type   Type of sanitization (using rktgk_sanitize_field()) (optional, default:text).
+ * @param  string $field_type   Type of sanitization (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) (optional, default:text).
  * @return mixed  The sanitized result (string|array|integer|boolean).
  */
 function wpmem_get_sanitized( $tag, $default = '', $request_type = 'post', $field_type = 'text' ) {
@@ -511,6 +511,8 @@ function wpmem_logout_link() {
 
 /**
  * Wrapper to return a string from the get_text function.
+ * 
+ * get_text() values are escaped for safe output, so this function can be used to return or echo the string as needed.
  *
  * @since 3.4.0
  *
