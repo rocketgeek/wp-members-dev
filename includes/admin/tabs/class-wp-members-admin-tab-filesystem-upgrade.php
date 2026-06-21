@@ -91,7 +91,7 @@ class WP_Members_Admin_Filesystem_Upgrade {
 			<p>
 				Once you have confirmed your moves and you are satisfied that things are correct, 
 				you will need to delete the original directory and files.<br />
-				<a href="<?php echo trailingslashit( admin_url() ) . '/options-general.php?page=wpmem-settings&tab=filesystem-upgrade'; ?>">Continue to the initial screen
+				<a href="<?php echo esc_url_raw( admin_url() . '/options-general.php?page=wpmem-settings&tab=filesystem-upgrade' ); ?>">Continue to the initial screen
 				and select the delete option</a>.
 			</p>
 			<table class="widefat fixed" cellspacing="0">
@@ -100,7 +100,7 @@ class WP_Members_Admin_Filesystem_Upgrade {
 					<th id="error">Error</th>
 				</tr>
 			<?php foreach ( $wpmem->filesystem->get_errors() as $user_id => $error ) {
-				echo '<tr><td>' . $user_id . '</td><td>' . $error . '</td></tr>';
+				echo '<tr><td>' . esc_html( $user_id ) . '</td><td>' . esc_html( $error ) . '</td></tr>';
 			} ?>
 			</table>
 		<?php } elseif ( $wpmem->filesystem->is_move_complete() ) { ?>
@@ -110,7 +110,7 @@ class WP_Members_Admin_Filesystem_Upgrade {
 				$files_to_move = $wpmem->filesystem->get_file_list(); 
 				$num_to_move = count( $files_to_move );
 				if ( $num_to_move > 0 ) {
-				echo '<p>There are ' . $num_to_move . ' files that were not moved. You may run step 1 again to
+				echo '<p>There are ' . esc_html( $num_to_move ) . ' files that were not moved. You may run step 1 again to
 				attempt to move these, or you may need to move them manually.';
 			} ?>
 			<p>If you wish to proceed to step 2 to delete the original directories and files you may do so below.</p>
@@ -162,13 +162,13 @@ class WP_Members_Admin_Filesystem_Upgrade {
 					<?php 
 					$dismiss_upgrade_notice = get_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
 					$checked = ( $dismiss_upgrade_notice || isset( $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) ) ? true : false ?>
-					<input type="checkbox" name="wpmem_dismiss_filesystem_upgrade_notice" value="1" <?php checked( 1, $checked ); ?> /> Permanently dismiss the admin notice.
+					<input type="checkbox" name="wpmem_dismiss_filesystem_upgrade_notice" value="1" <?php esc_attr( checked( 1, $checked ) ); ?> /> Permanently dismiss the admin notice.
 				</p>
 			</div>
 			<h3>Step 1: Move the filesystem</h3>
 			<input type="radio" id="move" name="update-filesystem-confirm" value="move" /> Move the current filesystem.<br>
 			<p>
-				There are <?php echo $num_to_move; ?> files to move.<br/>
+				There are <?php echo esc_html( $num_to_move ); ?> files to move.<br/>
 			</p>
 			<?php
 			$step_1_done = get_option( 'wpmem_upgrade_filesystem_move_complete' );

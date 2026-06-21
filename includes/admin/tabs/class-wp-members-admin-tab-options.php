@@ -78,7 +78,7 @@ class WP_Members_Admin_Tab_Options {
 						<p><strong><i>
 							<?php
 							/* translators: %s is replaced with a link to the users guide options documentation. */
-							printf( __( 'See the %sUsers Guide on plugin options%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
+							printf( esc_html__( 'See the %sUsers Guide on plugin options%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
 							?>
 						</i></strong></p>
 						<p><button id="opener">Get Settings Information</button></p>
