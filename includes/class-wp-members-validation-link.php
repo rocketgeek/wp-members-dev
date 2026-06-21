@@ -160,15 +160,54 @@ class WP_Members_Validation_Link {
 	 */
 	public function maybe_process_validation( $content ) {
 		if ( 'confirm' == wpmem_get( 'a', false, 'get' ) ) {
-			$key     = wpmem_get( 'key', false, 'get' );
-			$login   = wpmem_get( 'login', false, 'get' );
-			$content = '<div id="wpmem_email_confirm" class="wpmem-email-confirm">
-				<p>' . esc_html__( 'Please click the button below to confirm your email address and complete your registration:', 'wp-members' ) . '</p>
-				<form method="post" action="' . esc_url( wpmem_profile_url() ) . '">
-					<input type="hidden" name="a" value="confirm" />
-					<input type="hidden" name="key" value="' . esc_attr( $key ) . '" />
-					<input type="hidden" name="login" value="' . esc_attr( $login ) . '" />
-					<button type="submit" class="button">' . esc_html__( 'Confirm Email', 'wp-members' ) . '</button>
+			$defaults = array(
+				'div_id'       => 'wpmem_email_confirm',
+				'div_class'    => 'wpmem-email-confirm',
+				'form_id'      => 'wpmem_email_confirm_form',
+				'form_class'   => 'wpmem-email-confirm-form',
+				'button_id'    => 'wpmem_email_confirm_button',
+				'button_class' => 'button',
+				'post_url'     => wpmem_profile_url(),
+				'key'          => wpmem_get_sanitized( 'key', false, 'get', 'key' ),
+				'login'        => wpmem_get_sanitized( 'login', false, 'get', 'text' ),
+				'button_txt'   => wpmem_get_text( 'validate_confirm_btn' ),
+				'confirm_txt'  => '<p>' . esc_html__( 'Please click the button below to confirm your email address and complete your registration:', 'wp-members' ) . '</p>',
+				'redirect_to'  => wpmem_get( 'redirect_to', "", 'get' ),
+			);
+			
+			/**
+			 * Filter the arguments for the validation confirmation form.
+			 * 
+			 * @since 3.5.7
+			 * 
+			 * @param array $defaults Values for the variables used in the form. {
+			 *    @type string $div_id       The ID attribute for the form container div.
+			 *    @type string $div_class    The class attribute for the form container div.
+			 *    @type string $form_id      The ID attribute for the form element.
+			 *    @type string $form_class   The class attribute for the form element.
+			 *    @type string $button_id    The ID attribute for the form submit button.
+			 *    @type string $button_class The class attribute for the form submit button.
+			 *    @type string $post_url     The URL the confirmation form submits to.
+			 *    @type string $key          The validation key included as a hidden field in the form.
+			 *    @type string $login        The user login included as a hidden field in the form.
+			 *    @type string $button_txt   The text to display in the confirmation button.
+			 *    @type string $confirm_txt  The text to display above the confirmation button.
+			 * }
+			 */
+			$args = apply_filters( 'wpmem_validation_confirmation_form_args', $defaults );
+			
+			// Merge defaults with any args passed via the filter, just in case there is a missing value.
+			$args = wp_parse_args( $args, $defaults );
+			
+			// Build the confirmation form.
+			$form = '<div id="' . esc_attr( $args['div_id'] ) . '" class="' . esc_attr( $args['div_class'] ) . '">
+				' . $args['confirm_txt'] . '
+				<form id="' . esc_attr( $args['form_id'] ) . '" class="' . esc_attr( $args['form_class'] ) . '" method="post" action="' . esc_url( $args['post_url'] ) . '">
+					<input type="hidden" name="a" value="confirm_validate" />
+					<input type="hidden" name="key" value="' . esc_attr( $args['key'] ) . '" />
+					<input type="hidden" name="login" value="' . esc_attr( $args['login'] ) . '" />
+					<input type="hidden" name="redirect_to" value="' . esc_url( $args['redirect_to'] ) . '" />
+					<button type="submit" id="' . esc_attr( $args['button_id'] ) . '" class="' . esc_attr( $args['button_class'] ) . '">' . esc_html( $args['button_txt'] ) . '</button>
 				</form>
 			</div>';
 			/**
@@ -176,12 +215,22 @@ class WP_Members_Validation_Link {
 			 * 
 			 * @since 3.5.7
 			 * 
-			 * @param string $content The HTML content to display on the validation confirmation page.
-			 * @param string $key The validation key from the URL.
-			 * @param string $login The user login from the URL.
+			 * @param string $form The HTML content to display on the validation confirmation page.
+			 * @param array  $args Values for the variables used in the form. {
+			 *    @type string $div_id       The ID attribute for the form container div.
+			 *    @type string $div_class    The class attribute for the form container div.
+			 *    @type string $form_id      The ID attribute for the form element.
+			 *    @type string $form_class   The class attribute for the form element.
+			 *    @type string $button_id    The ID attribute for the form submit button.
+			 *    @type string $button_class The class attribute for the form submit button.
+			 *    @type string $post_url     The URL the confirmation form submits to.
+			 *    @type string $key          The validation key included as a hidden field in the form.
+			 *    @type string $login        The user login included as a hidden field in the form.
+			 *    @type string $button_txt   The text to display in the confirmation button.
+			 *    @type string $confirm_txt  The text to display above the confirmation button.
+			 * }
 			 */
-			$content = apply_filters( 'wpmem_validation_confirmation_form', $content, $key, $login );
-			return $content;
+			return apply_filters( 'wpmem_validation_confirmation_form', $form, $args );
 		}
 		return $content;
 	}
@@ -194,8 +243,8 @@ class WP_Members_Validation_Link {
 	public function validate_key() {
 		
 		// Check for validation key.
-		$key   = ( 'confirm' == wpmem_get( 'a', false ) ) ? wpmem_get( 'key',   false ) : false;
-		$login = ( 'confirm' == wpmem_get( 'a', false ) ) ? wpmem_get( 'login', false ) : false;
+		$key   = ( 'confirm_validate' == wpmem_get( 'a', false ) ) ? wpmem_get( 'key',   false ) : false;
+		$login = ( 'confirm_validate' == wpmem_get( 'a', false ) ) ? wpmem_get( 'login', false ) : false;
 
 		// Do not attempt validation if key or login is missing.
 		if ( false !== $key ) {
@@ -240,6 +289,15 @@ class WP_Members_Validation_Link {
 
 			} else {
 				$this->validated = false;
+
+				/**
+				 * Fires when a user account validation failed.
+				 *
+				 * @since 3.3.5
+				 *
+				 * @param int $user_id
+				 */
+				do_action( 'wpmem_account_validation_failed', $user->ID );
 			}
 		}
 		return;
@@ -257,7 +315,7 @@ class WP_Members_Validation_Link {
 	 */
 	public function validation_success( $content ) {
 
-		if ( $this->show_success && 'confirm' == wpmem_get( 'a', false ) && isset( $this->validated ) ) {
+		if ( $this->show_success && 'confirm_validate' == wpmem_get( 'a', false ) && isset( $this->validated ) ) {
 
 			if ( true === $this->validated ) {
 				$msg = $this->success_message;
