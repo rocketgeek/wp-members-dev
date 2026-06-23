@@ -26,12 +26,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				foreach ( $memberships as $membership ) {
 					 $list[] = array(
 						 'name' => $membership['title'],
-						 'meta (slug)' => $membership['name'],
+						 'meta key (slug)' => $membership['name'],
 					 );
 				}
 
 				WP_CLI::line( 'WP-Members memberships:' );
-				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'name', 'meta (slug)' ) );
+				$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'name', 'meta key (slug)' ) );
 				$formatter->display_items( $list );
 			}
 		}
@@ -55,15 +55,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 */
 		public function list_count( $args, $assoc_args ) {
 
-			if ( empty( $args ) && ! isset( $assoc_args['all'] ) && ! isset( $assoc_args['type'] ) ) {
-				$count_type = "all";
-			} else {
-				if ( isset( $assoc_args['type'] ) ) {
-					$count_type = $assoc_args['type'];
-				} else {
-					$count_type = "all";
-				}
-			}
+			$count_type = WP_CLI\Utils\get_flag_value( $assoc_args, 'type', 'all' );
 
 			switch ( $count_type ) {
 
@@ -153,10 +145,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @since 3.5.4 Added expiration date.
 		 */
 		public function add( $args, $assoc_args ) {
-			$date = ( isset( $assoc_args['date'] ) ) ? $assoc_args['date'] : false;
-			$user = wpmem_cli_get_user( $assoc_args );
-			wpmem_set_user_membership( $args[0], $user->ID, $date );
-			WP_CLI::success( sprintf( '%s membership added to %s', $args[0], $user->user_email ) );
+			WP_CLI::error( ' This command has moved to `wp mem user`. Use `wp mem user add-membership` instead.' );
 		}
 
 		/**
@@ -182,9 +171,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @since 3.5.3
 		 */
 		public function update( $args, $assoc_args ) {
-			$user = wpmem_cli_get_user( $assoc_args );
-			wpmem_set_user_membership( $args[0], $user->ID, $assoc_args['date'] );
-			WP_CLI::success( sprintf( '%s membership update for %s', $args[0], $user->user_email ) );			
+			WP_CLI::error( ' This command has moved to `wp mem user`. Use `wp mem user update-membership` instead.' );
 		}
 
 		/**
@@ -207,11 +194,43 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @since 3.5.3
 		 */
 		public function remove( $args, $assoc_args ) {
-			$user = wpmem_cli_get_user( $assoc_args );
-			wpmem_remove_user_membership( $args[0], $user );
-			WP_CLI::success( sprintf( '%s membership removed from %s', $args[0], $user->user_email ) );
+			WP_CLI::error( ' This command has moved to `wp mem user`. Use `wp mem user remove-membership` instead.' );
 		}
 
+		/**
+		 * Calculates the prorated value of a user's remaining time for a specific membership.
+		 * 
+		 * --membership=<meta_key>
+		 * : The membership to check.
+		 * 
+		 * [--id=<user>]
+		 * : The ID of the user to check
+		 * 
+		 * [--login=<user>]
+		 * : The login of the user to check.
+		 * 
+		 * [--email=<user>]
+		 * : The email of the user to check.
+		 * 
+		 * --value=<price>
+		 * : The full value of the membership to prorate.
+		 * 
+		 * [--interval=<days|months>] 
+		 * : Date interval displayed as result (defaults to "days").
+		 */
+		public function prorate( $args, $assoc_args ) {
+			$user = wpmem_cli_get_user( $assoc_args );
+			$product_key = $assoc_args['membership'];
+			$args = array(
+				'user_id'    => $user->ID,
+				'membership' => $product_key,
+				'value'      => $assoc_args['value'],
+				'interval'   => ( isset( $assoc_args['interval'] ) ) ? $assoc_args['interval'] : 'days'
+			);
+			$val_remaining = wpmem_prorate_membership( $args );
+			WP_CLI::line( sprintf( 'Remaining value of %s for user %s is %s', wpmem_get_membership_name( $product_key ), $user->user_login, round( $val_remaining, 2 ) ) );
+		}
+		
 		/**
 		 * Create a new membership.
 		 * 

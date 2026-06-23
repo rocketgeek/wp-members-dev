@@ -19,19 +19,26 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * <block_val|status|hidden>
 		 * : What to get? 
 		 *
-		 * --id=<post_id|post_slug>
+		 * [--id=<post_id|post_slug>]
 		 * : Post ID
 		 */
 		public function get( $args, $assoc_args ) {
 
-			if ( is_numeric( $assoc_args['id'] ) ) {
-				$post_id = $assoc_args['id'];
+			global $wpmem;
+
+			$id = WP_CLI\Utils\get_flag_value( $assoc_args, 'id', false );
+
+			if ( is_numeric( $id ) ) {
+				$post_id = $id;
 			} else {
-				$post = get_page_by_path( $assoc_args['id'], OBJECT );
+				if ( ! $id && ( 'block_val' ==$args[0] || 'status' == $args[0] ) ) {
+					WP_CLI::error( 'Please provide a post id or slug with --id=<post_id|post_slug>' );
+				}
+				$post = get_page_by_path( $id, OBJECT );
 				if ( $post ) {
 					$post_id = $post->ID;
 				} else {
-					WP_CLI::error( $assoc_args['id'] . ' is not a valid post' );
+					WP_CLI::error( $id . ' is not a valid post' );
 				}
 			}
 			
@@ -47,8 +54,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 							$block_text = 'hidden';
 							break;
 						case '0':
-						case false:
 							$block_text = 'unrestricted';
+							break;
+						case false:
+							// If it's false, get the post type and the default for that post type.
+							$post_type = get_post_type( $post_id );
+							$block_text = ( 1 == $wpmem->block[ $post_type ] ) ? 'restricted' : 'unrestricted';
 							break;
 					}
 					WP_CLI::line( 'post restriction setting:' . ' ' . $block_text );
