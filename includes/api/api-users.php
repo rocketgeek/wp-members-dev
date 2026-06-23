@@ -479,14 +479,11 @@ function wpmem_get_user_time_remaining( $product_key = false, $user_id = false, 
 		case 'months':
 			return $date_diff->months;
 			break;
+		case 'days':
 		default:
 			return $date_diff->days;
 			break;
 	}
-}
-
-function wpmem_prorate_membership( $args ) {
-		
 }
 
 /**
