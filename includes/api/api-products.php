@@ -422,8 +422,11 @@ function wpmem_generate_membership_expiration_date( $membership, $user_id, $set_
 	return $wpmem->membership->set_product_expiration( $membership, $user_id, $set_date, $prev_value, $renew );
 }
 
-// @todo EXPERIMENTAL
+//**************************************************************************************
+// EXPERIMENTAL
 // Anything after this line is subject to change in future versions, including the name.
+//**************************************************************************************
+
 /**
  * Gets the count(s) of a given membership.
  * 
@@ -451,12 +454,13 @@ function wpmem_get_membership_count( $membership, $type = "all" ) {
 			break;
 	}
 
-	//if ( $period ) {
+	if ( $period ) {
 		// It's an expiration membership
-		$sql = "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" AND meta_value ' . esc_sql( $compare ) . ' ' . esc_sql( $period ) . ' ORDER BY meta_value;';
-	//} else {
+		$sql = "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" AND meta_value ' .  esc_sql( $compare ) . ' ' . esc_sql( $period ) . ' ORDER BY meta_value;';
+	} else {
 		// It's not an expiration membership
-	//}
+		$sql = "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" ORDER BY meta_value;';
+	}
 
 	$results = $wpdb->get_results( $sql );
 
@@ -517,4 +521,67 @@ function wpmem_get_expiring_users( $interval ) {
 	$results = $wpdb->get_results( $sql, 'OBJECT' );
 	
 	return $results;
+}
+
+/**
+ * Prorates a membership value based on time remaining.
+ * 
+ * @since 3.5.7
+ * 
+ * @param array $args {
+ *    Parameters for prorating membership.
+ *    @type string $membership     The membership slug.
+ *    @type int    $user_id        The user ID.
+ *    @type string $interval       The interval for time remaining (e.g., 'days').
+ *    @type int    $membership_length The total length of the membership.
+ * }
+ * @return float The prorated value.
+ */
+function wpmem_prorate_membership( $args ) {
+	$time_remaining = wpmem_get_user_time_remaining( $args['membership'], $args['user_id'], $args['interval'] );
+	if ( $time_remaining <= 0 ) {
+		$val_remaining = 0;
+	} else {
+		$expiration_period = wpmem_get_expiration_period( $args['membership'], true );
+		if ( ! $expiration_period ) {
+			$val_remaining = 0;
+		} else {
+
+			// Equalize the interval to the requested interval unit.
+			if ( $args['interval'] !== $expiration_period[1] ) {
+
+				// $args['interval'] is the interval unit requested (e.g., 'days', 'months').
+				// $expiration_period[1] is the interval unit of the membership's expiration period (e.g., 'days', 'months').
+				// Convert $expiration_period to the same interval as $args['interval'] for accurate prorating.
+				// @todo Right now, just does days.
+
+				if ( $expiration_period[1] === 'year' ) {
+					$value_per_day = $args['value'] / 365;
+				} elseif ( $expiration_period[1] === 'month' ) {
+					$value_per_day = $args['value'] / 30;
+				}
+			}
+			$val_remaining = round( $value_per_day * $time_remaining, 2 );
+		}
+	}
+
+	return $val_remaining;
+}
+
+function wpmem_convert_time_interval( $value, $from_interval, $to_interval ) {
+	$intervals_in_seconds = array(
+		'second' => 1,
+		'minute' => 60,
+		'hour'   => 3600,
+		'day'    => 86400,
+		'week'   => 604800,
+		'month'  => 2629746, // Average month in seconds
+		'year'   => 31556952, // Average year in seconds
+	);
+
+	if ( ! isset( $intervals_in_seconds[ $from_interval ] ) || ! isset( $intervals_in_seconds[ $to_interval ] ) ) {
+		return false; // Invalid interval
+	}
+
+	return ( $value * $intervals_in_seconds[ $from_interval ] ) / $intervals_in_seconds[ $to_interval ];
 }
