@@ -238,17 +238,22 @@ function wpmem_get_user_view_link( $name, $view, $meta_key, $meta_value, $compar
  */
 function wpmem_cli_get_user( $assoc_args ) {
 
+	if ( ! defined( 'WP_CLI' ) ) {
+		return new WP_Error( 'wpmem-cli-error', __( 'This function is only available in WP-CLI.', 'wp-members' ) );
+	}
+
 	if ( isset( $assoc_args['id'] ) ) {
-		$user_id = $assoc_args['id'];
 		$user = get_user_by( 'ID', $assoc_args['id'] );
 	} elseif ( isset( $assoc_args['login'] ) ) {
 		$user = get_user_by( 'login', $assoc_args['login'] );
 	} elseif ( isset( $assoc_args['email'] ) ) {
 		$user = get_user_by( 'email', $assoc_args['email'] );
+	} else {
+		WP_CLI::error( 'This command requires --id=<user_id>, --login=<user_login>, or --email=<user_email>.' );
 	}
 	if ( $user ) {
 		return $user;
 	}
-	WP_CLI::error( __( 'No valid user data from inputs given. Try [wp user list] to find a valid user.', 'wp-members' ) );
+	WP_CLI::error( 'User not found. Try [wp user list] to find a valid user.' );
 
 }
