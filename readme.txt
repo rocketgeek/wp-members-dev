@@ -2,7 +2,7 @@
 Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 4.0
-Tested up to: 6.9
+Tested up to: 7.0
 Stable tag: 3.5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -107,7 +107,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.6 is a security release. WP-Members 3.5.5 is a feature update release. It fixes some minor bugs and adds new filters and some additional features.  WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.5.7 is a code improvement release.  It fixes some minor bugs and adds new filters and some additional features.  WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
 
 
 == Screenshots ==
@@ -139,15 +139,17 @@ WP-Members 3.5.6 is a security release. WP-Members 3.5.5 is a feature update rel
 * Fixes a bug in the bulk user edit tool to allow for activation and/or confirmation of all users.
 * Fixes a bug in the `redirect_to` param of the [wpmem_form register] shortcode.
 * Improvement of pwd reset: if link generation is an error, it will display in the email.
-* Improvement for wpmem_get_membership_post_list(), order by ID|title|date|name|modified, ID is default.
-* Added wpmem_load_template() wrapper and template handling functions.
-* Added wpmem_get_expiring_users() API function.
-* Added `wpmem_user_membership_removed` action hook.
-* Added custom column sorting to Users > All Users.
+* Improvement for `wpmem_get_membership_post_list()`, order by ID|title|date|name|modified, ID is default.
+* Improvement for email validation process to make it a form submission. This prevents email pre-filters from consuming the key and causing errors.
+* Added `wpmem_validation_confirmation_form_args` and `wpmem_validation_confirmation_form` filters for customizing email validation button & form.
+* Added `wpmem_load_template()` wrapper and template handling functions.
+* Added `wpmem_get_expiring_users()` API function.
 * Added `wpmem_sortable_user_columns` filter hook for customizing sortable columns.
-* `wpmem_user_membership_set` action replaces `wpmem_user_product_set`.
-* Code review and improvement: security audit updates.
-* Code review and improvement: translation update, added translator comments.
+* Added `wpmem_user_membership_removed` action hook.
+* Added `wpmem_user_membership_set` action to replace `wpmem_user_product_set`.
+* Added custom column sorting to Users > All Users.
+* Code review and improvement: security audit, added translator comments.
+* Code review for WordPress 7.0.
 
 = 3.5.6 =
 
