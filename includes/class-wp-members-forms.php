@@ -1853,9 +1853,9 @@ class WP_Members_Forms {
 
 			if ( ! $field['native'] && ! in_array( $meta_key, $exclude ) ) {
 
-				$label = wpmem_get_field_label( $meta_key );
+				$label = wpmem_get_field_label( $meta_key ); // function returns an escaped result.
 
-				$req = ( $field['required'] ) ? ' <span class="description">' . wpmem_get_text( 'wp_form_required' ) . '</span>' : '';
+				$req = ( $field['required'] ) ? ' <span class="description">' . wpmem_get_text( 'wp_form_required' ) . '</span>' : ''; // function returns an escaped result.
 
 				$class = ( 'radio'    == $field['type'] 
 					    || 'checkbox' == $field['type']
@@ -1910,7 +1910,7 @@ class WP_Members_Forms {
 					if ( 'multicheckbox' == $field['type'] || 'multiselect' == $field['type'] ) {
 						$args['delimiter'] = $field['delimiter'];
 					}
-					echo wpmem_form_field( $args );
+					echo wpmem_form_field( $args ); // function returns an escaped result.
 					break;
 
 				case( 'file' ):
@@ -1920,7 +1920,7 @@ class WP_Members_Forms {
 
 				default:
 					$args['value'] = esc_attr( $posted_meta ); // ( isset( $_POST[ $meta_key ] ) ) ? esc_attr( $_POST[ $meta_key ] ) : '';
-					echo wpmem_form_field( $args );
+					echo wpmem_form_field( $args ); // function returns an escaped result.
 					break;
 				}
 

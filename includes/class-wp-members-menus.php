@@ -120,35 +120,33 @@ class WP_Members_Menus {
 		} else if ( $restrictions == 'out' ){
 			$logged_in_out = 'out';
 		}
-
-		$hidden = $logged_in_out == 'in' ? '' : 'display: none;';
 		?>
-		<input type="hidden" name="<?php echo $this->nonce_name; ?>" value="<?php echo wp_create_nonce( $this->nonce_field ); ?>" />
+		<input type="hidden" name="<?php echo esc_attr( $this->nonce_name ); ?>" value="<?php echo esc_attr( wp_create_nonce( $this->nonce_field ) ); ?>" />
 
 		<div class="field-wpmem_nav_menu wpmem_logged_in_out_field description-wide" style="margin: 5px 0;">
-		    <span class="description"><?php _e( "Display", 'wp-members' ); ?></span>
+		    <span class="description"><?php esc_html_e( "Display", 'wp-members' ); ?></span>
 		    <br />
 
-		    <input type="hidden" class="nav-menu-id" value="<?php echo $item->ID ;?>" />
+		    <input type="hidden" class="nav-menu-id" value="<?php echo esc_attr( $item->ID ) ;?>" />
 
 		    <div class="wpmem-logged-in" style="float: left; width: 35%;">
-		        <input type="radio" class="wpmem-logged-in-out" name="wpmem_logged_in_out[<?php echo $item->ID ;?>]" id="wpmem_logged_in-for-<?php echo $item->ID ;?>" <?php checked( 'in', $logged_in_out ); ?> value="in" />
-		        <label for="wpmem_logged_in-for-<?php echo $item->ID ;?>">
-		            <?php _e( 'Logged In Users', 'wp-members'); ?>
+		        <input type="radio" class="wpmem-logged-in-out" name="wpmem_logged_in_out[<?php echo esc_attr( $item->ID ) ;?>]" id="wpmem_logged_in-for-<?php echo esc_attr( $item->ID ) ;?>" <?php checked( 'in', $logged_in_out ); ?> value="in" />
+		        <label for="wpmem_logged_in-for-<?php echo esc_attr( $item->ID ) ;?>">
+		            <?php esc_html_e( 'Logged In Users', 'wp-members'); ?>
 		        </label>
 		    </div>
 
 		    <div class="wpmem-logged-in" style="float: left; width: 35%;">
-		        <input type="radio" class="wpmem-logged-in-out" name="wpmem_logged_in_out[<?php echo $item->ID ;?>]" id="wpmem_logged_out-for-<?php echo $item->ID ;?>" <?php checked( 'out', $logged_in_out ); ?> value="out" />
-		        <label for="wpmem_logged_out-for-<?php echo $item->ID ;?>">
-		            <?php _e( 'Logged Out Users', 'wp-members'); ?>
+		        <input type="radio" class="wpmem-logged-in-out" name="wpmem_logged_in_out[<?php echo esc_attr( $item->ID ) ;?>]" id="wpmem_logged_out-for-<?php echo esc_attr( $item->ID ) ;?>" <?php checked( 'out', $logged_in_out ); ?> value="out" />
+		        <label for="wpmem_logged_out-for-<?php echo esc_attr( $item->ID ) ;?>">
+		            <?php esc_html_e( 'Logged Out Users', 'wp-members'); ?>
 		        </label>
 		    </div>
 
 		    <div class="wpmem-logged-in" style="float: left; width: 30%;">
-		        <input type="radio" class="wpmem-logged-in-out" name="wpmem_logged_in_out[<?php echo $item->ID ;?>]" id="wpmem_all_users-for-<?php echo $item->ID ;?>" <?php checked( '', $logged_in_out ); ?> value="" />
-		        <label for="wpmem_all_users-for-<?php echo $item->ID ;?>">
-		            <?php _e( 'All Users', 'wp-members'); ?>
+		        <input type="radio" class="wpmem-logged-in-out" name="wpmem_logged_in_out[<?php echo esc_attr( $item->ID ) ;?>]" id="wpmem_all_users-for-<?php echo esc_attr( $item->ID ) ;?>" <?php checked( '', $logged_in_out ); ?> value="" />
+		        <label for="wpmem_all_users-for-<?php echo esc_attr( $item->ID ) ;?>">
+		            <?php esc_html_e( 'All Users', 'wp-members'); ?>
 		        </label>
 		    </div>
 
@@ -158,7 +156,7 @@ class WP_Members_Menus {
 			$display_products = wpmem_get_memberships();
 			$checked_products = ( isset( $restrictions['products'] ) && is_array( $restrictions['products'] ) ) ? $restrictions['products'] : false;
 			?>
-			<div class="field-wpmem_nav_menu wpmem_nav_menu_field description-wide" style="margin: 5px 0; <?php echo $hidden;?>">
+			<div class="field-wpmem_nav_menu wpmem_nav_menu_field description-wide" style="margin: 5px 0; <?php echo ( ( $logged_in_out == 'in' ) ? '' : 'display: none;' ); ?>">
 			<?php if ( empty( $display_products ) ) { 
 				$add_product_url = esc_url( admin_url( 'post-new.php?post_type=wpmem_product' ) );	
 			?>
@@ -180,8 +178,8 @@ class WP_Members_Menus {
 					?>
 
 					<div class="wpmem-product-input" style="float: left; width: 33.3%; margin: 2px 0;">
-					<input type="checkbox" name="wpmem_product[<?php echo $item->ID ;?>][<?php echo $i; ?>]" id="wpmem_product-<?php echo $key; ?>-for-<?php echo $item->ID ;?>" <?php echo $checked; ?> value="<?php echo $key; ?>" />
-					<label for="wpmem_product-<?php echo $key; ?>-for-<?php echo $item->ID ;?>">
+					<input type="checkbox" name="wpmem_product[<?php echo esc_attr( $item->ID ) ;?>][<?php echo esc_attr( $i ); ?>]" id="wpmem_product-<?php echo esc_attr( $key ); ?>-for-<?php echo esc_attr( $item->ID ) ;?>" <?php echo esc_attr( $checked ); ?> value="<?php echo esc_attr( $key ); ?>" />
+					<label for="wpmem_product-<?php echo esc_attr( $key ); ?>-for-<?php echo esc_attr( $item->ID ) ;?>">
 					<?php echo esc_html( $product['title'] ); ?>
 					<?php $i++; ?>
 					</label>
