@@ -150,11 +150,12 @@ class WP_Members_Products {
 	 */
 	public function update_memberhips() {
 		global $wpdb;
-		$sql = "SELECT ID, post_title, post_name 
+		$result = $wpdb->get_results(
+			"SELECT ID, post_title, post_name 
 			FROM " . $wpdb->prefix . "posts 
 			WHERE post_type = 'wpmem_product' 
-			AND post_status = 'publish';";
-		$result = $wpdb->get_results( $sql );
+			AND post_status = 'publish';"
+		);
 
 		if ( $result ) {
 			foreach ( $result as $plan ) {
@@ -511,8 +512,8 @@ class WP_Members_Products {
 				FROM ' . $wpdb->postmeta . ' m
 				JOIN ' . $wpdb->posts . ' p ON (m.post_id = p.ID AND m.meta_key = %s )
 				WHERE p.post_status = "publish"
-				ORDER BY p.' . $order_by . ' ' . $order . ';',
-				$this->post_stem . $product_meta
+				ORDER BY p.' . esc_sql( $order_by ) . ' ' . esc_sql( $order ) . ';',
+				esc_sql( $this->post_stem . $product_meta )
 			), ARRAY_N );
 
 		}

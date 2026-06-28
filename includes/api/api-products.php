@@ -456,13 +456,11 @@ function wpmem_get_membership_count( $membership, $type = "all" ) {
 
 	if ( $period ) {
 		// It's an expiration membership
-		$sql = "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" AND meta_value ' .  esc_sql( $compare ) . ' ' . esc_sql( $period ) . ' ORDER BY meta_value;';
+		$results = $wpdb->get_results( "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" AND meta_value ' .  esc_sql( $compare ) . ' ' . esc_sql( $period ) . ' ORDER BY meta_value;' );
 	} else {
 		// It's not an expiration membership
-		$sql = "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" ORDER BY meta_value;';
+		$results = $wpdb->get_results( "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" ORDER BY meta_value;' );
 	}
-
-	$results = $wpdb->get_results( $sql );
 
 	return count( $results );
 }
@@ -510,15 +508,30 @@ function wpmem_get_expiration_period( $membership, $raw = false ) {
  * @param array $interval Array with keys 'number' and 'period' (i.e. array( 'number' => 1, 'period' => 'month' ) to get users with memberships expiring in 1 month).
  * @return object
  */
-function wpmem_get_expiring_users( $interval ) {
-	global $wpdb;
-	$sql = "SELECT user_id, meta_value, FROM_UNIXTIME(`meta_value`,'%Y-%m-%d') as 'date_expires'
-	FROM {$wpdb->usermeta}
-	WHERE meta_key IN ({$this->product_metas})
-	AND CURDATE() = DATE_SUB( FROM_UNIXTIME(`meta_value`,'%Y-%m-%d'), INTERVAL " . esc_sql( $interval['number'] ) . " " . esc_sql( $interval['period'] ) . " )
-	GROUP BY user_id;";
+function wpmem_get_expiring_users( $interval, $meta = false ) {
+	global $wpdb, $wpmem;
 
-	$results = $wpdb->get_results( $sql, 'OBJECT' );
+	if ( $meta ) {
+		// Check against a specific membership.
+		$results = $wpdb->get_results( 
+			'SELECT user_id, meta_value, FROM_UNIXTIME(`meta_value`,"%Y-%m-%d") as "date_expires"
+			FROM ' . $wpdb->usermeta . '
+			WHERE meta_key = "' . esc_sql( $meta ) . '"
+			AND CURDATE() = DATE_SUB( FROM_UNIXTIME(`meta_value`,"%Y-%m-%d"), INTERVAL ' . esc_sql( $interval['number'] ) . ' ' . esc_sql( $interval['period'] ) . ' )
+			GROUP BY user_id;', 
+			'OBJECT' 
+		);		
+	} else {
+		// Check against all memberships.
+		$results = $wpdb->get_results( 
+			"SELECT user_id, meta_value, FROM_UNIXTIME(`meta_value`,'%Y-%m-%d') as 'date_expires'
+			FROM {$wpdb->usermeta}
+			WHERE meta_key IN (" . esc_sql( implode( ",", $wpmem->membership->membership_by_id ) ) . ")
+			AND CURDATE() = DATE_SUB( FROM_UNIXTIME(`meta_value`,'%Y-%m-%d'), INTERVAL " . esc_sql( $interval['number'] ) . " " . esc_sql( $interval['period'] ) . " )
+			GROUP BY user_id;", 
+			'OBJECT' 
+		);
+	}
 	
 	return $results;
 }

@@ -97,26 +97,24 @@ class WP_Members_Admin_User_Search {
 				$terms = array_values( $terms );
 			}
 
-			// Need a permanent crud table because you cannot reference MySQL temporary tables more than once per query.
-			$mktable = $wpdb->prefix . $this->table;
+			// Uses a permanent crud table because you cannot reference MySQL temporary tables more than once per query.
 
 			// If the table does not exist, create the table to store the meta keys.
-			$wpdb->query( "CREATE TABLE IF NOT EXISTS {$mktable} (meta_key VARCHAR(255) NOT NULL);" );
+			$wpdb->query( "CREATE TABLE IF NOT EXISTS " . $wpdb->prefix . esc_sql( $this->table ) . "(meta_key VARCHAR(255) NOT NULL);" );
 
 			// Empty the table to ensure that we have an accurate set of meta keys.
-			$wpdb->query( "TRUNCATE TABLE {$mktable};" );
+			$wpdb->query( "TRUNCATE TABLE " . $wpdb->prefix . esc_sql( $this->table ) . ";" );
 
 			// Insert the meta keys into the table.
 			$prepare_values_array = array_fill( 0, count( $meta_keys ), '(%s)' );
 			$prepare_values = implode( ", ", $prepare_values_array );
 
-			$insert_sql = $wpdb->prepare( "
-				INSERT INTO {$mktable}
+			$wpdb->query( $wpdb->prepare( 
+				"INSERT INTO " . $wpdb->prefix . esc_sql( $this->table ) . "
 				(meta_key)
 				VALUES
-				{$prepare_values};", $meta_keys );
-
-			$wpdb->query( $insert_sql );
+				{$prepare_values};", $meta_keys 
+			) );
 
 			// Build data for $wpdb->prepare.
 			$values = array();
@@ -133,14 +131,14 @@ class WP_Members_Admin_User_Search {
 			$values[] = ( $search_with_or !== false ? 1 : count( $terms ) );
 
 			// Query for matching users.
-			$user_ids = $wpdb->get_col( $sql = $wpdb->prepare( "
+			$user_ids = $wpdb->get_col( $wpdb->prepare( "
 				SELECT user_id
 				FROM (" . implode( 'UNION ALL', array_fill( 0, count( $terms ), "
 					SELECT DISTINCT u.ID AS user_id
 					FROM {$wpdb->users} u
 					INNER JOIN {$wpdb->usermeta} um
 					ON um.user_id = u.ID
-					INNER JOIN {$mktable} mk
+					INNER JOIN " . $wpdb->prefix . esc_sql( $this->table ) . " mk
 					ON mk.meta_key = um.meta_key
 					WHERE LOWER(um.meta_value) LIKE %s
 					OR LOWER(u.user_login) LIKE %s

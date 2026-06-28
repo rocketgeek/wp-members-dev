@@ -373,8 +373,7 @@ class WP_Members_Admin_Users {
 
 			// We need a count of total users.
 			// @todo - need a more elegant way of this entire process.
-			$sql = "SELECT COUNT(*) FROM " . $wpdb->users;
-			$users = $wpdb->get_var( $sql );
+			$users = $wpdb->get_var( "SELECT COUNT(*) FROM " . $wpdb->users );
 
 			// What needs to be counted?		
 			$count_metas = array(

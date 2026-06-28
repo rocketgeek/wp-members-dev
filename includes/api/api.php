@@ -83,6 +83,8 @@ function wpmem_get_block_setting( $post_id ) {
 /**
  * Gets a link to the login page with a return link redirect_to value.
  * 
+ * The return value is escaped for safe output, so it can be used directly in HTML.
+ * 
  * @since 3.4.6
  * 
  * @param  array  $args {
@@ -116,6 +118,8 @@ function wpmem_get_login_link( $args = array() ) {
 /**
  * Echos a login link using wpmem_get_login_link().
  * 
+ * The output is already escaped for safe output, so it can be used directly in HTML.
+ * 
  * @since 3.5.6
  */
 function wpmem_login_link( $args = array() ) {
@@ -124,6 +128,8 @@ function wpmem_login_link( $args = array() ) {
 
 /**
  * Gets a link to the register page with a return link redirect_to value.
+ * 
+ * The return value is escaped for safe output, so it can be used directly in HTML.
  * 
  * @since 3.4.6
  * 
@@ -158,6 +164,8 @@ function wpmem_get_reg_link( $args = array() ) {
 /**
  * Echos a login link using wpmem_get_reg_link().
  * 
+ * The output is already escaped for safe output, so it can be used directly in HTML.
+ * 
  * @since 3.5.6
  */
 function wpmem_reg_link( $args = array() ) {
@@ -165,7 +173,10 @@ function wpmem_reg_link( $args = array() ) {
 }
 
 /**
- * Wrapper to get the login page location.
+ * Returns the login page URL.
+ * 
+ * The value is filtered through the wpmem_login_url filter, so it can be modified 
+ * by other plugins or themes. The return value is also escaped for safe output.
  *
  * @since 3.1.1
  * @since 3.1.2 Added redirect_to parameter.
@@ -460,8 +471,7 @@ function wpmem_is_reg_page( $check = false ) {
 	} else {
 		if ( ! is_int( $check ) ) {
 			global $wpdb;
-			$sql   = 'SELECT ID FROM $wpdb->posts WHERE post_name = "' . esc_sql( $check ) . '" AND post_status = "publish" LIMIT 1';	
-			$arr   = $wpdb->get_results( $sql, ARRAY_A  ); 
+			$arr   = $wpdb->get_results( 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_name = "' . esc_sql( $check ) . '" AND post_status = "publish" LIMIT 1', ARRAY_A  ); 
 			$check = $arr[0]['ID'];
 		}
 	}
@@ -512,7 +522,7 @@ function wpmem_logout_link() {
 /**
  * Wrapper to return a string from the get_text function.
  * 
- * get_text() values are escaped for safe output, so this function can be used to return or echo the string as needed.
+ * Values are escaped for safe output, so this function can be used to return or echo the string as needed.
  *
  * @since 3.4.0
  *
@@ -772,7 +782,7 @@ function wpmem_show_post_restriction( $post_id, $icon = false, $echo = false ) {
         }
 
         if ( $echo ) {
-            echo $result;
+            echo wp_kses_post( $result );
         } else {
             return $result;
         }
