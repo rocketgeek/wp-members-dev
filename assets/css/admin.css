@@ -154,7 +154,8 @@
 }
 #wpmem-fields .column-profile,
 #wpmem-fields .column-userscrn,
-#wpmem-fields .column-usearch {
+#wpmem-fields .column-usearch,
+#wpmem-fields .column-usersort {
 	width: 62px;
 	padding-left: 0px;
 }
