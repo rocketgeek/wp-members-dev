@@ -28,8 +28,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php
 $wpmem_tos = get_option( 'wpmembers_tos' );
 
-echo wpautop( wp_unslash( $wpmem_tos ) );
+echo wp_kses_post( wpautop( wp_unslash( $wpmem_tos ) ) );
 
+// wpmem_get_text() returns an escaped result, so we can safely echo it here.
 echo '<p>' . sprintf( wpmem_get_text( 'tos_close' ), '[<a href="javascript:self.close()">', '</a>]' )
 	. ' ' . sprintf( wpmem_get_text( 'tos_print' ), '[<a href="javascript:window.print()">', '</a>]' ) 
 	. '</p>';

@@ -217,9 +217,9 @@ class WP_Members_Admin_Tab_Dropins {
 		$loc_info = esc_html__( 'Current dropin folder: ', 'wp-members' );
 		$loc_desc = esc_html__( 'You can change location of the dropin folder using the <code>wpmem_dropin_folder</code> filter.', 'wp-members' );
 		echo '<div class="wrap">';
-		printf( '<h3 class="title">%s</h3>', $heading );
-		printf( '<p><strong>%s</strong></p>', $loc_info );
-		printf( '<p>%s</p>', $loc_desc );
+		printf( '<h3 class="title">%s</h3>', esc_html( $heading ) );
+		printf( '<p><strong>%s</strong></p>', esc_html( $loc_info ) );
+		printf( '<p>%s</p>', esc_html( $loc_desc ) );
 		printf( '<form name="updatedropinsform" id="updatedropinsform" method="post" action="%s">', wpmem_admin_form_post_url() );
 		$table->items = $field_items;
 		$table->prepare_items(); 

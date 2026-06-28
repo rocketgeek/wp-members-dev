@@ -825,19 +825,18 @@ class WP_Members_Products_Admin {
 
 					// If user has date, display that; otherwise placeholder
 					$date_value  = ( isset( $user_products[ $key ] ) && 1 != $user_products[ $key ] && 0 != $user_products[ $key ] && '' != $user_products[ $key ] ) ? date( 'Y-m-d', $user_products[ $key ] ) : "";
-					$placeholder = ( ! isset( $user_products[ $key ] ) ) ? 'placeholder="' . __( 'Expiration date (optional)', 'wp-members' ) . '" ' : '';
 
 					if ( isset( $user_products[ $key ] ) ) {
 						echo '<td align="center"><span id="wpmem_product_enabled" class="dashicons dashicons-yes"></span></td>';
 						if ( $user_products[ $key ] != 1 ) {
-							echo '<td> <input type="text" name="_wpmem_membership_expiration_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" class="wpmem_datepicker" ' . esc_attr( $placeholder ) . ' /></td>';
+							echo '<td> <input type="text" name="_wpmem_membership_expiration_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" class="wpmem_datepicker" ' . ( ( ! isset( $user_products[ $key ] ) ) ? 'placeholder="' . esc_html__( 'Expiration date (optional)', 'wp-members' ) . '" ' : '' ) . ' /></td>';
 						} else {
 							echo '<td>&nbsp;</td>';
 						}
 					} else {
 						if ( isset( $value['expires'] ) && ! empty( $value['expires'] ) ) {
 							echo '<td><span id="wpmem_product_enabled" class="dashicons"></span></td>';
-							echo '<td> <input type="text" name="_wpmem_membership_expiration_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" class="wpmem_datepicker" ' . esc_attr( $placeholder ) . ' /></td>';
+							echo '<td> <input type="text" name="_wpmem_membership_expiration_' . esc_attr( $key ) . '" value="' . esc_attr( $date_value ) . '" class="wpmem_datepicker" ' . ( ( ! isset( $user_products[ $key ] ) ) ? 'placeholder="' . esc_html__( 'Expiration date (optional)', 'wp-members' ) . '" ' : '' ) . ' /></td>';
 						} else {
 							echo '<td>&nbsp;</td>';
 						}

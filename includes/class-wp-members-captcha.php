@@ -82,8 +82,8 @@ class WP_Members_Captcha {
 		if ( false === $key ) {
 			$opts = get_option( 'wpmembers_captcha' );
 			$key  = $opts['hcaptcha']['api_key'];
-		}		
-		$html  = '<div class="h-captcha" data-sitekey="' . $key . '"></div>';
+		}
+		$html  = '<div class="h-captcha" data-sitekey="' . esc_attr( $key ) . '"></div>';
 		$html .= '<script src="https://hcaptcha.com/1/api.js" async defer></script>';
 		/** This filter is defined in /includes/class-wp-members-captcha.php */
 		return apply_filters( 'wpmem_captcha', $html );
@@ -124,13 +124,13 @@ class WP_Members_Captcha {
 		 * See https://wpbitz.com/how-to-use-hooks-in-wordpress/
 		 */
 		if ( 3 == $wpmem->captcha ) {
-			$html = '<script src="' . $wpmem_recaptcha_url . '" async defer></script>
-			<div class="g-recaptcha" data-sitekey="' . $key . '"></div>';
+			$html = '<script src="' . esc_url_raw( $wpmem_recaptcha_url ) . '" async defer></script>
+			<div class="g-recaptcha" data-sitekey="' . esc_attr( $key ) . '"></div>';
 		} else {
-			$html = '<script src="' . $wpmem_recaptcha_url . '?render=' . $key . '"></script>';
+			$html = '<script src="' . esc_url_raw( $wpmem_recaptcha_url ) . '?render=' . esc_attr( $key ) . '"></script>';
 			$html.= "<script>
 						grecaptcha.ready(function () {
-							grecaptcha.execute('" . $key . "', { action: 'contact' }).then(function (token) {
+							grecaptcha.execute('" . esc_attr( $key ) . "', { action: 'contact' }).then(function (token) {
 								var recaptchaResponse = document.getElementById('recaptchaResponse');
 								recaptchaResponse.value = token;
 							});
@@ -204,7 +204,7 @@ class WP_Members_Captcha {
 			$rs_captcha->img_type = $args['img_type'];
 
 			$rs_captcha_word   = $rs_captcha->generate_random_word();
-			$rs_captcha_prefix = mt_rand();
+			$rs_captcha_prefix = wp_rand();
 			$rs_captcha_image_name = $rs_captcha->generate_image( $rs_captcha_prefix, $rs_captcha_word );
 
 			/**
@@ -394,7 +394,7 @@ class WP_Members_Captcha {
 					return false;
 				}
 				
-				if ( $_SERVER['REQUEST_METHOD'] === 'POST' && false !== $captcha ) {
+				if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' && false !== $captcha ) {
 
 					// Make and decode POST request:
 					$url = $recaptcha_verify_url . http_build_query([

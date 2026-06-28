@@ -284,18 +284,13 @@ class WP_Members_Admin_API {
 		 * @param array $tabs An array of the tabs to be displayed on the plugin settings page.
 		 */
 		$this->tabs = apply_filters( 'wpmem_admin_tabs', $this->tabs );
-	
-		$links = array();
+
+		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $this->tabs as $tab => $name ) {
 			$link_args = array( 'page' => 'wpmem-settings', 'tab'  => $tab );
 			$link = add_query_arg( $link_args, admin_url( 'options-general.php' ) );
 			$class = ( $tab == $current ) ? 'nav-tab nav-tab-active' : 'nav-tab';
-			$links[] = sprintf( '<a class="%s" href="%s">%s</a>', esc_attr( $class ), esc_url( $link ), esc_attr( $name ) );
-		}
-	
-		echo '<h2 class="nav-tab-wrapper">';
-		foreach ( $links as $link ) {
-			echo $link; // These link values are all escaped above when the $links array is built.
+			echo '<a class="' . esc_attr( $class ) . '" href="' . esc_url( $link ) . '">' . esc_attr( $name ) . '</a>';
 		}
 		echo '</h2>';
 	}

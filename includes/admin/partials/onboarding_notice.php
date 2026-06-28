@@ -13,28 +13,29 @@ $utms = array(
 	'utm_medium'   => 'wp-members-core-plugin',
 	'utm_campaign' => 'plugin-install',
 );
+$release_notes_link = add_query_arg( $utms, 'https://rocketgeek.com/plugins/wp-members/changelog/' );
 	
-$action_complete = ( 'update_pending' == $wpmem->install_state ) ? esc_html__( 'WP-Members update complete', 'wp-members' ) : esc_html__( 'WP-Members installation complete', 'wp-members' );
+$action_complete = ( 'update_pending' == $wpmem->install_state ) ? __( 'WP-Members update complete', 'wp-members' ) : __( 'WP-Members installation complete', 'wp-members' );
 
 if ( 'finalize' == wpmem_get( 'wpmem_onboarding_action' ) ) {
 ?>
 <div class="notice notice-info is-dismissible">
-	<h3><?php echo $action_complete; ?></h3>
+	<h3><?php echo esc_html( $action_complete ); ?></h3>
 	<?php if ( 'update_pending' != $wpmem->install_state ) { ?>
-		<p>WP-Members installs some basic defaults to get you started. Be sure to review <a href="<?php echo admin_url(); ?>options-general.php?page=wpmem-settings">the plugin's default setup here</a>.
+		<p>WP-Members installs some basic defaults to get you started. Be sure to review <a href="<?php echo esc_url( trailingslashit( admin_url() ) . 'options-general.php?page=wpmem-settings' ); ?>">the plugin's default setup here</a>.
 		There are links to related documentation in the plugin settings.  There are also some helpful links below.</p>     
 	<?php } ?>
 	<ul><?php /* translators: %s: WP-Members version number */ ?>
-		<li>&raquo; <a href="<?php echo $release_notes_link . "?" . http_build_query( $utms ); ?>" target="_blank"><?php printf( esc_html__( 'WP-Members version %s release notes', 'wp-members' ), $wpmem->version ); ?></a></li>
-		<li>&raquo; <a href="https://rocketgeek.com/plugins/wp-members/docs/?<?php echo http_build_query( $utms ); ?>" target="_blank"><?php _e( 'WP-Members documentation', 'wp-members' ); ?></a></li>
+		<li>&raquo; <a href="<?php echo esc_url_raw( $release_notes_link ); ?>" target="_blank"><?php printf( esc_html__( 'WP-Members version %s release notes', 'wp-members' ), esc_attr( $wpmem->version ) ); ?></a></li>
+		<li>&raquo; <a href="<?php echo esc_url_raw( add_query_arg( $utms, 'https://rocketgeek.com/plugins/wp-members/docs/' ) ); ?>" target="_blank"><?php esc_html_e( 'WP-Members documentation', 'wp-members' ); ?></a></li>
 	</ul>  
-	<h3><?php _e( 'Want more features? Or need help?', 'wp-members' ); ?></h3>
-	<p>There are <a href="https://rocketgeek.com/store/?<?php echo http_build_query( $utms ); ?>" target="_blank">premium plugin add-ons</a> available as well as a <a href="https://rocketgeek.com/plugins/wp-members/support-options/?<?php echo http_build_query( $utms ); ?>" target="_blank">discounted bundle</a>.<br />
-	If you need assistance, consider a <a href="https://rocketgeek.com/plugins/wp-members/support-options/?<?php echo http_build_query( $utms ); ?>" target="_blank">premium support subscription</a>.</p>
+	<h3><?php esc_html_e( 'Want more features? Or need help?', 'wp-members' ); ?></h3>
+	<p>There are <a href="<?php echo esc_url_raw( add_query_arg( $utms, 'https://rocketgeek.com/store/' ) ); ?>" target="_blank">premium plugin add-ons</a> available as well as a <a href="<?php echo esc_url_raw( add_query_arg( $utms, 'https://rocketgeek.com/plugins/wp-members/support-options/' ) ); ?>" target="_blank">discounted bundle</a>.<br />
+	If you need assistance, consider a <a href="<?php echo esc_url_raw( add_query_arg( $utms, 'https://rocketgeek.com/plugins/wp-members/support-options/' ) ); ?>" target="_blank">premium support subscription</a>.</p>
 	<p>
-		<a href="<?php echo admin_url() . 'options-general.php?page=wpmem-settings'; ?>"><?php _e( 'Go to WP-Members settings', 'wp-members' ); ?></a> | 
-		<a href="<?php echo admin_url() . 'plugins.php'; ?>"><?php _e( 'Go to WordPress plugins page', 'wp-members' ); ?></a> |
-		<a href="<?php echo admin_url() . 'update-core.php'; ?>"><?php _e( 'Go to WordPress updates page', 'wp-members' ); ?></a>
+		<a href="<?php echo esc_url( trailingslashit( admin_url() ) . 'options-general.php?page=wpmem-settings' ); ?>"><?php esc_html_e( 'Go to WP-Members settings', 'wp-members' ); ?></a> | 
+		<a href="<?php echo esc_url( trailingslashit( admin_url() ) . 'plugins.php' ); ?>"><?php esc_html_e( 'Go to WordPress plugins page', 'wp-members' ); ?></a> |
+		<a href="<?php echo esc_url( trailingslashit( admin_url() ) . 'update-core.php' ); ?>"><?php esc_html_e( 'Go to WordPress updates page', 'wp-members' ); ?></a>
 	</p>
 </div>
 

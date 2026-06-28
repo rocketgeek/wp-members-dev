@@ -65,12 +65,12 @@ class WP_Members_Admin_Tab_About {
                     <p><strong><a href="<?php self::do_link( 'wordpass_free' ); ?>" target="_blank">Try WordPass Free!</a></strong></p>
                     </div></div>
                  </div>
-                <h2><?php _e( 'About WP-Members', 'wp-members' ); ?></h2>
+                <h2><?php esc_html_e( 'About WP-Members', 'wp-members' ); ?></h2>
                     <p>WP-Members is a WordPress membership plugin that is simple to use but incorporates a powerful API for customization.
                     A simple installation can be up and running in minutes. Yet, using the plugin's API, filters, and actions, the plugin can
                     be customized without touching the main plugin files.</p>
                     <p>Introduced publicly in 2006, WP-Members was the first WordPress Membership plugin and through support of the WP community it continues to grow
-                    and be developed.  <strong>Why put your trust in an unknown?  WP-Members has a <?php echo date('Y') - date('Y', strtotime('2006-01-01')); ?> year track record of active development and support.</strong></p>
+                    and be developed.  <strong>Why put your trust in an unknown?  WP-Members has a <?php echo esc_html( gmdate('Y') - gmdate('Y', strtotime('2006-01-01')) ); ?> year track record of active development and support.</strong></p>
                     <p><strong><a href="<?php self::do_link( 'docs' ); ?>" target="_blank">Plugin Documentation</a></strong> |
                     <strong><a href="<?php self::do_link( 'support' ); ?>" target="_blank">Premium Support &amp; Extensions</a></strong></p>
                 <h2>Priority Support</h2>

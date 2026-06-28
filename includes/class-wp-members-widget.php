@@ -45,9 +45,9 @@ class widget_wpmemwidget extends WP_Widget {
 		if ( $instance['redirect_to'] != '' ) {
 			if ( ! wp_http_validate_url( $instance['redirect_to'] ) ) {
 				// If it's not a valid URL, try setting a permalink.
-				$redirect_to_escd = esc_html( rktgk_get_permalink_by_slug( $instance['redirect_to'] ) );	
+				$redirect_to = rktgk_get_permalink_by_slug( $instance['redirect_to'] );	
 			} else {
-				$redirect_to_escd = esc_url_raw( $instance['redirect_to'] );
+				$redirect_to = $instance['redirect_to'];
 			}
 		}
 		
@@ -58,7 +58,7 @@ class widget_wpmemwidget extends WP_Widget {
 		</p>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>"><?php esc_html_e( 'Redirect to (optional):', 'wp-members' ); ?></label>
-			<input id="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'redirect_to' ) ); ?>" value="<?php echo $redirect_to_escd; ?>" style="width:95%;" />
+			<input id="<?php echo esc_attr( $this->get_field_id( 'redirect_to' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'redirect_to' ) ); ?>" value="<?php echo esc_url_raw( $redirect_to ); ?>" style="width:95%;" />
 		</p>
 		<?php
 	}

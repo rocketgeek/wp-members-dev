@@ -27,12 +27,12 @@ class WP_Members_Admin_Posts {
 		if ( ( isset( $_GET['post_type'] ) && ( 'page' == $_GET['post_type'] || 'post' == $_GET['post_type'] || array_key_exists( $_GET['post_type'], $wpmem->post_types ) ) ) || ! isset( $_GET['post_type'] ) ) { ?>
 		<script type="text/javascript">
 			jQuery(document).ready(function() {
-			jQuery('<option>').val('unblock').text('<?php _e( 'Unrestrict', 'wp-members' ) ?>').appendTo("select[name='action']");
-			jQuery('<option>').val('block').text('<?php   _e( 'Restrict',   'wp-members' ) ?>').appendTo("select[name='action']");
-			jQuery('<option>').val('hide').text('<?php    _e( 'Hide',       'wp-members' ) ?>').appendTo("select[name='action']");
-			jQuery('<option>').val('unblock').text('<?php _e( 'Unrestrict', 'wp-members' ) ?>').appendTo("select[name='action2']");
-			jQuery('<option>').val('block').text('<?php   _e( 'Restrict',   'wp-members' ) ?>').appendTo("select[name='action2']");
-			jQuery('<option>').val('hide').text('<?php    _e( 'Hide',       'wp-members' ) ?>').appendTo("select[name='action2']");
+			jQuery('<option>').val('unblock').text('<?php esc_html_e( 'Unrestrict', 'wp-members' ) ?>').appendTo("select[name='action']");
+			jQuery('<option>').val('block').text('<?php   esc_html_e( 'Restrict',   'wp-members' ) ?>').appendTo("select[name='action']");
+			jQuery('<option>').val('hide').text('<?php    esc_html_e( 'Hide',       'wp-members' ) ?>').appendTo("select[name='action']");
+			jQuery('<option>').val('unblock').text('<?php esc_html_e( 'Unrestrict', 'wp-members' ) ?>').appendTo("select[name='action2']");
+			jQuery('<option>').val('block').text('<?php   esc_html_e( 'Restrict',   'wp-members' ) ?>').appendTo("select[name='action2']");
+			jQuery('<option>').val('hide').text('<?php    esc_html_e( 'Hide',       'wp-members' ) ?>').appendTo("select[name='action2']");
 			});
 		</script><?php
 		}
@@ -193,15 +193,13 @@ class WP_Members_Admin_Posts {
 		$post_meta_value = get_post_meta( $post->ID, '_wpmem_block', true );
 		$post_meta_value = ( null == $post_meta_value ) ? $wpmem->block[ $post->post_type ] : $post_meta_value;
 		$post_meta_settings = array(
-			'0' => array( 'text' => esc_html__( 'Unrestricted', 'wp-members' ), 'icon' => '<span id="wpmem_post_icon_0" class="dashicons dashicons-unlock" ' . ( ( 0 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
-			'1' => array( 'text' => esc_html__( 'Restricted',   'wp-members' ), 'icon' => '<span id="wpmem_post_icon_1" class="dashicons dashicons-lock" '   . ( ( 1 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
-			'2' => array( 'text' => esc_html__( 'Hidden',       'wp-members' ), 'icon' => '<span id="wpmem_post_icon_2" class="dashicons dashicons-hidden" ' . ( ( 2 != $post_meta_value ) ? 'style="display:none;"' : '' ) . '></span>' ),
+			'0' => array( 'text' => __( 'Unrestricted', 'wp-members' ), 'key' => 'unlock' ),
+			'1' => array( 'text' => __( 'Restricted',   'wp-members' ), 'key' => 'lock'   ),
+			'2' => array( 'text' => __( 'Hidden',       'wp-members' ), 'key' => 'hidden' ),
 		); ?>
 		<p><?php
-			foreach ( $post_meta_settings as $key => $value ) {
-				echo $value['icon'];
-			} ?> <?php
-			_e( 'Status:', 'wp-members' ); ?> <span id="wpmem_post_block_status"><?php echo $post_meta_settings[ $post_meta_value ]['text']; ?></span> <a href="#" class="hide-if-no-js" id="wpmem_edit_block_status"><?php _e( 'Edit' ); ?></a>
+			echo '<span id="wpmem_post_icon_' . esc_attr( $post_meta_value ) . '" class="dashicons dashicons-' . esc_attr( $post_meta_settings[ $post_meta_value ]['key'] ) . '"></span>';
+			esc_html_e( 'Status:', 'wp-members' ); ?> <span id="wpmem_post_block_status"><?php echo esc_html( $post_meta_settings[ $post_meta_value ]['text'] ); ?></span> <a href="#" class="hide-if-no-js" id="wpmem_edit_block_status"><?php esc_html_e( 'Edit' ); ?></a>
 		</p>
 		<p>
 			<div id="wpmem_block">
@@ -210,14 +208,14 @@ class WP_Members_Admin_Posts {
 			foreach ( $post_meta_settings as $key => $value ) {
 				$original_value = ( $post_meta_value == $key ) ? $key           : $original_value;
 				$original_label = ( $post_meta_value == $key ) ? $value['text'] : $original_label;
-				echo '<input type="radio" id="wpmem_block_status_' . $key . '" name="wpmem_block" value="' . $key . '" ' . checked( $post_meta_value, $key, false ) . ' /><label>' . $value['text'] . '</label><br />';
+				echo '<input type="radio" id="wpmem_block_status_' . esc_attr( $key ) . '" name="wpmem_block" value="' . esc_attr( $key ) . '" ' . checked( $post_meta_value, $key, false ) . ' /><label>' . esc_html( $value['text'] ) . '</label><br />';
 			}
-			echo '<input type="hidden" id="wpmem_block_original_value" name="wpmem_block_original_value" value="' . $original_value . '" />';
-			echo '<input type="hidden" id="wpmem_block_original_label" name="wpmem_block_original_label" value="' . $original_label . '" />';
+			echo '<input type="hidden" id="wpmem_block_original_value" name="wpmem_block_original_value" value="' . esc_attr( $original_value ) . '" />';
+			echo '<input type="hidden" id="wpmem_block_original_label" name="wpmem_block_original_label" value="' . esc_attr( $original_label ) . '" />';
 			?>
 			<p>
-				<a href="#" class="hide-if-no-js button" id="wpmem_ok_block_status"><?php echo _e( 'Ok' ); ?></a>
-				<!--<a href="#" class="hide-if-no-js" id="wpmem_cancel_block_status"><?php _e( 'Cancel' ); ?></a>--><?php // @todo Cannot use this until js is updated to set the radio group back to the original value (otherwise it's confusing for the user). ?>
+				<a href="#" class="hide-if-no-js button" id="wpmem_ok_block_status"><?php esc_html_e( 'Ok' ); ?></a>
+				<!--<a href="#" class="hide-if-no-js" id="wpmem_cancel_block_status"><?php esc_html_e( 'Cancel' ); ?></a>--><?php // @todo Cannot use this until js is updated to set the radio group back to the original value (otherwise it's confusing for the user). ?>
 			</p>
 			</div>
 		</p>
@@ -337,19 +335,19 @@ class WP_Members_Admin_Posts {
 			}
 
 			if ( $wpmem->block[ $post_type ] == 1 ) {
-				$block_span = array( 'lock', 'green', esc_html__( 'Restricted', 'wp-members' ) );
+				$block_span = array( 'lock', 'green', __( 'Restricted', 'wp-members' ) );
 			}
 			if ( $wpmem->block[ $post_type ] == 0 ) {
-				$block_span =  array( 'unlock', 'red', esc_html__( 'Unrestricted', 'wp-members' ) );
+				$block_span =  array( 'unlock', 'red', __( 'Unrestricted', 'wp-members' ) );
 			}
 			if ( $wpmem->block[ $post_type ] == 1 && $block_meta == '0' ) {
-				$block_span = array( 'unlock', 'red', esc_html__( 'Unrestricted', 'wp-members' ) );
+				$block_span = array( 'unlock', 'red', __( 'Unrestricted', 'wp-members' ) );
 			} elseif ( $wpmem->block[ $post_type ] == 0 && $block_meta == '1' ) {
-				$block_span = array( 'lock', 'green', esc_html__( 'Restricted', 'wp-members' ) );
+				$block_span = array( 'lock', 'green', __( 'Restricted', 'wp-members' ) );
 			} elseif ( 2 == $block_meta ) {
-				$block_span = array( 'hidden', '', esc_html__( 'Hidden', 'wp-members' ) );
+				$block_span = array( 'hidden', '', __( 'Hidden', 'wp-members' ) );
 			}
-			echo '<span class="dashicons dashicons-' . $block_span[0] . '" style="color:' . $block_span[1] . '" title="' . $block_span[2] . '"></span>';
+			echo '<span class="dashicons dashicons-' . esc_attr( $block_span[0] ) . '" style="color:' . esc_attr( $block_span[1] ) . '" title="' . esc_html( $block_span[2] ) . '"></span>';
 		}
 	}
 

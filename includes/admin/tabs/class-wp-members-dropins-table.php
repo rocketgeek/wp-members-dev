@@ -141,7 +141,7 @@ class WP_Members_Dropins_Table extends WP_List_Table {
 	 */
 	function single_row( $columns ) {
 		echo '<tr id="list_items_' . esc_attr( $columns['dropin_name'] ) . '" class="list_item" list_item="' . esc_attr( $columns['dropin_name'] ) . '">';
-		echo $this->single_row_columns( $columns );
+		$this->single_row_columns( $columns );
 		echo "</tr>\n";
 	}
 
