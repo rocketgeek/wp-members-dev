@@ -49,7 +49,8 @@ class WP_Members_Admin_Tab_About {
         }
     }
 
-    static function build_settings() { ?>
+    static function build_settings() { 
+        global $wpmem;?>
         <div class="metabox-holder has-right-sidebar">
             <div class="post-body"><div class="post-body-content">
             <div class="postbox"><div class="inside">
@@ -81,7 +82,7 @@ class WP_Members_Admin_Tab_About {
                 <h2>Premium Extensions</h2>
                     <table>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-advanced-options' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/advanced_options-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-advanced-options' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/advanced_options-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-advanced-options' ); ?>" target="_blank">Advanced Options</a></strong><br />
                     This exclusive extension adds a host of additional features to the plugin that are as simple to set up as checking a box. Hides the dashboard,
                     override WP default URLs for login and registration, disable certain WP defaults, change WP-Members defaults, notify admin on user profile
@@ -89,39 +90,39 @@ class WP_Members_Admin_Tab_About {
                     of available settings here.</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-download-protect' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/download_protect-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-download-protect' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/download_protect-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-download-protect' ); ?>" target="_blank">Download Protect</a></strong><br />Adds file restriction to the core WP-Members functionality. Restrict file downloads to registered users and track download activity.</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-invite-codes' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/invitation_codes-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-invite-codes' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/invitation_codes-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-invite-codes' ); ?>" target="_blank">Invite Codes</a></strong><br />Create invite codes for registration. Use to track sign-ups, or require a valid invite code in order to register.</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-security' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/wpmembers_security-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-security' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/wpmembers_security-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-security' ); ?>" target="_blank">Security</a></strong><br />Set password expirations, require strong passwords, restrict concurrent logins, block specific IPs or email addresses from registering, restrict usernames like "admin" or "support" from being registered.  This extension allows you to block IPs, emails, and restrict username selection.</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-text-editor' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/wpmembers_editor-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-text-editor' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/wpmembers_editor-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-text-editor' ); ?>" target="_blank">Text String Editor</a><br />Provides a simple way to edit all of the plugin's user-facing text strings. Includes text that is used in the various forms, custom messages, form headings, etc.</strong></td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-user-list' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/wpmembers_userlist-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-user-list' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/wpmembers_userlist-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-user-list' ); ?>" target="_blank">User List</a></strong><br />Provides a configurable shortcode to create user/member directories.  The extension allows you to set defaults for the shortcode and to override any of those defaults with shortcode parameters for an unlimited number of lists.</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-user-tracking' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/wpmembers_user_tracking-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-user-tracking' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/wpmembers_user_tracking-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-user-tracking' ); ?>" target="_blank">User Tracking</a></strong><br />Tracks site usage by registered logged in users. Review what pages a user is viewing, download data as CSV.</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-mailchimp-integration' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2017/12/mailchimp_logo-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-mailchimp-integration' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/mailchimp_logo-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-mailchimp-integration' ); ?>" target="_blank">MailChimp Integration</a></strong><br />Integrate MainChimp newsletter signup directly into your WP-Members registration form and allow users to subscribe/unsubscribe from their profile.</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-paypal-subscriptions' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2017/12/paypal_PNG22-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-paypal-subscriptions' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/paypal_PNG22-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-paypal-subscriptions' ); ?>" target="_blank">PayPal Subscriptions</a></strong><br />Start charging for access to your membership site.  Easy to set up and manages user expiration dates.  Uses basic PayPal IPN (Instant Payment Notification).</td>
                         </tr>
                         <tr>
-                            <td><a href="<?php self::do_link( 'wp-members-salesforce-web-to-lead-integration' ); ?>" target="_blank"><img src="https://rocketgeek.com/wp/wp-content/uploads/2018/01/salesforce-80x80.png" /></a></td>
+                            <td><a href="<?php self::do_link( 'wp-members-salesforce-web-to-lead-integration' ); ?>" target="_blank"><img src="<?php echo esc_url( $wpmem->url . 'assets/images/about/salesforce-80x80.png' ); ?>" /></a></td>
                             <td><strong><a href="<?php self::do_link( 'wp-members-salesforce-web-to-lead-integration' ); ?>" target="_blank">Salesforce Integration</a></strong><br />Integrates Salesforce Web-to-Lead with the WP-Members registration form data.</td>
                         </tr>
                     </table>
