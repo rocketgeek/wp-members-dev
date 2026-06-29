@@ -66,6 +66,11 @@ class WP_Members_Update_Filesystem_Class {
 			return false;
 		}
 
+		// Initialize the filesystem
+		global $wp_filesystem;
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		WP_Filesystem(); // This sets up $wp_filesystem
+
 		$results = $this->get_file_list();
 	
 		// If there are results, they need to move.
@@ -73,8 +78,8 @@ class WP_Members_Update_Filesystem_Class {
 
 			$new_dir_location = trailingslashit( '/wpmembers/' . wpmem_get_file_dir_hash() );
 			// If new_dir_location does not exist, create it.
-			if ( ! is_dir( $this->basedir . $new_dir_location ) ) {
-				mkdir( $this->basedir . $new_dir_location, 0755, true );
+			if ( ! $wp_filesystem->is_dir( $this->basedir . $new_dir_location ) ) {
+				$wp_filesystem->mkdir( $this->basedir . $new_dir_location, 0755, true );
 				// Add indexes and htaccess
 				wpmem_create_file( array(
 					'path'     => $this->basedir . $new_dir_location,
@@ -129,6 +134,7 @@ class WP_Members_Update_Filesystem_Class {
 	/**
 	 * Move/rename a media attachment file and update WordPress metadata.
 	 *
+	 * @global WP_Filesystem_Base $wp_filesystem
 	 * @param int    $attachment_id The ID of the attachment post.
 	 * @param string $new_file_path Absolute path to the new location (including filename).
 	 *
@@ -153,9 +159,14 @@ class WP_Members_Update_Filesystem_Class {
 			return new WP_Error( 'invalid_attachment', 'Invalid attachment ID.' );
 		}
 
+		// Initialize the filesystem
+		global $wp_filesystem;
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		WP_Filesystem(); // This sets up $wp_filesystem
+
 		// Get current absolute file path
 		$old_file_path = get_attached_file( $attachment_id );
-		if ( ! file_exists( $old_file_path ) ) {
+		if ( ! $wp_filesystem->exists( $old_file_path ) ) {
 			$error = new WP_Error( 'file_missing', 'Original file not found.' );
 			if ( is_wp_error( $error ) ) { // Try if it's https
 				// First, equalize the https and http baseurls.
@@ -168,7 +179,7 @@ class WP_Members_Update_Filesystem_Class {
 				}
 				// Then, try again to see if the file exists.
 				$old_file_path = str_replace( trailingslashit( $this->baseurl ), '', $old_file_path );
-				if ( ! file_exists( $old_file_path ) ) {
+				if ( ! $wp_filesystem->exists( $old_file_path ) ) {
 					// Still an error.
 					return $error;
 				}
@@ -177,14 +188,14 @@ class WP_Members_Update_Filesystem_Class {
 
 		// Ensure destination directory exists
 		$new_dir = dirname( $new_file_path );
-		if ( ! file_exists( $new_dir ) ) {
-			if ( ! wp_mkdir_p( $new_dir ) ) {
+		if ( ! $wp_filesystem->exists( $new_dir ) ) {
+			if ( ! $wp_filesystem->mkdir( $new_dir ) ) {
 				return new WP_Error( 'dir_create_failed', 'Could not create destination directory.' );
 			}
 		}
 
 		// Move the original file
-		if ( ! rename( $old_file_path, $new_file_path ) ) {
+		if ( ! $wp_filesystem->move( $old_file_path, $new_file_path ) ) {
 			return new WP_Error( 'move_failed', 'Failed to move the main file.' );
 		}
 
@@ -216,6 +227,7 @@ class WP_Members_Update_Filesystem_Class {
 	 * 
 	 * @see https://wpbitz.com/code-snippets/delete-directory-using-rmdir-in-php-even-if-the-directory-is-not-empty/
 	 * 
+	 * @global WP_Filesystem_Base $wp_filesystem
 	 * @param  string  $dir
 	 * @return boolean
 	 */
@@ -233,32 +245,17 @@ class WP_Members_Update_Filesystem_Class {
 			return false;
 		}
 
+		// Initialize the filesystem
+		global $wp_filesystem;
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		WP_Filesystem(); // This sets up $wp_filesystem
+
 		// Check if $dir is a directory, return false if it's not.
-		if ( ! is_dir( $dir ) ) {
+		if ( ! $wp_filesystem->is_dir( $dir ) ) {
 			return false;
 		}
 
-		// Get all files and folders in the directory.
-		$items = scandir( $dir );
-
-		// Loop through items in the directory.
-		foreach ( $items as $item ) {
-			// Skip special entries "." (current directory) and ".." (parent directory)
-			if ( $item == '.' || $item == '..' ) {
-				continue;
-			}
-			// Build the full path of the current item.
-			$path = $dir . DIRECTORY_SEPARATOR . $item;
-
-			// If the item is a directory, call this function recursively.
-			if ( is_dir( $path ) ) {
-				$this->delete_directory( $path );
-			} else { // If the item is a file, delete it.
-				unlink( $path );
-			}
-		}
-
-		// Remove the main directory.
-		return rmdir( $dir );
+		// Remove the directory recursively.
+		$wp_filesystem->delete( $dir, true );
 	}
 }
