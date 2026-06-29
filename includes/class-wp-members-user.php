@@ -1252,7 +1252,7 @@ class WP_Members_User {
 		// Update the legacy setting.
 		$user_products = get_user_meta( $user_id, '_wpmem_products', true );
 		$user_products = ( $user_products ) ? $user_products : array();
-		$user_products[ $membership ] = ( true === $new_value ) ? true : date( 'Y-m-d H:i:s', $new_value );
+		$user_products[ $membership ] = ( true === $new_value ) ? true : gmdate( 'Y-m-d H:i:s', $new_value );
 		update_user_meta( $user_id, '_wpmem_products', $user_products );
 
 		/**

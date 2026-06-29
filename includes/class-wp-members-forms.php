@@ -329,7 +329,7 @@ class WP_Members_Forms {
 					$value = esc_url( $value );
 					break;
 				case 'timestamp':
-					$value = ( '' != $value ) ? date( $timestamp, intval( $value ) ) : '';
+					$value = ( '' != $value ) ? gmdate( $timestamp, intval( $value ) ) : '';
 					break;
 				default:
 					$value = wp_unslash( esc_attr( $value ) );

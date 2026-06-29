@@ -952,7 +952,7 @@ class WP_Members_Shortcodes {
 				case 'date':
 					if ( isset( $sanitized_atts['format'] ) ) {
 						// Formats date: https://secure.php.net/manual/en/function.date.php
-						$result = ( '' != $user_info_field ) ? date( $sanitized_atts['format'], strtotime( $user_info_field ) ) : '';
+						$result = ( '' != $user_info_field ) ? gmdate( $sanitized_atts['format'], strtotime( $user_info_field ) ) : '';
 					} else {
 						// Formats date to whatever the WP setting is.
 						$result = ( '' != $user_info_field ) ? date_i18n( get_option( 'date_format' ), strtotime( $user_info_field ) ) : '';

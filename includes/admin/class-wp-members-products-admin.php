@@ -824,7 +824,7 @@ class WP_Members_Products_Admin {
 					</select></td><td style="padding:0px 0px;">' . esc_html( $value['title'] ) . '</td>';
 
 					// If user has date, display that; otherwise placeholder
-					$date_value  = ( isset( $user_products[ $key ] ) && 1 != $user_products[ $key ] && 0 != $user_products[ $key ] && '' != $user_products[ $key ] ) ? date( 'Y-m-d', $user_products[ $key ] ) : "";
+					$date_value  = ( isset( $user_products[ $key ] ) && 1 != $user_products[ $key ] && 0 != $user_products[ $key ] && '' != $user_products[ $key ] ) ? gmdate( 'Y-m-d', $user_products[ $key ] ) : "";
 
 					if ( isset( $user_products[ $key ] ) ) {
 						echo '<td align="center"><span id="wpmem_product_enabled" class="dashicons dashicons-yes"></span></td>';

@@ -93,7 +93,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$expiration = ( isset( $row[ $expiration_key ] ) ) ? $row[ $expiration_key ] : false;
 
 				// Set expiration date - either "false" or MySQL timestamp.
-				$date = ( $expiration ) ? date( "Y-m-d H:i:s", strtotime( $expiration ) ) : false;
+				$date = ( $expiration ) ? gmdate( "Y-m-d H:i:s", strtotime( $expiration ) ) : false;
 
 				if ( ! $user_id ) {
 					if ( ! $membership ) {

@@ -1341,7 +1341,7 @@ function wpmem_update_membership_from_import( $user_id, $args = array() ) {
 
 	// Set expiration date - either "false" or MySQL timestamp.
 	if ( $expiration ) {
-		$date = ( 'none' == $expiration || false == $expiration ) ? false : date( "Y-m-d H:i:s", strtotime( $expiration ) );
+		$date = ( 'none' == $expiration || false == $expiration ) ? false : gmdate( "Y-m-d H:i:s", strtotime( $expiration ) );
 	} else {
 		$date = false;
 	}

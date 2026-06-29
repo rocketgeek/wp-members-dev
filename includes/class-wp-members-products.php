@@ -617,7 +617,7 @@ class WP_Members_Products {
 		$end = $this->memberships[ $product ]['fixed_period']['end'];
 
 		// Get the current year.
-		$current_year = date( 'Y' );
+		$current_year = gmdate( 'Y' );
 
 		// Format period end date for current year.
 		$cur_date = DateTime::createFromFormat( 'd-m-Y', $end . '-' . $current_year ); //DateTime( $start_date );
@@ -628,7 +628,7 @@ class WP_Members_Products {
 		// If date is past, set next period.
 		if ( $cur_date < $now ) {
 			// Date is past.
-			$next_year = date( 'Y', strtotime( '+1 year' ) );
+			$next_year = gmdate( 'Y', strtotime( '+1 year' ) );
 			$next_date = DateTime::createFromFormat( 'd-m-Y', $end . '-' . $next_year );
 			$new_value = $next_date->format( 'U' );
 		} else {
@@ -640,7 +640,7 @@ class WP_Members_Products {
 				$grace_date   = DateTime::createFromFormat( 'U', strtotime( $grace_period, strtotime( $cur_date->format( 'd-m-Y' ) ) ) );
 				if ( $grace_date < $now ) {
 					// We are in grace period, set expiration as next year.
-					$next_year = date( 'Y', strtotime( '+1 year' ) );
+					$next_year = gmdate( 'Y', strtotime( '+1 year' ) );
 					$next_date = DateTime::createFromFormat( 'd-m-Y', $end . '-' . $next_year );
 					$new_value = $next_date->format( 'U' );
 				} else {
@@ -712,7 +712,7 @@ class WP_Members_Products {
 			
 			$exp_date = wpmem_get_user_expiration( $key );
 			if ( $exp_date > 1 ) {
-				$exp_formatted = ( 'default' == $args['date_format'] ) ? wpmem_format_date( $exp_date ) : date( $args['date_format'], $exp_date );
+				$exp_formatted = ( 'default' == $args['date_format'] ) ? wpmem_format_date( $exp_date ) : gmdate( $args['date_format'], $exp_date );
 			} else {
 				$exp_formatted = $args['no_expire'];
 			}
