@@ -24,6 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class WP_Members_Dropins_Table extends WP_List_Table {
 
+	var $dropins = array();
+
 	/**
 	 * Constructor.
 	 *
@@ -57,6 +59,14 @@ class WP_Members_Dropins_Table extends WP_List_Table {
 		return sprintf( '<input type="checkbox" name="%s[]" value="%s" %s />', esc_attr( $this->_args['singular'] ), esc_attr( $item['dropin_file'] ), $checked );
 	}
 
+	function column_dropin_enabled( $item ) {
+		global $wpmem;
+		if ( in_array( $item['dropin_file'], $wpmem->dropins_enabled ) ) {
+			return '<span id="wpmem_dropin_enabled" class="dashicons dashicons-yes"></span>';
+		}
+		return '';
+	}
+
 	/**
 	 * Returns table columns.
 	 *
@@ -68,10 +78,10 @@ class WP_Members_Dropins_Table extends WP_List_Table {
 		return array(
 			'cb'                 =>  '<input type="checkbox" />',
 			'dropin_name'        => esc_html__( 'Name',        'wp-members' ),
-			'dropin_enabled'     => esc_html__( 'Enabled',     'wp-members' ),
 			'dropin_file'        => esc_html__( 'File',        'wp-members' ),
-			'dropin_version'     => esc_html__( 'Version',     'wp-members' ),
 			'dropin_description' => esc_html__( 'Description', 'wp-members' ),
+			'dropin_version'     => esc_html__( 'Version',     'wp-members' ),
+			'dropin_enabled'     => esc_html__( 'Enabled',     'wp-members' ),
 		);
 	}
 
@@ -151,9 +161,7 @@ class WP_Members_Dropins_Table extends WP_List_Table {
 
 		//nonce validations,etc
 
-		$dir_chk = WP_Members_Admin_Tab_Dropins::check_dir();
-
-		//echo ( $dir_chk ) ? '.htaccess OK!' : 'NO .htaccess!!!';
+		WP_Members_Admin_Tab_Dropins::check_dir();
 
 		$action = $this->current_action();
 
@@ -169,8 +177,13 @@ class WP_Members_Dropins_Table extends WP_List_Table {
 				$settings = array();
 				//echo "SAVING SETTINGS";print_r( $_REQUEST['dropin'] );
 				if ( wpmem_get( 'dropin' ) ) {
-					foreach( wpmem_get( 'dropin' ) as $dropin ) {
-						$settings[] = $dropin;
+
+					if ( empty( wpmem_get( 'dropin' ) ) ) {
+						$settings = array();
+					} else {
+						foreach( wpmem_get( 'dropin' ) as $dropin ) {
+							$settings[] = sanitize_text_field( $dropin );
+						}
 					}
 					update_option( 'wpmembers_dropins', $settings, false );
 				} else {

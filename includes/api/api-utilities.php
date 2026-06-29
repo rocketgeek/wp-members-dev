@@ -315,6 +315,7 @@ function wpmem_get_redirect_to( $args = array() ) {
  * 
  * @since 3.5.0
  * 
+ * @global object $wp_filesystem
  * @param array $args {
  *     The name, path, and contents of the file.
  * 
@@ -324,11 +325,15 @@ function wpmem_get_redirect_to( $args = array() ) {
  * }
  */
 function wpmem_create_file( $args ) {
+	// Initialize the filesystem
+	global $wp_filesystem;
+	require_once( ABSPATH . 'wp-admin/includes/file.php' );
+	WP_Filesystem(); // This sets up $wp_filesystem
+
 	$check_file = trailingslashit( $args['path'] ) . $args['name'];
     if ( ! file_exists( $check_file ) ) {
-		$file = fopen( $check_file, "w" );
-		fwrite( $file, $args['contents'] );
-		fclose( $file );
+		// Use $wp_filesystem for file operations
+		$wp_filesystem->put_contents( $check_file, $args['contents'], FS_CHMOD_FILE );
 	}
 }
 
@@ -495,4 +500,14 @@ function wpmem_csv_to_array( $file, $cols = false ) {
 	}
 
 	return $csv;
+}
+
+/**
+ * Get the dropin directory path.
+ * 
+ * @since 3.5.7
+ */
+function wpmem_get_dropin_dir() {
+	global $wpmem;
+	return $wpmem->dropin_dir;
 }

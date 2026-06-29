@@ -173,6 +173,11 @@
 	margin-left: 0px;
 }
 
+.column-dropin_version,
+.column-dropin_enabled {
+	width: 60px;
+}
+
 /** tooltip styles **/
 
 /* Add this attribute to the element that needs a tooltip */

@@ -129,26 +129,16 @@ class WP_Members_Admin_Tab_Dropins {
 	 */
 	public static function check_dir() {
 
-		/** This filter is documented in inc/class-wp-members.php */
-		$dir = apply_filters( 'wpmem_dropin_dir', $wpmem->dropin_dir );
+		// Initialize the filesystem
+		global $wp_filesystem;
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		WP_Filesystem(); // This sets up $wp_filesystem
+
+		$dir = wpmem_get_dropin_dir();
 		$check  = false;
-		if ( file_exists( $dir ) ) {
-			$file   = $dir . '.htaccess';
-			if ( ! file_exists ( $file ) ) {
-				$check = self::create_htaccess( $file );
-			} else {
-				$handle = fopen( $file, "r" );
-				if ( $handle ) {
-				// Read file line-by-line
-				while ( ( $buffer = fgets( $handle ) ) !== false ) {
-					if ( strpos( $buffer, "Options -Indexes" ) !== false )
-						$check = true;
-						break;
-					}
-				}
-				fclose( $handle );
-				$check = ( false === $check ) ? self::create_htaccess( $file ) : $check;
-			}
+		$file = trailingslashit( $dir ) . '.htaccess';
+		if ( ! $wp_filesystem->exists ( $file ) ) {
+			$check = self::create_htaccess( $dir );
 		}
 		return $check;
 	}
@@ -159,13 +149,14 @@ class WP_Members_Admin_Tab_Dropins {
 	 * @since 3.1.9
 	 *
 	 * @param  string
-	 * @return boolean
+	 * @return void
 	 */
-	public static function create_htaccess( $file ) {
-		$handle = fopen( $file, "w" );
-		fwrite( $handle, "Options -Indexes" );
-		fclose( $handle );
-		return ( $handle ) ? true : false;
+	public static function create_htaccess( $dir ) {
+		wpmem_create_file( array(
+			'path'     => $dir,
+			'name'     => '.htaccess',
+			'contents' => "Options -Indexes"
+		) );
 	}
 
 	/**
@@ -193,7 +184,7 @@ class WP_Members_Admin_Tab_Dropins {
 		$field_items = array();
 
 		// Parse dropins.
-		foreach ( glob( $folder . '*.php' ) as $filename ) {
+		foreach ( glob( trailingslashit( $folder ) . '*.php' ) as $filename ) {
 			$file_data = get_file_data( $filename, $headers );
 
 			$filename = explode( '/', $filename );
@@ -213,13 +204,13 @@ class WP_Members_Admin_Tab_Dropins {
 		include_once( $wpmem->path . 'includes/admin/tabs/class-wp-members-dropins-table.php' );
 		$table = new WP_Members_Dropins_Table();
 
-		$heading  = esc_html__( 'Manage Dropins', 'wp-members' );
-		$loc_info = esc_html__( 'Current dropin folder: ', 'wp-members' );
-		$loc_desc = esc_html__( 'You can change location of the dropin folder using the <code>wpmem_dropin_folder</code> filter.', 'wp-members' );
+		$heading  = __( 'Manage Dropins', 'wp-members' );
+		$loc_info = __( 'Current dropin folder: ', 'wp-members' ) . '<code>' . wpmem_get_dropin_dir() . '</code>';
+		$loc_desc = __( 'You can change location of the dropin folder using the <code>wpmem_dropin_folder</code> filter.', 'wp-members' );
 		echo '<div class="wrap">';
 		printf( '<h3 class="title">%s</h3>', esc_html( $heading ) );
-		printf( '<p><strong>%s</strong></p>', esc_html( $loc_info ) );
-		printf( '<p>%s</p>', esc_html( $loc_desc ) );
+		printf( '<p><strong>%s</strong></p>', wp_kses_post( $loc_info ) );
+		printf( '<p>%s</p>', wp_kses_post( $loc_desc ) );
 		printf( '<form name="updatedropinsform" id="updatedropinsform" method="post" action="%s">', wpmem_admin_form_post_url() );
 		$table->items = $field_items;
 		$table->prepare_items(); 

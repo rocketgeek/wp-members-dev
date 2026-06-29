@@ -609,6 +609,17 @@ class WP_Members {
 		
 		// Load dropins.
 		if ( $this->dropins ) {
+			$dir_info = wpmem_upload_dir();
+			$this->dropin_dir = trailingslashit( $dir_info['wpmem_base_dir'] ) . 'dropins';
+			/**
+			 * Filters the drop-in file directory.
+			 *
+			 * @since 3.0.0
+			 * @since 3.3.0 Filter previously unpublished, changed hook name.
+			 *
+			 * @param string $this->dropin_dir The drop-in file directory.
+			 */
+			$this->dropin_dir = apply_filters( 'wpmem_dropin_dir', $this->dropin_dir );
 			$this->load_dropins();
 		}
 	}
@@ -708,8 +719,15 @@ class WP_Members {
 	 * @since 3.0.0
 	 *
 	 * @todo This is experimental. The function and its operation is subject to change.
+	 * 
+	 * @global $wp_filesystem The WordPress filesystem object.
 	 */
 	function load_dropins() {
+
+		// Initialize the filesystem
+		global $wp_filesystem;
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		WP_Filesystem(); // This sets up $wp_filesystem
 
 		/**
 		 * Fires before dropins load (for adding additional drop-ins).
@@ -719,15 +737,7 @@ class WP_Members {
 		 */
 		do_action( 'wpmem_load_dropins' );
 		
-		/**
-		 * Filters the drop-in file directory.
-		 *
-		 * @since 3.0.0
-		 * @since 3.3.0 Filter previously unpublished, changed hook name.
-		 *
-		 * @param string $wpmem->dropin_dir The drop-in file directory.
-		 */
-		$dir = apply_filters( 'wpmem_dropin_dir', $this->dropin_dir );
+		$dir = $this->dropin_dir;
 		
 		// Load any drop-ins.
 		$settings = get_option( 'wpmembers_dropins' );
@@ -735,7 +745,7 @@ class WP_Members {
 		if ( ! empty( $this->dropins_enabled ) ) {
 			foreach ( $this->dropins_enabled as $filename ) {
 				$dropin = $dir . $filename;
-				if ( file_exists( $dropin ) ) {
+				if ( $wp_filesystem->exists( $dropin ) ) {
 					include_once $dropin;
 				}
 			}
