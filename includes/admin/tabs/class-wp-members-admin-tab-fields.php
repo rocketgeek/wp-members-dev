@@ -156,7 +156,7 @@ class WP_Members_Admin_Tab_Fields {
 					<label><?php esc_html_e( 'Meta Key', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
 					<?php if ( $mode == 'edit' ) { 
 						echo "<span>" . esc_html( $meta_key ) . "</span>"; ?>
-						<input type="hidden" name="add_option" value="<?php echo esc_url( $meta_key ); ?>" required /> 
+						<input type="hidden" name="add_option" value="<?php echo esc_attr( $meta_key ); ?>" required /> 
 					<?php } else { ?>
 						<input type="text" name="add_option" value="" class="regular-text" />
 						<?php esc_html_e( 'The database meta value for the field. It must be unique and contain no spaces (underscores are ok).', 'wp-members' ); ?>
@@ -747,8 +747,8 @@ Last Row|last_row
 				global $add_field_err_msg;
 
 				$add_field_err_msg = false;
-				$add_name   = sanitize_text_field( wpmem_get( 'add_name' ) );
-				$add_option = sanitize_text_field( wpmem_get( 'add_option' ) );
+				$add_name   = sanitize_text_field( wp_unslash( wpmem_get( 'add_name' ) ) );
+				$add_option = sanitize_text_field( wp_unslash( wpmem_get( 'add_option' ) ) );
 
 				// Error check that field label and option name are included and unique.
 				$add_field_err_msg = ( ! $add_name   ) ? esc_html__( 'Field Label is required. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
@@ -779,8 +779,8 @@ Last Row|last_row
 
 				$type = sanitize_text_field( wpmem_get( 'add_type' ) );
 
-				$arr[0] = filter_var( wpmem_get( 'add_order_id' ), FILTER_SANITIZE_NUMBER_INT );
-				$arr[1] = sanitize_text_field( stripslashes( wpmem_get( 'add_name' ) ) );
+				$arr[0] = intval( wpmem_get( 'add_order_id' ) );
+				$arr[1] = esc_html( $add_name );
 				$arr[2] = $us_option;
 				$arr[3] = $type;
 				$arr[4] = ( 'y' == wpmem_get( 'add_display', 'n'  ) ) ? 'y' : 'n';
@@ -799,12 +799,12 @@ Last Row|last_row
 				$arr[6] = ( in_array( $us_option, $native_fields ) ) ? 'y' : 'n';
 
 				if ( 'text' == $type || 'email' == $type || 'textarea' == $type || 'password' == $type || 'url' == $type || 'number' == $type || 'date' == $type || 'timestamp' == $type ) {
-					$arr['placeholder'] = sanitize_text_field( stripslashes( wpmem_get( 'add_placeholder' ) ) );
+					$arr['placeholder'] = sanitize_text_field( wp_unslash( wpmem_get( 'add_placeholder' ) ) );
 				}
 
 				if ( 'text' == $type || 'email' == $type || 'password' == $type || 'url' == $type || 'number' == $type || 'date' == $type || 'timestamp' == $type ) {
-					$arr['pattern'] = sanitize_text_field( stripslashes( wpmem_get( 'add_pattern' ) ) );
-					$arr['title']   = sanitize_text_field( stripslashes( wpmem_get( 'add_title' ) ) );
+					$arr['pattern'] = sanitize_text_field( wp_unslash( wpmem_get( 'add_pattern' ) ) );
+					$arr['title']   = sanitize_text_field( wp_unslash( wpmem_get( 'add_title' ) ) );
 				}
 
 				if ( 'number' == $type || 'date' == $type ) {
@@ -831,7 +831,7 @@ Last Row|last_row
 				) {
 					// Get the values.
 					$which_post = ( $type == 'radio' || $type == 'multicheckbox' || $type == 'multiselect' ) ? 'add_radio_value' : 'add_dropdown_value';
-					$str = stripslashes( sanitize_textarea_field( $_POST[ $which_post ] ) );
+					$str = sanitize_textarea_field( wp_unslash( $_POST[ $which_post ] ) );
 					// Remove linebreaks.
 					$str = trim( str_replace( array("\r", "\r\n", "\n"), '', $str ) );
 					// Create array.
@@ -853,12 +853,12 @@ Last Row|last_row
 				}
 
 				if ( $type == 'file' || $type == 'image' ) {
-					$arr[7] = sanitize_text_field( stripslashes( $_POST['add_file_value'] ) );
+					$arr[7] = sanitize_text_field( wpmem_get( 'add_file_value' ) );
 				}
 
 				if ( wpmem_get( 'add_type' ) == 'hidden' ) { 
 					$add_field_err_msg = ( ! $_POST['add_hidden_value'] ) ? esc_html__( 'A value is required for hidden fields. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
-					$arr[7] = ( isset( $_POST['add_hidden_value'] ) ) ? sanitize_text_field( stripslashes( $_POST['add_hidden_value'] ) ) : '';
+					$arr[7] = sanitize_text_field( wpmem_get( 'add_hidden_value', '' ) );
 				}
 
 				if ( 'timestamp' == wpmem_get( 'add_type' ) ) {
@@ -869,7 +869,7 @@ Last Row|last_row
 					if ( ! $add_field_err_msg ) {
 						array_push( $wpmem_fields, $arr );
 						/* translators: %s: Field label being added */
-						$did_update = sprintf( esc_html__( '%s was added', 'wp-members' ), esc_html( $_POST['add_name'] ) );
+						$did_update = sprintf( esc_html__( '%s was added', 'wp-members' ), esc_html( $add_name ) );
 					} else {
 						$did_update = $add_field_err_msg;
 					}
@@ -883,7 +883,7 @@ Last Row|last_row
 						}
 					}
 					/* translators: %s: Field label being updated */
-					$did_update =  sprintf( esc_html__( '%s was updated', 'wp-members' ), esc_html( stripslashes( $add_name ) ) );
+					$did_update =  sprintf( esc_html__( '%s was updated', 'wp-members' ), esc_html( $add_name ) );
 					$did_update.= '<p><a href="' . esc_url( add_query_arg( array( 'page' => 'wpmem-settings', 'tab' => 'fields' ), get_admin_url() . 'options-general.php' ) ) . '">&laquo; ' . esc_html__( 'Return to Fields Table', 'wp-members' ) . '</a></p>';
 				}
 
