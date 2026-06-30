@@ -808,13 +808,13 @@ Last Row|last_row
 				}
 
 				if ( 'number' == $type || 'date' == $type ) {
-					$arr['min'] = filter_var( wpmem_get( 'add_min' ), FILTER_SANITIZE_NUMBER_INT );
-					$arr['max'] = filter_var( wpmem_get( 'add_max' ), FILTER_SANITIZE_NUMBER_INT );
+					$arr['min'] = intval( wpmem_get( 'add_min' ) );
+					$arr['max'] = intval( wpmem_get( 'add_max' ) );
 				}
 
 				if ( 'textarea' == $type ) {
-					$arr['rows'] = filter_var( wpmem_get( 'add_rows' ), FILTER_SANITIZE_NUMBER_INT );
-					$arr['cols'] = filter_var( wpmem_get( 'add_cols' ), FILTER_SANITIZE_NUMBER_INT );
+					$arr['rows'] = intval( wpmem_get( 'add_rows' ) );
+					$arr['cols'] = intval( wpmem_get( 'add_cols' ) );
 				}
 
 				if ( $type == 'checkbox' ) {
