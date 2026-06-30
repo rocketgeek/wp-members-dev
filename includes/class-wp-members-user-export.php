@@ -227,7 +227,7 @@ class WP_Members_User_Export {
 							// If value is a date and false is not the format_date option...
 							if ( false !== $args['date_format'] && '' != $row[ $meta ] && $row[ $meta ] > 2 ) {
 								$date_format = ( 'wp' == $args['date_format'] ) ? get_option('date_format') : $args['date_format'];
-								$row[ $meta ] = gmdate( $date_format, $row[ $meta ] );
+								$row[ $meta ] = date( $date_format, $row[ $meta ] );
 							}
 							break;
 						default:
