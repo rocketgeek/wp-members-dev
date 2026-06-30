@@ -56,16 +56,16 @@ class WP_Members_Admin_Tab_Fields {
 	 *
 	 * @global object $wpmem         The WP_Members Object.
 	 * @global string $did_update
-	 * @global string $delete_action
+	 * @global string $wpmem_fields_delete_action
 	 */
 	public static function build_settings() {
 
-		global $wpmem, $did_update, $delete_action;
+		global $wpmem, $did_update, $wpmem_fields_delete_action;
 		$wpmem_fields  = wpmem_fields();
 		$edit_meta     = sanitize_text_field( wpmem_get( 'field', false, 'get' ) );
 		$add_meta      = sanitize_text_field( wpmem_get( 'add_field', false ) );
 
-		if ( 'delete' == $delete_action ) {
+		if ( 'delete' == $wpmem_fields_delete_action ) {
 
 			$delete_fields = wpmem_sanitize_array( wpmem_get( 'delete' ) );?>
 
@@ -76,7 +76,7 @@ class WP_Members_Admin_Tab_Fields {
 				<?php foreach ( $delete_fields as $meta ) {
 					echo esc_html( $wpmem->fields[ $meta ]['label'] ) . ' (meta key: ' . esc_attr( $meta ) . ')<br />';
 				} ?>
-				<form name="<?php echo esc_attr( $delete_action ); ?>" id="<?php echo esc_attr( $delete_action ); ?>" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>">
+				<form name="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" id="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>">
 					<?php wp_nonce_field( 'wpmem-confirm-delete' ); ?>
 					<input type="hidden" name="delete_fields" value="<?php echo esc_attr( implode( ",", $delete_fields ) ); ?>" />
 					<input type="hidden" name="dodelete" value="delete_confirmed" />
@@ -658,11 +658,11 @@ Last Row|last_row
 	 *
 	 * @global object $wpmem
 	 * @global string $did_update
-	 * @global string $add_field_err_msg  The add field error message
+	 * @global string $wpmem_add_field_err_msg  The add field error message
 	 */
 	public static function update() {
 
-		global $wpmem, $did_update, $delete_action;
+		global $wpmem, $did_update, $wpmem_fields_delete_action;
 
 		if ( 'wpmem-settings' == wpmem_get( 'page', false, 'get' ) && 'fields' == wpmem_get( 'tab', false, 'get' ) ) {
 			// Get the current fields.
@@ -671,7 +671,7 @@ Last Row|last_row
 			$action = sanitize_text_field( wpmem_get( 'action', false ) );
 			$action = ( -1 == $action ) ? sanitize_text_field( wpmem_get( 'action2' ) ) : $action;
 
-			$delete_action = false;
+			$wpmem_fields_delete_action = false;
 
 			if ( 'save' == $action ) {
 
@@ -737,39 +737,39 @@ Last Row|last_row
 				// Check nonce.
 				check_admin_referer( 'bulk-settings_page_wpmem-settings' );
 
-				$delete_action = 'delete';
+				$wpmem_fields_delete_action = 'delete';
 
 			} elseif ( ( 'add_field' == wpmem_get( 'wpmem_admin_a' ) || 'edit_field' == wpmem_get( 'wpmem_admin_a' ) ) && check_admin_referer( 'wpmem_add_field' ) ) {
 
 				// Set action.
 				$action = sanitize_text_field( wpmem_get( 'wpmem_admin_a' ) );
 
-				global $add_field_err_msg;
+				global $wpmem_add_field_err_msg;
 
-				$add_field_err_msg = false;
+				$wpmem_add_field_err_msg = false;
 				$add_name   = sanitize_text_field( wp_unslash( wpmem_get( 'add_name' ) ) );
 				$add_option = sanitize_text_field( wp_unslash( wpmem_get( 'add_option' ) ) );
 
 				// Error check that field label and option name are included and unique.
-				$add_field_err_msg = ( ! $add_name   ) ? esc_html__( 'Field Label is required. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
-				$add_field_err_msg = ( ! $add_option ) ? esc_html__( 'Meta Key is required. Nothing was updated.',    'wp-members' ) : $add_field_err_msg;
+				$wpmem_add_field_err_msg = ( ! $add_name   ) ? esc_html__( 'Field Label is required. Nothing was updated.', 'wp-members' ) : $wpmem_add_field_err_msg;
+				$wpmem_add_field_err_msg = ( ! $add_option ) ? esc_html__( 'Meta Key is required. Nothing was updated.',    'wp-members' ) : $wpmem_add_field_err_msg;
 
-				$add_field_err_msg = ( ! preg_match("/^[A-Za-z0-9_]*$/", $add_option ) ) ? esc_html__( 'Meta Key must contain only letters, numbers, and underscores', 'wp-members' ) : $add_field_err_msg;
+				$wpmem_add_field_err_msg = ( ! preg_match("/^[A-Za-z0-9_]*$/", $add_option ) ) ? esc_html__( 'Meta Key must contain only letters, numbers, and underscores', 'wp-members' ) : $wpmem_add_field_err_msg;
 
 				// Check for duplicate field names.
 				$chk_fields = array();
 				foreach ( $wpmem_fields as $field ) {
 					$chk_fields[] = $field[2];
 				}
-				$add_field_err_msg = ( in_array( $add_option, $chk_fields ) ) ? esc_html__( 'A field with that meta key already exists', 'wp-members' ) : $add_field_err_msg;
+				$wpmem_add_field_err_msg = ( in_array( $add_option, $chk_fields ) ) ? esc_html__( 'A field with that meta key already exists', 'wp-members' ) : $wpmem_add_field_err_msg;
 
 				// Error check for reserved terms.
 				$reserved_terms = wpmem_wp_reserved_terms();
 				if ( in_array( strtolower( $add_option ), $reserved_terms ) ) {
 					/* translators: 1. Meta key that is a reserved term. */
-					$add_field_err_msg = sprintf( esc_html__( 'Sorry, "%s" is a <a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">reserved term</a>. Field was not added.', 'wp-members' ), $add_option );
+					$wpmem_add_field_err_msg = sprintf( esc_html__( 'Sorry, "%s" is a <a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">reserved term</a>. Field was not added.', 'wp-members' ), $add_option );
 					// @todo Revise the translated string.
-					// $add_field_err_msg = sprintf( esc_html__( 'Sorry, "%1$s" is a %2$sreserved term%3$s. Field was not added.', 'wp-members' ), $add_option, '<a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">', '</a>' );
+					// $wpmem_add_field_err_msg = sprintf( esc_html__( 'Sorry, "%1$s" is a %2$sreserved term%3$s. Field was not added.', 'wp-members' ), $add_option, '<a href="https://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">', '</a>' );
 				}
 
 				// Error check option name for spaces and replace with underscores.
@@ -818,7 +818,7 @@ Last Row|last_row
 				}
 
 				if ( $type == 'checkbox' ) {
-					$add_field_err_msg = ( ! $_POST['add_checked_value'] ) ? esc_html__( 'Checked value is required for checkboxes. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
+					$wpmem_add_field_err_msg = ( ! wpmem_get( 'add_checked_value', false ) ) ? esc_html__( 'Checked value is required for checkboxes. Nothing was updated.', 'wp-members' ) : $wpmem_add_field_err_msg;
 					$arr[7] = sanitize_text_field( wpmem_get( 'add_checked_value', false ) );
 					$arr[8] = ( 'y' == wpmem_get( 'add_checked_default', 'n'  ) ) ? 'y' : 'n';
 					$arr['checkbox_label'] = intval( wpmem_get( 'add_checkbox_label', 0 ) );
@@ -831,7 +831,7 @@ Last Row|last_row
 				) {
 					// Get the values.
 					$which_post = ( $type == 'radio' || $type == 'multicheckbox' || $type == 'multiselect' ) ? 'add_radio_value' : 'add_dropdown_value';
-					$str = sanitize_textarea_field( wp_unslash( $_POST[ $which_post ] ) );
+					$str = sanitize_textarea_field( wp_unslash( wpmem_get( $which_post, '' ) ) );
 					// Remove linebreaks.
 					$str = trim( str_replace( array("\r", "\r\n", "\n"), '', $str ) );
 					// Create array.
@@ -857,7 +857,7 @@ Last Row|last_row
 				}
 
 				if ( wpmem_get( 'add_type' ) == 'hidden' ) { 
-					$add_field_err_msg = ( ! $_POST['add_hidden_value'] ) ? esc_html__( 'A value is required for hidden fields. Nothing was updated.', 'wp-members' ) : $add_field_err_msg;
+					$wpmem_add_field_err_msg = ( ! wpmem_get( 'add_hidden_value', false ) ) ? esc_html__( 'A value is required for hidden fields. Nothing was updated.', 'wp-members' ) : $wpmem_add_field_err_msg;
 					$arr[7] = sanitize_text_field( wpmem_get( 'add_hidden_value', '' ) );
 				}
 
@@ -866,12 +866,12 @@ Last Row|last_row
 				}
 
 				if ( $action == 'add_field' ) {
-					if ( ! $add_field_err_msg ) {
+					if ( ! $wpmem_add_field_err_msg ) {
 						array_push( $wpmem_fields, $arr );
 						/* translators: %s: Field label being added */
 						$did_update = sprintf( esc_html__( '%s was added', 'wp-members' ), esc_html( $add_name ) );
 					} else {
-						$did_update = $add_field_err_msg;
+						$did_update = $wpmem_add_field_err_msg;
 					}
 				} else {
 					for ( $row = 0; $row < count( $wpmem_fields ); $row++ ) {
