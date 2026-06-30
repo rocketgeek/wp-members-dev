@@ -211,7 +211,7 @@ class WP_Members_Admin_Tab_Dropins {
 		printf( '<h3 class="title">%s</h3>', esc_html( $heading ) );
 		printf( '<p><strong>%s</strong></p>', wp_kses_post( $loc_info ) );
 		printf( '<p>%s</p>', wp_kses_post( $loc_desc ) );
-		printf( '<form name="updatedropinsform" id="updatedropinsform" method="post" action="%s">', wpmem_admin_form_post_url() );
+		printf( '<form name="updatedropinsform" id="updatedropinsform" method="post" action="%s">', esc_url( wpmem_admin_form_post_url() ) );
 		$table->items = $field_items;
 		$table->prepare_items(); 
 		$table->display(); 

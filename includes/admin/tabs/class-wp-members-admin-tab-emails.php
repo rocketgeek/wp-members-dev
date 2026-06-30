@@ -62,7 +62,7 @@ class WP_Members_Admin_Tab_Emails {
 							<?php esc_html_e( 'A list of shortcodes is available here.', 'wp-members' ); ?></a>
 							</p>
 							<hr />
-							<form name="updateemailform" id="updateemailform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
+							<form name="updateemailform" id="updateemailform" method="post" action="<?php echo esc_url( esc_url( wpmem_admin_form_post_url() ) ); ?>"> 
 							<?php wp_nonce_field( 'wpmem_update_emails', 'wpmem_nonce' ); ?>
 								<table class="form-table"> 
 									<tr valign="top"> 

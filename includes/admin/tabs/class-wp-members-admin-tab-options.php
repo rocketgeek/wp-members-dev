@@ -92,7 +92,7 @@ class WP_Members_Admin_Tab_Options {
 					<div class="postbox">
 						<h3><span><?php esc_html_e( 'Manage Options', 'wp-members' ); ?></span></h3>
 						<div class="inside">
-							<form name="updatesettings" id="updatesettings" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url() ); ?>">
+							<form name="updatesettings" id="updatesettings" method="post" action="<?php echo esc_url_raw( esc_url( wpmem_admin_form_post_url() ) ); ?>">
 							<?php wp_nonce_field( 'wpmem_update_options', 'wpmem_nonce' ); ?>
 								<h3><?php esc_html_e( 'Content', 'wp-members' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#content" target="_blank" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								<ul>
@@ -368,7 +368,7 @@ class WP_Members_Admin_Tab_Options {
 					<div class="postbox">
 						<h3><span><?php esc_html_e( 'Custom Post Types', 'wp-members' ); ?></span></h3>
 						<div class="inside">
-							<form name="updatecpts" id="updatecpts" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url() ); ?>">
+							<form name="updatecpts" id="updatecpts" method="post" action="<?php echo esc_url_raw( esc_url( wpmem_admin_form_post_url() ) ); ?>">
 							<?php wp_nonce_field( 'wpmem_update_options', 'wpmem_nonce' ); ?>
 								<table class="form-table">
 									<tr>

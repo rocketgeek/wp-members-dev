@@ -76,7 +76,7 @@ class WP_Members_Admin_Tab_Fields {
 				<?php foreach ( $delete_fields as $meta ) {
 					echo esc_html( $wpmem->fields[ $meta ]['label'] ) . ' (meta key: ' . esc_attr( $meta ) . ')<br />';
 				} ?>
-				<form name="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" id="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>">
+				<form name="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" id="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" method="post" action="<?php echo esc_url( esc_url( wpmem_admin_form_post_url() ) ); ?>">
 					<?php wp_nonce_field( 'wpmem-confirm-delete' ); ?>
 					<input type="hidden" name="delete_fields" value="<?php echo esc_attr( implode( ",", $delete_fields ) ); ?>" />
 					<input type="hidden" name="dodelete" value="delete_confirmed" />
@@ -625,7 +625,7 @@ Last Row|last_row
 		echo '<div class="wrap">';
 		echo '<h3 class="title">' . esc_html__( 'Manage Fields', 'wp-members' ) . '</h3>';
 		//printf( '<p>%s <strong>%s</strong></p>', $description, $which_form );
-		echo '<form name="updatefieldform" id="updatefieldform" method="post" action="' . esc_url( wpmem_admin_form_post_url() ) . '">';
+		echo '<form name="updatefieldform" id="updatefieldform" method="post" action="' . esc_url( esc_url( wpmem_admin_form_post_url() ) ) . '">';
 
 		$table->items = $field_items;
 		$table->prepare_items(); 

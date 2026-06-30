@@ -575,7 +575,7 @@ class WP_Members_Admin_API {
 			}
 		}
 		$url = add_query_arg( $params, admin_url( $pagenow ) );
-		return esc_url( $url );
+		return $url;
 	}
 	
 	/**

@@ -143,7 +143,7 @@ class WP_Members_User_Utilities {
     public static function admin_page() {
         echo "<h1>" . esc_html__( 'WP-Members User Utilities', 'wp-members' ) . "</h1>";
 
-        echo '<form name="wpmem-user-utilities" id="wpmem-user-utilities" method="post" action="' . wpmem_admin_form_post_url() . '">';
+        echo '<form name="wpmem-user-utilities" id="wpmem-user-utilities" method="post" action="' . esc_url( wpmem_admin_form_post_url() ) . '">';
 
         if ( wpmem_is_enabled( 'mod_reg' ) ) {
             echo '<h2>' . esc_html__( 'Moderated Registration', 'wp-members' ) . '</h2>';

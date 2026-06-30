@@ -77,7 +77,7 @@ class WP_Members_Admin_Filesystem_Upgrade {
 		}
 		?>
 		<div class="wrap">
-			<form name="update-filesystem-form" id="update-filesystem-form" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
+			<form name="update-filesystem-form" id="update-filesystem-form" method="post" action="<?php echo esc_url( esc_url( wpmem_admin_form_post_url() ) ); ?>"> 
 			<?php wp_nonce_field( 'wpmem-upgrade-filesystem' ); ?>
 			<h2><?php esc_html_e( 'Upgrade the WP-Members filesystem', 'wp-members' ); ?></h2>
 			<?php
