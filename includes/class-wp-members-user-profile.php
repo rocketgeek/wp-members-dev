@@ -62,7 +62,7 @@ class WP_Members_User_Profile {
 		/** This filter is documented in includes/class-wp-members-user-profile.php */
 		$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
 
-		$user_id = ( 'profile' == $current_screen->id ) ? $user_ID : filter_var( $_REQUEST['user_id'], FILTER_SANITIZE_NUMBER_INT ); 
+		$user_id = ( 'profile' == $current_screen->id ) ? $user_ID : intval( wp_unslash( $_REQUEST['user_id'] ) ); 
 		$display = ( 'profile' == $current_screen->base ) ? 'user' : 'admin'; 
 		$display = ( current_user_can( $required_capability ) ) ? 'admin' : $display;
 		$heading = ( 'admin' == $display ) ? __( 'WP-Members Additional Fields', 'wp-members' ) : __( 'Additional Information', 'wp-members' );
@@ -372,7 +372,7 @@ class WP_Members_User_Profile {
 				&& $field['type'] != 'file' 
 				&& $field['type'] != 'image'
 			    && $field['type'] != 'textarea' ) {
-				( isset( $_POST[ $meta ] ) && 'password' != $field['type'] ) ? $fields[ $meta ] = sanitize_text_field( $_POST[ $meta ] ) : false;
+				( isset( $_POST[ $meta ] ) && 'password' != $field['type'] ) ? $fields[ $meta ] = sanitize_text_field( wp_unslash( $_POST[ $meta ] ) ) : false;
 				
 				// For user profile (not admin).
 				if ( 'admin' != $display ) {
@@ -454,7 +454,7 @@ class WP_Members_User_Profile {
 						}
 						// Do we need to set a specific date?
 						if ( isset( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) ) {
-							wpmem_set_user_product( $product_key, $user_id, sanitize_text_field( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) );
+							wpmem_set_user_product( $product_key, $user_id, sanitize_text_field( wp_unslash( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) ) );
 						} else {
 							wpmem_set_user_product( $product_key, $user_id );
 						}

@@ -1412,7 +1412,7 @@ class WP_Members_Forms {
 
 		// Create hidden fields.
 		$var         = ( $tag == 'edit' ) ? 'update' : 'register';
-		$redirect_to = ( isset( $_REQUEST['redirect_to'] ) ) ? $_REQUEST['redirect_to'] : ( ( $redirect_to ) ? $redirect_to : get_permalink() );
+		$redirect_to = ( isset( $_REQUEST['redirect_to'] ) ) ? wp_unslash( $_REQUEST['redirect_to'] ) : ( ( $redirect_to ) ? $redirect_to : get_permalink() );
 		$hidden_rows['_wpmem_a']        = '<input name="a" type="hidden" value="' . esc_attr( $var ) . '" />';
 		$hidden_rows['_wpmem_reg_page'] = '<input name="wpmem_reg_page" type="hidden" value="' . esc_url( get_permalink() ) . '" />';
 		if ( $redirect_to != get_permalink() ) {

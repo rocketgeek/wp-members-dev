@@ -577,7 +577,7 @@ function wpmem_woo_checkout_update_meta( $order_id ) {
 					update_user_meta( $user_id, $meta_key, $field['checked_value'] );
 					break;
 				case 'textarea':
-					update_user_meta( $user_id, $meta_key, sanitize_textarea_field( $_POST[ $meta_key ] ) );
+					update_user_meta( $user_id, $meta_key, sanitize_textarea_field( wp_unslash( $_POST[ $meta_key ] ) ) );
 					break;
 				case 'multicheckbox':
 				case 'multiselect':
@@ -588,9 +588,9 @@ function wpmem_woo_checkout_update_meta( $order_id ) {
 					break;
 				default:
 					if ( 'user_url' == $meta_key ) {
-						wp_update_user( array( 'ID' => $user_id, 'user_url' => sanitize_text_field( $_POST[ $meta_key ] ) ) );
+						wp_update_user( array( 'ID' => $user_id, 'user_url' => sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) ) ) );
 					} else {
-						update_user_meta( $user_id, $meta_key, sanitize_text_field( $_POST[ $meta_key ] ) );
+						update_user_meta( $user_id, $meta_key, sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) ) );
 					}
 					break;
 			}

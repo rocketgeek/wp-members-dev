@@ -220,7 +220,7 @@ class WP_Members_Menus {
 		}
 
 		// Verify this came from our screen and with proper authorization.
-		if ( ! isset( $_POST[ $this->nonce_name ] ) || ! wp_verify_nonce( $_POST[ $this->nonce_name ], $this->nonce_field ) ){
+		if ( ! isset( $_POST[ $this->nonce_name ] ) || ! wp_verify_nonce( wp_unslash( $_POST[ $this->nonce_name ] ), $this->nonce_field ) ){
 			return;
 		}
 
@@ -233,14 +233,14 @@ class WP_Members_Menus {
 			foreach( (array) $_POST['wpmem_product'][ $menu_item_db_id ] as $product ) {
 
 				if ( array_key_exists ( $product, $product_names ) ) {
-					$custom_fields['products'][] = sanitize_text_field( $product );
+					$custom_fields['products'][] = sanitize_text_field( wp_unslash( $product ) );
 				}
 			}
 			if ( ! empty ( $custom_fields ) ) {
 				$saved_data = $custom_fields;
 			}
 		} elseif ( isset( $_POST['wpmem_logged_in_out'][ $menu_item_db_id ] ) && in_array( $_POST['wpmem_logged_in_out'][ $menu_item_db_id ], array( 'in', 'out' ) ) ) {
-			$saved_data = sanitize_text_field( $_POST['wpmem_logged_in_out'][ $menu_item_db_id ] );
+			$saved_data = sanitize_text_field( wp_unslash( $_POST['wpmem_logged_in_out'][ $menu_item_db_id ] ) );
 		}
  
 		if ( $saved_data ) {

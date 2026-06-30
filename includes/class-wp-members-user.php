@@ -249,7 +249,7 @@ class WP_Members_User {
 		global $user_ID, $wpmem, $wpmem_themsg, $userdata; 
 		
 		// Check the nonce.
-		if ( empty( $_POST ) || ! wp_verify_nonce( $_REQUEST[ '_wpmem_' . $tag . '_nonce' ], 'wpmem_longform_nonce' ) ) {
+		if ( empty( $_POST ) || ! wp_verify_nonce( wp_unslash( $_REQUEST[ '_wpmem_' . $tag . '_nonce' ] ), 'wpmem_longform_nonce' ) ) {
 			$wpmem_themsg = wpmem_get_text( 'reg_generic' );
 			return;
 		}
@@ -281,7 +281,7 @@ class WP_Members_User {
 					if ( isset( $_POST[ $meta_key ] ) ) {
 						switch ( $field['type'] ) {
 						case 'checkbox':
-							$this->post_data[ $meta_key ] = sanitize_text_field( $_POST[ $meta_key ] );
+							$this->post_data[ $meta_key ] = sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) );
 							break;
 						case 'multiselect':
 						case 'multicheckbox':
@@ -289,16 +289,16 @@ class WP_Members_User {
 							$this->post_data[ $meta_key ] = ( isset( $_POST[ $meta_key ] ) ) ? implode( $delimiter, wpmem_sanitize_array( $_POST[ $meta_key ] ) ) : '';
 							break;
 						case 'textarea':
-							$this->post_data[ $meta_key ] = sanitize_textarea_field( $_POST[ $meta_key ] );
+							$this->post_data[ $meta_key ] = sanitize_textarea_field( wp_unslash( $_POST[ $meta_key ] ) );
 							break;
 						case 'email':
-							$this->post_data[ $meta_key ] = sanitize_email( $_POST[ $meta_key ] );
+							$this->post_data[ $meta_key ] = sanitize_email( wp_unslash( $_POST[ $meta_key ] ) );
 							break;
 						case 'timestamp':
-							$this->post_data[ $meta_key ] = strtotime( $_POST[ $meta_key ] );
+							$this->post_data[ $meta_key ] = strtotime( wp_unslash( $_POST[ $meta_key ] ) );
 							break;
 						default:
-							$this->post_data[ $meta_key ] = sanitize_text_field( $_POST[ $meta_key ] );
+							$this->post_data[ $meta_key ] = sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) );
 							break;
 						}
 					} else {
@@ -717,7 +717,7 @@ class WP_Members_User {
 		// User must be logged in OR must be resetting a forgotten password.
 		$is_error = ( ! is_user_logged_in() && 'set_password_from_key' != wpmem_get( 'a', false, 'request' ) ) ? "loggedin" : $is_error;
 		// Verify nonce.
-		$is_error = ( ! wp_verify_nonce( $_REQUEST['_wpmem_pwdchange_nonce'], 'wpmem_shortform_nonce' ) ) ? "reg_generic" : $is_error;
+		$is_error = ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_pwdchange_nonce'] ), 'wpmem_shortform_nonce' ) ) ? "reg_generic" : $is_error;
 		if ( $is_error ) {
 			return $is_error;
 		}
@@ -763,7 +763,7 @@ class WP_Members_User {
 
 		} else {
 
-			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_pwdreset_nonce'], 'wpmem_shortform_nonce' ) ) {
+			if ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_pwdreset_nonce'] ), 'wpmem_shortform_nonce' ) ) {
 				$errors->add( 'nonce', wpmem_get_text( 'pwd_reset_nonce' ) );
 				return "reg_generic";
 			}
@@ -826,7 +826,7 @@ class WP_Members_User {
 	public function resend_confirm() {
 		if ( isset( $_POST['formsubmit'] ) ) {
 			
-			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_reconfirm_nonce'], 'wpmem_shortform_nonce' ) ) {
+			if ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_reconfirm_nonce'] ), 'wpmem_shortform_nonce' ) ) {
 				return "reg_generic";
 			}
 
@@ -875,7 +875,7 @@ class WP_Members_User {
 	public function retrieve_username() {
 		if ( isset( $_POST['formsubmit'] ) ) {
 			
-			if ( ! wp_verify_nonce( $_REQUEST['_wpmem_getusername_nonce'], 'wpmem_shortform_nonce' ) ) {
+			if ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_getusername_nonce'] ), 'wpmem_shortform_nonce' ) ) {
 				return "reg_generic";
 			}
 			

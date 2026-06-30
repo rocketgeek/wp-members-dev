@@ -136,8 +136,8 @@ class WP_Members_Admin_Tab_Emails {
 
 		// Update the email address (if applicable).
 		if ( $wpmem->email->from    != $_POST['wp_mail_from'] || $wpmem->email->from_name != $_POST['wp_mail_from_name'] || $wpmem->email->html != wpmem_get( 'wpmem_email_html', 0 ) ) {
-			$wpmem->email->from      = sanitize_email( $_POST['wp_mail_from'] );
-			$wpmem->email->from_name = sanitize_text_field( $_POST['wp_mail_from_name'] );
+			$wpmem->email->from      = sanitize_email( wp_unslash( $_POST['wp_mail_from'] ) );
+			$wpmem->email->from_name = sanitize_text_field( wp_unslash( $_POST['wp_mail_from_name'] ) );
 			$wpmem->email->html      = intval( wpmem_get( 'wpmem_email_html', 0 ) );
 			update_option( 'wpmembers_email_wpfrom', $wpmem->email->from, false );
 			update_option( 'wpmembers_email_wpname', $wpmem->email->from_name, false );
@@ -153,15 +153,15 @@ class WP_Members_Admin_Tab_Emails {
 
 		for ( $row = 0; $row < ( count( $arr ) - 1 ); $row++ ) {
 			$arr2 = array( 
-				"subj" => sanitize_text_field( $_POST[ $arr[ $row ] . '_subj' ] ),
-				"body" => wp_kses( $_POST[ $arr[ $row ] . '_body' ], 'post' ),
+				"subj" => sanitize_text_field( wp_unslash( $_POST[ $arr[ $row ] . '_subj' ] ) ),
+				"body" => wp_kses( wp_unslash( $_POST[ $arr[ $row ] . '_body' ] ), 'post' ),
 			);
 			update_option( $arr[ $row ], $arr2, false );
 			$arr2 = '';
 		}
 
 		// Updated the email footer.
-		update_option( $arr[ $row ], wp_kses( $_POST[ $arr[ $row ] . '_body' ], 'post' ), false );
+		update_option( $arr[ $row ], wp_kses( wp_unslash( $_POST[ $arr[ $row ] . '_body' ] ), 'post' ), false );
 
 		if ( ! empty ( $wpmem->admin->emails ) ) {
 			foreach( $wpmem->admin->emails as $email ) {

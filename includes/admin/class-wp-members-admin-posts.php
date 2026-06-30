@@ -24,7 +24,7 @@ class WP_Members_Admin_Posts {
 	 */
 	static function bulk_action() {  
 		global $wpmem;
-		if ( ( isset( $_GET['post_type'] ) && ( 'page' == $_GET['post_type'] || 'post' == $_GET['post_type'] || array_key_exists( $_GET['post_type'], $wpmem->post_types ) ) ) || ! isset( $_GET['post_type'] ) ) { ?>
+		if ( ( isset( $_GET['post_type'] ) && ( 'page' == $_GET['post_type'] || 'post' == $_GET['post_type'] || array_key_exists( wp_unslash( $_GET['post_type'] ), $wpmem->post_types ) ) ) || ! isset( $_GET['post_type'] ) ) { ?>
 		<script type="text/javascript">
 			jQuery(document).ready(function() {
 			jQuery('<option>').val('unblock').text('<?php esc_html_e( 'Unrestrict', 'wp-members' ) ?>').appendTo("select[name='action']");
@@ -87,7 +87,7 @@ class WP_Members_Admin_Posts {
 						'post_type' => $type,
 					);
 					if ( isset( $_GET['post_status'] ) && 'all' != $_GET['post_status'] ) {
-						$arr['post_status'] = sanitize_text_field( $_GET['post_status'] );
+						$arr['post_status'] = sanitize_text_field( wp_unslash( $_GET['post_status'] ) );
 					}
 
 					$sendback = add_query_arg( array( $arr ), '', $sendback );
@@ -254,7 +254,7 @@ class WP_Members_Admin_Posts {
 			return;
 		}
 		// Quit if the nonce isn't there, or is wrong.
-		if ( ! isset( $_POST['wpmem_block_meta_nonce'] ) || ! wp_verify_nonce( $_POST['wpmem_block_meta_nonce'], 'wpmem_block_meta_nonce' ) ) {
+		if ( ! isset( $_POST['wpmem_block_meta_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['wpmem_block_meta_nonce'] ), 'wpmem_block_meta_nonce' ) ) {
 			return;
 		}
 		// Quit if it's a post revision
@@ -267,7 +267,7 @@ class WP_Members_Admin_Posts {
 		}
 
 		// Get value.
-		$block = ( isset( $_POST['wpmem_block'] ) ) ? sanitize_text_field( $_POST['wpmem_block'] ) : null;
+		$block = ( isset( $_POST['wpmem_block'] ) ) ? sanitize_text_field( wp_unslash( $_POST['wpmem_block'] ) ) : null;
 
 		// Set the value.
 		self::set_block_status( $block, $post_id, $post->post_type );
@@ -298,7 +298,7 @@ class WP_Members_Admin_Posts {
 	 */
 	static function columns( $columns ) {
 		global $wpmem;
-		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( $_REQUEST['post_type'] ) : 'post';
+		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) : 'post';
 
 		if ( $post_type == 'page' || $post_type == 'post' || array_key_exists( $post_type, $wpmem->post_types ) ) {
 			$columns['wpmem_block'] = esc_html__( 'Status', 'wp-members' );

@@ -657,7 +657,7 @@ class WP_Members_Products_Admin {
 	 */
 	function post_columns( $columns ){
 		global $wpmem;
-		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( $_REQUEST['post_type'] ) : 'post';
+		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) : 'post';
 		if ( $post_type == 'page' || $post_type == 'post' || array_key_exists( $post_type, $wpmem->post_types ) ) {
 			$product = array( 'wpmem_product' => esc_html__( 'Required Membership', 'wp-members' ) );
 			$columns = wpmem_array_insert( $columns, $product, 'wpmem_block', 'before' );
