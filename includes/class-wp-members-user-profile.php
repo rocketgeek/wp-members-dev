@@ -387,7 +387,7 @@ class WP_Members_User_Profile {
 			} elseif ( $field['type'] == 'checkbox' ) {
 				$fields[ $meta ] = wpmem_get_sanitized( $meta, '' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_text_field( $_POST[ $meta ] ) : '';
 			} elseif ( $field['type'] == 'multiselect' || $field['type'] == 'multicheckbox' ) {
-				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wpmem_sanitize_array( $_POST[ $meta ] ) ) : '';
+				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wpmem_sanitize_array( wp_unslash( $_POST[ $meta ] ) ) ) : '';
 			} elseif ( $field['type'] == 'textarea' ) {
 				$fields[ $meta ] = wpmem_get_sanitized( $meta, '', 'post', 'textarea' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_textarea_field( $_POST[ $meta ] ) : '';
 			}

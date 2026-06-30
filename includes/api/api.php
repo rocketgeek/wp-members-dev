@@ -313,7 +313,7 @@ function wpmem_current_url( $slash = true, $getq = true ) {
 	global $wp;
 	$url = home_url( add_query_arg( array(), $wp->request ) );
 	$url = ( $slash ) ? trailingslashit( $url ) : $url;
-	$url = ( $getq && count( $_GET ) > 0 ) ? $url . '?' . $_SERVER['QUERY_STRING'] : $url;
+	$url = ( $getq && count( $_GET ) > 0 ) ? $url . '?' . wp_unslash( $_SERVER['QUERY_STRING'] ) : $url;
 	return esc_url_raw( $url );
 }
 
