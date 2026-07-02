@@ -64,7 +64,7 @@ class WP_Members_Admin_Tab_Shortcodes {
 				<div id="post-body-content">
 					<div class="postbox">
 						<div class="inside">
-							<form name="updateshortcodesform" id="updateshortcodesform" method="post" action="<?php echo esc_url( esc_url( wpmem_admin_form_post_url() ) ); ?>"> 
+							<form name="updateshortcodesform" id="updateshortcodesform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 							<?php 
                             wp_nonce_field( 'wpmem_update_shortcodes', 'wpmem_nonce' );
                             $wpmem_enable_field_sc = $wpmem->shortcodes->enable_field; 

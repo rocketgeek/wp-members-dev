@@ -85,7 +85,7 @@ class WP_Members_Admin_Tab_Captcha {
 
 						<h3><?php esc_html_e( 'Manage CAPTCHA Options', 'wp-members' ); ?></h3>
 						<div class="inside">
-							<form name="updatecaptchaform" id="updatecaptchaform" method="post" action="<?php echo esc_url_raw( esc_url( wpmem_admin_form_post_url() ) ); ?>">
+							<form name="updatecaptchaform" id="updatecaptchaform" method="post" action="<?php echo esc_url_raw( wpmem_admin_form_post_url() ); ?>">
 							<?php wp_nonce_field( 'wpmem-update-settings' ); ?>
 								<table class="form-table">
 									<tr valign="top">

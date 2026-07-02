@@ -71,15 +71,15 @@ function wpmem_admin_user_profile( $user_id ) {
 /**
  * Wrapper for form_post_url().
  * 
- * Generates the URL for posting forms in the admin panel. Uses the WP_Members_Admin_API::form_post_url() method,
- * which returns an escaped result. If no args are passed, it defaults to the current URL.
+ * Generates the URL for posting forms in the admin panel. Uses the WP_Members_Admin_API::form_post_url() method.
+ * If no args are passed, it defaults to the current URL.
  *
  * @since 3.1.8
  *
  * @global object $wpmem The WP_Members Object.
  * @param  string $tab   The plugin tab being displayed.
  * @param  mixed  $args  Array of additional arguments|boolean. Default: false.
- * @return string $url   The escaped admin URL for posting forms.
+ * @return string $url   The admin URL for posting forms.
  */
 function wpmem_admin_form_post_url( $args = false ) {
 	global $wpmem;

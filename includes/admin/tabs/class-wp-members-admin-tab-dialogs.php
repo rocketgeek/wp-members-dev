@@ -70,7 +70,7 @@ class WP_Members_Admin_Tab_Dialogs {
 							/* translators: %s is replaced with allowed HTML tags. */
 							printf( esc_html__( 'You can customize the text for dialogs and error messages. Simple HTML is allowed %s etc.', 'wp-members' ), '- &lt;p&gt;, &lt;b&gt;, &lt;i&gt;,' ); 
 							?></p>
-							<form name="updatedialogform" id="updatedialogform" method="post" action="<?php echo esc_url( esc_url( wpmem_admin_form_post_url() ) ); ?>"> 
+							<form name="updatedialogform" id="updatedialogform" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>"> 
 							<?php wp_nonce_field( 'wpmem_update_dialogs', 'wpmem_nonce' ); ?>
 								<table class="form-table">
 								<?php 

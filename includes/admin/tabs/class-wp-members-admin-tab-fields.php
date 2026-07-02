@@ -625,7 +625,7 @@ Last Row|last_row
 		echo '<div class="wrap">';
 		echo '<h3 class="title">' . esc_html__( 'Manage Fields', 'wp-members' ) . '</h3>';
 		//printf( '<p>%s <strong>%s</strong></p>', $description, $which_form );
-		echo '<form name="updatefieldform" id="updatefieldform" method="post" action="' . esc_url( esc_url( wpmem_admin_form_post_url() ) ) . '">';
+		echo '<form name="updatefieldform" id="updatefieldform" method="post" action="' . esc_url( wpmem_admin_form_post_url() ) . '">';
 
 		$table->items = $field_items;
 		$table->prepare_items(); 
