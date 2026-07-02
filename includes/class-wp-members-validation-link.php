@@ -418,8 +418,7 @@ class WP_Members_Validation_Link {
 	 */
 	public function clear_activation_key( $user_id ) {
 		global $wpdb;
-		$result = $wpdb->update( $wpdb->users, array( 'user_activation_key' => '', ), array( 'ID' => intval( $user_id ) ) );
-		//clean_user_cache( $user_id );
+		$wpdb->update( $wpdb->users, array( 'user_activation_key' => '', ), array( 'ID' => intval( $user_id ) ) );
 	}
 
 	/**

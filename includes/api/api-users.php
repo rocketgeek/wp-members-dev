@@ -254,18 +254,18 @@ function wpmem_user_has_meta( $meta, $value = false, $user_id = false ) {
  * 
  * @since 3.4.6
  * 
- * @global object  $wpdb
  * @param  string  $meta_key
  * @param  string  $meta_value
  * @return WP_User
  */
-function wpmem_get_user_by_meta( $meta_key, $meta_value ) {
-	global $wpdb;
-	$user = $wpdb->get_row( 'SELECT u1.ID, m1.meta_value
-		FROM ' . $wpdb->users . ' u1
-		JOIN ' . $wpdb->usermeta . ' m1 ON (m1.user_id = u1.ID AND m1.meta_key = "' . esc_sql( $meta_key ) . '")
-		WHERE m1.meta_value = "' . esc_sql( $meta_value ) . '";' );
-	return $user;
+function wpmem_get_user_by_meta( $meta_key, $meta_value, $args = array() ) {
+	$user = get_users(
+		array(
+			'meta_key'   => esc_sql( $meta_key ),
+			'meta_value' => esc_sql( $meta_value ),
+			'number'     => 1
+	) );
+	return $user[0] ?? null;
 }
 
 /**
