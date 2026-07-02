@@ -87,10 +87,16 @@ if ( ! function_exists( 'rktgk_get_sanitized' ) ):
  * @param  string $default      Default value (optional, default: null).
  * @param  string $request_type Request type (post|get|request) (optional, default:post).
  * @param  string $field_type   Type of sanitization (using rktgk_sanitize_field()) (optional, default:text).
+ * @param  bool   $unslash      Whether to unslash the value (optional, default:true).
  * @return mixed  The sanitized result (string|array|integer|boolean).
  */
-function rktgk_get_sanitized( $tag, $default = '', $request_type = 'post', $field_type = 'text' ) {
+function rktgk_get_sanitized( $tag, $default = '', $request_type = 'post', $field_type = 'text', $unslash = true ) {
 	$pre_sanitized_tag = rktgk_get( $tag, $default, $request_type );
+	
+	if ( $unslash ) {
+		$pre_sanitized_tag = wp_unslash( $pre_sanitized_tag );
+	}
+	
 	if ( 'array' == $field_type ) {
 		return rktgk_sanitize_array( $pre_sanitized_tag );
 	} else {
