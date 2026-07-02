@@ -142,6 +142,7 @@ WP-Members 3.5.7 is a code improvement release.  It fixes some minor bugs and ad
 * Improvement for `wpmem_get_membership_post_list()`, order by ID|title|date|name|modified, ID is default.
 * Improvement for email validation process to make it a form submission. This prevents email pre-filters from consuming the key and causing errors.
 * Improvement for experimental dropins functionality.
+* Improvement: reduce use of direct MySQL queries.
 * Added `wpmem_validation_confirmation_form_args` and `wpmem_validation_confirmation_form` filters for customizing email validation button & form.
 * Added `wpmem_load_template()` wrapper and template handling functions.
 * Added `wpmem_get_expiring_users()` API function.
@@ -149,6 +150,8 @@ WP-Members 3.5.7 is a code improvement release.  It fixes some minor bugs and ad
 * Added `wpmem_user_membership_removed` action hook.
 * Added `wpmem_user_membership_set` action to replace `wpmem_user_product_set`.
 * Added custom column sorting to Users > All Users.
+* Added wp_unslash() to the sanitization options in wpmem_get_sanitized().
+* Added timestamp as an option in sanitization functions.
 * Code review and improvement: security audit, added translator comments, use `gmdate()` instead of `date()`.
 * Code review for WordPress 7.0.
 
