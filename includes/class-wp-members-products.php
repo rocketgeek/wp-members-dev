@@ -149,13 +149,13 @@ class WP_Members_Products {
 	 * @since 3.5.2
 	 */
 	public function update_memberhips() {
-		global $wpdb;
-		$result = $wpdb->get_results(
-			"SELECT ID, post_title, post_name 
-			FROM " . $wpdb->prefix . "posts 
-			WHERE post_type = 'wpmem_product' 
-			AND post_status = 'publish';"
+		$args = array(
+			'post_type' => 'wpmem_product',
+			'post_status' => 'publish',
+			'numberposts' => -1
 		);
+
+		$result = get_posts( $args );
 
 		if ( $result ) {
 			foreach ( $result as $plan ) {
@@ -485,15 +485,12 @@ class WP_Members_Products {
 	 * @since 3.3.0
 	 * @since 3.5.5 Added arguments for ordering the query results.
 	 *
-	 * @global  stdClass      $wpdb
-	 *
 	 * @param   string        $product_meta
 	 * @param   string        $order_by ID|title|date|name|modified
 	 * @param   string        $order asc|desc
 	 * @return  array|boolean $post_ids if not empty, otherwise false
 	 */
 	function get_all_posts( $product_meta, $order_by = 'ID', $order = 'ASC' ) {
-		global $wpdb;
 
 		if ( $order_by ) {
 
@@ -507,21 +504,21 @@ class WP_Members_Products {
 			// Add post stem to order by value.
 			$order_by = ( $order_by != 'ID' ) ? 'post_' . $order_by : 'ID';
 
-			$results = $wpdb->get_results( $wpdb->prepare(
-				'SELECT m.post_id
-				FROM ' . $wpdb->postmeta . ' m
-				JOIN ' . $wpdb->posts . ' p ON (m.post_id = p.ID AND m.meta_key = %s )
-				WHERE p.post_status = "publish"
-				ORDER BY p.' . esc_sql( $order_by ) . ' ' . esc_sql( $order ) . ';',
-				esc_sql( $this->post_stem . $product_meta )
-			), ARRAY_N );
-
+			$results = get_posts( array(
+				'meta_key'       => $this->post_stem . esc_attr( $product_meta ),
+				'orderby'        => esc_attr( $order_by ),
+				'order'          => esc_attr( $order ),
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+			) );
 		}
 		
 		foreach ( $results as $result ) {
-			$post_ids[] = $result[0];
+			$post_ids[] = $result->ID;
 		}
 		
+		wp_reset_postdata();
+
 		return ( ! empty( $post_ids ) ) ? $post_ids : false;
 	}
 	

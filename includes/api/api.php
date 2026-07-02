@@ -450,10 +450,11 @@ function wpmem_get( $tag, $default = '', $type = 'post' ) {
  * @param  string $default      Default value (optional, default: null).
  * @param  string $request_type Request type (post|get|request) (optional, default:post).
  * @param  string $field_type   Type of sanitization (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) (optional, default:text).
+ * @param  bool   $unslash      Whether to unslash the value (optional, default:true).
  * @return mixed  The sanitized result (string|array|integer|boolean).
  */
-function wpmem_get_sanitized( $tag, $default = '', $request_type = 'post', $field_type = 'text' ) {
-	return rktgk_get_sanitized( $tag, $default, $request_type, $field_type );
+function wpmem_get_sanitized( $tag, $default = '', $request_type = 'post', $field_type = 'text', $unslash = true ) {
+	return rktgk_get_sanitized( $tag, $default, $request_type, $field_type, $unslash );
 }
 
 /**
@@ -470,9 +471,8 @@ function wpmem_is_reg_page( $check = false ) {
 		$check = get_the_ID();
 	} else {
 		if ( ! is_int( $check ) ) {
-			global $wpdb;
-			$arr   = $wpdb->get_results( 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_name = "' . esc_sql( $check ) . '" AND post_status = "publish" LIMIT 1', ARRAY_A  ); 
-			$check = $arr[0]['ID'];
+			$result = get_page_by_path( $check, OBJECT, array( 'page', 'post' ) );
+			$check = $result->ID;
 		}
 	}
 	$reg_page = wpmem_get( 'wpmem_reg_page' );
