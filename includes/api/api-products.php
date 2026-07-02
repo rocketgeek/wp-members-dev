@@ -454,7 +454,7 @@ function wpmem_get_membership_count( $membership, $type = "all" ) {
 			break;
 	}
 
-	if ( $period ) {
+	if ( $period != 0 ) {
 		// It's an expiration membership
 		$results = $wpdb->get_results( "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" AND meta_value ' .  esc_sql( $compare ) . ' ' . esc_sql( $period ) . ' ORDER BY meta_value;' );
 	} else {

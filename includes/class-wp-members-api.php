@@ -21,9 +21,7 @@ class WP_Members_API {
 	 *
 	 * @since 3.1.1
 	 */
-	function __construct() {
-
-	}
+	function __construct() {}
 	
 	/**
 	 * Get field keys by meta.
