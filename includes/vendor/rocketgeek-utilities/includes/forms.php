@@ -86,7 +86,7 @@ if ( ! function_exists( 'rktgk_get_sanitized' ) ):
  * @param  string $tag          Form field or query string param.
  * @param  string $default      Default value (optional, default: null).
  * @param  string $request_type Request type (post|get|request) (optional, default:post).
- * @param  string $field_type   Type of sanitization (using rktgk_sanitize_field()) (optional, default:text).
+ * @param  string $field_type   Type of sanitization (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) Default:text.
  * @param  bool   $unslash      Whether to unslash the value (optional, default:true).
  * @return mixed  The sanitized result (string|array|integer|boolean).
  */
@@ -143,7 +143,7 @@ if ( ! function_exists( 'rktgk_sanitize_array' ) ):
  * @since 1.0.0
  *
  * @param  array  $data
- * @param  string $type The data type integer|int (default: false)
+ * @param  string $type The data type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) Default:text
  * @return array  $data
  */
 function rktgk_sanitize_array( $data, $type = 'text' ) {
@@ -225,6 +225,10 @@ function rktgk_sanitize_field( $data, $type = '', $xtra = null ) {
 
 		case 'key':
 			$sanitized_data = sanitize_key( $data );
+			break;
+		
+		case 'timestamp':
+			$sanitized_data = strtotime( $data );
 			break;
 
 		case 'text':
