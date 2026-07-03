@@ -679,9 +679,19 @@ function wpmem_update_autoload_options() {
 		"wpmembers_email_validated" => false,
 	);
 	
-	// Update wpmem options autoload values.
-	wp_set_option_autoload_values( $wpmem_options );
-	
+	// Update wpmem options autoload values. Requires WP 6.4
+	$wp_version = get_bloginfo( 'version' );
+	if ( version_compare( $wp_version, '6.4', '<' ) ) {
+		foreach ( $wpmem_options as $option => $autoload ) {
+			update_option( $option, get_option( $option ), $autoload );
+		}
+	} else {
+		// WP 6.4+ has a new function to update autoload values.
+		if ( function_exists( 'wp_set_option_autoload_values' ) ) {
+			wp_set_option_autoload_values( $wpmem_options );
+		}
+	}
+
 	// Delete pre-3.x options if they exist.
 	delete_option( "wpmembers_msurl"  );
 	delete_option( "wpmembers_regurl" );
