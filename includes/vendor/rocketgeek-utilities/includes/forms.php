@@ -52,7 +52,8 @@ function rktgk_get( $tag, $default = '', $type = 'post' ) {
 		case 'request':
 			return ( isset( $_REQUEST[ $tag ] ) ) ? $_REQUEST[ $tag ] : $default;
 			break;
-		default: // case 'post':
+		case 'post':
+		default:
 			return ( isset( $_POST[ $tag ] ) ) ? $_POST[ $tag ] : $default;
 			break;
 	}
@@ -86,7 +87,7 @@ if ( ! function_exists( 'rktgk_get_sanitized' ) ):
  * @param  string $tag          Form field or query string param.
  * @param  string $default      Default value (optional, default: null).
  * @param  string $request_type Request type (post|get|request) (optional, default:post).
- * @param  string $field_type   Type of sanitization (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) Default:text.
+ * @param  string $field_type   Type of sanitization (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key|timestamp|redirect) Default:text.
  * @param  bool   $unslash      Whether to unslash the value (optional, default:true).
  * @return mixed  The sanitized result (string|array|integer|boolean).
  */
@@ -143,7 +144,7 @@ if ( ! function_exists( 'rktgk_sanitize_array' ) ):
  * @since 1.0.0
  *
  * @param  array  $data
- * @param  string $type The data type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) Default:text
+ * @param  string $type The data type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key|timestamp|redirect) Default:text
  * @return array  $data
  */
 function rktgk_sanitize_array( $data, $type = 'text' ) {
@@ -172,7 +173,7 @@ if ( ! function_exists( 'rktgk_sanitize_field' ) ):
  * @since 1.0.1 Added text, url, array, class as accepted $type
  *
  * @param  string $data
- * @param  string $type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) Default:text
+ * @param  string $type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key|timestamp|redirect) Default:text
  * @param  string $xtra Extra data based on type.
  * @return string $sanitized_data
  */
@@ -220,6 +221,7 @@ function rktgk_sanitize_field( $data, $type = '', $xtra = null ) {
 			break;
 		
 		case 'kses':
+			$xtra = ( null == $xtra ) ? 'post' : $xtra;
 			$sanitized_data = ( 'post' == $xtra ) ? wp_kses_post( $data ) : wp_kses( $data, $xtra );
 			break;
 
@@ -229,6 +231,10 @@ function rktgk_sanitize_field( $data, $type = '', $xtra = null ) {
 		
 		case 'timestamp':
 			$sanitized_data = strtotime( $data );
+			break;
+
+		case 'redirect':
+			$sanitized_data = wp_sanitize_redirect( $data, home_url() );
 			break;
 
 		case 'text':
