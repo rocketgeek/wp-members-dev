@@ -296,13 +296,13 @@ function wpmem_get_suffix( $echo = false ) {
  */
 function wpmem_get_redirect_to( $args = array() ) {
 	// redirect_to in the form or URL will override a redirect set in the form args.
-	if ( isset( $_REQUEST['redirect_to'] ) ) {
-		$redirect_to = wp_sanitize_redirect( wp_unslash( $_REQUEST['redirect_to'] ) );
+	if ( wpmem_get( 'redirect_to', false ) ) {
+		$redirect_to = wpmem_get_sanitized( 'redirect_to', '', 'request', 'redirect' );
 	} else {
 		if ( isset( $args['redirect_to'] ) ) {
 			$raw_redirect_to = $args['redirect_to'];
 			// Is it a URL?
-			$redirect_to = ( false == filter_var( $raw_redirect_to, FILTER_VALIDATE_URL ) ) ? home_url( $raw_redirect_to ) : $raw_redirect_to;
+			$redirect_to = ( false == wp_http_validate_url( $raw_redirect_to ) ) ? home_url( $raw_redirect_to ) : $raw_redirect_to;
 		} else {
 			$redirect_to = ( isset( $_SERVER['REQUEST_URI'] ) ) ? wp_sanitize_redirect( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : get_permalink();
 		}

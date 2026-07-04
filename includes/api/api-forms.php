@@ -429,8 +429,8 @@ function wpmem_sanitize_array( $data, $type = false ) {
  * @param  string $type $type (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) Default:text
  * @return string $sanitized_data
  */
-function wpmem_sanitize_field( $data, $type = 'text' ) {
-	return rktgk_sanitize_field( $data, $type );
+function wpmem_sanitize_field( $data, $type = 'text', $xtra = null ) {
+	return rktgk_sanitize_field( $data, $type, $xtra );
 }
 
 /**
@@ -571,26 +571,26 @@ function wpmem_woo_checkout_update_meta( $order_id ) {
 	$checkout_fields = WC()->checkout()->checkout_fields;
 	$fields = wpmem_fields();
 	foreach ( $fields as $meta_key => $field ) {
-		if ( isset( $checkout_fields['order'][ $meta_key ] ) && isset( $_POST[ $meta_key ] ) ) {
+		if ( isset( $checkout_fields['order'][ $meta_key ] ) && false != wpmem_get( $meta_key, false, 'post' ) ) {
 			switch ( $fields[ $meta_key ]['type'] ) {
 				case 'checkbox':
 					update_user_meta( $user_id, $meta_key, $field['checked_value'] );
 					break;
 				case 'textarea':
-					update_user_meta( $user_id, $meta_key, sanitize_textarea_field( wp_unslash( $_POST[ $meta_key ] ) ) );
+					update_user_meta( $user_id, $meta_key, wpmem_get_sanitized( $meta_key, '', 'post', 'textarea' ) );
 					break;
 				case 'multicheckbox':
 				case 'multiselect':
-					update_user_meta( $user_id, $meta_key, wpmem_sanitize_array( $_POST[ $meta_key ] ) );
+					update_user_meta( $user_id, $meta_key, wpmem_get_sanitized( $meta_key, array(), 'post', 'array' ) );
 					break;
 				case 'membership':
-					wpmem_set_user_product( wpmem_sanitize_array( $_POST[ $meta_key ] ), $user_id );
+					wpmem_set_user_product( wpmem_get_sanitized( $meta_key, array(), 'post', 'array' ), $user_id );
 					break;
 				default:
 					if ( 'user_url' == $meta_key ) {
-						wp_update_user( array( 'ID' => $user_id, 'user_url' => sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) ) ) );
+						wp_update_user( array( 'ID' => $user_id, 'user_url' => wpmem_get_sanitized( $meta_key, '', 'post', 'url' ) ) );
 					} else {
-						update_user_meta( $user_id, $meta_key, sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) ) );
+						update_user_meta( $user_id, $meta_key, wpmem_get_sanitized( $meta_key ) );
 					}
 					break;
 			}

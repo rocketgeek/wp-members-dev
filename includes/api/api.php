@@ -449,7 +449,7 @@ function wpmem_get( $tag, $default = '', $type = 'post' ) {
  * @param  string $tag          Form field or query string param.
  * @param  string $default      Default value (optional, default: null).
  * @param  string $request_type Request type (post|get|request) (optional, default:post).
- * @param  string $field_type   Type of sanitization (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key) (optional, default:text).
+ * @param  string $field_type   Type of sanitization (text|array|multiselect|multicheckbox|textarea|email|file|image|int|integer|number|url|class|nonce|kses|key|timestamp|redirect) Default:text.
  * @param  bool   $unslash      Whether to unslash the value (optional, default:true).
  * @return mixed  The sanitized result (string|array|integer|boolean).
  */
