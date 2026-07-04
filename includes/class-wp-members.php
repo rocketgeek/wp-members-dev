@@ -1899,7 +1899,7 @@ class WP_Members {
 			 * @param string $locale The current locale.
 			 */
 			$dir = apply_filters( 'wpmem_localization_dir', basename( $this->path ) . '/i18n/languages/', $locale );
-			load_plugin_textdomain( $domain, FALSE, $dir );
+			load_plugin_textdomain( $domain, "", $dir );
 		}
 		return;
 	}
