@@ -222,7 +222,7 @@ function rktgk_sanitize_field( $data, $type = '', $xtra = null ) {
 		
 		case 'kses':
 			$xtra = ( null == $xtra ) ? 'post' : $xtra;
-			$sanitized_data = ( 'post' == $xtra ) ? wp_kses_post( $data ) : wp_kses( $data, $xtra );
+			$sanitized_data = wp_kses( $data, $xtra );
 			break;
 
 		case 'key':
