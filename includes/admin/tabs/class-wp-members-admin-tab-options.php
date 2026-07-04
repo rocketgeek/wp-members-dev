@@ -622,19 +622,15 @@ class WP_Members_Admin_Tab_Options {
 			 * activated so they don't accidentally lock themselves
 			 * out later.
 			 */
-			if ( isset( $_POST['wpmem_settings_moderate'] ) == 1 ) {
+			if ( 1 == wpmem_get( 'wpmem_settings_moderate', 0 ) ) {
 				update_user_meta( get_current_user_id(), 'active', 1 );
 			}
 			
-			if ( isset( $_POST['wpmem_settings_act_link'] ) == 1 ) {
+			if ( 1 == wpmem_get( 'wpmem_settings_act_link', 0 ) ) {
 				update_user_meta( get_current_user_id(), '_wpmem_activation_confirm', time() );
 			}
 
-			if ( 1 == wpmem_get_sanitized( 'wpmem_legacy_dialogs', 0, 'post', 'int' ) ) {
-				update_option( 'wpmem_legacy_dialogs', 1, false );
-			} else {
-				update_option( 'wpmem_legacy_dialogs', 0, false );
-			}
+			update_option( 'wpmem_legacy_dialogs', wpmem_get_sanitized( 'wpmem_legacy_dialogs', 0, 'post', 'int' ), false );
 
 			WP_Members_Admin_Tab_Options::save_settings( $wpmem_newsettings );
 

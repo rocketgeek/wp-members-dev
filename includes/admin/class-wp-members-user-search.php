@@ -175,7 +175,7 @@ class WP_Members_Admin_User_Search {
 	*/
 	public function get_search_terms() {
 		// Get the WordPress search term(s).
-		$terms = ( wpmem_get( 's', false, 'get' ) ) ? trim( strtolower( wp_unslash( $_GET['s'] ) ) ) : false;
+		$terms = trim( strtolower( wpmem_get_sanitized( 's', false, 'get' ) ) );
 
 		// Quite if no search term(s) exist.
 		if ( empty( $terms ) ) {

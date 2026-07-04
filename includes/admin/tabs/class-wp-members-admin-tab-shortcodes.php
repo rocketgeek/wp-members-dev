@@ -133,11 +133,7 @@ class WP_Members_Admin_Tab_Shortcodes {
 
 		$wpmem_settings = get_option( 'wpmembers_settings' );
 
-		if ( isset( $_POST['wpmem_enable_field_sc'] ) ) {
-			$wpmem_settings['shortcodes']['enable_field'] = intval( $_POST['wpmem_enable_field_sc'] );
-		} else {
-			$wpmem_settings['shortcodes']['enable_field'] = 0;
-		}
+		$wpmem_settings['shortcodes']['enable_field'] = wpmem_get_sanitized( 'wpmem_enable_field_sc', 0, 'post', 'int' );
 
 		update_option( 'wpmembers_settings', $wpmem_settings, true );
 

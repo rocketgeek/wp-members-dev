@@ -153,9 +153,9 @@ class widget_wpmemwidget extends WP_Widget {
 		$url = get_bloginfo('url');
 
 		if ( isset( $_REQUEST['redirect_to'] ) ) {
-			$post_to = wp_unslash( $_REQUEST['redirect_to'] );
+			$post_to = wp_sanitize_redirect( wp_unslash( $_REQUEST['redirect_to'] ) );
 		} elseif ( is_home() || is_front_page() ) {
-			$post_to = wp_unslash( $_SERVER['REQUEST_URI'] );
+			$post_to = wp_sanitize_redirect( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		} elseif ( is_single() || is_page() ) {
 			$post_to = get_permalink();
 		} elseif ( is_category() ) {
@@ -165,7 +165,7 @@ class widget_wpmemwidget extends WP_Widget {
 		} elseif ( is_search() ) {
 			$post_to = add_query_arg( 's', get_search_query(), $url );
 		} else {
-			$post_to = wp_unslash( $_SERVER['REQUEST_URI'] );
+			$post_to = wp_sanitize_redirect( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		}
 
 		// Clean whatever the url is.
