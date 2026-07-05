@@ -40,7 +40,6 @@ class WP_Members_Products_Admin {
 			add_action( 'admin_footer',                    array( $this, 'enqueue_select2' ) );
 			add_filter( 'manage_users_columns',            array( $this, 'user_columns' ) );
 			add_filter( 'manage_users_custom_column',      array( $this, 'user_columns_content' ), 10, 3 );
-			add_action( 'admin_head',                      array( $this, 'post_columns_width' ) );
 			add_filter( 'manage_posts_columns',            array( $this, 'post_columns' ) );
 			add_action( 'manage_posts_custom_column',      array( $this, 'post_columns_content' ), 10, 2 );
 			add_filter( 'manage_pages_columns',            array( $this, 'post_columns' ) );
@@ -234,7 +233,8 @@ class WP_Members_Products_Admin {
 	 *
 	 * @since 3.3.3
 	 *
-	 * @return array $post_types
+	 * @global object $wpmem
+	 * @return array  $post_types
 	 */
 	function get_post_types() {
 		global $wpmem;
@@ -462,7 +462,7 @@ class WP_Members_Products_Admin {
 		global $wpmem;
 		
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-		if ( ! isset( $_POST['wpmem_product_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['wpmem_product_nonce'] ), '_wpmem_product_nonce' ) ) return;
+		if ( ! wp_verify_nonce( wpmem_get_sanitized( 'wpmem_product_nonce', false, 'post', 'nonce' ), '_wpmem_product_nonce' ) ) return;
 		if ( ! current_user_can( 'edit_posts', $post_id ) ) return;
 		
 		$post = get_post( $post_id );
@@ -636,31 +636,23 @@ class WP_Members_Products_Admin {
 	}
 	
 	/**
-	 * Styles the width for membership post column.
-	 *
-	 * @since 3.4.0
-	 */
-	function post_columns_width() {
-		if ( isset( $_REQUEST['post_type'] ) ) {
-			echo '<style>.column-wpmem_product{ min-width:140px; width: 12%;}</style>';
-		}
-	}
-	
-	/**
 	 * Add membership product column to post table.
 	 *
 	 * @since 3.2.4
-	 *
+	 * 
+	 * @global string $pagenow
+	 * @global string $typenow
 	 * @global object $wpmem
 	 * @param  array  $columns
 	 * @return array  $columns
 	 */
-	function post_columns( $columns ){
-		global $wpmem;
-		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) : 'post';
-		if ( $post_type == 'page' || $post_type == 'post' || array_key_exists( $post_type, $wpmem->post_types ) ) {
-			$product = array( 'wpmem_product' => esc_html__( 'Required Membership', 'wp-members' ) );
-			$columns = wpmem_array_insert( $columns, $product, 'wpmem_block', 'before' );
+	function post_columns( $columns ) {
+		global $pagenow, $typenow, $wpmem;
+		if ( 'edit.php' == $pagenow ) {
+			if ( $typenow == 'page' || $typenow == 'post' || array_key_exists( $typenow, $wpmem->post_types ) ) {
+				$product = array( 'wpmem_product' => esc_html__( 'Required Membership', 'wp-members' ) );
+				$columns = wpmem_array_insert( $columns, $product, 'wpmem_block', 'before' );
+			}
 		}
 		return $columns;	
 	}
@@ -670,15 +662,14 @@ class WP_Members_Products_Admin {
 	 *
 	 * @since 3.2.4
 	 *
-	 * @global object $wpmem
 	 * @param  string $column_name
 	 * @param  int    $post_id
 	 */
 	function post_columns_content( $column_name, $post_id ) {
 		if ( 'wpmem_product' == $column_name ) {
-			global $wpmem;
-			$post_products = $wpmem->membership->get_post_products( $post_id );
+			$post_products = wpmem_get_post_memberships( $post_id );
 			if ( $post_products ) {
+				$display = array();
 				foreach ( $post_products as $meta ) {
 					$display[] = wpmem_get_membership_name( $meta );
 				}
@@ -733,7 +724,6 @@ class WP_Members_Products_Admin {
 			'item_wrap_after'  => '</div>',
 		), $val, $column_name, $user_id );
 		if ( 'wpmem_product' == $column_name ) {
-			global $wpmem;
 			$display = array();
 			$user_products = wpmem_get_user_memberships( $user_id );
 			if ( $user_products ) {
@@ -777,13 +767,12 @@ class WP_Members_Products_Admin {
 	 * @since 3.2.0
 	 *
 	 * @global string $pagenow
-	 * @global object $wpmem
 	 * @param  string $key
 	 */
 	public function user_profile_tab_content( $key ) { 
 		// If product enabled
 		if ( 'memberships' == $key ) {
-			global $pagenow, $wpmem;
+			global $pagenow;
 			
 			/** This filter is documented in includes/class-wp-members-user-profile.php */
 			$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
