@@ -173,6 +173,12 @@
 	margin-left: 0px;
 }
 
+/** For membership column */
+.column-wpmem_product{
+	min-width:140px;
+	width: 12%;
+}
+
 .column-dropin_version,
 .column-dropin_enabled {
 	width: 60px;
