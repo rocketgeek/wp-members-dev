@@ -100,6 +100,7 @@ see https://rocketgeek.com/tips-and-tricks/load-a-custom-stylesheet/
 #wpmem_reg input[type="url"],
 #wpmem_reg input[type="number"],
 #wpmem_reg input[type="date"],
+#wpmem_reg input[type="file"],
 #wpmem_reg textarea,
 #wpmem_login input[type="text"],
 #wpmem_login input[type="password"] {
