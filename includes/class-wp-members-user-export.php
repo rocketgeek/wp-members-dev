@@ -90,7 +90,7 @@ class WP_Members_User_Export {
 		 */
 		$export_fields = apply_filters( 'wpmem_export_fields', $export_fields, $tag );
 
-		$today = date( "Y-m-d" );
+		$today = gmdate( "Y-m-d" );
 
 		// Setup defaults.
 		$defaults = array(
@@ -227,7 +227,7 @@ class WP_Members_User_Export {
 							// If value is a date and false is not the format_date option...
 							if ( false !== $args['date_format'] && '' != $row[ $meta ] && $row[ $meta ] > 2 ) {
 								$date_format = ( 'wp' == $args['date_format'] ) ? get_option('date_format') : $args['date_format'];
-								$row[ $meta ] = date( $date_format, $row[ $meta ] );
+								$row[ $meta ] = gmdate( $date_format, $row[ $meta ] );
 							}
 							break;
 						default:
