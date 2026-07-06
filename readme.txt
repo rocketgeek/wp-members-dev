@@ -154,6 +154,7 @@ WP-Members 3.5.7 is a code improvement release.  It fixes some minor bugs and ad
 * Added timestamp as an option in sanitization functions.
 * Code review and improvement: security audit, added translator comments, use `gmdate()` instead of `date()`.
 * Code review for WordPress 7.0.
+* Requires WP 5.9 or higher (6.4 or higher recommended).
 
 = 3.5.6 =
 
