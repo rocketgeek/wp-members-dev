@@ -968,5 +968,13 @@ function wpmem_allowed_html( $context = 'default' ) {
 			$allowed_html = wp_kses_allowed_html( $context );
 			break;
 	}
-	return $allowed_html;
+	/**
+	 * Filter the allowed html. 
+	 * 
+	 * @since 3.6
+	 * 
+	 * @param array   $allowed_html  The allowed html for the context.
+	 * @param string  $context       The context for allowed html. Default: 'default'.
+	 */
+	return apply_filters( 'wpmem_allowed_html', $allowed_html, $context );
 }
