@@ -52,7 +52,7 @@ class WP_Members_Admin_Tab_Dropins {
 
 			// Update settings.
 			$wpmem_dropins_saved = false;
-			if (  ( isset( $_GET['tab'] ) && $_GET['tab'] == 'dropins' ) && isset( $_POST['wpmembers_dropins'] ) ) {
+			if ( 'dropins' == wpmem_get( 'tab', false, 'get' ) && wpmem_get( 'wpmembers_dropins' ) ) {
 				$settings = array();
 				$post_vals = wpmem_get( 'wpmembers_dropins', false );
 				if ( $post_vals ) {

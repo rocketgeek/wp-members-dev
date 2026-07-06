@@ -66,11 +66,11 @@ class WP_Members_Admin_Filesystem_Upgrade {
 		if ( isset( $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) && 1 == $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) {
 			update_option( 'wpmem_dismiss_filesystem_upgrade_notice', intval( wpmem_get( 'wpmem_dismiss_filesystem_upgrade_notice', 0, 'post' ) ), false );
 		} else {
-			if ( isset( $_POST['wpmem_admin_a'] ) && 'update_filesystem' == $_POST['wpmem_admin_a'] && ! isset( $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) ) {
+			if ( 'update_filesystem' == wpmem_get( 'wpmem_admin_a', false ) && ! isset( $_POST['wpmem_dismiss_filesystem_upgrade_notice'] ) ) {
 				delete_option( 'wpmem_dismiss_filesystem_upgrade_notice' );
 			}
 		}
-		if ( isset( $_POST['update-filesystem-confirm'] ) && 'move' == $_POST['update-filesystem-confirm'] ) {
+		if ( 'move' == wpmem_get( 'update-filesystem-confirm', false ) ) {
 			$wpmem->filesystem->update_filesystem();
 			$wpmem->filesystem->set_move_complete( true );
 			update_option( 'wpmem_upgrade_filesystem_move_complete', 1, false );
@@ -117,7 +117,7 @@ class WP_Members_Admin_Filesystem_Upgrade {
 			<h3>Step 2: Delete old filesystem</h3>
 			<input type="radio" id="delete" name="update-filesystem-confirm" value="delete" /> Delete the old filesystem.<br>
 			<?php submit_button(); ?>
-		<?php } elseif ( isset( $_POST['update-filesystem-confirm'] ) && 'delete' == $_POST['update-filesystem-confirm'] ) {
+		<?php } elseif ( 'delete' == wpmem_get( 'update-filesystem-confirm', false ) ) {
 			// Clean up (delete) old dir.
 			$rmdir = $wpmem->filesystem->delete_directory( trailingslashit( $wpmem->filesystem->basedir ) . 'wpmembers/user_files' );
 			if ( $rmdir ) {

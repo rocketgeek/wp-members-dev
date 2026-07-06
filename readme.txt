@@ -1,9 +1,9 @@
-﻿=== WP-Members Membership Plugin ===
+﻿=== WP-Members ===
 Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 5.9
 Tested up to: 7.0
-Stable tag: 3.5.6
+Stable tag: 3.5.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 The original WordPress membership plugin with content restriction, user login, custom registration fields, user profiles, and more.
