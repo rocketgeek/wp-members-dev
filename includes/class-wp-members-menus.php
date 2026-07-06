@@ -220,7 +220,7 @@ class WP_Members_Menus {
 		}
 
 		// Verify this came from our screen and with proper authorization.
-		if ( ! isset( $_POST[ $this->nonce_name ] ) || ! wp_verify_nonce( wp_unslash( $_POST[ $this->nonce_name ] ), $this->nonce_field ) ){
+		if ( ! wp_verify_nonce( wpmem_get_sanitized( $this->nonce_name, false, 'post', 'nonce' ), $this->nonce_field ) ){
 			return;
 		}
 
@@ -229,9 +229,10 @@ class WP_Members_Menus {
 		if ( isset( $_POST['wpmem_logged_in_out'][ $menu_item_db_id ] ) && 'in' == $_POST['wpmem_logged_in_out'][ $menu_item_db_id ] && isset( $_POST['wpmem_product'][ $menu_item_db_id ] ) ) {
 			
 			$custom_fields = array();
-			
-			foreach( (array) $_POST['wpmem_product'][ $menu_item_db_id ] as $product ) {
 
+			$product_array = wpmem_sanitize_array( wp_unslash( $_POST['wpmem_product'][ $menu_item_db_id ] ) );
+			
+			foreach( $product_array as $product ) {
 				if ( array_key_exists ( $product, $product_names ) ) {
 					$custom_fields['products'][] = sanitize_text_field( wp_unslash( $product ) );
 				}

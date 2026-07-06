@@ -62,7 +62,7 @@ class WP_Members_User_Profile {
 		/** This filter is documented in includes/class-wp-members-user-profile.php */
 		$required_capability = apply_filters( 'wpmem_user_profile_caps', 'edit_users' );
 
-		$user_id = ( 'profile' == $current_screen->id ) ? $user_ID : intval( wp_unslash( $_REQUEST['user_id'] ) ); 
+		$user_id = ( 'profile' == $current_screen->id ) ? $user_ID : wpmem_get_sanitized( 'user_id', false, 'request', 'int' ); 
 		$display = ( 'profile' == $current_screen->base ) ? 'user' : 'admin'; 
 		$display = ( current_user_can( $required_capability ) ) ? 'admin' : $display;
 		$heading = ( 'admin' == $display ) ? __( 'WP-Members Additional Fields', 'wp-members' ) : __( 'Additional Information', 'wp-members' );
@@ -307,7 +307,7 @@ class WP_Members_User_Profile {
 	 * @global string $user_id
 	 * @global object $wpmem
 	 * @param  string $user_id
-	 * @return
+	 * @return void
 	 */
 	static function update( $user_id ) {
 
@@ -321,7 +321,7 @@ class WP_Members_User_Profile {
 		$display = ( ! isset( $current_screen ) || is_null( $current_screen ) || 'profile' == $current_screen->base ) ? 'user' : 'admin';
 	
 		if ( ! $user_id ) {
-			$user_id = filter_var( wpmem_get( 'user_id', -1, 'request' ), FILTER_SANITIZE_NUMBER_INT );
+			$user_id = wpmem_get_sanitized( 'user_id', -1, 'request', 'int' );
 			if ( 1 > $user_id ) {
 			// Still no user id? User cannot be updated.
 			return;
@@ -372,7 +372,8 @@ class WP_Members_User_Profile {
 				&& $field['type'] != 'file' 
 				&& $field['type'] != 'image'
 			    && $field['type'] != 'textarea' ) {
-				( isset( $_POST[ $meta ] ) && 'password' != $field['type'] ) ? $fields[ $meta ] = sanitize_text_field( wp_unslash( $_POST[ $meta ] ) ) : false;
+				
+				( isset( $_POST[ $meta ] ) ) ? $fields[ $meta ] = wpmem_get_sanitized( $meta, '' ) : false;
 				
 				// For user profile (not admin).
 				if ( 'admin' != $display ) {
@@ -380,16 +381,16 @@ class WP_Members_User_Profile {
 					if ( ! $field['required'] ) {
 						$chk = true;
 					}
-					if ( $field['required'] && $_POST[ $meta ] != '' ) {
+					if ( $field['required'] && wpmem_get( $meta, '' ) != '' ) {
 						$chk = true;
 					}
 				}
 			} elseif ( $field['type'] == 'checkbox' ) {
-				$fields[ $meta ] = wpmem_get_sanitized( $meta, '' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_text_field( $_POST[ $meta ] ) : '';
+				$fields[ $meta ] = wpmem_get_sanitized( $meta, '' );
 			} elseif ( $field['type'] == 'multiselect' || $field['type'] == 'multicheckbox' ) {
-				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wpmem_sanitize_array( wp_unslash( $_POST[ $meta ] ) ) ) : '';
+				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wpmem_sanitize_array( $_POST[ $meta ] ) ) : '';
 			} elseif ( $field['type'] == 'textarea' ) {
-				$fields[ $meta ] = wpmem_get_sanitized( $meta, '', 'post', 'textarea' ); // ( isset( $_POST[ $meta ] ) ) ? sanitize_textarea_field( $_POST[ $meta ] ) : '';
+				$fields[ $meta ] = wpmem_get_sanitized( $meta, '', 'post', 'textarea' );
 			}
 		}
 
@@ -426,7 +427,7 @@ class WP_Members_User_Profile {
 		if ( 'admin' == $display || current_user_can( $required_capability ) ) {
 			if ( $wpmem->mod_reg == 1 ) {
 
-				$wpmem_activate_user = ( isset( $_POST['activate_user'] ) == '' ) ? -1 : intval( $_POST['activate_user'] );
+				$wpmem_activate_user = wpmem_get_sanitized( 'activate_user', -1, 'post', 'int' );
 
 				if ( $wpmem_activate_user == 1 ) {
 					wpmem_activate_user( $user_id );
@@ -453,8 +454,8 @@ class WP_Members_User_Profile {
 							wpmem_update_user_role( $user_id, wpmem_get_membership_role( $product_key ), 'add' );
 						}
 						// Do we need to set a specific date?
-						if ( isset( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) ) {
-							wpmem_set_user_product( $product_key, $user_id, sanitize_text_field( wp_unslash( $_POST[ '_wpmem_membership_expiration_' . $product_key ] ) ) );
+						if ( wpmem_get( '_wpmem_membership_expiration_' . $product_key, false ) ) {
+							wpmem_set_user_product( $product_key, $user_id, wpmem_get_sanitized( '_wpmem_membership_expiration_' . $product_key ) );
 						} else {
 							wpmem_set_user_product( $product_key, $user_id );
 						}

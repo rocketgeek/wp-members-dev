@@ -249,7 +249,7 @@ class WP_Members_User {
 		global $user_ID, $wpmem, $wpmem_themsg, $userdata; 
 		
 		// Check the nonce.
-		if ( empty( $_POST ) || ! wp_verify_nonce( wp_unslash( $_REQUEST[ '_wpmem_' . $tag . '_nonce' ] ), 'wpmem_longform_nonce' ) ) {
+		if ( empty( $_POST ) || ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_' . $tag . '_nonce', false, 'request', 'nonce' ), 'wpmem_longform_nonce' ) ) {
 			$wpmem_themsg = wpmem_get_text( 'reg_generic' );
 			return;
 		}
@@ -278,27 +278,27 @@ class WP_Members_User {
 		foreach ( $wpmem->fields as $meta_key => $field ) {
 			if ( ( 'register' == $tag && true == $field['register'] ) || ( 'update' == $tag && true == $field['profile'] ) ) {
 				if ( 'password' != $meta_key && 'confirm_password' != $meta_key && 'username' != $meta_key ) {
-					if ( isset( $_POST[ $meta_key ] ) ) {
+					if ( wpmem_get( $meta_key, false ) ) {
 						switch ( $field['type'] ) {
 						case 'checkbox':
-							$this->post_data[ $meta_key ] = sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) );
+							$this->post_data[ $meta_key ] = wpmem_get_sanitized( $meta_key );
 							break;
 						case 'multiselect':
 						case 'multicheckbox':
 							$delimiter = ( isset( $field['delimiter'] ) ) ? $field['delimiter'] : '|';
-							$this->post_data[ $meta_key ] = ( isset( $_POST[ $meta_key ] ) ) ? implode( $delimiter, wpmem_sanitize_array( $_POST[ $meta_key ] ) ) : '';
+							$this->post_data[ $meta_key ] = implode( $delimiter, wpmem_get_sanitized( $meta_key, array(), 'post', 'array' ) );
 							break;
 						case 'textarea':
-							$this->post_data[ $meta_key ] = sanitize_textarea_field( wp_unslash( $_POST[ $meta_key ] ) );
+							$this->post_data[ $meta_key ] = wpmem_get_sanitized( $meta_key, '', 'post', 'textarea' );
 							break;
 						case 'email':
-							$this->post_data[ $meta_key ] = sanitize_email( wp_unslash( $_POST[ $meta_key ] ) );
+							$this->post_data[ $meta_key ] = wpmem_get_sanitized( $meta_key, '', 'post', 'email' );
 							break;
 						case 'timestamp':
-							$this->post_data[ $meta_key ] = strtotime( wp_unslash( $_POST[ $meta_key ] ) );
+							$this->post_data[ $meta_key ] = wpmem_get_sanitized( $meta_key, '', 'post', 'timestamp' );
 							break;
 						default:
-							$this->post_data[ $meta_key ] = sanitize_text_field( wp_unslash( $_POST[ $meta_key ] ) );
+							$this->post_data[ $meta_key ] = wpmem_get_sanitized( $meta_key );
 							break;
 						}
 					} else {
@@ -306,11 +306,11 @@ class WP_Members_User {
 					}
 				} else {
 					// We do have password as part of the registration form.
-					if ( isset( $_POST['password'] ) ) {
-						$this->post_data['password'] = $_POST['password']; // wp_insert_user() hashes this, so sanitizing is unnessary (and undesirable).
+					if ( wpmem_get( 'password' ) ) {
+						$this->post_data['password'] = wpmem_get( 'password' ); // wp_insert_user() hashes this, so sanitizing is unnessary (and undesirable).
 					}
-					if ( isset( $_POST['confirm_password'] ) ) {
-						$this->post_data['confirm_password'] = $_POST['confirm_password'];
+					if ( wpmem_get( 'confirm_password' ) ) {
+						$this->post_data['confirm_password'] = wpmem_get( 'confirm_password' );
 					}
 				}
 			}
@@ -376,7 +376,7 @@ class WP_Members_User {
 				$allowed_file_types = explode( '|', $field['file_types'] );
 				$msg_types  = implode( ', ', $allowed_file_types );
 				if ( ! empty( $_FILES[ $meta_key ]['name'] ) ) {
-					$extension = pathinfo( $_FILES[ $meta_key ]['name'], PATHINFO_EXTENSION );
+					$extension = pathinfo( sanitize_text_field( $_FILES[ $meta_key ]['name'] ), PATHINFO_EXTENSION );
 					if ( ! in_array( $extension, $allowed_file_types ) ) {
 						$wpmem_themsg = sprintf( wpmem_get_text( 'reg_file_type' ), esc_html__( $field['label'], 'wp-members' ), str_replace( '|', ',', $msg_types ) );
 					}
@@ -472,7 +472,7 @@ class WP_Members_User {
 				if ( ( $field['type'] == 'checkbox' || $field['type'] == 'multicheckbox' || $field['type'] == 'multiselect' || $field['type'] == 'radio' ) && ( ! isset( $_POST[ $meta_key ] ) ) ) {
 					$is_error = true;
 				} 
-				if ( ( $field['type'] != 'checkbox' && $field['type'] != 'multicheckbox' && $field['type'] != 'multiselect' && $field['type'] != 'radio' ) && ( ! $_POST[ $meta_key ] ) ) {
+				if ( ( $field['type'] != 'checkbox' && $field['type'] != 'multicheckbox' && $field['type'] != 'multiselect' && $field['type'] != 'radio' ) && ( ! isset( $_POST[ $meta_key ] ) ) ) {
 					$is_error = true;
 				}
 				if ( $is_error ) {
@@ -562,7 +562,7 @@ class WP_Members_User {
 		// If this is Users > Add New.
 		if ( is_admin() && $this->reg_type['is_add_new'] ) {
 			// If moderated registration and activate is checked, set active flags.
-			if ( 1 == $wpmem->mod_reg && isset( $_POST['activate_user'] ) ) {
+			if ( 1 == $wpmem->mod_reg && wpmem_get( 'activate_user', false ) ) {
 				update_user_meta( $user_id, 'active', 1 );
 				wpmem_set_user_status( $user_id, 0 );
 			}
@@ -694,7 +694,9 @@ class WP_Members_User {
 	 *
 	 * @since 3.1.7
 	 *
-	 * @return
+	 * @global int   $user_ID
+	 * @param  array $args
+	 * @return void
 	 */
 	public function password_change( $args ) {
 		global $user_ID;
@@ -717,7 +719,7 @@ class WP_Members_User {
 		// User must be logged in OR must be resetting a forgotten password.
 		$is_error = ( ! is_user_logged_in() && 'set_password_from_key' != wpmem_get( 'a', false, 'request' ) ) ? "loggedin" : $is_error;
 		// Verify nonce.
-		$is_error = ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_pwdchange_nonce'] ), 'wpmem_shortform_nonce' ) ) ? "reg_generic" : $is_error;
+		$is_error = ( ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_pwdchange_nonce', false, 'request', 'nonce' ), 'wpmem_shortform_nonce' ) ) ? "reg_generic" : $is_error;
 		if ( $is_error ) {
 			return $is_error;
 		}
@@ -763,7 +765,7 @@ class WP_Members_User {
 
 		} else {
 
-			if ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_pwdreset_nonce'] ), 'wpmem_shortform_nonce' ) ) {
+			if ( ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_pwdreset_nonce', false, 'request', 'nonce' ), 'wpmem_shortform_nonce' ) ) {
 				$errors->add( 'nonce', wpmem_get_text( 'pwd_reset_nonce' ) );
 				return "reg_generic";
 			}
@@ -826,7 +828,7 @@ class WP_Members_User {
 	public function resend_confirm() {
 		if ( isset( $_POST['formsubmit'] ) ) {
 			
-			if ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_reconfirm_nonce'] ), 'wpmem_shortform_nonce' ) ) {
+			if ( ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_reconfirm_nonce', false, 'request', 'nonce' ), 'wpmem_shortform_nonce' ) ) {
 				return "reg_generic";
 			}
 
@@ -875,7 +877,7 @@ class WP_Members_User {
 	public function retrieve_username() {
 		if ( isset( $_POST['formsubmit'] ) ) {
 			
-			if ( ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpmem_getusername_nonce'] ), 'wpmem_shortform_nonce' ) ) {
+			if ( ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_getusername_nonce', false, 'request', 'nonce' ), 'wpmem_shortform_nonce' ) ) {
 				return "reg_generic";
 			}
 			
@@ -916,7 +918,7 @@ class WP_Members_User {
 			if ( ( 'file' == $field['type'] || 'image' == $field['type'] ) && isset( $_FILES[ $meta_key ] ) && is_array( $_FILES[ $meta_key ] ) ) {
 				if ( ! empty( $_FILES[ $meta_key ]['name'] ) ) {
 					// Upload the file and save it as an attachment.
-					$file_post_id = $wpmem->api->do_file_upload( $_FILES[ $meta_key ], $user_id );
+					$file_post_id = $wpmem->api->do_file_upload( $_FILES[ $meta_key ], $user_id ); // $_FILES sanitized in do_file_upload().
 					// Save the attachment ID as user meta.
 					update_user_meta( $user_id, $meta_key, $file_post_id );
 					// Add attachment ID to post data array.
