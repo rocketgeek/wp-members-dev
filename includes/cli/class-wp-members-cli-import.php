@@ -587,7 +587,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( ! isset( $assoc_args['dry-run'] ) ) {
 				$file_info = $this->get_file_info( $assoc_args );
 				WP_CLI::confirm( sprintf( 'You have selected to delete %s on completion. This cannot be undone. Do you with to continue?', $file_info['name'] ) );
-				$result = unlink( $file_info['file'] );
+				$result = wp_delete_file( $file_info['file'] );
 				if ( $result ) {
 					WP_CLI::success( sprintf( '%s was deleted.', $file_info['name'] ) );
 				} else {
