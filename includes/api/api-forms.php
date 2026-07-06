@@ -924,3 +924,49 @@ function wpmem_get_field_options( $meta_key ) {
 	$fields = wpmem_fields();
 	return $fields[ $meta_key ]['options'];
 }
+
+/**
+ * Gets allowed html. 
+ * 
+ * @since 3.6
+ * 
+ * @param   string  $context       The context for allowed html. Default: 'default'.
+ * @return  array   $allowed_html  The allowed html for the context.
+ */
+function wpmem_allowed_html( $context = 'default' ) {
+
+	switch ( $context ) {
+		case 'form':
+			$context = 'form';
+			$allowed_html = wp_kses_allowed_html( 'post' );
+			$additional_tags = array(
+				'input' => array(
+					'type'        => true,
+					'name'        => true,
+					'value'       => true,
+					'class'       => true,
+					'id'          => true,
+					'size'        => true,
+					'maxlength'   => true,
+					'placeholder' => true,
+					'required'    => true,
+					'autocomplete'=> true,
+				),
+				'label' => array(
+					'for'         => true,
+					'class'       => true,
+				),
+				'abbr'  => array(
+					'title'       => true,
+				),
+			);
+			$allowed_html = array_merge( $allowed_html, $additional_tags );
+			break;
+		case 'default':
+		default:
+			$context = 'post';
+			$allowed_html = wp_kses_allowed_html( $context );
+			break;
+	}
+	return $allowed_html;
+}
