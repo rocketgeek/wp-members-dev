@@ -87,8 +87,8 @@ class WP_Members_Admin_Tab_Shortcodes {
                                     <td><input type="radio" name="wpmem_enable_field_sc" id="wpmem_enable_field_sc_3" value="2" <?php checked( $wpmem_enable_field_sc, 2 ); ?> /></td>
                                     <td><label><?php esc_html_e('Fully enabled', 'wp-members'); ?></label>
                                     <span class="description"><?php 
-										/* translators: %s are replaced with a link to the documentation on security implications of enabling the shortcode. */
-										printf( esc_html__('%sSee docs for security implications%s.','wp-members'),
+										/* translators: %1$s & %2$s are replaced with a link to the documentation on security implications of enabling the shortcode. */
+										printf( esc_html__('%1$sSee docs for security implications%2$s.','wp-members'),
 											'<a href="https://rocketgeek.com/plugins/wp-members/docs/shortcodes/field-shortcodes/#security" target="_blank">',
 											'</a>'
 										); 

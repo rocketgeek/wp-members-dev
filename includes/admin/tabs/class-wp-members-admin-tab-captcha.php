@@ -72,8 +72,8 @@ class WP_Members_Admin_Tab_Captcha {
 					<h3><span><?php esc_html_e( 'Need help?', 'wp-members' ); ?></span></h3>
 					<div class="inside">
 						<strong><i><?php 
-							/* translators: %s replaced with a link to the Users Guide on CAPTCHA settings. */
-							printf( esc_html__( 'See the %sUsers Guide on CAPTCHA%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/registration/using-captcha/" target="_blank">', '</a>' );
+							/* translators: %1$s & %2$s are replaced with a link to the Users Guide on CAPTCHA settings. */
+							printf( esc_html__( 'See the %1$sUsers Guide on CAPTCHA%2$s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/registration/using-captcha/" target="_blank">', '</a>' );
 						?></i></strong>
 					</div>
 				</div>
@@ -122,8 +122,8 @@ class WP_Members_Admin_Tab_Captcha {
 												|| ! isset( $wpmem_captcha['recaptcha']['public'] )
 												|| '' == $wpmem_captcha['recaptcha']['private'] 
 												|| '' == $wpmem_captcha['recaptcha']['public'] ) {
-												/* translators: %s are replaced with a link to the reCAPTCHA sign up page. */
-												printf( esc_html__( 'reCAPTCHA requires an API key, consisting of a "site" and a "secret" key. You can sign up for a %s free reCAPTCHA key%s', 'wp-members' ), "<a href=\"https://www.google.com/recaptcha/admin#whyrecaptcha\" target=\"_blank\">", '</a>' );
+												/* translators: %1$s & %2$s are replaced with a link to the reCAPTCHA sign up page. */
+												printf( esc_html__( 'reCAPTCHA requires an API key, consisting of a "site" and a "secret" key. You can sign up for a %1$s free reCAPTCHA key%2$s', 'wp-members' ), "<a href=\"https://www.google.com/recaptcha/admin#whyrecaptcha\" target=\"_blank\">", '</a>' );
 											} ?></p>
 											<p><label><?php esc_html_e( 'Site Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_publickey" size="60" value="<?php echo esc_attr( $public_key ); ?>" /></p>
 											<p><label><?php esc_html_e( 'Secret Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_privatekey" size="60" value="<?php echo esc_attr( $private_key ); ?>" /></p>
@@ -139,8 +139,8 @@ class WP_Members_Admin_Tab_Captcha {
 										<th scope="row"><?php esc_html_e( 'hCaptcha Keys', 'wp-members' ); ?></th>
 										<td>
 											<p><?php if ( '' == $private_key || '' == $public_key ) {
-												/* translators: %s are replaced with a link to the hCaptcha sign up page. */
-												printf( esc_html__( 'hCaptcha requires an API key. You can sign up for %s an hCaptcha API key here %s', 'wp-members' ), "<a href=\"https://hcaptcha.com/\" target=\"_blank\">", '</a>' );
+												/* translators: %1$s & %2$s are replaced with a link to the hCaptcha sign up page. */
+												printf( esc_html__( 'hCaptcha requires an API key. You can sign up for %1$s an hCaptcha API key here %2$s', 'wp-members' ), "<a href=\"https://hcaptcha.com/\" target=\"_blank\">", '</a>' );
 											} ?></p>
 											<p><label><?php esc_html_e( 'API Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_publickey" size="60" value="<?php echo esc_attr( $public_key ); ?>" /></p>
 											<p><label><?php esc_html_e( 'Secret Key', 'wp-members' ); ?>:</label><br /><input type="text" name="wpmem_captcha_privatekey" size="60" value="<?php echo esc_attr( $private_key ); ?>" /></p>
@@ -218,8 +218,8 @@ class WP_Members_Admin_Tab_Captcha {
 										<tr>
 											<td colspan="2">
 												<p><?php esc_html_e( 'To use Really Simple CAPTCHA, you must have the Really Simple CAPTCHA plugin installed and activated.', 'wp-members' ); ?></p>
-												<?php /* translators: %s are replaced with a link to the Really Simple CAPTCHA plugin. */ ?>
-												<p><?php printf( esc_html__( 'You can download Really Simple CAPTCHA from the %swordpress.org plugin repository%s.', 'wp-members' ), '<a href="http://wordpress.org/plugins/really-simple-captcha/">', '</a>' ); ?></p>
+												<?php /* translators: %1$s & %2$s are replaced with a link to the Really Simple CAPTCHA plugin. */ ?>
+												<p><?php printf( esc_html__( 'You can download Really Simple CAPTCHA from the %1$swordpress.org plugin repository%2$s.', 'wp-members' ), '<a href="http://wordpress.org/plugins/really-simple-captcha/">', '</a>' ); ?></p>
 											</td>
 										</tr><?php
 									}

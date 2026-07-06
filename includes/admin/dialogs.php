@@ -110,22 +110,22 @@ function wpmem_a_warning_msg( $msg ) {
 
 	case 'users_can_register':
 		$strong_msg = __( 'Your WP settings allow anyone to register - this is not the recommended setting.', 'wp-members' );
-		/* translators: placeholders here are for an <a href> html tag. */
-		$remain_msg = sprintf( __( 'You can %s change this here %s making sure the box next to "Anyone can register" is unchecked.', 'wp-members'), '<a href="options-general.php" target="_blank">', '</a>' );
+		/* translators: %1$s & %2$s are replaced with a link to the general settings page. */
+		$remain_msg = sprintf( __( 'You can %1$s change this here %2$s making sure the box next to "Anyone can register" is unchecked.', 'wp-members'), '<a href="options-general.php" target="_blank">', '</a>' );
 		$span_msg   = __( 'If you do not want users to register through wp-login.php, uncheck this option.', 'wp-members' );
 		break;
 
 	case 'comment_registration':
 		$strong_msg = __( 'Your WP settings allow anyone to comment - this is not the recommended setting.', 'wp-members' );
-		/* translators: placeholders here are for an <a href> html tag. */
-		$remain_msg = sprintf( __( 'You can %s change this here %s by checking the box next to "Users must be registered and logged in to comment."', 'wp-members' ), '<a href="options-discussion.php" target="_blank">', '</a>' );
+		/* translators: %1$s & %2$s are replaced with a link to the discussion settings page. */
+		$remain_msg = sprintf( __( 'You can %1$s change this here %2$s by checking the box next to "Users must be registered and logged in to comment."', 'wp-members' ), '<a href="options-discussion.php" target="_blank">', '</a>' );
 		$span_msg   = __( 'If you do not want non-registered users to comment, change this setting.', 'wp-members' );
 		break;
 
 	case 'rss_use_excerpt':
 		$strong_msg = __( 'Your WP settings allow full text rss feeds - this is not the recommended setting.', 'wp-members' );
-		/* translators: placeholders here are for an <a href> html tag. */
-		$remain_msg = sprintf( __( 'You can %s change this here %s by changing "For each article in a feed, show" to "Summary."', 'wp-members' ), '<a href="options-reading.php" target="_blank">' , '</a>' );
+		/* translators: %1$s & %2$s are replaced with a link to the reading settings page. */
+		$remain_msg = sprintf( __( 'You can %1$s change this here %2$s by changing "For each article in a feed, show" to "Summary."', 'wp-members' ), '<a href="options-reading.php" target="_blank">' , '</a>' );
 		$span_msg   = __( 'Full text feeds allow your protected content in an RSS reader.', 'wp-members' );
 		break;
 
@@ -217,8 +217,8 @@ function wpmem_a_rating_box() {
 	?><div class="postbox">
 		<h3><?php esc_html_e( 'Like WP-Members?', 'wp-members' ); ?></h3>
 		<div class="inside"><?php
-			/* translators: placeholders here are for an <a href> html tag. */
-			echo sprintf( esc_html__( 'If you like WP-Members please give it a %s&#9733;&#9733;&#9733;&#9733;&#9733;%s rating. Thanks!!', 'wp-members' ), '<a href="https://wordpress.org/support/plugin/wp-members/reviews?rate=5#new-post">', '</a>' ); 
+			/* translators: %1$s & %2$s are replaced with a link to the WordPress.org review page. */
+			echo sprintf( esc_html__( 'If you like WP-Members please give it a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. Thanks!!', 'wp-members' ), '<a href="https://wordpress.org/support/plugin/wp-members/reviews?rate=5#new-post">', '</a>' ); 
 		?></div>
 	</div><?php
 }

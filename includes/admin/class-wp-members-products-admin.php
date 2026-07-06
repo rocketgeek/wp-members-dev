@@ -843,8 +843,8 @@ class WP_Members_Products_Admin {
 				</script>
 				<?php
 			} else {
-				/* translators: %s are replaced with the link to create memberships. */
-				echo '<p>' . sprintf( esc_html__( 'No memberships have been created. %sCreate new memberships here%s', 'wp-members' ), '<a href="' . esc_url( admin_url() ) . 'edit.php?post_type=wpmem_product">', '</a>' );
+				/* translators: %1$s & %2$s are replaced with the link to create memberships. */
+				echo '<p>' . sprintf( esc_html__( 'No memberships have been created. %1$sCreate new memberships here%2$s', 'wp-members' ), '<a href="' . esc_url( admin_url() ) . 'edit.php?post_type=wpmem_product">', '</a>' );
 			}
 		}
 	}

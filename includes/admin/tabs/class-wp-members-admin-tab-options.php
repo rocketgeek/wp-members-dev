@@ -77,8 +77,8 @@ class WP_Members_Admin_Tab_Options {
 					<div class="inside">
 						<p><strong><i>
 							<?php
-							/* translators: %s is replaced with a link to the users guide options documentation. */
-							printf( esc_html__( 'See the %sUsers Guide on plugin options%s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
+							/* translators: %1$s & %2$s are replaced with a link to the users guide options documentation. */
+							printf( esc_html__( 'See the %1$sUsers Guide on plugin options%2$s.', 'wp-members' ), '<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/" target="_blank">', '</a>' );	
 							?>
 						</i></strong></p>
 						<p><button id="opener">Get Settings Information</button></p>
@@ -224,8 +224,8 @@ class WP_Members_Admin_Tab_Options {
 									array(
 										__('Enable memberships', 'wp-members'),
 										'wpmem_settings_products',
-										/* translators: %s is replaced with a link to the membership products documentation. */
-										sprintf(__('Enables creation of different %s membership products %s','wp-members'),
+										/* translators: %1$s & %2$s are replaced with a link to the membership products documentation. */
+										sprintf(__('Enables creation of different %1$s membership products %2$s','wp-members'),
 											'<a href="https://rocketgeek.com/plugins/wp-members/docs/membership-products/" target="_blank">',
 											'</a>'
 										),
@@ -240,11 +240,11 @@ class WP_Members_Admin_Tab_Options {
 									array(
 										__('Notify admin','wp-members'),
 										'wpmem_settings_notify',
-										/* translators: First %s replaced by the email the notification is sent to. Second is links to change the email and documentation about the filter. */
-										sprintf(__('Notify %s for each new registration? %s','wp-members'),
+										/* translators: %1$s replaced by the email the notification is sent to. %2$s is links to change the email and documentation about the filter. */
+										sprintf(__('Notify %1$s for each new registration? %2$s','wp-members'),
 											$admin_email,
-											/* translators: %s is replaced with a link to the admin email settings and a link to the filter hooks documentation. */
-											sprintf(__( '%sChange%s or %sFilter%s this address', 'wp-members' ), 
+											/* translators: %1$s & %2$s are replaced with a link to the admin email settings; %3$s & %4$s are replaced with a link to the filter hooks documentation. */
+											sprintf(__( '%1$sChange%2$s or %3$sFilter%4$s this address', 'wp-members' ), 
 												'<a href="' . site_url( 'wp-admin/options-general.php', 'admin' ) . '">', 
 												'</a>', 
 												'<a href="https://rocketgeek.com/plugins/wp-members/docs/filter-hooks/wpmem_notify_addr/">', 
@@ -262,8 +262,8 @@ class WP_Members_Admin_Tab_Options {
 									array(
 										__('Confirmation Link', 'wp-members'),
 										'wpmem_settings_act_link',
-										/* translators: %s is replaced with a link to the confirmation link documentation. */
-										sprintf(__('Send email confirmation link on new registration. %s(Requires additional configuration)%s','wp-members'),
+										/* translators: %1$s & %2$s are replaced with a link to the confirmation link documentation. */
+										sprintf(__('Send email confirmation link on new registration. %1$s(Requires additional configuration)%2$s','wp-members'),
 											'<a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#confirm" target="_blank">',
 											'</a>'
 										),
