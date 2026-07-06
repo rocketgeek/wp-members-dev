@@ -817,7 +817,7 @@ function wpmem_field_display_value( $field_meta, $value = '', $echo = false ) {
 	 */
 	$display_value = apply_filters( 'wpmem_' . $type . '_field_display', $display_value, $field_meta, $type );
 	if ( $echo ) {
-		echo $display_value;
+		echo esc_html( $display_value );
 	} else {
 		return $display_value;
 	}

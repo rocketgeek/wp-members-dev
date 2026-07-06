@@ -118,13 +118,13 @@ class widget_wpmemwidget extends WP_Widget {
 		 */
 		$id = apply_filters( 'wpmem_widget_id', 'wp-members', $instance, $this->id_base  );
 		
-		echo $args['before_widget'];
+		echo wp_kses_post( $args['before_widget'] );
 		echo '<div id="' . esc_attr( $id ) . '">';
-		echo $args['before_title'] . esc_html( $title ) . $args['after_title'];
+		echo wp_kses_post( $args['before_title'] ) . esc_html( $title ) . wp_kses_post( $args['after_title'] );
 		// The Widget
 		$this->do_sidebar( $redirect_to, $customizer ); 
 		echo '</div>';
-		echo $args['after_widget'];
+		echo wp_kses_post( $args['after_widget'] );
 	}
 	
 	/**
@@ -154,7 +154,7 @@ class widget_wpmemwidget extends WP_Widget {
 
 		if ( isset( $_REQUEST['redirect_to'] ) ) {
 			$post_to = wp_sanitize_redirect( wp_unslash( $_REQUEST['redirect_to'] ) );
-		} elseif ( is_home() || is_front_page() ) {
+		} elseif ( ( is_home() || is_front_page() ) && isset( $_SERVER['REQUEST_URI'] ) ) {
 			$post_to = wp_sanitize_redirect( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		} elseif ( is_single() || is_page() ) {
 			$post_to = get_permalink();
@@ -165,7 +165,7 @@ class widget_wpmemwidget extends WP_Widget {
 		} elseif ( is_search() ) {
 			$post_to = add_query_arg( 's', get_search_query(), $url );
 		} else {
-			$post_to = wp_sanitize_redirect( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+			$post_to = ( isset( $_SERVER['REQUEST_URI'] ) ) ? wp_sanitize_redirect( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		}
 
 		// Clean whatever the url is.
@@ -449,8 +449,8 @@ class widget_wpmemwidget extends WP_Widget {
 			$defaults = array(
 				'user_login'     => $user_login,
 				'wrapper_before' => '<p class="login_widget_status">',
-				'status_text'    => sprintf( wpmem_get_text( 'widget_status' ), $user_login ) . '<br />',
-				'link_text'      => wpmem_get_text( 'widget_logout' ),
+				'status_text'    => sprintf( esc_html( wpmem_get_text( 'widget_status' ) ), $user_login ) . '<br />',
+				'link_text'      => esc_html( wpmem_get_text( 'widget_logout' ) ),
 				'wrapper_after'  => '</p>',
 			);
 

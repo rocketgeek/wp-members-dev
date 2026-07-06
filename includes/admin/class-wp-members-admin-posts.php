@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WP_Members_Admin_Posts {
+
+	static public $action = 'wpmem_posts_bulk_action';
 	
 	/**
 	 * Function to add block/unblock to the bulk dropdown list.
@@ -20,11 +22,13 @@ class WP_Members_Admin_Posts {
 	 * @since 2.9.2
 	 * @since 3.3.0 Changed from wpmem_bulk_posts_action().
 	 *
-	 * @global object $wpmem The WP_Members object.
+	 * @global string $pagenow The current page being viewed.
+	 * @global string $typenow The current post type being viewed
+	 * @global object $wpmem   The WP_Members object.
 	 */
 	static function bulk_action() {  
-		global $wpmem;
-		if ( ( isset( $_GET['post_type'] ) && ( 'page' == $_GET['post_type'] || 'post' == $_GET['post_type'] || array_key_exists( wp_unslash( $_GET['post_type'] ), $wpmem->post_types ) ) ) || ! isset( $_GET['post_type'] ) ) { ?>
+		global $pagenow, $typenow, $wpmem;
+		if ( $pagenow == 'edit.php' && ( $typenow == 'page' || $typenow == 'post' || array_key_exists( $typenow, $wpmem->post_types ) ) ) { ?>
 		<script type="text/javascript">
 			jQuery(document).ready(function() {
 			jQuery('<option>').val('unblock').text('<?php esc_html_e( 'Unrestrict', 'wp-members' ) ?>').appendTo("select[name='action']");
@@ -44,12 +48,8 @@ class WP_Members_Admin_Posts {
 	 *
 	 * @since 2.9.2
 	 * @since 3.3.0 Changed from wpmem_posts_page_load().
-	 *
-	 * @global object $wpmem The WP_Members object.
 	 */
 	static function page_load() {
-
-		global $wpmem;
 
 		$wp_list_table = _get_list_table( 'WP_Posts_List_Table' );
 		$action = $wp_list_table->current_action();
@@ -82,19 +82,19 @@ class WP_Members_Admin_Posts {
 					}
 					// Set the return message.
 					$arr = array( 
-						'a' => 'updated',
-						'n' => $x,
-						'post_type' => $type,
+						self::$action => 'updated',
+						'n'           => $x,
+						'post_type'   => $type,
 					);
 					if ( isset( $_GET['post_status'] ) && 'all' != $_GET['post_status'] ) {
-						$arr['post_status'] = sanitize_text_field( wp_unslash( $_GET['post_status'] ) );
+						$arr['post_status'] = wpmem_get_sanitized( 'post_status', '', 'get' );
 					}
 
 					$sendback = add_query_arg( array( $arr ), '', $sendback );
 
 				} else {
 					// Set the return message.
-					$sendback = add_query_arg( array( 'a' => 'none' ), '', $sendback );
+					$sendback = add_query_arg( array( self::$action => 'none' ), '', $sendback );
 				}
 				break;
 
@@ -116,15 +116,28 @@ class WP_Members_Admin_Posts {
 	 * @since 3.3.0 Changed from wpmem_posts_admin_notices().
 	 *
 	 * @global $pagenow
-	 * @global $post_type
+	 * @global $typenow
 	 */
 	static function notices() {
+		global $pagenow, $typenow;
+		if ( $pagenow == 'edit.php' && wpmem_get( self::$action, '', 'request' ) ) {
 
-		global $pagenow, $post_type;
-		if ( $pagenow == 'edit.php' && isset( $_REQUEST['a'] ) ) {
-			/* translators: %s: Name of post type being restricted/unrestricted */
-			$msg = ( $_REQUEST['a'] == 'block' ) ? sprintf( __( '%s restricted', 'wp-members' ), $post_type ) : sprintf( __( '%s unrestricted', 'wp-members' ), $post_type );
-			echo '<div class="updated"><p>' . esc_html( wp_unslash( $_REQUEST['n'] ) ) . ' ' . esc_html( $msg ) . '</p></div>';
+			// Get the post type object
+    		$post_type_obj  = get_post_type_object( $typenow );
+			$singular_label = $post_type_obj->labels->singular_name;
+			$plural_label   = $post_type_obj->labels->name;
+			$items          = wpmem_get_sanitized( 'n', '', 'request', 'int' );
+
+			$label = ( $items == 1 ) ? $singular_label : $plural_label;
+
+			if ( wpmem_get( self::$action, '', 'request' ) == 'block' ) {
+				/* translators: %1$d: Number of posts, %2$s: Name of post type being restricted */
+				$msg = sprintf( _n( '%1$d %2$s restricted', '%1$d %2$s restricted', $items, 'wp-members' ), $items, $label );
+			} else {
+				/* translators: %1$d: Number of posts, %2$s: Name of post type being unrestricted */
+				$msg = sprintf( _n( '%1$d %2$s unrestricted', '%1$d %2$s unrestricted', $items, 'wp-members' ), $items, $label );
+			}
+			echo '<div class="updated"><p>' . esc_html( $msg ) . '</p></div>';
 		}
 	}
 
@@ -254,7 +267,7 @@ class WP_Members_Admin_Posts {
 			return;
 		}
 		// Quit if the nonce isn't there, or is wrong.
-		if ( ! isset( $_POST['wpmem_block_meta_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['wpmem_block_meta_nonce'] ), 'wpmem_block_meta_nonce' ) ) {
+		if ( ! wp_verify_nonce( wpmem_get_sanitized( 'wpmem_block_meta_nonce', false, 'post', 'nonce' ), 'wpmem_block_meta_nonce' ) ) {
 			return;
 		}
 		// Quit if it's a post revision
@@ -267,7 +280,7 @@ class WP_Members_Admin_Posts {
 		}
 
 		// Get value.
-		$block = ( isset( $_POST['wpmem_block'] ) ) ? sanitize_text_field( wp_unslash( $_POST['wpmem_block'] ) ) : null;
+		$block = wpmem_get_sanitized( 'wpmem_block', '', 'post', 'text' );
 
 		// Set the value.
 		self::set_block_status( $block, $post_id, $post->post_type );
@@ -292,15 +305,15 @@ class WP_Members_Admin_Posts {
 	 * @since 2.8.3
 	 * @since 3.3.0 Changed from wpmem_post_columns().
 	 *
+	 * @global string $pagenow The current page being viewed.
+	 * @global string $typenow The current post type being viewed.
 	 * @global object $wpmem   The WP-Members Object
 	 * @param  array  $columns The array of table columns.
 	 * @return array  $columns
 	 */
 	static function columns( $columns ) {
-		global $wpmem;
-		$post_type = ( isset( $_REQUEST['post_type'] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) : 'post';
-
-		if ( $post_type == 'page' || $post_type == 'post' || array_key_exists( $post_type, $wpmem->post_types ) ) {
+		global $pagenow, $typenow, $wpmem;
+		if ( $pagenow == 'edit.php' && ( $typenow == 'page' || $typenow == 'post' || array_key_exists( $typenow, $wpmem->post_types ) ) ) {
 			$columns['wpmem_block'] = esc_html__( 'Status', 'wp-members' );
 		}
 		return $columns;

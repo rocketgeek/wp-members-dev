@@ -1209,7 +1209,7 @@ function wpmem_is_user_confirmed( $user_id = false ) {
 function wpmem_admin_add_new_user() {
 	global $wpmem;
 	// Output the custom registration fields.
-	echo $wpmem->forms->wp_newuser_form();
+	echo $wpmem->forms->wp_newuser_form(); // output is escaped in the form class.
 	return;
 }
 

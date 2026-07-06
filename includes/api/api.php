@@ -377,6 +377,8 @@ function wpmem_current_post_id() {
  * @return string  $status     The user status string produced by wpmem_inc_memberlinks().
  */
 function wpmem_login_status( $echo = true, $tag = false ) {
+
+	$status = '';
 	if ( is_user_logged_in() ) {
 		
 		global $user_login;
@@ -420,7 +422,7 @@ function wpmem_login_status( $echo = true, $tag = false ) {
 	}
 	
 	if ( $echo ) {
-		echo $status; 
+		echo wp_kses( $status, wpmem_allowed_html() );
 	} else {
 		return $status;
 	}
@@ -537,7 +539,7 @@ function wpmem_logout_link() {
 function wpmem_get_text( $str, $echo = false ) {
 	global $wpmem;
 	if ( $echo ) {
-		echo $wpmem->dialogs->get_text( $str );
+		echo esc_html( $wpmem->dialogs->get_text( $str ) );
 	} else {
 		return $wpmem->dialogs->get_text( $str );
 	}
@@ -580,7 +582,7 @@ function wpmem_get_display_message( $tag, $custom = false ) {
  * @return
  */
 function wpmem_display_message( $tag, $custom = false ) {
-	echo wpmem_get_display_message( $tag, $custom );
+	echo wp_kses( wpmem_get_display_message( $tag, $custom ), wpmem_allowed_html() );
 }
 
 /**

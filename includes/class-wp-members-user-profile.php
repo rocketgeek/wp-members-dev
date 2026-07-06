@@ -262,7 +262,9 @@ class WP_Members_User_Profile {
 				 * @param string $user_id
 				 * @param array  $row
 				 */
-				echo apply_filters( 'wpmem_' . $display . '_profile_field', $show_field, $user_id, $row );
+				$show_field = apply_filters( 'wpmem_' . $display . '_profile_field', $show_field, $user_id, $row );
+
+				echo wp_kses( $show_field, wpmem_allowed_html( 'form' ) );
 			}
 
 			/**
@@ -388,7 +390,8 @@ class WP_Members_User_Profile {
 			} elseif ( $field['type'] == 'checkbox' ) {
 				$fields[ $meta ] = wpmem_get_sanitized( $meta, '' );
 			} elseif ( $field['type'] == 'multiselect' || $field['type'] == 'multicheckbox' ) {
-				$fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wpmem_sanitize_array( $_POST[ $meta ] ) ) : '';
+				// $fields[ $meta ] = ( isset( $_POST[ $meta ] ) ) ? implode( $field['delimiter'], wpmem_sanitize_array( $_POST[ $meta ] ) ) : '';
+				$fields[ $meta ] = implode( $field['delimiter'], wpmem_get_sanitized( $meta, array(), 'post', 'array' ) );
 			} elseif ( $field['type'] == 'textarea' ) {
 				$fields[ $meta ] = wpmem_get_sanitized( $meta, '', 'post', 'textarea' );
 			}

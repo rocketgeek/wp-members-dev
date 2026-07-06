@@ -1819,9 +1819,9 @@ class WP_Members_Forms {
 
 				foreach ( $rows as $row_item ) {
 					if ( $row_item['type'] == 'checkbox' ) {
-						echo $row_item['row_before'] . $row_item['field'] . $row_item['label'] . $row_item['row_after'];
+						echo wp_kses( $row_item['row_before'] . $row_item['field'] . $row_item['label'] . $row_item['row_after'], wpmem_allowed_html( 'form' ) );
 					} else { 
-						echo $row_item['row_before'] . $row_item['label'] . $row_item['field'] . $row_item['row_after'];
+						echo wp_kses( $row_item['row_before'] . $row_item['label'] . $row_item['field'] . $row_item['row_after'], wpmem_allowed_html( 'form' ) );
 					}
 				}
 			}
@@ -1851,17 +1851,22 @@ class WP_Members_Forms {
 
 			if ( ! $field['native'] && ! in_array( $meta_key, $exclude ) ) {
 
-				$label = wpmem_get_field_label( $meta_key ); // function returns an escaped result.
+				$label_escaped = wpmem_get_field_label( $meta_key ); // function returns an escaped result.
 
-				$req = ( $field['required'] ) ? ' <span class="description">' . wpmem_get_text( 'wp_form_required' ) . '</span>' : ''; // function returns an escaped result.
-
-				$class = ( 'radio'    == $field['type'] 
+				if ( 'radio'    == $field['type'] 
 					    || 'checkbox' == $field['type']
-						|| 'date'     == $field['type'] ) ? '' : ' class="form-field" ';
-				echo '<tr' . $class . '>
-					<th scope="row">
-						<label for="' . esc_attr( $meta_key ) . '">' . $label . $req . '</label>
-					</th>
+						|| 'date'     == $field['type'] ) {
+					echo '<tr>';
+				} else {
+					echo '<tr class="form-field">';
+				}
+				echo '<th scope="row">';
+				if ( $field['required'] ) {
+					echo '<label for="' . esc_attr( $meta_key ) . '">' . $label_escaped . ' <span class="description">' . wpmem_get_text( 'wp_form_required' ) . '</span></label>';
+				} else {
+					echo '<label for="' . esc_attr( $meta_key ) . '">' . $label_escaped . '</label>';
+				}
+				echo '</th>
 					<td>';
 
 				// determine the field type and generate accordingly.
@@ -1883,12 +1888,12 @@ class WP_Members_Forms {
 					$val = sanitize_text_field( $posted_meta );
 					$args['value']   = $field['values'];
 					$args['compare'] = $val;
-					echo wpmem_form_field( $args );
+					wpmem_form_field_echo( $args );
 					break;
 
 				case( 'textarea' ):
 					$args['value'] = esc_textarea( $posted_meta );
-					echo wpmem_form_field( $args );
+					wpmem_form_field_echo( $args );
 					break;
 
 				case( 'checkbox' ):
@@ -1896,7 +1901,7 @@ class WP_Members_Forms {
 					$val = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
 					$args['value']   = $field['checked_value'];
 					$args['compare'] = $val;
-					echo wpmem_form_field( $args );
+					wpmem_form_field_echo( $args );
 					break;
 
 				case( 'multiselect' ):
@@ -1908,7 +1913,7 @@ class WP_Members_Forms {
 					if ( 'multicheckbox' == $field['type'] || 'multiselect' == $field['type'] ) {
 						$args['delimiter'] = $field['delimiter'];
 					}
-					echo wpmem_form_field( $args ); // function returns an escaped result.
+					wpmem_form_field_echo( $args ); // function returns an escaped result.
 					break;
 
 				case( 'file' ):
@@ -1918,7 +1923,7 @@ class WP_Members_Forms {
 
 				default:
 					$args['value'] = esc_attr( $posted_meta );
-					echo wpmem_form_field( $args ); // function returns an escaped result.
+					wpmem_form_field_echo( $args ); // function returns an escaped result.
 					break;
 				}
 
@@ -2223,8 +2228,8 @@ class WP_Members_Forms {
 
 		// If filtered value is not the default label, use that, otherwise use label.
 		// @note: if default changes, this check must change.
-		/* translators: %s is replaced with the TOS link. */
-		if ( __( 'Please indicate that you agree to the %s Terms of Service %s', 'wp-members' ) == $tos_link_text ) {
+		/* translators: %1$s is replaced with the TOS link, %2$s is the closing link tag. */
+		if ( __( 'Please indicate that you agree to the %1$s Terms of Service %2$s', 'wp-members' ) == $tos_link_text ) {
 			if ( __( 'TOS', 'wp-members' ) != $field['label'] && __( 'Terms of Service', 'wp-members' ) != $field['label'] ) {
 				$tos_link_text = $field['label'];
 			}

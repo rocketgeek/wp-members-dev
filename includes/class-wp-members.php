@@ -1558,8 +1558,8 @@ class WP_Members {
 				if ( false !== get_post_status( $val ) ) {
 					$this->user_pages[ $key ] = get_page_link( $val );
 				} else {
-					/* translators: %s is the link to review and update settings, next %s is the page type (e.g. login, registration, etc.), final %s is the closing link tag */
-					$notice = sprintf( __( 'You have a linked page in the WP-Members page settings that corresponds to a post ID that no longer exists. Please %s review and update the %s page settings %s.', 'wp-members' ), '<a href="' . esc_url( get_admin_url() . '/options-general.php?page=wpmem-settings&tab=options' ) . '">', esc_attr( $key ), '</a>' );
+					/* translators: %1$s is the opening link tag to update settings, %2$s is the page type (e.g. login, registration, etc.), %3$s is the closing link tag */
+					$notice = sprintf( esc_html__( 'You have a linked page in the WP-Members page settings that corresponds to a post ID that no longer exists. Please %1$s review and update the %2$s page settings %3$s.', 'wp-members' ), '<a href="' . esc_url( get_admin_url() . '/options-general.php?page=wpmem-settings&tab=options' ) . '">', esc_attr( $key ), '</a>' );
 					$this->admin_notices[] = array(
 						'type'=>'error',
 						'notice'=>$notice
@@ -1630,7 +1630,7 @@ class WP_Members {
 		$logout = wpmem_logout_link(); ?>
 		<script type="text/javascript">
 			jQuery(document).ready(function() {
-				jQuery('.wpmem_loginout').html('<a class="login_button" href="<?php echo esc_url( $logout ); ?>"><?php echo wpmem_get_text( 'menu_logout' ); ?></a>');
+				jQuery('.wpmem_loginout').html('<a class="login_button" href="<?php echo esc_url( $logout ); ?>"><?php echo esc_html( wpmem_get_text( 'menu_logout' ) ); ?></a>');
 			});
 		</script><?php
 	}
@@ -1899,7 +1899,7 @@ class WP_Members {
 			 * @param string $locale The current locale.
 			 */
 			$dir = apply_filters( 'wpmem_localization_dir', basename( $this->path ) . '/i18n/languages/', $locale );
-			load_plugin_textdomain( $domain, "", $dir );
+			load_plugin_textdomain( $domain, '', $dir );
 		}
 		return;
 	}
