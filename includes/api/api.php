@@ -123,7 +123,7 @@ function wpmem_get_login_link( $args = array() ) {
  * @since 3.5.6
  */
 function wpmem_login_link( $args = array() ) {
-	echo wpmem_get_login_link( $args );
+	echo wp_kses( wpmem_get_login_link( $args ), 'post' );
 }
 
 /**
@@ -169,7 +169,7 @@ function wpmem_get_reg_link( $args = array() ) {
  * @since 3.5.6
  */
 function wpmem_reg_link( $args = array() ) {
-	echo wpmem_get_reg_link( $args );
+	echo wp_kses( wpmem_get_reg_link( $args ), 'post' );
 }
 
 /**
@@ -313,7 +313,10 @@ function wpmem_current_url( $slash = true, $getq = true ) {
 	global $wp;
 	$url = home_url( add_query_arg( array(), $wp->request ) );
 	$url = ( $slash ) ? trailingslashit( $url ) : $url;
-	$url = ( $getq && count( $_GET ) > 0 ) ? $url . '?' . wp_unslash( $_SERVER['QUERY_STRING'] ) : $url;
+	if ( isset( $_SERVER['QUERY_STRING'] ) && ! empty( $_SERVER['QUERY_STRING'] ) ) {
+		$sanitized_q = array_map( 'sanitize_text_field', wp_unslash( $_SERVER['QUERY_STRING'] ) );
+		$url = $url . '?' . implode( '&', $sanitized_q );
+	}
 	return esc_url_raw( $url );
 }
 
