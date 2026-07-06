@@ -47,14 +47,14 @@ if ( ! function_exists( 'rktgk_get' ) ):
 function rktgk_get( $tag, $default = '', $type = 'post' ) {
 	switch ( $type ) {
 		case 'get':
-			return ( isset( $_GET[ $tag ] ) ) ? $_GET[ $tag ] : $default;
+			return ( isset( $_GET[ $tag ] ) ) ? trim( $_GET[ $tag ] ) : $default;
 			break;
 		case 'request':
-			return ( isset( $_REQUEST[ $tag ] ) ) ? $_REQUEST[ $tag ] : $default;
+			return ( isset( $_REQUEST[ $tag ] ) ) ? trim( $_REQUEST[ $tag ] ) : $default;
 			break;
 		case 'post':
 		default:
-			return ( isset( $_POST[ $tag ] ) ) ? $_POST[ $tag ] : $default;
+			return ( isset( $_POST[ $tag ] ) ) ? trim( $_POST[ $tag ] ) : $default;
 			break;
 	}
 }
