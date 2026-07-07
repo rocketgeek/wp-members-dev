@@ -172,32 +172,24 @@ class WP_Members_Admin_Users {
 					switch ( $action ) {
 						case 'activate':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users activated', 'wp-members' ), intval( $x ) ) );
-							// @todo When we upgrade to 3.6 and update translations.
-							// $msg = urlencode( esc_html( sprintf( _n( '%s user activated', '%s users activated', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user activated', '%s users activated', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'deactivate':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users deactivated', 'wp-members' ), intval( $x ) ) );
-							// @todo When we upgrade to 3.6 and update translations.
-							// $msg = urlencode( esc_html( sprintf( _n( '%s user deactivated', '%s users deactivated', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user deactivated', '%s users deactivated', $i, 'wp-members' ), $i ) ) );
+							break;
 						case 'confirm':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users confirmed', 'wp-members' ), intval( $x ) ) );
-							// @todo When we upgrade to 3.6 and update translations.
-							// $msg = urlencode( esc_html( sprintf( _n( '%s user confirmed', '%s users confirmed', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user confirmed', '%s users confirmed', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'unconfirm':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( '%s users unconfirmed', 'wp-members' ), intval( $x ) ) );
-							// @todo When we upgrade to 3.6 and update translations.
-							// $msg = urlencode( esc_html( sprintf( _n( '%s user unconfirmed', '%s users unconfirmed', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( '%s user unconfirmed', '%s users unconfirmed', $i, 'wp-members' ), $i ) ) );
 							break;
 						case 'resend_welcome':
 							/* translators: placeholder displays an integer. */
-							$msg = urlencode( sprintf( esc_html__( 'Resent welcome to %s users', 'wp-members' ), intval( $x ) ) );
-							// @todo When we upgrade to 3.6 and update translations.
-							// $msg = urlencode( esc_html( sprintf( _n( 'Resent welcome to %s user', 'Resent welcome to %s users', $i, 'wp-members' ), $i ) ) );
+							$msg = urlencode( esc_html( sprintf( _n( 'Resent welcome to %s user', 'Resent welcome to %s users', $i, 'wp-members' ), $i ) ) );
+							break;
 					}
 
 				} else {
@@ -332,14 +324,13 @@ class WP_Members_Admin_Users {
 	 */
 	static function admin_notices() {
 
-		global $pagenow, $user_action_msg;
-		if ( $pagenow == 'users.php' && isset( $_REQUEST['activated'] ) ) {
+		global $pagenow, $wpmem;
+		if ( $pagenow == 'users.php' && wpmem_get( 'activated', false, 'request' ) ) {
 			$message = wpmem_get_sanitized( 'activated', false, 'request' );
-			echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
-		}
-
-		if ( $user_action_msg ) {
-			echo '<div class="updated"><p>' . esc_html( $user_action_msg ) . '</p></div>';
+			$wpmem->admin_notices[] = array(
+				'notice' => $message,
+				'type'   => 'success',
+			);
 		}
 	}
 
@@ -372,8 +363,8 @@ class WP_Members_Admin_Users {
 			global $wpdb;
 
 			// We need a count of total users.
-			// @todo - need a more elegant way of this entire process.
-			$users = $wpdb->get_var( "SELECT COUNT(*) FROM " . $wpdb->users );
+			$user_count = count_users();
+			$total_users = $user_count['total_users'];
 
 			// What needs to be counted?		
 			$count_metas = array(
@@ -394,14 +385,14 @@ class WP_Members_Admin_Users {
 			foreach ( $count_metas as $key => $meta_key ) {
 				if ( 'confirmed' == $key || 'notconfirmed' == $key ) {
 					$count = wpmem_user_count( array( 'meta_key'=>$meta_key, 'meta_value'=>0, 'compare'=>'>' ) );
-					$count = ( 'notconfirmed' == $key ) ? $users - $count : $count;
+					$count = ( 'notconfirmed' == $key ) ? $total_users - $count : $count;
 				}
 				if ( 'active' == $key ) {
 					$count = wpmem_user_count( array( 'meta_key'=>$meta_key, 'meta_value'=>1 ) );
 				}
 				if ( 'notactive' == $key || 'notexported' == $key ) {
 					$users_with_meta = wpmem_user_count( array( 'meta_key'=>$meta_key, 'meta_value'=>1 ) );
-					$count = $users - $users_with_meta;
+					$count = $total_users - $users_with_meta;
 				}
 				if ( 'deactivated' == $key ) {
 					$count = wpmem_user_count( array( 'meta_key'=>'active', 'meta_value'=>0 ) );
