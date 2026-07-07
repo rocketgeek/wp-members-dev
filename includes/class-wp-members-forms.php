@@ -1163,7 +1163,7 @@ class WP_Members_Forms {
 			//	$val = sanitize_text_field( wpmem_get( $meta_key, '' ) ); 
 
 				// Should be checked by default? and only if form hasn't been submitted.
-				$val   = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
+				$val   = ( empty( $_POST ) && $field['checked_default'] ) ? $field['checked_value'] : $val;
 				$input = wpmem_form_field( array(
 					'name'     => $meta_key, 
 					'type'     => $field['type'], 
@@ -1187,7 +1187,7 @@ class WP_Members_Forms {
 					$valtochk = $val;
 					$val = $field['checked_value']; 
 					// if it should it be checked by default (& only if form not submitted), then override above...
-					if ( $field['checked_default'] && ( ! $_POST && $tag != 'edit' ) ) { 
+					if ( $field['checked_default'] && ( empty( $_POST ) && $tag != 'edit' ) ) { 
 						$val = $valtochk = $field['checked_value'];
 					}
 				}
@@ -1669,7 +1669,7 @@ class WP_Members_Forms {
 						}
 
 						$val = esc_attr( wpmem_get( $meta_key, '' ) );
-						$val = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
+						$val = ( empty( $_POST ) && $field['checked_default'] ) ? $field['checked_value'] : $val;
 
 						$row_before = '<p class="wpmem-checkbox">';
 						$label = '<label for="' . $meta_key . '">' . $label . $req . '</label>';
@@ -1819,9 +1819,9 @@ class WP_Members_Forms {
 
 				foreach ( $rows as $row_item ) {
 					if ( $row_item['type'] == 'checkbox' ) {
-						echo wp_kses( $row_item['row_before'] . $row_item['field'] . $row_item['label'] . $row_item['row_after'], wpmem_allowed_html( 'form' ) );
+						echo wp_kses( $row_item['row_before'] . $row_item['field'] . $row_item['label'] . $row_item['row_after'], wpmem_kses_allowed_html( 'form' ) );
 					} else { 
-						echo wp_kses( $row_item['row_before'] . $row_item['label'] . $row_item['field'] . $row_item['row_after'], wpmem_allowed_html( 'form' ) );
+						echo wp_kses( $row_item['row_before'] . $row_item['label'] . $row_item['field'] . $row_item['row_after'], wpmem_kses_allowed_html( 'form' ) );
 					}
 				}
 			}
@@ -1851,7 +1851,7 @@ class WP_Members_Forms {
 
 			if ( ! $field['native'] && ! in_array( $meta_key, $exclude ) ) {
 
-				$label_escaped = wpmem_get_field_label( $meta_key ); // function returns an escaped result.
+				$label = wpmem_get_field_label( $meta_key );
 
 				if ( 'radio'    == $field['type'] 
 					    || 'checkbox' == $field['type']
@@ -1862,9 +1862,9 @@ class WP_Members_Forms {
 				}
 				echo '<th scope="row">';
 				if ( $field['required'] ) {
-					echo '<label for="' . esc_attr( $meta_key ) . '">' . $label_escaped . ' <span class="description">' . wpmem_get_text( 'wp_form_required' ) . '</span></label>';
+					echo '<label for="' . esc_attr( $meta_key ) . '">' . wp_kses( $label, wpmem_kses_allowed_html( 'link' ) ) . ' <span class="description">' . esc_html( wpmem_get_text( 'wp_form_required' ) ) . '</span></label>';
 				} else {
-					echo '<label for="' . esc_attr( $meta_key ) . '">' . $label_escaped . '</label>';
+					echo '<label for="' . esc_attr( $meta_key ) . '">' . wp_kses( $label, wpmem_kses_allowed_html( 'link' ) ) . '</label>';
 				}
 				echo '</th>
 					<td>';
@@ -1898,7 +1898,7 @@ class WP_Members_Forms {
 
 				case( 'checkbox' ):
 					$val = sanitize_text_field( $posted_meta );
-					$val = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
+					$val = ( empty( $_POST ) && $field['checked_default'] ) ? $field['checked_value'] : $val;
 					$args['value']   = $field['checked_value'];
 					$args['compare'] = $val;
 					wpmem_form_field_echo( $args );
@@ -1937,9 +1937,9 @@ class WP_Members_Forms {
 		if ( 1 == $wpmem->mod_reg ) {
 			echo '<tr>
 					<th scope="row">
-						<label for="activate_user">' . wpmem_get_text( 'wp_form_activate' ) . '</label>
+						<label for="activate_user">' . esc_html( wpmem_get_text( 'wp_form_activate' ) ) . '</label>
 					</th>
-					<td>' . wpmem_form_field( array( 'name' => 'activate_user', 'type' => 'checkbox', 'value' => 1, 'compare' => '' ) ) . '</td>
+					<td>'; wpmem_form_field_echo( array( 'name' => 'activate_user', 'type' => 'checkbox', 'value' => 1, 'compare' => '' ) ); echo '</td>
 				  </tr>';
 		}
 

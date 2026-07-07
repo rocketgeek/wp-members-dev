@@ -91,7 +91,7 @@ class WP_Members_Admin_Tab_Fields {
 
 			if ( $edit_meta || $add_meta ) {
 				$mode = ( $edit_meta ) ? wpmem_get_sanitized( 'mode', false, 'get', 'text' ) : 'add';
-				self::build_field_edit( $mode, $wpmem_fields, $edit_meta );
+				self::build_field_edit( $mode, $edit_meta );
 			} else {
 				self::build_field_table();
 			} ?>
@@ -110,12 +110,11 @@ class WP_Members_Admin_Tab_Fields {
 	 * @since 3.1.8 Changed name from wpmem_a_field_edit().
 	 * @since 3.3.0 Changed name from wpmem_a_render_fields_tab_field_edit() to build_field_edit().
 	 *
-	 * @global object      $wpmem        The WP_Members Object.
-	 * @param  string      $mode         The mode for the function (edit|add)
-	 * @param  array|null  $wpmem_fields The array of fields
-	 * @param  string|null $field        The field being edited
+	 * @global object  $wpmem  The WP_Members Object.
+	 * @param  string  $mode   The mode for the function (edit|add)
+	 * @param  string  $field  The field being edited
 	 */
-	public static function build_field_edit( $mode, $wpmem_fields, $meta_key ) {
+	public static function build_field_edit( $mode, $meta_key ) {
 		global $wpmem;
 		$fields = wpmem_fields();
 		if ( $mode == 'edit' ) {
@@ -340,43 +339,46 @@ class WP_Members_Admin_Tab_Fields {
 				<li id="add_dropdown_value">
 					<label style="vertical-align:top"><?php esc_html_e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
 					<textarea name="add_dropdown_value" rows="8" cols="60"><?php
-	// Accomodate editing the current dropdown values or create dropdown value example.
-	if ( $mode == 'edit' ) {
-	for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
-	// If the row contains commas (i.e. 1,000-10,000), wrap in double quotes.
-	if ( strstr( $field['values'][ $row ], ',' ) ) {
-	echo '"' . esc_attr( $field['values'][ $row ] ) . '"'; echo ( $row == count( $field['values'] )- 1  ) ? '"' : "\",\n";
-	} else {
-	echo esc_attr( $field['values'][ $row ] ); echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
-	} }
-					} else { ?>
+				// Accomodate editing the current dropdown values or create dropdown value example.
+				if ( $mode == 'edit' ) {
+
+					for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
+						// If the row contains commas (i.e. 1,000-10,000), wrap in double quotes.
+						if ( strstr( $field['values'][ $row ], ',' ) ) {
+echo '"' . esc_attr( $field['values'][ $row ] ) . '"'; echo ( $row == count( $field['values'] )- 1  ) ? '"' : ",\n";
+						} else {
+echo esc_attr( $field['values'][ $row ] ); echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
+						}
+					}
+				} else { ?>
 ---- Select One ----|,
 Choice One|choice_one,
 "1,000|one_thousand",
 "1,000-10,000|1,000-10,000",
 Last Row|last_row
-					<?php } ?></textarea>
-					</li>
+				<?php } ?></textarea>
+				</li>
 			<?php } ?>
 			<?php if ( $mode == 'add' || ( $mode == 'edit' && ( $field['type'] == 'radio' || $field['type'] == 'multicheckbox' ) ) ) { ?>
 				<li id="add_radio_value" >
 					<label style="vertical-align:top"><?php esc_html_e( 'Values (Displayed|Stored):', 'wp-members' ); ?> <?php echo '<span class="req">' . esc_html__( '(required)', 'wp-members' ) . '</span>'; ?></label>
 					<textarea name="add_radio_value" rows="8" cols="60"><?php
-	// Accomodate editing the current radio values or create radio value example.
-	if ( $mode == 'edit' ) {
-	for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
-	// If the row contains commas (i.e. 1,000-10,000), wrap in double quotes.
-	if ( strstr( $field['values'][ $row ], ',' ) ) {
-	echo '"' . esc_attr( $field['values'][ $row ] ) . '"'; echo ( $row == count( $field['values'] )- 1  ) ? '"' : "\",\n";
-	} else {
-	echo esc_attr( $field['values'][ $row ] ); echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
-	} }
-					} else { ?>
+				// Accomodate editing the current radio values or create radio value example.
+				if ( $mode == 'edit' ) {
+					for ( $row = 0; $row < count( $field['values'] ); $row++ ) {
+						// If the row contains commas (i.e. 1,000-10,000), wrap in double quotes.
+						if ( strstr( $field['values'][ $row ], ',' ) ) {
+echo '"' . esc_attr( $field['values'][ $row ] ) . '"'; echo ( $row == count( $field['values'] )- 1  ) ? '"' : ",\n";
+						} else {
+echo esc_attr( $field['values'][ $row ] ); echo ( $row == count( $field['values'] )- 1  ) ? "" : ",\n";
+						} 
+					}
+				} else { ?>
 Choice One|choice_one,
 "1,000|one_thousand",
 "1,000-10,000|1,000-10,000",
 Last Row|last_row
-					<?php } ?></textarea>
+				<?php } ?></textarea>
 				</li>
 			<?php } ?>
 				<li>
@@ -814,7 +816,7 @@ Last Row|last_row
 					|| $type == 'multicheckbox' 
 				) {
 					// Get the values.
-					$which_post = ( $type == 'radio' || $type == 'multicheckbox' || $type == 'multiselect' ) ? 'add_radio_value' : 'add_dropdown_value';
+					$which_post = ( $type == 'radio' || $type == 'multicheckbox' ) ? 'add_radio_value' : 'add_dropdown_value';
 					/*
 					 * @todo - the line below does not work, but the uncommented line does.
 					 *         They should produce the same result as they are (supposedly)
@@ -832,7 +834,7 @@ Last Row|last_row
 					if ( ! function_exists( 'str_getcsv' ) ) {
 						$clean_values = explode( ',', $str );
 					} else {
-						$clean_values = str_getcsv( $str, ',', '"' );
+						$clean_values = str_getcsv( $str, ',', '"', "\\" );
 					}
 					// Clean input values.
 					foreach ( $clean_values as $key => $raw_value ) {

@@ -960,6 +960,7 @@ function wpmem_kses_allowed_html( $context = 'default' ) {
 					'class' => true,
 					'id' => true,
 					'required' => true,
+					'multiple' => true,
 				),
 				'option' => array( 
 					'type' => true,
