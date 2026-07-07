@@ -192,9 +192,11 @@
 				$("#wpmem_file_info").hide();
 			if ($("#wpmem_field_type_select").val() == 'hidden') {
 				$("#wpmem_hidden_info").show();
+				$("#wpmem_href").hide();
 				$("#add_hidden_value").prop('required',true);
 			} else {
 				$("#wpmem_hidden_info").hide();
+				$("#wpmem_href").show();
 				$("#add_hidden_value").prop('required',false);
 			}
 			if ($("#wpmem_field_type_select").val() == 'timestamp' )

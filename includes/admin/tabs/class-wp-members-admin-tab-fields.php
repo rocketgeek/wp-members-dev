@@ -397,7 +397,7 @@ Last Row|last_row
 				</li>
 			<?php echo ( $mode == 'add' ) ? '</div>' : ''; ?>
 			<?php } ?>
-				<li>
+				<li id="wpmem_href">
 					<label><?php esc_html_e( 'Label href', 'wp-members' ); ?></label>
 					<input type="text" name="add_terms_check_href" value="<?php echo ( $mode == 'edit' ) ? ( isset( $field['label_href'] ) ? esc_attr( $field['label_href'] ) : '' ) : ''; ?>" class="regular-text" /> <?php echo '<span class="description">' . esc_html__( '(optional)', 'wp-members' ) . '</span>'; ?>
 				</li>
