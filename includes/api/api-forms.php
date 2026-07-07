@@ -302,7 +302,7 @@ function wpmem_form_field( $name, $type=null, $value=null, $valtochk=null, $clas
  * @param string|array  $args  See wpmem_form_field() for accepted arguments.
  */
 function wpmem_form_field_echo( $name, $type=null, $value=null, $valtochk=null, $class='textbox' ) {
-	echo wpmem_form_field( $name, $type, $value, $valtochk, $class ); // Output is escaped in wpmem_form_field().
+	echo wp_kses( wpmem_form_field( $name, $type, $value, $valtochk, $class ), wpmem_kses_allowed_html( 'form' ) ); // Output is escaped in wpmem_form_field().
 }
 
 /**
@@ -337,7 +337,7 @@ function wpmem_form_label( $args ) {
  * @param array  $args See wpmem_form_label() for accepted arguments.
  */
 function wpmem_form_label_echo( $args ) {
-	echo wpmem_form_label( $args );	// Output is escaped in wpmem_form_label().
+	echo wp_kses( wpmem_form_label( $args ), wpmem_kses_allowed_html( 'form' ) );	// Output is escaped in wpmem_form_label().
 }
 
 /**
@@ -721,7 +721,7 @@ function wpmem_form_field_wc_custom_field_types( $field, $key, $args, $value ) {
 
 			case 'checkbox':
 				// If it is a checkbox that should be checked by default.
-				if ( $wpmem_fields[ $key ]['checked_default'] && ! is_user_logged_in() && ! $_POST ) {
+				if ( $wpmem_fields[ $key ]['checked_default'] && ! is_user_logged_in() && empty( $_POST ) ) {
 					$field = str_replace( '<input type="checkbox"', '<input type="checkbox" checked ', $field );
 				}
 				break;
@@ -879,7 +879,7 @@ function wpmem_get_field_label( $meta_key ) {
 	
 	if ( isset( $args['label_href'] ) ) {
 
-		$label_text = str_replace( '%', '%s', esc_html__( $args['label'], 'wp-members' ) );
+		$label_text = str_replace( '%', '%s', __( $args['label'], 'wp-members' ) );
 		/**
 		 * Filters the anchor tag.
 		 * 
@@ -901,7 +901,7 @@ function wpmem_get_field_label( $meta_key ) {
 			
 		return sprintf( $label_text, $anchor_tag, '</a>' );
 	} else {
-		return esc_html__( $args['label'], 'wp-members' );
+		return __( $args['label'], 'wp-members' );
 	}
 }
 
@@ -933,11 +933,10 @@ function wpmem_get_field_options( $meta_key ) {
  * @param   string  $context       The context for allowed html. Default: 'default'.
  * @return  array   $allowed_html  The allowed html for the context.
  */
-function wpmem_allowed_html( $context = 'default' ) {
+function wpmem_kses_allowed_html( $context = 'default' ) {
 
 	switch ( $context ) {
 		case 'form':
-			$context = 'form';
 			$allowed_html = wp_kses_allowed_html( 'post' );
 			$additional_tags = array(
 				'input' => array(
@@ -949,11 +948,40 @@ function wpmem_allowed_html( $context = 'default' ) {
 					'size'        => true,
 					'maxlength'   => true,
 					'placeholder' => true,
+					'pattern'     => true,
+					'title'       => true,
 					'required'    => true,
 					'autocomplete'=> true,
 				),
+				'select' => array( 
+					'type' => true,
+					'name' => true,
+					'value' => true,
+					'class' => true,
+					'id' => true,
+					'required' => true,
+				),
+				'option' => array( 
+					'type' => true,
+					'name' => true,
+					'value' => true,
+					'class' => true,
+					'id' => true,
+				),
+				'textarea' => array(
+					'type'        => true,
+					'name'        => true,
+					'value'       => true,
+					'class'       => true,
+					'id'          => true,
+					'cols'        => true,
+					'rows'        => true,
+					'placeholder' => true,
+					'required'    => true,
+				),
 				'label' => array(
 					'for'         => true,
+					'id'          => true,
 					'class'       => true,
 				),
 				'abbr'  => array(
@@ -962,6 +990,16 @@ function wpmem_allowed_html( $context = 'default' ) {
 			);
 			$allowed_html = array_merge( $allowed_html, $additional_tags );
 			break;
+		case 'link':
+			$allowed_html = array(
+				'a' => array(
+					'href'   => true,
+					'class'  => true,
+					'id'     => true,
+					'title'  => true,
+					'target' => true,
+				),
+			);
 		case 'default':
 		default:
 			$context = 'post';
@@ -976,5 +1014,5 @@ function wpmem_allowed_html( $context = 'default' ) {
 	 * @param array   $allowed_html  The allowed html for the context.
 	 * @param string  $context       The context for allowed html. Default: 'default'.
 	 */
-	return apply_filters( 'wpmem_allowed_html', $allowed_html, $context );
+	return apply_filters( 'wpmem_kses_allowed_html', $allowed_html, $context );
 }
