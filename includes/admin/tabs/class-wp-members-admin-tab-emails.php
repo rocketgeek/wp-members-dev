@@ -153,8 +153,8 @@ class WP_Members_Admin_Tab_Emails {
 
 		for ( $row = 0; $row < ( count( $arr ) - 1 ); $row++ ) {
 			$arr2 = array( 
-				"subj" => sanitize_text_field( $_POST[ $arr[ $row ] . '_subj' ] ),
-				"body" => wp_kses( $_POST[ $arr[ $row ] . '_body' ], 'post' ),
+				"subj" => ( isset( $_POST[ $arr[ $row ] . '_subj' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ $arr[ $row ] . '_subj' ] ) ) : '',
+				"body" => ( isset( $_POST[ $arr[ $row ] . '_body' ] ) ) ? wp_kses( wp_unslash( $_POST[ $arr[ $row ] . '_body' ] ), 'post' ) : '',
 			);
 			update_option( $arr[ $row ], $arr2, false );
 			$arr2 = '';

@@ -121,7 +121,16 @@ class WP_Members_Admin_Tab_Dialogs {
 		check_admin_referer( 'wpmem_update_dialogs', 'wpmem_nonce' );
 
 		if ( ! empty ( $wpmem->admin->dialogs ) ) {
-			$wpmem->admin->dialog_update();
+			$settings = $wpmem->admin->dialogs;
+			foreach ( $settings as $dialog ) {
+				if ( isset( $_POST[ $dialog['name'] . '_dialog' ] ) ) {
+					$settings[ $dialog['name'] ] = wp_kses( wp_unslash( $_POST[ $dialog['name'] . '_dialog' ] ), 'post' );
+				}
+			}
+
+			update_option( 'wpmembers_dialogs', $settings, false );
+			// Refresh settings
+			$wpmem->admin->default_dialogs();
 		}
 
 		// Terms of Service.

@@ -54,13 +54,12 @@ class WP_Members_Admin_Tab_Fields {
 	 * @since 3.1.8
 	 * @since 3.3.0 Renamed from wpmem_a_render_fields_tab() to build_settings().
 	 *
-	 * @global object $wpmem         The WP_Members Object.
-	 * @global string $did_update
+	 * @global object $wpmem
 	 * @global string $wpmem_fields_delete_action
 	 */
 	public static function build_settings() {
 
-		global $wpmem, $did_update, $wpmem_fields_delete_action;
+		global $wpmem, $wpmem_fields_delete_action;
 		$wpmem_fields  = wpmem_fields();
 		$edit_meta     = wpmem_get_sanitized( 'field', false, 'get', 'text' );
 		$add_meta      = wpmem_get_sanitized( 'add_field', false );
@@ -69,41 +68,27 @@ class WP_Members_Admin_Tab_Fields {
 
 			$delete_fields = wpmem_get_sanitized( 'delete', array(), 'post', 'array' ); ?>
 
+			<div class="postbox"><div class="inside">
+
 			<?php if ( empty( $delete_fields ) ) { ?>
-				<p><?php esc_html_e( 'No fields selected for deletion', 'wp-members' ); ?></p>
+				<p><strong><?php esc_html_e( 'No fields selected for deletion', 'wp-members' ); ?></strong></p>
 			<?php } else { ?>
-				<p><?php esc_html_e( 'Are you sure you want to delete the following fields?', 'wp-members' ); ?></p>
+				<p><strong><?php esc_html_e( 'Are you sure you want to delete the following fields?', 'wp-members' ); ?></strong></p>
+				<ul>
 				<?php foreach ( $delete_fields as $meta ) {
-					echo esc_html( $wpmem->fields[ $meta ]['label'] ) . ' (meta key: ' . esc_attr( $meta ) . ')<br />';
+					echo '<li>' . esc_html( $wpmem->fields[ $meta ]['label'] ) . ' (meta key: ' . esc_attr( $meta ) . ')</li>';
 				} ?>
+				</ul>
 				<form name="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" id="<?php echo esc_attr( $wpmem_fields_delete_action ); ?>" method="post" action="<?php echo esc_url( wpmem_admin_form_post_url() ); ?>">
 					<?php wp_nonce_field( 'wpmem-confirm-delete' ); ?>
 					<input type="hidden" name="delete_fields" value="<?php echo esc_attr( implode( ",", $delete_fields ) ); ?>" />
 					<input type="hidden" name="dodelete" value="delete_confirmed" />
 					<?php submit_button( esc_html__( 'Delete Fields', 'wp-members' ) ); ?>
 				</form><?php
-			}
+			} ?>
+			</div></div><?php
 		} else {
 
-			if ( 'delete_confirmed' == wpmem_get( 'dodelete' ) ) {
-
-				check_admin_referer( 'wpmem-confirm-delete' );
-
-				$delete_fields = wpmem_get_sanitized( 'delete_fields', array() );
-				$delete_fields = explode( ",", $delete_fields );
-				$wpmem_new_fields = array();
-				foreach ( $wpmem_fields as $field ) {
-					if ( ! in_array( $field[2], $delete_fields ) ) {
-						$wpmem_new_fields[] = $field;
-					}
-				}
-				update_option( 'wpmembers_fields', $wpmem_new_fields, false );
-				$did_update = esc_html__( 'Fields deleted', 'wp-members' );
-			}
-
-			if ( $did_update ) { ?>
-				<div id="message" class="updated fade"><p><strong><?php echo wp_kses( $did_update, 'post' ); ?></strong></p></div>
-			<?php } 
 			if ( $edit_meta || $add_meta ) {
 				$mode = ( $edit_meta ) ? wpmem_get_sanitized( 'mode', false, 'get', 'text' ) : 'add';
 				self::build_field_edit( $mode, $wpmem_fields, $edit_meta );
@@ -594,7 +579,7 @@ Last Row|last_row
 				|| ( '_wpmem_user_confirmed' == $key && 1 == $wpmem->act_link ) 
 				|| ( 'active' == $key && 1 == $wpmem->mod_reg ) 
 				|| wpmem_is_exp_enabled() && $wpmem->use_exp == 1 && ( 'exp_type' == $key || 'expires' == $key ) ) {
-				$user_screen_items[ $key ] = array( 'label' => esc_html__( $item, 'wp-members' ), 'meta' => $key,
+				$user_screen_items[ $key ] = array( 'label' => $item, 'meta' => $key,
 					'userscrn' => wpmem_form_field( "wpmem_fields_uscreen[{$key}]", 'checkbox', $item, $ut_checked ),
 					'usersort' => wpmem_form_field( "wpmem_fields_usrsort[{$key}]", 'checkbox', $item, $ur_checked ),
 				);
@@ -657,12 +642,11 @@ Last Row|last_row
 	 * @since 3.3.9 load_fields() moved to forms object class.
 	 *
 	 * @global object $wpmem
-	 * @global string $did_update
 	 * @global string $wpmem_add_field_err_msg  The add field error message
 	 */
 	public static function update() {
 
-		global $wpmem, $did_update, $wpmem_fields_delete_action;
+		global $wpmem, $wpmem_fields_delete_action;
 
 		if ( 'wpmem-settings' == wpmem_get( 'page', false, 'get' ) && 'fields' == wpmem_get( 'tab', false, 'get' ) ) {
 			// Get the current fields.
@@ -727,10 +711,12 @@ Last Row|last_row
 				$wpmem->forms->load_fields();
 				
 				// Set update message.
-				$did_update = esc_html__( 'WP-Members fields were updated', 'wp-members' );
-				
-				// Return.
-				return $did_update;
+				$wpmem->admin_notices['fields_updated'] = array(
+					'notice' => esc_html__( 'WP-Members fields were updated', 'wp-members' ),
+					'type' => 'success'
+				);
+
+				return;
 
 			} elseif ( 'delete' == $action ) {
 
@@ -839,7 +825,7 @@ Last Row|last_row
 					 *         class-wp-members-user.php line 289.
 					 */
 					// $str = wpmem_get_sanitized( $which_post, '', 'post', 'textarea' );
-					$str = sanitize_textarea_field( wp_unslash( $_POST[ $which_post ] ) );
+					$str = ( isset( $_POST[ $which_post ] ) ) ? sanitize_textarea_field( wp_unslash( $_POST[ $which_post ] ) ) : '';
 					// Remove linebreaks.
 					$str = trim( str_replace( array("\r", "\r\n", "\n"), '', $str ) );
 					// Create array.
@@ -877,9 +863,16 @@ Last Row|last_row
 					if ( ! $wpmem_add_field_err_msg ) {
 						array_push( $wpmem_fields, $arr );
 						/* translators: %s: Field label being added */
-						$did_update = sprintf( esc_html__( '%s was added', 'wp-members' ), esc_html( $add_name ) );
+						$wpmem->admin_notices['field_added'] = array(
+							/* translators: %s: Field label being added */
+							'notice' => sprintf( esc_html__( '%s was added', 'wp-members' ), esc_html( $add_name ) ),
+							'type' => 'success'
+						);
 					} else {
-						$did_update = $wpmem_add_field_err_msg;
+						$wpmem->admin_notices['field_error'] = array(
+							'notice' => $wpmem_add_field_err_msg,
+							'type' => 'error'
+						);
 					}
 				} else {
 					for ( $row = 0; $row < count( $wpmem_fields ); $row++ ) {
@@ -890,17 +883,38 @@ Last Row|last_row
 							}
 						}
 					}
-					/* translators: %s: Field label being updated */
-					$did_update =  sprintf( esc_html__( '%s was updated', 'wp-members' ), esc_html( $add_name ) );
-					$did_update.= '<p><a href="' . esc_url( add_query_arg( array( 'page' => 'wpmem-settings', 'tab' => 'fields' ), get_admin_url() . 'options-general.php' ) ) . '">&laquo; ' . esc_html__( 'Return to Fields Table', 'wp-members' ) . '</a></p>';
+					$wpmem->admin_notices['field_updated'] = array(
+						/* translators: %s: Field label being updated */
+						'notice' => sprintf( esc_html__( '%s was updated', 'wp-members' ), esc_html( $add_name ) ) . '<p><a href="' . esc_url( add_query_arg( array( 'page' => 'wpmem-settings', 'tab' => 'fields' ), get_admin_url() . 'options-general.php' ) ) . '">&laquo; ' . esc_html__( 'Return to Fields Table', 'wp-members' ) . '</a></p>',
+						'type' => 'success'
+					);
 				}
 
 				$wpmem_newfields = $wpmem_fields;
 
 				update_option( 'wpmembers_fields', $wpmem_newfields, false );
 				$wpmem->forms->load_fields();
-				return $did_update;		
+				return;		
 			}
+		}
+
+		if ( 'delete_confirmed' == wpmem_get( 'dodelete' ) ) {
+
+			check_admin_referer( 'wpmem-confirm-delete' );
+
+			$delete_fields = wpmem_get_sanitized( 'delete_fields', array() );
+			$delete_fields = explode( ",", $delete_fields );
+			$wpmem_new_fields = array();
+			foreach ( wpmem_fields() as $field ) {
+				if ( ! in_array( $field[2], $delete_fields ) ) {
+					$wpmem_new_fields[] = $field;
+				}
+			}
+			update_option( 'wpmembers_fields', $wpmem_new_fields, false );
+			$wpmem->admin_notices['fields_deleted'] = array(
+				'notice' => esc_html__( 'Fields deleted', 'wp-members' ),
+				'type' => 'success'
+			);
 		}
 	}
 

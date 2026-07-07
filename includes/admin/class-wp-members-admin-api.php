@@ -174,7 +174,7 @@ class WP_Members_Admin_API {
 		if ( current_user_can( 'list_users' ) ) {
 			add_action( 'admin_footer-users.php',        array( 'WP_Members_Admin_Users', 'bulk_user_action' ) );
 			add_action( 'load-users.php',                array( 'WP_Members_Admin_Users', 'page_load' ) );
-			add_action( 'admin_notices',                 array( 'WP_Members_Admin_Users', 'admin_notices' ) );
+			add_action( 'admin_notices',                 array( 'WP_Members_Admin_Users', 'admin_notices' ), 5 );
 			add_filter( 'views_users',                   array( 'WP_Members_Admin_Users', 'views' ) );
 			add_filter( 'manage_users_columns',          array( 'WP_Members_Admin_Users', 'add_user_column' ) );
 			add_filter( 'manage_users_custom_column',    array( 'WP_Members_Admin_Users', 'add_user_column_content' ), 10, 3 );
@@ -341,25 +341,6 @@ class WP_Members_Admin_API {
         </tr><?php
 	}
 
-	/**
-	 * Saves custom dialog settings.
-	 *
-	 * @since 3.1.1
-	 */
-	function dialog_update() {
-		$settings = $this->dialogs;
-		foreach ( $settings as $dialog ) {
-			if ( isset( $_POST[ $dialog['name'] . '_dialog' ] ) ) {
-				$settings[ $dialog['name'] ] = wp_kses( wp_unslash( $_POST[ $dialog['name'] . '_dialog' ] ), 'post' );
-			}
-		}
-
-		update_option( 'wpmembers_dialogs', $settings, false );
-		// Refresh settings
-		$this->default_dialogs();
-		return;
-	}	
-		
 	/**
 	 * Handles custom dialog settings.
 	 *
