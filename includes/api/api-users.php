@@ -1209,7 +1209,7 @@ function wpmem_is_user_confirmed( $user_id = false ) {
 function wpmem_admin_add_new_user() {
 	global $wpmem;
 	// Output the custom registration fields.
-	echo $wpmem->forms->wp_newuser_form(); // output is escaped in the form class.
+	echo wp_kses( $wpmem->forms->wp_newuser_form(), wpmem_kses_allowed_html( 'form' ) ); // output is escaped in the form class.
 	return;
 }
 
@@ -1295,7 +1295,8 @@ function wpmem_user_count( $args = 'all' ) {
 				break;
 
 			case 'notconfirmed':
-				return ( count_users() ) - ( wpmem_get_user_count_by_meta( '_wpmem_user_confirmed', '0', '>' ) );
+				$user_count = count_users();
+				return $user_count['total_users'] - wpmem_get_user_count_by_meta( '_wpmem_user_confirmed', '0', '>' );
 				break;
 				
 			default:
