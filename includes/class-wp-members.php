@@ -650,6 +650,7 @@ class WP_Members {
 		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_style_wp_login' ) ); // styles the native registration
 		add_action( 'wp_enqueue_scripts',    array( $this, 'enqueue_style' ) );          // Enqueues the stylesheet.
 		add_action( 'wp_enqueue_scripts',    array( $this, 'loginout_script' ) );
+		add_action( 'wp_enqueue_scripts',    array( $this, 'enqueue_captcha_scripts' ) );
 		add_action( 'customize_register',    array( $this, 'customizer_settings' ) );
 		add_action( 'wp_footer',             array( $this, 'invisible_captcha' ) );
 
@@ -1985,6 +1986,15 @@ class WP_Members {
 		if ( 4 == $this->captcha && true !== wpmem_is_reg_form_showing() ) {
 			echo WP_Members_Captcha::show(); // Output is escaped when generated in WP_Members_Captcha::show()
 		}
+	}
+
+	/**
+	 * Enqueue scripts for captcha if enabled.
+	 * 
+	 * @since 3.6.0
+	 */
+	function enqueue_captcha_scripts() {
+		WP_Members_Captcha::enqueue_scripts();
 	}
 
 	/**

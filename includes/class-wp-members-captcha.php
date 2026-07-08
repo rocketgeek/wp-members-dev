@@ -46,7 +46,48 @@ class WP_Members_Captcha {
 				break;
 		}
 	}
-	
+
+	/**
+	 * Enqueues the necessary scripts for the selected CAPTCHA.
+	 * 
+	 * @since 3.6.0
+	 */
+	static function enqueue_scripts() {
+		global $wpmem;
+		$type = self::type();
+		switch ( $type ) {
+			case 'hcaptcha':
+				wp_enqueue_script(
+					'wpmem-hcaptcha-api', // Handle name
+					'https://js.hcaptcha.com/1/api.js', // hCaptcha API URL
+					array(), // No dependencies
+					$wpmem->version, // Version of WP-Members
+					true // Load in footer for better performance
+				);
+				break;
+			case 'recaptcha_v2':
+				/**
+				 * Filters the URL used for google recaptcha API.
+				 *
+				 * @since 3.4.2
+				 *
+				 * @param string $url
+				 */
+				$wpmem_recaptcha_url = apply_filters( 'wpmem_recaptcha_url', 'https://www.google.com/recaptcha/api.js' );
+				wp_enqueue_script(
+					'wpmem-google-recaptcha', // Handle name
+					esc_url_raw( $wpmem_recaptcha_url ), // google API URL
+					array(), // No dependencies
+					$wpmem->version, // Version of WP-Members
+					true // Load in footer for better performance
+				);
+				break;
+			case 'rs_captcha':
+			default:
+				break;
+		}
+	}
+
 	/**
 	 * Display a CAPTCHA.
 	 *
@@ -83,8 +124,7 @@ class WP_Members_Captcha {
 			$opts = get_option( 'wpmembers_captcha' );
 			$key  = $opts['hcaptcha']['api_key'];
 		}
-		$html  = '<div class="h-captcha" data-sitekey="' . esc_attr( $key ) . '"></div>';
-		$html .= '<script src="https://hcaptcha.com/1/api.js" async defer></script>';
+		$html = '<div class="h-captcha" data-sitekey="' . esc_attr( $key ) . '"></div>';
 		/** This filter is defined in /includes/class-wp-members-captcha.php */
 		return apply_filters( 'wpmem_captcha', $html );
 	}
@@ -108,15 +148,9 @@ class WP_Members_Captcha {
 			$key  = $opts['recaptcha']['public'];
 		}
 		
-		/**
-		 * Filters the URL used for google recaptcha API.
-		 *
-		 * @since 3.4.2
-		 *
-		 * @param string $url
-		 */
+		/* Filter defined in class-wp-members-captcha.php */
 		$wpmem_recaptcha_url = apply_filters( 'wpmem_recaptcha_url', 'https://www.google.com/recaptcha/api.js' );
-		
+
 		/*
 		 * NOTE: DO NOT EDIT THIS. Use the filter hook found below.
 		 * 
@@ -124,8 +158,7 @@ class WP_Members_Captcha {
 		 * See https://wpbitz.com/how-to-use-hooks-in-wordpress/
 		 */
 		if ( 3 == $wpmem->captcha ) {
-			$html = '<script src="' . esc_url_raw( $wpmem_recaptcha_url ) . '" async defer></script>
-			<div class="g-recaptcha" data-sitekey="' . esc_attr( $key ) . '"></div>';
+			$html = '<div class="g-recaptcha" data-sitekey="' . esc_attr( $key ) . '"></div>';
 		} else {
 			$html = '<script src="' . esc_url_raw( $wpmem_recaptcha_url ) . '?render=' . esc_attr( $key ) . '"></script>';
 			$html.= "<script>
