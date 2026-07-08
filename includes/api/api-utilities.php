@@ -467,6 +467,7 @@ function wpmem_get_file_dir_hash() {
  * Reads a csv file to a keyed array.
  * 
  * @since 3.5.4
+ * @since 3.6.0 Rebuild to use WP_FILESYSTEM API for better file handling.
  * 
  * @todo If using $cols args, must use non-BOM UTF-8 encoding, otherwise the first row fails.
  * 
@@ -474,32 +475,65 @@ function wpmem_get_file_dir_hash() {
  * @param  array   $cols  If the file does not have a header row, an array to key it by (optional).
  */
 function wpmem_csv_to_array( $file, $cols = false ) {
+	global $wp_filesystem;
+
+	// Load WP_Filesystem API if not already loaded
+	if ( ! function_exists( 'WP_Filesystem' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	// Initialize filesystem
+	if ( ! WP_Filesystem() ) {
+		return new WP_Error( 'filesystem_init_failed', 'Could not initialize WP_Filesystem.' );
+	}
+
+	// Check if file exists
+	if ( ! $wp_filesystem->exists( $file ) ) {
+		return new WP_Error( 'file_not_found', 'CSV file not found: ' . esc_html( $file ) );
+	}
+
+	// Read file contents
+	$contents = $wp_filesystem->get_contents( $file );
+	if ( false === $contents ) {
+		return new WP_Error( 'read_failed', 'Could not read CSV file.' );
+	}
+
+	// Split into rows and parse CSV
+	$rows = array_map( 'str_getcsv', explode( "\n", trim( $contents ) ) );
+
+	// Remove empty rows
+	$rows = array_filter( $rows, function( $row ) {
+		return ! empty( array_filter( $row ) );
+	});
+
+	// Reindex the array to ensure sequential keys
+	$rows = array_values( $rows );
+
+	// If no rows, return empty array
+	if ( empty( $rows ) ) {
+		return [];
+	}
+
+	// Column headers: either from first row or provided $cols
+	$headers = ( ! $cols ) ? array_map( 'trim', $rows[0] ) : $cols;
 	
-	// Get rows into array.
-	$f = fopen( $file, 'r' );
-	while ( ( $line = fgetcsv( $f ) ) !== FALSE ) {
-		//$line is an array of the csv elements
-		$rows[] = $line;
-	}
-	fclose( $f );
-	
-	// If first row is header row of column names.
-	if ( ! $cols ) {
-		$cols = array_shift( $rows );
+	$data = [];
+
+	// Loop through remaining rows and combine with headers
+	for ( $i = 1; $i < count( $rows ); $i++ ) {
+		$row = $rows[$i];
+
+		// Ensure row has same number of columns as headers
+		if ( count( $row ) < count( $headers ) ) {
+			$row = array_pad( $row, count( $headers ), null );
+		} elseif ( count( $row ) > count( $headers ) ) {
+			$row = array_slice( $row, 0, count( $headers ) );
+		}
+
+		$data[] = array_combine( $headers, $row );
 	}
 
-	// Clean the header if BOM.
-	foreach( $cols as $h ) {
-		$cleaned_head[] = preg_replace( "/[^\w\d]/", "", esc_attr( $h ) );
-	}
-
-	// Build our array for return.
-	$csv = array();
-	foreach( $rows as $row ) {
-		$csv[] = array_combine( $cleaned_head, $row );
-	}
-
-	return $csv;
+	return $data;
 }
 
 /**
