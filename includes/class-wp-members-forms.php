@@ -1888,12 +1888,12 @@ class WP_Members_Forms {
 					$val = sanitize_text_field( $posted_meta );
 					$args['value']   = $field['values'];
 					$args['compare'] = $val;
-					wpmem_form_field_echo( $args );
+					wpmem_form_field_echo( $args ); // function returns an escaped result.
 					break;
 
 				case( 'textarea' ):
 					$args['value'] = esc_textarea( $posted_meta );
-					wpmem_form_field_echo( $args );
+					wpmem_form_field_echo( $args ); // function returns an escaped result.
 					break;
 
 				case( 'checkbox' ):
@@ -1901,7 +1901,7 @@ class WP_Members_Forms {
 					$val = ( empty( $_POST ) && $field['checked_default'] ) ? $field['checked_value'] : $val;
 					$args['value']   = $field['checked_value'];
 					$args['compare'] = $val;
-					wpmem_form_field_echo( $args );
+					wpmem_form_field_echo( $args ); // function returns an escaped result.
 					break;
 
 				case( 'multiselect' ):
@@ -1939,7 +1939,7 @@ class WP_Members_Forms {
 					<th scope="row">
 						<label for="activate_user">' . esc_html( wpmem_get_text( 'wp_form_activate' ) ) . '</label>
 					</th>
-					<td>'; wpmem_form_field_echo( array( 'name' => 'activate_user', 'type' => 'checkbox', 'value' => 1, 'compare' => '' ) ); echo '</td>
+					<td>' . wp_kses( wpmem_form_field( array( 'name' => 'activate_user', 'type' => 'checkbox', 'value' => 1, 'compare' => '' ) ), wpmem_kses_allowed_html( 'form' ) ) . '</td>
 				  </tr>';
 		}
 

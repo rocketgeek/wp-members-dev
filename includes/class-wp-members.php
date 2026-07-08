@@ -1983,7 +1983,7 @@ class WP_Members {
 	 */
 	function invisible_captcha() {
 		if ( 4 == $this->captcha && true !== wpmem_is_reg_form_showing() ) {
-			echo WP_Members_Captcha::show();
+			echo WP_Members_Captcha::show(); // Output is escaped when generated in WP_Members_Captcha::show()
 		}
 	}
 

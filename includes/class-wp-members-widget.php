@@ -439,7 +439,7 @@ class widget_wpmemwidget extends WP_Widget {
 				$form = $error_msg . $form;
 			}
 
-			echo $form;
+			echo wp_kses( $form, wpmem_kses_allowed_html( 'form' ) );
 
 		} else {
 
@@ -499,7 +499,7 @@ class widget_wpmemwidget extends WP_Widget {
 			 */
 			$str = apply_filters( 'wpmem_login_widget_status', $str );
 
-			echo $str;
+			echo wp_kses( $str, wpmem_kses_allowed_html() );
 		}
 	}
 }

@@ -264,7 +264,7 @@ class WP_Members_User_Profile {
 				 */
 				$show_field = apply_filters( 'wpmem_' . $display . '_profile_field', $show_field, $user_id, $row );
 
-				echo wp_kses( $show_field, wpmem_allowed_html( 'form' ) );
+				echo wp_kses( $show_field, wpmem_kses_allowed_html( 'form' ) );
 			}
 
 			/**

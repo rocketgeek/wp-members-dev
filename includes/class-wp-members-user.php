@@ -1158,7 +1158,7 @@ class WP_Members_User {
 						'post_type'   => $wpmem->membership->post_type,
 						'post_parent' => $membership_ids[ $membership ], // Current post's ID
 					);
-					//Replaces use of get_children, which unfortunately causes an infinite loop.
+					// Replaces use of get_children, which unfortunately causes an infinite loop.
 					$children = $wpdb->get_results( 'SELECT post_name FROM ' . $wpdb->prefix . 'posts WHERE post_type = "' . esc_sql( $args['post_type'] ) . '" AND post_parent = "' . esc_sql( $args['post_parent'] ) . '";' );
 					if ( ! empty( $children ) ) {
 						foreach ( $children as $child ) {

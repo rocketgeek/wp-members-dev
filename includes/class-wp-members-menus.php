@@ -230,11 +230,11 @@ class WP_Members_Menus {
 			
 			$custom_fields = array();
 
-			$product_array = wpmem_sanitize_array( wp_unslash( $_POST['wpmem_product'][ $menu_item_db_id ] ) );
+			$product_array = array_map( 'sanitize_text_field', wp_unslash( $_POST['wpmem_product'][ $menu_item_db_id ] ) );
 			
 			foreach( $product_array as $product ) {
 				if ( array_key_exists ( $product, $product_names ) ) {
-					$custom_fields['products'][] = sanitize_text_field( wp_unslash( $product ) );
+					$custom_fields['products'][] = $product;
 				}
 			}
 			if ( ! empty ( $custom_fields ) ) {
