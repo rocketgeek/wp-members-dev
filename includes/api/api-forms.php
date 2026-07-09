@@ -868,16 +868,21 @@ function wpmem_is_file_field( $field_meta ) {
  * Returns the field label.
  * 
  * @since 3.5.1
- * @since 3.5.4 Supports label_href and returns sanitized result.
+ * @since 3.5.4 Supports label_href.
+ * @since 3.6.0 Supports not applying link and stripping placeholders.
+ * 
+ * @param  string  $meta_key
+ * @param  boolean $apply_link
+ * @return string
  */
-function wpmem_get_field_label( $meta_key ) {
+function wpmem_get_field_label( $meta_key, $apply_link = true ) {
 	$fields = wpmem_fields();
 
 	$args = $fields[ $meta_key ];
 		
 	// Adjust placeholders.
 	
-	if ( isset( $args['label_href'] ) ) {
+	if ( $apply_link && isset( $args['label_href'] ) ) {
 
 		$label_text = str_replace( '%', '%s', __( $args['label'], 'wp-members' ) );
 		/**
@@ -901,7 +906,11 @@ function wpmem_get_field_label( $meta_key ) {
 			
 		return sprintf( $label_text, $anchor_tag, '</a>' );
 	} else {
-		return __( $args['label'], 'wp-members' );
+		if ( isset( $args['label_href'] ) && ! $apply_link ) {
+			return str_replace( '%', '', __( $args['label'], 'wp-members' ) );
+		} else {
+			return __( $args['label'], 'wp-members' );
+		}
 	}
 }
 
@@ -935,9 +944,11 @@ function wpmem_get_field_options( $meta_key ) {
  */
 function wpmem_kses_allowed_html( $context = 'default' ) {
 
+	global $allowedposttags;
+
 	switch ( $context ) {
 		case 'form':
-			$allowed_html = wp_kses_allowed_html( 'post' );
+			$allowed_html = $allowedposttags;
 			$additional_tags = array(
 				'input' => array(
 					'type'        => true,
@@ -947,27 +958,31 @@ function wpmem_kses_allowed_html( $context = 'default' ) {
 					'id'          => true,
 					'size'        => true,
 					'maxlength'   => true,
+					'min'         => true,
+					'max'         => true,
 					'placeholder' => true,
 					'pattern'     => true,
 					'title'       => true,
 					'required'    => true,
+					'checked'     => true,
 					'autocomplete'=> true,
 				),
 				'select' => array( 
-					'type' => true,
-					'name' => true,
-					'value' => true,
-					'class' => true,
-					'id' => true,
+					'type'     => true,
+					'name'     => true,
+					'value'    => true,
+					'class'    => true,
+					'id'       => true,
 					'required' => true,
 					'multiple' => true,
 				),
 				'option' => array( 
-					'type' => true,
-					'name' => true,
-					'value' => true,
-					'class' => true,
-					'id' => true,
+					'type'     => true,
+					'name'     => true,
+					'value'    => true,
+					'class'    => true,
+					'id'       => true,
+					'selected' => true,
 				),
 				'textarea' => array(
 					'type'        => true,
@@ -1016,4 +1031,28 @@ function wpmem_kses_allowed_html( $context = 'default' ) {
 	 * @param string  $context       The context for allowed html. Default: 'default'.
 	 */
 	return apply_filters( 'wpmem_kses_allowed_html', $allowed_html, $context );
+}
+
+function wpmem_add_global_attributes() {
+	return array(
+		'aria-controls'    => true,
+		'aria-current'     => true,
+		'aria-describedby' => true,
+		'aria-details'     => true,
+		'aria-expanded'    => true,
+		'aria-hidden'      => true,
+		'aria-label'       => true,
+		'aria-labelledby'  => true,
+		'aria-live'        => true,
+		'class'            => true,
+		'data-*'           => true,
+		'dir'              => true,
+		'hidden'           => true,
+		'id'               => true,
+		'lang'             => true,
+		'style'            => true,
+		'title'            => true,
+		'role'             => true,
+		'xml:lang'         => true,
+	);
 }
