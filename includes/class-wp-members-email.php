@@ -463,7 +463,8 @@ class WP_Members_Email {
 			// Split fields into field_str.
 			$field_str = '';
 			foreach ( $this->settings['fields'] as $key => $val ) {
-				$field_str.= wpmem_get_field_label( $key ) . ': ' . $val . $this->settings['line_break']; 
+				// Get field label without link markup.
+				$field_str.= wpmem_get_field_label( $key, false ) . ': ' . $val . $this->settings['line_break']; 
 			}
 
 			// Get the email footer if needed.
