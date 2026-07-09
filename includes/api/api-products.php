@@ -431,13 +431,13 @@ function wpmem_generate_membership_expiration_date( $membership, $user_id, $set_
  * Gets the count(s) of a given membership.
  * 
  * @since 3.5.3
+ * @since 3.6.0 Rebuild to use wpmem_get_user_count_by_meta().
  * 
  * @param  string  $membership  The membership slug
  * @param  string  $type        What type of count to get (all|active|expired default:all)
  * @return int     $count
  */
 function wpmem_get_membership_count( $membership, $type = "all" ) {
-	global $wpdb;
 	$user_meta = wpmem_get_membership_meta( $membership );
 	switch ( $type ) {
 		case "active":
@@ -454,15 +454,7 @@ function wpmem_get_membership_count( $membership, $type = "all" ) {
 			break;
 	}
 
-	if ( $period != 0 ) {
-		// It's an expiration membership
-		$results = $wpdb->get_results( "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" AND meta_value ' .  esc_sql( $compare ) . ' ' . esc_sql( $period ) . ' ORDER BY meta_value;' );
-	} else {
-		// It's not an expiration membership
-		$results = $wpdb->get_results( "SELECT meta_value AS integer_value FROM " . $wpdb->usermeta . ' WHERE meta_key = "' . esc_sql( $user_meta ) . '" ORDER BY meta_value;' );
-	}
-
-	return count( $results );
+	return wpmem_get_user_count_by_meta( $user_meta, $period, $compare );
 }
 
 /**
