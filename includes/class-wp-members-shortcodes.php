@@ -681,6 +681,33 @@ class WP_Members_Shortcodes {
 			return;
 		}
 
+		$allowed_atts = array( 
+			'field',
+			'id',
+			'class',
+			'underscores',
+			'display',
+			'size',
+			'format',
+			'clickable',
+			'label',
+			'no_link',
+			'wrapper_tag',
+			'wrapper_id',
+			'wrapper_class',
+			'item_tag',
+		);
+		
+		//rktgk_what_is( $atts );
+		foreach ( $atts as $key => $value ) {
+			if ( $key != 0 ) {
+				if ( ! in_array( $key, $allowed_atts ) ) {
+					unset( $atts[ $key ] );
+				}
+			}
+		}
+		//rktgk_what_is( $atts );
+
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
 
@@ -976,7 +1003,7 @@ class WP_Members_Shortcodes {
 			$content = ( isset( $sanitized_atts['clickable'] ) && ( true == $sanitized_atts['clickable'] || 'true' == $sanitized_atts['clickable'] ) ) ? make_clickable( $content ) : $content;
 		
 			// Display field label?
-			$content = ( isset( $fields[ $field ] ) && isset( $sanitized_atts['label'] ) && ( true == $sanitized_atts['label'] ) ) ? wpmem_get_field_label( $field ) . ": " . $content : $content;
+			$content = ( isset( $fields[ $field ] ) && isset( $sanitized_atts['label'] ) && ( true == $sanitized_atts['label'] ) ) ? esc_html( wpmem_get_field_label( $field, false ) ) . ": " . $content : $content;
 		}
 		
 		/**
