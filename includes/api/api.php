@@ -422,7 +422,7 @@ function wpmem_login_status( $echo = true, $tag = false ) {
 	}
 	
 	if ( $echo ) {
-		echo wp_kses( $status, wpmem_allowed_html() );
+		echo wp_kses( $status, wpmem_kses_allowed_html() );
 	} else {
 		return $status;
 	}
@@ -582,7 +582,7 @@ function wpmem_get_display_message( $tag, $custom = false ) {
  * @return
  */
 function wpmem_display_message( $tag, $custom = false ) {
-	echo wp_kses( wpmem_get_display_message( $tag, $custom ), wpmem_allowed_html() );
+	echo wp_kses( wpmem_get_display_message( $tag, $custom ), wpmem_kses_allowed_html() );
 }
 
 /**
@@ -813,5 +813,59 @@ function wpmem_is_exp_enabled() {
 function wpmem_load_template( $template_name ) {
 	global $wpmem;
 	$wpmem->load_template( $template_name );
+}
+
+/**
+ * Export a csv file.
+ * 
+ * @since 3.6.0
+ */
+function wpmem_export_user_csv() {
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+
+	// Initialize WP_Filesystem
+	if ( ! WP_Filesystem() ) {
+		return new WP_Error('filesystem_error', 'Could not initialize WP_Filesystem.');
+	}
+
+	global $wp_filesystem;
+
+	// Prepare CSV header
+	$csv_data = "ID,Username,Email,Display Name,Role\n";
+
+	// Add user data
+	foreach ( $users as $user ) {
+		$roles = implode('|', $user->roles);
+		$csv_data .= sprintf(
+			"%d,%s,%s,%s,%s\n",
+			$user->ID,
+			esc_csv($user->user_login),
+			esc_csv($user->user_email),
+			esc_csv($user->display_name),
+			esc_csv($roles)
+		);
+	}
+
+	// File path in uploads directory
+	$upload_dir = wp_upload_dir();
+	$file_path  = trailingslashit($upload_dir['basedir']) . 'users-export.csv';
+	$file_url   = trailingslashit($upload_dir['baseurl']) . 'users-export.csv';
+
+	// Write file using WP_Filesystem
+	if ( ! $wp_filesystem->put_contents( $file_path, $csv_data, FS_CHMOD_FILE ) ) {
+		return new WP_Error('write_error', 'Failed to write CSV file.');
+	}
+
+	return $file_url;
+}
+
+/**
+ * Escape output for CSV.
+ * 
+ * @since 3.6.0
+ */
+function wpmem_esc_csv( $value ) {
+    $value = str_replace( '"', '""', $value ); // Escape quotes
+    return '"' . $value . '"';
 }
 // End of file.
