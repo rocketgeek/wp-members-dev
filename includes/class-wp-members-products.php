@@ -105,7 +105,7 @@ class WP_Members_Products {
 	 */
 	function __construct() {
 		
-		$this->load_products();
+		$this->load_memberships();
 		
 		add_filter( 'wpmem_securify',               array( $this, 'product_access' ) );
 		add_filter( 'wpmem_product_restricted_msg', array( $this, 'apply_custom_access_message' ), 10, 2 );
@@ -120,11 +120,11 @@ class WP_Members_Products {
 	 * Loads product settings.
 	 *
 	 * @since 3.2.0
-	 * @todo Name change to load_memberships() is coming.
+	 * @since 3.6.0 Name change from load_products().
 	 *
 	 * @global object $wpdb The WPDB object class.
 	 */
-	private function load_products() {
+	private function load_memberships() {
 
 		$memberships = get_option( 'wpmem_memberships' );
 
@@ -204,12 +204,20 @@ class WP_Members_Products {
 		 *
 		 * @since 3.3.5
 		 * @since 3.5.0 Use wpmem_post_memberships instead.
-		 * @todo Mark deprecated filter hook.
+		 * @since 3.6.0 deprecated. Obsolete by 3.7.0.
 		 *
 		 * @param array $post_memberships
 		 * @param int   $post_id
 		 */
-		$memberships = apply_filters( 'wpmem_post_products', $memberships, $post_id );
+		$memberships = apply_filters_deprecated( 'wpmem_post_products', array( $memberships, $post_id ), '3.5.0', 'wpmem_post_memberships', 'Obsolete by 3.7.0' );
+		/**
+		 * Filter membership access by post ID.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param array $post_memberships
+		 * @param int   $post_id
+		 */
 		$memberships = apply_filters( 'wpmem_post_memberships', $memberships, $post_id );
 		return $memberships;
 	}
