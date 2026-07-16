@@ -58,16 +58,6 @@ class WP_Members_Dialogs {
 			'tos'              => esc_html__( 'TOS', 'wp-members' ),
 			'tos_alt'          => esc_html__( 'Terms of Service', 'wp-members' ),
 		);
-		
-		/*
-		 * Strings to be added or removed in future versions, included so they will
-		 * be in the translation template.
-		 * @todo Check whether any of these should be removed.
-		 */
-		$benign_strings = array(
-			__( 'No fields selected for deletion', 'wp-members' ),
-			__( 'You are not logged in.', 'wp-members' ), // Technically removed 3.5
-		);
 	
 		$defaults = array(
 			

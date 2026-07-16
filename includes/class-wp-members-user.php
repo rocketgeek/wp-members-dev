@@ -239,14 +239,13 @@ class WP_Members_User {
 	 *
 	 * @global int    $user_ID
 	 * @global string $wpmem_themsg
-	 * @global array  $userdata
 	 *
 	 * @param  string $tag
 	 */
 	public function register_validate( $tag ) {
 		
 		// Get the globals.
-		global $user_ID, $wpmem, $wpmem_themsg, $userdata; 
+		global $user_ID, $wpmem, $wpmem_themsg; 
 		
 		// Check the nonce.
 		if ( empty( $_POST ) || ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_' . $tag . '_nonce', false, 'request', 'nonce' ), 'wpmem_longform_nonce' ) ) {
@@ -562,7 +561,7 @@ class WP_Members_User {
 		// If this is Users > Add New.
 		if ( is_admin() && $this->reg_type['is_add_new'] ) {
 			// If moderated registration and activate is checked, set active flags.
-			if ( 1 == $wpmem->mod_reg && wpmem_get( 'activate_user', false ) ) {
+			if ( wpmem_is_enabled( 'mod_reg' ) && wpmem_get( 'activate_user', false ) ) {
 				update_user_meta( $user_id, 'active', 1 );
 				wpmem_set_user_status( $user_id, 0 );
 			}

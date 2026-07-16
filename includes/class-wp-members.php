@@ -553,7 +553,7 @@ class WP_Members {
 			if ( 'pwd_link' != $key || 'login_error' != $key || 'shortcodes' != $key ) {
 				$this->{$key} = $val;
 			}
-			// @todo Check to make sure we don't have an invalid entry.
+			// Check to make sure we don't have an invalid entry.
 			if ( 'cssurl' == $key ) {
 				$this->{$key} = ( 'https://' == $val || 'http://' == $val ) ? '' : $this->{$key};
 			}
@@ -562,7 +562,7 @@ class WP_Members {
 		// Load dependent files.
 		$this->load_dependencies();
 				
-		// @todo Until I think of a better place to put this.
+		// Did user opt-in to diagnotics?
 		$this->optin = get_option( 'wpmembers_optin' );
 		
 		// Load user pages (login, register, user profile).
@@ -1379,7 +1379,6 @@ class WP_Members {
 		$hidden  = array();
 		$default_post_types = array( 'post'=>'Posts', 'page'=>'Page' );
 		$post_types = array_merge( $this->post_types, $default_post_types );
-		// $results = $wpdb->get_results( "SELECT post_id FROM " . $wpdb->prefix . "postmeta WHERE meta_key = '_wpmem_block' AND meta_value = 2" );
 		$results = $wpdb->get_results( 
 			"SELECT
 				p1.id,
@@ -1575,7 +1574,7 @@ class WP_Members {
 	 * Returns a requested text string.
 	 *
 	 * This function manages all of the front-end facing text.
-	 * All defaults can be filtered using wpmem_default_text_strings.
+	 * All defaults can be filtered using wpmem_default_text.
 	 *
 	 * @since 3.1.0
 	 * @deprecated 3.5.0 Use wpmem_get_text() Make sure "official" extensions do not use $wpmem->get_text() before making obsolete.

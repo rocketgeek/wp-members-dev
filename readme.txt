@@ -3,7 +3,7 @@ Contributors: cbutlerjr
 Tags: membership, registration, login, authentication, restriction
 Requires at least: 5.9
 Tested up to: 7.0
-Stable tag: 3.5.7
+Stable tag: 3.6.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 The original WordPress membership plugin with content restriction, user login, custom registration fields, user profiles, and more.
@@ -107,7 +107,7 @@ The FAQs are maintained at https://rocketgeek.com/plugins/wp-members/docs/faqs/
 
 == Upgrade Notice ==
 
-WP-Members 3.5.7 is a code improvement release.  It fixes some minor bugs and adds new filters and some additional features.  WP-Members 3.5.0 is a major update. See changelog for a list of updates. Minimum WP version is 4.0.
+WP-Members 3.6.0 is a major update. See changelog for a list of updates. Minimum WP version is 5.9.
 
 
 == Screenshots ==
@@ -131,7 +131,9 @@ WP-Members 3.5.7 is a code improvement release.  It fixes some minor bugs and ad
 
 == Changelog ==
 
-= 3.5.7 =
+= 3.6.0 =
+
+This is a major update.  The minimum WP version is increased to 5.9.  The codebase underwent an audit for security, code efficiency, translation, and cleanup.
 
 * Fixes a bug in the `wp mem get` CLI command that prevents listing all hidden posts without passing an individual post ID.
 * Fixes a bug in the `wp mem get` CLI command that allows an empty post ID for subcommands that require a post ID.
@@ -155,6 +157,11 @@ WP-Members 3.5.7 is a code improvement release.  It fixes some minor bugs and ad
 * Code review and improvement: security audit, added translator comments, use `gmdate()` instead of `date()`.
 * Code review for WordPress 7.0.
 * Requires WP 5.9 or higher (6.4 or higher recommended).
+
+* Removed filter hooks deprecated one major version or more ago.
+* `wpmem_post_products` will be obsolete in 3.7.0.
+* Added wpmem_add_error()
+* Expanded the use of the WP_Error object. Previously this was just in the login, but now incorporated into registration. It will eventually fully replace $wpmem_themsg, but for now it $wpmem_themsg is late converted to the error object so it can still be used.
 
 = 3.5.6 =
 

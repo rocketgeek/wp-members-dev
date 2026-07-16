@@ -856,7 +856,6 @@ function wpmem_user_register( $tag = "register" ) {
 				if ( in_array( 'user_email', $wpmem->fields ) && ! is_email( $wpmem->user->post_data['user_email']) ) { 
 					$wpmem_themsg = wpmem_get_text( 'reg_valid_email' );
 					return "updaterr";
-					exit();
 				}
 			}
 		}
@@ -865,7 +864,6 @@ function wpmem_user_register( $tag = "register" ) {
 		if ( array_key_exists( 'confirm_email', $wpmem->user->post_data ) && $wpmem->user->post_data['confirm_email'] != $wpmem->user->post_data ['user_email'] ) { 
 			$wpmem_themsg = wpmem_get_text( 'reg_email_match' );
 			return "updaterr";
-			exit();
 		}
 		
 		// Add the user_ID to the fields array.

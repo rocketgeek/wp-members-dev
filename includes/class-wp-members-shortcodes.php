@@ -25,7 +25,7 @@ class WP_Members_Shortcodes {
 
 	public $enable_field = 0;
 	
-	function __construct( $settings ) {
+	public function __construct( $settings ) {
 
 		$this->enable_field = ( isset( $settings['shortcodes']['enable_field'] ) ) ? $settings['shortcodes']['enable_field'] : 0;
 
@@ -143,7 +143,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag     The shortcode's tag (wpmem_form).
 	 * @return string          The form HTML (or nested content, if used and the user is logged in).
 	 */
-	function forms( $atts, $content, $tag ) {
+	public function forms( $atts, $content, $tag ) {
 
 		if ( is_admin() ) {
 			return;
@@ -302,7 +302,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag     The shortcode's tag (wpmem_logged_in).
 	 * @return string|void     The restricted content to display if the user meets the criteria.
 	 */
-	function logged_in( $atts, $content, $tag ) {
+	public function logged_in( $atts, $content, $tag ) {
 
 		global $wpmem;
 
@@ -442,7 +442,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag     The shortcode tab (wpmem_logged_out).
 	 * @return string $content The content, if the user is logged out, otherwise an empty string.
 	 */
-	function logged_out( $atts, $content, $tag ) {
+	public function logged_out( $atts, $content, $tag ) {
 		return ( ! is_user_logged_in() ) ? do_shortcode( $content ) : '';
 	}
 
@@ -471,7 +471,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag     The shortcode's tag (wpmem_show_count).
 	 * @return string $content The user count.
 	 */
-	function user_count( $atts, $content, $tag ) {
+	public function user_count( $atts, $content, $tag ) {
 		
 		// Sanitize the user input.
 		$sanitized_args = wpmem_sanitize_array( $atts );
@@ -508,7 +508,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @return string $content
 	 */
-	function user_profile( $atts, $content, $tag ) {
+	public function user_profile( $atts, $content, $tag ) {
 
 		global $wpmem, $wpmem_themsg;
 
@@ -623,7 +623,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @return string $content
 	 */
-	function loginout( $atts, $content, $tag ) {
+	public function loginout( $atts, $content, $tag ) {
 		$sanitized_atts = wpmem_sanitize_array( $atts );
 		$link = wpmem_loginout( $sanitized_atts );
 		return do_shortcode( $link );
@@ -675,7 +675,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag     The shortcode tag (wpmem_form).
 	 * @return string $content Content to return.
 	 */
-	function fields( $atts, $content, $tag ) {
+	public function fields( $atts, $content, $tag ) {
 
 		if ( is_admin() ) {
 			return;
@@ -1036,7 +1036,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @retrun string $content
 	 */
-	function logout( $atts, $content, $tag ) {
+	public function logout( $atts, $content, $tag ) {
 
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
@@ -1065,7 +1065,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @return string $content
 	 */
-	function tos( $atts, $content, $tag ) {
+	public function tos( $atts, $content, $tag ) {
 
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
@@ -1095,7 +1095,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @retrun string $content
 	 */
-	function avatar( $atts, $content, $tag ) {
+	public function avatar( $atts, $content, $tag ) {
 
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
@@ -1128,7 +1128,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @return string $content
 	 */
-	function login_link( $atts, $content, $tag ) {
+	public function login_link( $atts, $content, $tag ) {
 
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
@@ -1165,7 +1165,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @return string $content
 	 */
-	function login_button( $atts, $content, $tag ) {
+	public function login_button( $atts, $content, $tag ) {
 		$content = wpmem_loginout( array( 'format'=>'button' ) );
 		return do_shortcode( $content );
 	}
@@ -1187,7 +1187,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $tag
 	 * @return string $content
 	 */
-	function form_nonce( $atts, $content, $tag ) {
+	public function form_nonce( $atts, $content, $tag ) {
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
 		$nonce = ( isset( $sanitized_atts['form'] ) ) ? esc_attr( $sanitized_atts['form'] ) : 'register';
@@ -1210,7 +1210,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $content
 	 * @return string $content
 	 */
-	function render_pwd_reset( $wpmem_regchk, $content ) {
+	private function render_pwd_reset( $wpmem_regchk, $content ) {
 
 		global $wpmem;
 
@@ -1291,7 +1291,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $content
 	 * @return string $content
 	 */
-	function render_user_edit( $wpmem_regchk, $content, $atts = false ) {
+	private function render_user_edit( $wpmem_regchk, $content, $atts = false ) {
 
 		global $wpmem_a, $wpmem_themsg;
 		/**
@@ -1330,7 +1330,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $content
 	 * @return string $content
 	 */
-	function render_forgot_username( $wpmem_regchk, $content ) {
+	private function render_forgot_username( $wpmem_regchk, $content ) {
 
 		if ( ! is_user_logged_in() ) {
 
@@ -1346,7 +1346,7 @@ class WP_Members_Shortcodes {
 				break;
 
 			case "usernamesuccess":
-				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' ); // ( isset( $_POST['user_email'] ) ) ? sanitize_email( $_POST['user_email'] ) : '';
+				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' );
 				$msg = sprintf( wpmem_get_text( 'usernamesuccess' ), $email );
 				$content = $content . wpmem_get_display_message( 'usernamesuccess', $msg );
 				$wpmem->regchk = ''; // Clear regchk.
@@ -1374,7 +1374,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $content
 	 * @return string $content
 	 */
-	function render_resend_confirm( $wpmem_regchk, $content ) {
+	private function render_resend_confirm( $wpmem_regchk, $content ) {
 
 		if ( ! is_user_logged_in() ) {
 
@@ -1390,7 +1390,7 @@ class WP_Members_Shortcodes {
 				break;
 
 			case "reconfirmsuccess":
-				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' ); // ( isset( $_POST['user_email'] ) ) ? sanitize_email( $_POST['user_email'] ) : '';
+				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' );
 				$msg = wpmem_get_text( 'reconfirm_success' );
 				$content = $content . wpmem_get_display_message( 'reconfirm_success', $msg );
 				$wpmem->regchk = ''; // Clear regchk.
@@ -1420,7 +1420,7 @@ class WP_Members_Shortcodes {
 	 * @param  string $page
 	 * @return string $str
 	 */
-	function render_links( $page = 'member' ) {
+	private function render_links( $page = 'member' ) {
 
 		global $user_login, $wpmem;
 
