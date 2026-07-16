@@ -696,7 +696,8 @@ class WP_Members {
 		    && ! wpmem_is_woo_active() ) {
 			add_filter( 'lostpassword_url',  array( $this, 'lost_pwd_url' ), 10, 2 );
 		}
-		
+
+		// Adds localized strings from a custom translation file.
 		if ( function_exists( 'wpmem_custom_translation_strings' ) ) {
 			add_filter( 'wpmem_fields', array( $this->forms, 'localize_fields' ), 9 );
 		}
