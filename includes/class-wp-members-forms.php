@@ -172,7 +172,6 @@ class WP_Members_Forms {
 	 * @param array $fields
 	 */
 	function localize_fields( $fields ) {
-		// @todo Find wpmem_custom_translation_strings()
 		if ( function_exists( 'wpmem_custom_translation_strings' ) ) {
 			$string_map = wpmem_custom_translation_strings( get_locale() );
 			foreach ( $string_map as $meta_key => $value ) {
@@ -2140,8 +2139,8 @@ class WP_Members_Forms {
 			 * Filter the message args.
 			 * 
 			 * @since 3.5.0
+			 * @since 3.6.0 Default message no longer wrapped with <p> tag.
 			 * 
-			 * @todo Eliminate <p> tag from before/after.  Use CSS to adjust the div size instead.
 			 * @todo Rework localization of custom strings into dialogs class.
 			 * 
 			 * @param  array  $args  {
@@ -2154,8 +2153,8 @@ class WP_Members_Forms {
 			 */
 			$args = apply_filters( 'wpmem_restricted_msg_args', array( 
 				'msg' => ( $dialogs['restricted_msg'] == $msg ) ? $msg : __( stripslashes( $dialogs['restricted_msg'] ), 'wp-members' ),
-				'before' => '<div id="wpmem_restricted_msg"><p>',
-				'after'  => '</p></div>',
+				'before' => '<div id="wpmem_restricted_msg">',
+				'after'  => '</div>',
 			));
 			$full_html = $args['before'] . $args['msg'] . $args['after'];
 
@@ -2164,6 +2163,7 @@ class WP_Members_Forms {
 			 *
 			 * @since 2.7.3
 			 * @since 3.2.0 Added raw message string and HTML as separate params.
+			 * @since 3.6.0 Default message no longer has <p> tag (changes str_replace() filter possibilities). Should be using wpmem_restricted_msg_args anyway.
 			 *
 			 * @param string $full_html The post restricted message with HTML.
 			 * @param string $message   The raw message string.
