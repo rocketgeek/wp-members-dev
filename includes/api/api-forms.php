@@ -1056,3 +1056,20 @@ function wpmem_add_global_attributes() {
 		'xml:lang'         => true,
 	);
 }
+
+/**
+ * Adds a new error to the WP-Members error object.
+ * 
+ * @since 3.6.0
+ * 
+ * @global object $wpmem->error
+ * @param  string $tag
+ * @param  string $msg
+ */
+function wpmem_add_error( $tag, $msg ) {
+	global $wpmem;
+	if ( ! is_wp_error ( $wpmem->error ) ) {
+		$wpmem->error = new WP_Error();
+	}
+	$wpmem->error->add( $tag, $msg );
+}
