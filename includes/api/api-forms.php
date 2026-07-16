@@ -1073,3 +1073,33 @@ function wpmem_add_error( $tag, $msg ) {
 	}
 	$wpmem->error->add( $tag, $msg );
 }
+
+/**
+ * Filter custom fields for localization.
+ *
+ * @since 3.3.9
+ * @since 3.6.0 Moved out of forms class.
+ *
+ * @param array $fields
+ */
+function wpmem_localize_fields( $fields ) {
+	if ( function_exists( 'wpmem_custom_translation_strings' ) ) {
+		$string_map = wpmem_custom_translation_strings( get_locale() );
+		foreach ( $string_map as $meta_key => $value ) {
+			if ( is_array( $value ) ) {
+				if ( isset( $fields[ $meta_key ]['placeholder'] ) && isset( $value['placeholder'] ) ) {
+					$fields[ $meta_key ]['placeholder'] = $string_map[ $meta_key ]['placeholder'];
+				}
+				if ( isset( $fields[ $meta_key ]['title'] ) && isset( $value['title'] ) ) {
+					$fields[ $meta_key ]['title'] = $string_map[ $meta_key ]['title'];
+				}
+				if ( isset( $fields[ $meta_key ]['label'] ) && isset( $value['label'] ) ) {
+					$fields[ $meta_key ]['label'] = $string_map[ $meta_key ]['label'];
+				}
+			} else {
+				$fields[ $meta_key ]['label'] = $string_map[ $meta_key ];
+			}
+		}
+	}
+	return $fields;
+}
