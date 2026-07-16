@@ -15,14 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Members_User_Export {
 
 	/**
-	 * Used instead of getting global.
-	 * 
-	 * @since 3.4.1
-	 * @todo May change how this is used. (Currently just replaces minor use of $wpmem global object for this one thing.)
-	 */
-	public static $membership_product_stem = "_wpmem_products_";
-
-	/**
 	 * New export function to export all or selected users
 	 *
 	 * @since 2.9.7
@@ -221,8 +213,7 @@ class WP_Members_User_Export {
 							$role = wpmem_get_user_role( $user, true ); // As of 3.4, wpmem_get_user_role() can get all roles.
 							$row['role'] = ( is_array( $role ) ) ? implode( ",", $role ) : $role;
 							break;
-						case ( self::$membership_product_stem === substr( $meta, 0, strlen( self::$membership_product_stem ) ) ):
-							$product = str_replace( self::$membership_product_stem, '', $meta );
+						case ( "_wpmem_products_" === substr( $meta, 0, strlen( "_wpmem_products_" ) ) ):
 							$row[ $meta ] = wpmem_get_user_meta( $user, $meta );
 							// If value is a date and false is not the format_date option...
 							if ( false !== $args['date_format'] && '' != $row[ $meta ] && $row[ $meta ] > 2 ) {
@@ -307,7 +298,7 @@ class WP_Members_User_Export {
 			// Don't bother if it's empty (i.e. memberships enabled, but none created).
 			if ( $membership_products && ! empty( $membership_products ) ) {
 				foreach ( $membership_products as $product_key => $product ) {
-					$export_fields[ self::$membership_product_stem . $product_key ] = $membership_products[ $product_key ]['title'];
+					$export_fields[ "_wpmem_products_" . $product_key ] = $membership_products[ $product_key ]['title'];
 				}
 			}
 		}
