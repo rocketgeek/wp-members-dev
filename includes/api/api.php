@@ -632,7 +632,10 @@ function wpmem_add_custom_dialog( $dialogs, $tag, $msg, $label ) {
  */
 function wpmem_has_error() {
 	global $wpmem;
-	return ( is_wp_error( $wpmem->error ) ) ? true : false;
+	if ( is_wp_error( $wpmem->error ) ) {
+		return ( $wpmem->error->has_errors() ) ? true : false;
+	}
+	return false;
 }
 
 /**
