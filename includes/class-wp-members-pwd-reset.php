@@ -42,7 +42,6 @@ class WP_Members_Pwd_Reset {
 		add_action( 'init',               array( $this, 'init' ) );
 		add_filter( 'wpmem_email_filter', array( $this, 'add_reset_key_to_email' ), 10, 3 );
 		add_action( 'template_redirect',  array( $this, 'handle_reset'           ), 20  );
-		//add_filter( 'the_content',        array( $this, 'display_content'        ), 100 );
 	}
 
 	function init() {
@@ -231,19 +230,6 @@ class WP_Members_Pwd_Reset {
 		}
 		return $arr;
 	}
-
-	/**
-	 * Display page content to user.
-	 *
-	 * @since 3.3.5
-	 *
-	 * @param  string  $content
-	 * @return string  $content
-	 */
-	function display_content( $content ) {
-		return ( false != $this->content ) ? $this->content : $content;
-	}
-
 	
 	function error_msg( $code, $message = false ) {
 		if ( $message ) {

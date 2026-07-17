@@ -967,7 +967,7 @@ class WP_Members_Forms {
 			$tag = $mixed;
 		}
 
-		global $wpmem;
+		global $wpmem; // All that is left is for captcha and setting the reg form showing flag at the end.
 
 		// If editing, the user object of the user being edit.
 		$user = ( 'edit' == $tag ) ? get_user_by( 'ID', get_current_user_id() ) : false;

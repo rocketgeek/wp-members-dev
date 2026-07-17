@@ -83,10 +83,6 @@ class WP_Members_Dialogs {
 			
 			// Password reset form.
 			'pwdreset_heading'     => esc_html__( 'Reset Forgotten Password', 'wp-members' ),
-			// @note As of version 3.5.0, old password reset is obsolete.
-			//       The field label used is "login_username" (see above).
-			//'pwdreset_username'    => esc_html__( 'Username', 'wp-members' ),
-			//'pwdreset_email'       => esc_html__( 'Email', 'wp-members' ),
 			'pwdreset_button'      => esc_html__( 'Reset Password' ),
 			'username_link_before' => esc_html__( 'Forgot username?', 'wp-members' ) . '&nbsp;',
 			'username_link'        => esc_html__( 'Click here', 'wp-members' ),
@@ -164,8 +160,7 @@ class WP_Members_Dialogs {
 			/* translators: %s is the username of the logged in user. */
 			'widget_status'         => esc_html__( 'You are logged in as %s', 'wp-members' ),
 			'widget_logout'         => esc_html__( 'click here to log out', 'wp-members' ),
-			'widget_login_failed_old' => __( 'Login Failed!<br />You entered an invalid username or password.', 'wp-members' ),
-			'widget_login_failed'   => esc_html__( 'Invalid username or password.', 'wp-members' ), // @todo New string replacement. Replace widget_login_failed when translated.
+			'widget_login_failed'   => esc_html__( 'Invalid username or password.', 'wp-members' ),
 			'widget_not_logged_in'  => '',
 			'widget_login_username' => esc_html__( 'Username or Email', 'wp-members' ),
 			'widget_login_password' => esc_html__( 'Password', 'wp-members' ),
@@ -197,7 +192,6 @@ class WP_Members_Dialogs {
 			'product_restricted_single'    => esc_html__( "This content requires the following membership: ", 'wp-members' ),
 			'product_restricted_multiple'  => esc_html__( "This content requires one of the following memberships: ", 'wp-members' ),
 
-			// @todo These are new in 3.5.0 (moved from other areas of the plugin)
 			'rs_captcha_error' => esc_html__( 'Error with the captcha code configuration. Please notify the site administrator', 'wp-members' ),
 			'rs_captcha_empty' => esc_html__( 'Captcha code was empty. You must complete the captcha code.', 'wp-members' ),
 			'rs_captcha_wrong' => esc_html__( 'You have entered an incorrect code value. Please try again.', 'wp-members' ),
@@ -359,10 +353,8 @@ class WP_Members_Dialogs {
 
 		// defaults
 		$defaults = array(
-			'div_before' => '<div class="wpmem_msg">',
-			'div_after'  => '</div>', 
-			'p_before'   => '', // @deprecated 3.4.0
-			'p_after'    => '', // @deprecated 3.4.0
+			'div_before' => '<div id="' . esc_attr( 'wpmem_' . $tag ) . '" class="wpmem_msg">',
+			'div_after'  => '</div>',
 			'tags'       => array(
 				'user',
 				'email',
@@ -376,16 +368,6 @@ class WP_Members_Dialogs {
 			),
 		);
 
-		/**
-		 * Filter the message arguments.
-		 *
-		 * @since 2.9.0
-		 * @deprecated 3.3.0 Use wpmem_msg_defaults instead.
-		 *
-		 * @param array An array of arguments to merge with defaults.
-		 */
-		$args = apply_filters_deprecated( 'wpmem_msg_args', array(''), '3.3.0', 'wpmem_msg_defaults' );
-
 		/** This filter is documented in /includes/class-wp-members-admin-api.php */
 		$dialogs = apply_filters( 'wpmem_dialogs', get_option( 'wpmembers_dialogs' ) );
 
@@ -394,7 +376,6 @@ class WP_Members_Dialogs {
 			if ( is_array( $dialogs[ $tag ] ) ) {
 				$msg = stripslashes( $dialogs[ $tag ]['value'] );
 			} else {
-				// wpmem_get_text() returns and escaped value using esc_html().
 				$msg = wpmem_get_text( $tag );
 				/*
 				 * If the value in the dialogs array is the same as the default, use the default (which is escaped). 
@@ -412,23 +393,6 @@ class WP_Members_Dialogs {
 		}
 	
 		$defaults['msg'] = $msg;
-
-		/**
-		 * Filter the message array
-		 *
-		 * @since 2.9.2
-		 * @since 3.1.1 added $dialogs parameter.
-		 * @deprecated 3.3.0 Use wpmem_msg_defaults instead.
-		 * @todo Obsolete in 3.5.0
-		 *
-		 * @param array  $defaults An array of the defaults.
-		 * @param string $tag      The tag that we are on, if any.
-		 * @param array  $dialogs
-		 */
-		$defaults = apply_filters_deprecated( 'wpmem_msg_dialog_arr', array( $defaults, $tag, $dialogs ), '3.3.0', 'wpmem_msg_defaults' );
-
-		// Merge $args with defaults.
-		$args = wp_parse_args( $args, $defaults );
 
 		// Backwards compatibility for 'toggles'.
 		if ( isset( $args['toggles'] ) ) {

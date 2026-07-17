@@ -374,7 +374,7 @@ function wpmem_current_post_id() {
  *
  * @global string  $user_login
  * @param  boolean $echo       Determines whether function should print result or not (default: true).
- * @return string  $status     The user status string produced by wpmem_inc_memberlinks().
+ * @return string  $status     The user status string produced by $wpmem->shortcodes->render_links().
  */
 function wpmem_login_status( $echo = true, $tag = false ) {
 

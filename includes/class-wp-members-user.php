@@ -125,10 +125,6 @@ class WP_Members_User {
 			return "loginfailed";
 		} else {
 			
-			// Make sure current user is set.
-			// @todo Verify that removing this resovles 2 sessions issues per https://wordpress.org/support/topic/creating-multiple-same-sessions-on-login/
-			// wpmem_set_as_logged_in( $user->ID );
-			
 			$redirect_to = wpmem_get( 'redirect_to', false );
 			$redirect_to = ( $redirect_to ) ? esc_url_raw( trim( $redirect_to ) ) : esc_url_raw( wpmem_current_url() );
 			/** This filter defined in wp-login.php */
@@ -531,7 +527,7 @@ class WP_Members_User {
 
 			// Handle file uploads, if any.
 			if ( ! empty( $_FILES ) ) {
-				$this->upload_user_files( $user_id, $wpmem->fields );
+				$this->upload_user_files( $user_id, wpmem_fields() );
 			}
 		}
 	
@@ -673,10 +669,7 @@ class WP_Members_User {
 		$this->pwd_reset = new WP_Members_Pwd_Reset;
 		if ( isset( $_POST['formsubmit'] ) ) {
 			if ( 'link' == $action ) {
-				$user = wpmem_get( 'user', false );
-				$user = ( strpos( $user, '@' ) ) ? sanitize_email( $user ) : sanitize_user( $user );
-				$args = array( 'user' => $user );
-				return $this->password_link( $args );
+				return $this->password_link();
 			} else {
 				$args = array(
 					'pass1' => wpmem_get( 'pass1', false ),
@@ -750,16 +743,18 @@ class WP_Members_User {
 		 * Filter the password reset arguments.
 		 *
 		 * @since 3.4.2
+		 * @deprecated 3.6.0 No replacement exists.
 		 *
 		 * @param array The username or email.
 		 */
-		$arr = apply_filters( 'wpmem_pwdreset_args', $args );
+		$arr = apply_filters_deprecated( 'wpmem_pwdreset_args', array(''), '3.6.0' );
 
-		$errors = new WP_Error();
+		$user = wpmem_get( 'user', false );
+		$user = ( is_email( $user ) ) ? sanitize_email( $user ) : sanitize_user( $user );
 
-		if ( ! isset( $arr['user'] ) || '' == $arr['user'] ) { 
-			// There was an empty field.
-			$errors->add( 'empty', wpmem_get_text( 'pwd_reset_empty' ) );
+		// If no username or email given.
+		if ( ! $user ) {
+			wpmem_add_error( 'empty', wpmem_get_text( 'pwd_reset_empty' ) );
 			return "pwdreseterr";
 
 		} else {
@@ -769,12 +764,11 @@ class WP_Members_User {
 				return "reg_generic";
 			}
 
-			$user_to_check = ( strpos( $arr['user'], '@' ) ) ? sanitize_email( $arr['user'] ) : sanitize_user( $arr['user'] );
-
-			if ( username_exists( $user_to_check ) ) {
-				$user = get_user_by( 'login', $user_to_check );
-			} elseif ( email_exists( $user_to_check ) ) {
-				$user = get_user_by( 'email', $user_to_check );
+			// Check if the username or email is valid.
+			if ( username_exists( $user ) ) {
+				$user = get_user_by( 'login', $user );
+			} elseif ( email_exists( $user ) ) {
+				$user = get_user_by( 'email', $user );
 			} else {
 				$user = false;
 			}

@@ -851,7 +851,6 @@ function wpmem_user_register( $tag = "register" ) {
 			if ( $wpmem->user->post_data['user_email'] != $current_user->user_email ) {
 				if ( email_exists( $wpmem->user->post_data['user_email'] ) ) { 
 					return "email";
-					exit();
 				} 
 				if ( in_array( 'user_email', $wpmem->fields ) && ! is_email( $wpmem->user->post_data['user_email']) ) { 
 					$wpmem_themsg = wpmem_get_text( 'reg_valid_email' );

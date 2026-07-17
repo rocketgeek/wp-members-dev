@@ -767,12 +767,8 @@ class WP_Members {
 	 *
 	 * @since 3.0.0
 	 * @since 3.3.0 Deprecated all but exp and trl constants.
-	 * 
-	 * @todo Can WPMEM_MOD_REG be deprecated?
 	 */
 	function load_constants() {
-		( ! defined( 'WPMEM_MOD_REG' ) ) ? define( 'WPMEM_MOD_REG', $this->mod_reg   ) : '';
-
 		// @todo these are deprecated as of PayPal extension version 0.9.9.1.
 		( ! defined( 'WPMEM_USE_EXP' ) ) ? define( 'WPMEM_USE_EXP', $this->use_exp   ) : '';
 		( ! defined( 'WPMEM_USE_TRL' ) ) ? define( 'WPMEM_USE_TRL', $this->use_trial ) : '';
@@ -1031,11 +1027,11 @@ class WP_Members {
 			 * @since 2.9.8
 			 * @since 3.0.0 Moved to is_blocked() in WP_Members object.
 			 * @since 3.3.0 Passes $defaults, second argument deprecated.
+			 * @since 3.6.0 Second argument fully obsolete.
 			 *
-			 * @param array $args     $defaults.
-			 * @param array $defaults Deprecated 3.3.0. @todo Obsolete in 3.5.0
+			 * @param array $args  Defaults.
 			 */
-			$args = apply_filters( 'wpmem_block_args', $defaults, $defaults );
+			$args = apply_filters( 'wpmem_block_args', $defaults );
 	
 			// Merge $args with defaults.
 			$args = ( wp_parse_args( $args, $defaults ) );
@@ -1995,16 +1991,6 @@ class WP_Members {
 	 */
 	function enqueue_captcha_scripts() {
 		WP_Members_Captcha::enqueue_scripts();
-	}
-
-	/**
-	 * Check for errors.
-	 * 
-	 * @since 3.4.6
-	 * @since 3.4.8 Check as WP_Error (use is_wp_error()).
-	 */
-	public function has_errors() {
-		return ( is_wp_error( $this->error ) && $this->error->has_errors() ) ? true : false;
 	}
 
 	/**

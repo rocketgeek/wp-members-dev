@@ -117,7 +117,7 @@ class WP_Members_Shortcodes {
 	 * @since 3.2.0 Added id, exclude_fields, include_fields, and product attributes.
 	 * @since 3.3.2 Added WP default login form.
 	 *
-	 * @todo Complete support for id, exlude_fields, include_fields, and product attributes
+	 * @todo Complete support for id, exclude_fields, include_fields, and product attributes
 	 *       May require updates to core functions.
 	 *
 	 * @global object $wpmem        The WP_Members object.
@@ -233,17 +233,7 @@ class WP_Members_Shortcodes {
 				break;
 
 			case 'forgot_username':
-				$content = $this->render_forgot_username( $wpmem->regchk, $content );
-				break;
-
-			// @todo Review - is this actually ever triggered?
-			case 'customizer_login':
-				$content = wpmem_login_form();
-				break;
-
-			// @todo Review - is this actually ever triggered?
-			case 'customizer_register':
-				$content = wpmem_register_form( 'new' );
+				$content = $this->render_forgot_username( wpmem_get_form_state(), $content );
 				break;
 				
 			case 'login':
