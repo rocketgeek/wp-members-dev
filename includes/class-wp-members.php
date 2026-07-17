@@ -617,6 +617,7 @@ class WP_Members {
 		
 		// Load dropins.
 		if ( $this->dropins ) {
+			// @todo Create a hash for this dir.
 			$dir_info = wpmem_upload_dir();
 			$this->dropin_dir = trailingslashit( $dir_info['wpmem_base_dir'] ) . 'dropins';
 			/**
@@ -738,6 +739,8 @@ class WP_Members {
 		global $wp_filesystem;
 		require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		WP_Filesystem(); // This sets up $wp_filesystem
+
+		// @todo Check for .htaccess/index.php
 
 		/**
 		 * Fires before dropins load (for adding additional drop-ins).
@@ -1782,6 +1785,7 @@ class WP_Members {
 					}
 
 					// Apply the_content_more_link filter if one exists (will match up all 'more' link text).
+					// This is a native WP filter hook, so it is not prefixed.
 					/** This filter is documented in /wp-includes/post-template.php */
 					$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
@@ -1895,7 +1899,7 @@ class WP_Members {
 		// Plugin textdomain.
 		$domain = 'wp-members';
 
-		// Wordpress locale.
+		// Wordpress locale. This is a native WP filter hook, so it is not prefixed.
 		/** This filter is documented in wp-includes/l10n.php */
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
@@ -2056,6 +2060,8 @@ class WP_Members {
 		// Check for anything that we should stop execution for (currently just the default tos).
 		if ( 'display' == wpmem_get( 'tos', false, 'get' ) ) {
 			// If themes are not loaded, we don't need them.
+			// WP_USE_THEMES is a core WP constant. We're checking here to see if it is defined and if not, defining it.
+			// This function is deprecated and intended for removal in 3.7.0 anyway.
 			$user_themes = ( ! defined( 'WP_USE_THEMES'  ) ) ? define( 'WP_USE_THEMES',  false  ) : '';
 			$this->load_default_tos();
 			die();

@@ -201,7 +201,7 @@ class WP_Members_Walker_Nav_Menu extends Walker_Nav_Menu {
 				 * @param stdClass $args    An object of menu item arguments.
 				 * @param int      $id      Nav menu ID.
 				 */
-				do_action( 'wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args, $id );
+				do_action( 'wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args, $id ); // This is a native WP hook, so it is not prefixed.
                 // end added section 
                 ?>
 	            <div class="menu-item-actions description-wide submitbox">

@@ -287,7 +287,7 @@ class widget_wpmemwidget extends WP_Widget {
 			// Handle outside elements added to the login form (currently ONLY for login).
 			if ( $args['login_form_action'] ) {
 				ob_start();
-				do_action( 'login_form' );
+				do_action( 'login_form' ); // This is a native WP hook, so it is not prefixed.
 				$add_to_form = ob_get_contents();
 				ob_end_clean();
 				$form.= $add_to_form;
