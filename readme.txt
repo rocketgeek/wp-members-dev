@@ -159,9 +159,12 @@ This is a major update.  The minimum WP version is increased to 5.9.  The codeba
 * Requires WP 5.9 or higher (6.4 or higher recommended).
 
 * Removed filter hooks deprecated one major version or more ago.
+  ** Old login_failed() now fully obsolete.
+  ** Old dialog filters now fully obsolete (expand this explanation to which ones specifically).
 * `wpmem_post_products` will be obsolete in 3.7.0.
 * Added wpmem_add_error()
 * Expanded the use of the WP_Error object. Previously this was just in the login, but now incorporated into registration. It will eventually fully replace $wpmem_themsg, but for now it $wpmem_themsg is late converted to the error object so it can still be used.
+* $wpmem->regchk now wpmem_get_form_state().
 
 = 3.5.6 =
 

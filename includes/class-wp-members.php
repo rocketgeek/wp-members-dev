@@ -1136,11 +1136,6 @@ class WP_Members {
 
 		$content = ( is_single() || is_page() ) ? $content : wpmem_do_excerpt( $content );
 
-		if ( $this->regchk == "captcha" ) {
-			global $wpmem_captcha_err;
-			$wpmem_themsg = wpmem_get_text( 'reg_captcha_err' )  . '<br /><br />' . $wpmem_captcha_err;
-		}
-
 		// Block/unblock Posts.
 		if ( ! is_user_logged_in() && true == $this->is_blocked() ) {
 
@@ -1194,7 +1189,7 @@ class WP_Members {
 				if ( get_theme_mod( 'wpmem_show_logged_out_state', false ) ) {
 					$content = '';
 					if ( get_theme_mod( 'wpmem_show_form_message_dialog', false ) ) {
-						$content = $this->dialogs->login_failed();
+						$content = wpmem_get_display_message( 'loginfailed' );
 					} else {
 						$content = wpmem_restricted_message();
 					}
