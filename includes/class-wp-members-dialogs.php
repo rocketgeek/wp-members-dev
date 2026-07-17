@@ -26,16 +26,15 @@ class WP_Members_Dialogs {
 	 * Returns a requested text string.
 	 *
 	 * This function manages all of the front-end facing text.
-	 * All defaults can be filtered using wpmem_default_text_strings.
+	 * All defaults can be filtered using wpmem_default_text.
 	 *
 	 * @since 3.1.0
 	 *
-	 * @global object $wpmem
-	 *
-	 * @param  string $str
-	 * @return string $text
+	 * @global  object  $wpmem
+	 * @param   string  $tag   The dialog to get.
+	 * @return  string  $text  The requested dialog.
 	 */	
-	function get_text( $str ) {
+	function get_text( $tag ) {
 		global $wpmem;
 		
 		// Default Form Fields.
@@ -116,7 +115,7 @@ class WP_Members_Dialogs {
 			
 			// Error messages and dialogs.
 			'login_failed_heading' => esc_html__( 'Login Failed!', 'wp-members' ), // @deprecated 3.4.0
-			'login_failed'         => esc_html__( 'You entered an invalid username or password.', 'wp-members' ),
+			'loginfailed'          => esc_html__( 'You entered an invalid username or password.', 'wp-members' ),
 			'login_failed_link'    => esc_html__( 'Click here to continue.', 'wp-members' ), // @deprecated 3.4.0
 			'pwdchangempty'        => esc_html__( 'Password fields cannot be empty', 'wp-members' ),
 			'usernamefailed'       => esc_html__( 'Sorry, that email address was not found.', 'wp-members' ),
@@ -257,7 +256,7 @@ class WP_Members_Dialogs {
 		
 		// Manage legacy keys (i.e. sb_ to widget_ ). 
 		// @todo Legacy keys to be obsolete by 3.5.0
-		$str = ( false !== strpos( $str, 'sb_' ) ) ? str_replace( 'sb_', 'widget_', $str ) : $str;
+		$tag = ( false !== strpos( $tag, 'sb_' ) ) ? str_replace( 'sb_', 'widget_', $tag ) : $tag;
 		foreach ( $text as $key => $value ) {
 			if ( false !== strpos( $key, 'sb_' ) ) {
 				$new_key = str_replace( 'sb_', 'widget_', $key );
@@ -265,76 +264,12 @@ class WP_Members_Dialogs {
 			}
 		}
 
-		if ( isset( $text[ $str ] ) ) {
-			return $text[ $str ];
+		if ( isset( $text[ $tag ] ) ) {
+			return $text[ $tag ];
 		} else {
 			wpmem_write_log( 'Unknown dialog key "' . $key . '" in WP_Members_Dialogs::get_text()' );
 			return '';
 		}
-	}
-	
-	/**
-	 * Login Failed Dialog.
-	 *
-	 * Returns the login failed error message.
-	 *
-	 * @since 1.8
-	 * @since 3.4.0 Removed "continue" (return) link (login form now displays by default under the error message).
-	 *
-	 * @todo 3.5.0 will fold this into the main message function and this functions associated filters will be obsolete.
-	 *
-	 * @global object $wpmem The WP_Members object.
-	 * @return string $str   The generated html for the login failed message.
-	 */
-	function login_failed() {
-
-		global $wpmem;
-
-		// Defaults.
-		$defaults = array(
-			'div_before'     => '',
-			'div_after'      => '', 
-			'heading_before' => '',
-			'heading'        => '', //wpmem_get_text( 'login_failed_heading' ),
-			'heading_after'  => '',
-			'p_before'       => '',
-			'message'        => ( $wpmem->error ) ? $wpmem->error->get_error_message() : wpmem_get_text( 'login_failed' ), // @todo $this->error
-			'p_after'        => '',
-			//'link'           => '<a href="' . esc_url( $_SERVER['REQUEST_URI'] ) . '">' . wpmem_get_text( 'login_failed_link' ) . '</a>',
-		);
-
-		/**
-		 * Filter the login failed dialog arguments.
-		 *
-		 * @since 2.9.0
-		 * @since 3.3.3 Should pass defaults to filter.
-		 * @deprecated 3.4.0
-		 * 
-		 * @todo Apply apply_filters_deprecated()
-		 *
-		 * @param array An array of arguments to merge with defaults.
-		 */
-		$args = apply_filters( 'wpmem_login_failed_args', $defaults );
-
-		// Merge $args with defaults.
-		$args = wp_parse_args( $args, $defaults );
-
-		$str = $args['div_before']
-			. $args['heading_before'] . $args['heading'] . $args['heading_after']
-			. $args['p_before'] . $args['message'] . $args['p_after']
-			//. $args['p_before'] . $args['link'] . $args['p_after']
-			. $args['div_after'];
-
-		/**
-		 * Filter the login failed dialog.
-		 *
-		 * @since 2.7.3
-		 *
-		 * @param string $str The login failed dialog.
-		 */
-		$str = apply_filters( 'wpmem_login_failed', $str );
-
-		return $str;
 	}
 
 	/**
@@ -345,13 +280,19 @@ class WP_Members_Dialogs {
 	 * @todo This replaces some other functions and usage seems to be inconsistent.
 	 *       Review and replace useage as needed.
 	 * 
-	 * @param  $tag     string
-	 * @param  $custom  string
-	 * @return $message string
+	 * @param  string  $pretag  Tag to identify the specific message.
+	 * @param  string  $custom  Custom message.
+	 * @return string  $message 
 	 */
-	function get_message( $tag, $custom = false ) {
+	function get_message( $pretag, $custom = false ) {
 
-		// defaults
+		if ( is_wp_error( $pretag ) ) {
+			$tag = $pretag->get_error_code();
+			$custom = $pretag->get_error_message();
+		} else {
+			$tag = $pretag;
+		}
+
 		$defaults = array(
 			'div_before' => '<div id="' . esc_attr( 'wpmem_' . $tag ) . '" class="wpmem_msg">',
 			'div_after'  => '</div>',
@@ -378,13 +319,15 @@ class WP_Members_Dialogs {
 			} else {
 				$msg = wpmem_get_text( $tag );
 				/*
-				 * If the value in the dialogs array is the same as the default, use the default (which is escaped). 
-				 * If not, use the value from the dialogs array (which may contain HTML and uses wp_kses_post()).
+				 * If the value in the dialogs array is the same as the default, use the default. 
+				 * If not, use the value from the dialogs array (which may contain HTML).
 				 */
-				$msg = ( $dialogs[ $tag ] == $msg ) ? $msg : wp_kses_post( __( stripslashes( $dialogs[ $tag ] ), 'wp-members' ) );
+				$msg = ( $dialogs[ $tag ] == $msg ) ? $msg : __( stripslashes( $dialogs[ $tag ] ), 'wp-members' );
 			}
 		} elseif ( 'loginfailed' == $tag ) {
-			$msg = $this->login_failed();
+			global $wpmem;
+			// @todo are there API functions for these?
+			$msg = ( $wpmem->error ) ? $wpmem->error->get_error_message() : wpmem_get_text( 'loginfailed' );
 		} elseif ( $custom ) {
 			$msg = $custom;
 		} else {
@@ -413,7 +356,7 @@ class WP_Members_Dialogs {
 		// @todo Temporary(?) workaround for custom dialogs as an array (WP-Members Security).
 		$display_msg = ( is_array( $args['msg'] ) ) ? $args['msg']['value'] : $args['msg'];
 
-		$str = $args['div_before'] . stripslashes( $display_msg ) . $args['div_after'];
+		$html = $args['div_before'] . $display_msg . $args['div_after'];
 
 		/**
 		 * Filter the message.
@@ -421,10 +364,10 @@ class WP_Members_Dialogs {
 		 * @since 2.7.4
 		 * @since 3.1.0 Added tag.
 		 *
-		 * @param string $str The message.
-		 * @param string $tag The tag of the message being displayed.
+		 * @param string $html The message.
+		 * @param string $tag  The tag of the message being displayed.
 		 */
-		return apply_filters( 'wpmem_msg_dialog', $str, $tag );
+		return wp_kses_post( apply_filters( 'wpmem_msg_dialog', $html, $tag ) );
 	}
 
 	/**
