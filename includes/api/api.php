@@ -624,6 +624,44 @@ function wpmem_add_custom_dialog( $dialogs, $tag, $msg, $label ) {
 }
 
 /**
+ * Checks if there is an error.
+ * 
+ * @since 3.6.0
+ * 
+ * @return boolean
+ */
+function wpmem_has_error() {
+	global $wpmem;
+	return ( is_wp_error( $wpmem->error ) ) ? true : false;
+}
+
+/**
+ * If there is an error, get the error message.
+ * 
+ * @since 3.6.0
+ */
+function wpmem_get_error_message() {
+	global $wpmem;
+	if ( wpmem_has_error() ) {
+		return $wpmem->error->get_error_message();
+	}
+	return false;
+}
+
+/**
+ * If there is an error, get the error code. 
+ * 
+ * @since 3.6.0
+ */
+function wpmem_get_error_code() {
+	global $wpmem;
+	if ( wpmem_has_error() ) {
+		return $wpmem->error->get_error_code();
+	}
+	return false;
+}
+
+/**
  * Gets an array of hidden post IDs.
  *
  * @since 3.3.1
