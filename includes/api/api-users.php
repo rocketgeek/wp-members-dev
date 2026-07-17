@@ -752,8 +752,10 @@ function wpmem_user_register( $tag = "register" ) {
 	$wpmem->user->register_validate( $tag );
 	
 	// @todo Added as a fix for legacy versions of security extension and any wpmem_pre_register_data action that might null $wpmem_themsg.
-	if ( $wpmem_themsg ) { 
-		return $wpmem_themsg;
+	// @todo Updated to use wpmem_add_error(), but this early check will be obsolete in 3.7.0.
+	if ( $wpmem_themsg ) {
+		wpmem_add_error( 'reg_error', $wpmem_themsg );
+		return;
 	}
 	
 	switch ( $tag ) {
@@ -785,9 +787,15 @@ function wpmem_user_register( $tag = "register" ) {
 		do_action( 'wpmem_pre_register_data', $wpmem->user->post_data );
 
 		// If the _pre_register_data hook sends back an error message.
-		if ( $wpmem_themsg ) { 
-			return $wpmem_themsg;
+		if ( $wpmem_themsg || wpmem_has_error() ) { 
+			// If $wpmem_themsg has a value here, it is an error. Add new error.
+			if ( $wpmem_themsg ) {
+				wpmem_add_error( 'reg_error', $wpmem_themsg );
+			}
+			return 'reg_error';
 		}
+
+		// Error checks and form validation are complete at this point.
 
 		// Main new user fields are ready.
 		$new_user_fields = array (
@@ -837,11 +845,6 @@ function wpmem_user_register( $tag = "register" ) {
 
 	case "update":
 
-		if ( $wpmem_themsg ) { 
-			return "updaterr";
-			exit();
-		}
-
 		/*
 		 * Doing a check for existing email is not the same as a new reg. check first to 
 		 * see if it's different, then check if it is a valid address and it exists.
@@ -849,11 +852,12 @@ function wpmem_user_register( $tag = "register" ) {
 		global $current_user; wp_get_current_user();
 		if ( isset( $wpmem->user->post_data['user_email'] ) ) {
 			if ( $wpmem->user->post_data['user_email'] != $current_user->user_email ) {
-				if ( email_exists( $wpmem->user->post_data['user_email'] ) ) { 
+				if ( email_exists( $wpmem->user->post_data['user_email'] ) ) {
+					wpmem_add_error( 'reg_email_taken', wpmem_get_text( 'reg_email_taken' ) );
 					return "email";
 				} 
 				if ( in_array( 'user_email', $wpmem->fields ) && ! is_email( $wpmem->user->post_data['user_email']) ) { 
-					$wpmem_themsg = wpmem_get_text( 'reg_valid_email' );
+					wpmem_add_error( 'reg_valid_email', wpmem_get_text( 'reg_valid_email' ) );
 					return "updaterr";
 				}
 			}
@@ -861,7 +865,7 @@ function wpmem_user_register( $tag = "register" ) {
 
 		// If form includes email confirmation, validate that they match.
 		if ( array_key_exists( 'confirm_email', $wpmem->user->post_data ) && $wpmem->user->post_data['confirm_email'] != $wpmem->user->post_data ['user_email'] ) { 
-			$wpmem_themsg = wpmem_get_text( 'reg_email_match' );
+			wpmem_add_error( 'reg_email_match', wpmem_get_text( 'reg_email_match' ) );
 			return "updaterr";
 		}
 		
@@ -886,9 +890,15 @@ function wpmem_user_register( $tag = "register" ) {
 		do_action( 'wpmem_pre_update_data', $wpmem->user->post_data );
 		
 		// If the _pre_update_data hook sends back an error message.
-		if ( $wpmem_themsg ){ 
+		if ( $wpmem_themsg || wpmem_has_error() ) { 
+			// If $wpmem_themsg has a value here, it is an error. Add new error.
+			if ( $wpmem_themsg ) {
+				wpmem_add_error( 'updaterr', $wpmem_themsg );
+			}
 			return "updaterr";
 		}
+
+		// Error checks and form validation are complete at this point.
 
 		// A list of fields that can be updated by wp_update_user.
 		$native_fields = array( 

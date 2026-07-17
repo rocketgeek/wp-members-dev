@@ -120,7 +120,6 @@ class WP_Members_Shortcodes {
 	 * @todo Complete support for id, exclude_fields, include_fields, and product attributes
 	 *       May require updates to core functions.
 	 *
-	 * @global object $wpmem        The WP_Members object.
 	 * @global string $wpmem_themsg The WP-Members message container.
 	 *
 	 * @param  array  $atts {
@@ -149,7 +148,7 @@ class WP_Members_Shortcodes {
 			return;
 		}
 
-		global $wpmem, $wpmem_themsg;
+		global $wpmem_themsg;
 
 		// Sanitize the user input.
 		$sanitized_atts = wpmem_sanitize_array( $atts );
@@ -206,30 +205,36 @@ class WP_Members_Shortcodes {
 					 */
 					$content = ( $content ) ? $content : $this->render_links( 'register' );
 				} elseif ( is_user_logged_in() && is_customize_preview() && get_theme_mod( 'wpmem_show_form_message_dialog', false ) ) {
-					$wpmem_themsg = wpmem_get_text( 'customizer_generic_msg' );
-					$content  = wpmem_get_display_message( $wpmem->regchk, $wpmem_themsg );
+					$content  = wpmem_get_display_message( wpmem_get_form_state(), wpmem_get_text( 'customizer_generic_msg' ) );
 					$content .= wpmem_register_form( $reg_form_args );
 				} else {
-					if ( $wpmem->regchk == 'loginfailed' ) {
-						$content = $wpmem->dialogs->login_failed() . wpmem_login_form();
+					if ( wpmem_get_form_state() == 'loginfailed' ) {
+						$content = wpmem_get_display_message( 'loginfailed' ) . wpmem_login_form();
 						break;
 					}
-					// @todo Can this be moved into another function? Should $wpmem get an error message handler?
-					if ( $wpmem->regchk == 'captcha' ) {
-						global $wpmem_captcha_err;
-						$wpmem_themsg = wpmem_get_text( 'reg_captcha_err' ) . '<br /><br />' . $wpmem_captcha_err;
+
+					if ( wpmem_get_form_state() == 'success' ) {
+						$content  = wpmem_get_display_message( wpmem_get_form_state(), $wpmem_themsg );
+						$content .= wpmem_login_form();
+					} elseif ( wpmem_has_error() ) {
+						$content  = wpmem_get_display_message( wpmem_get_error_code(), wpmem_get_error_message() );
+						$content .= wpmem_register_form( $reg_form_args );
+					} else {
+						if ( $wpmem_themsg ) {
+							$content  = wpmem_get_display_message( wpmem_get_form_state(), $wpmem_themsg );
+						}
+						$content .= wpmem_register_form( $reg_form_args );
 					}
-					$content  = ( $wpmem_themsg || $wpmem->regchk == 'success' ) ? wpmem_get_display_message( $wpmem->regchk, $wpmem_themsg ) : '';
-					$content .= ( $wpmem->regchk == 'success' ) ? wpmem_login_form() : wpmem_register_form( $reg_form_args );
+
 				}
 				break;
 
 			case 'password':
-				$content = $this->render_pwd_reset( $wpmem->regchk, $content );
+				$content = $this->render_pwd_reset( wpmem_get_form_state(), $content );
 				break;
 
 			case 'user_edit':
-				$content = $this->render_user_edit( $wpmem->regchk, $content, $args );
+				$content = $this->render_user_edit( wpmem_get_form_state(), $content, $args );
 				break;
 
 			case 'forgot_username':
@@ -243,7 +248,7 @@ class WP_Members_Shortcodes {
 					$content = ( $content ) ? $content : $this->render_links( 'login' );
 				} else {
 					$content = '';
-					if ( $wpmem->regchk == 'loginfailed' || ( is_customize_preview() && get_theme_mod( 'wpmem_show_form_message_dialog', false ) ) ) {
+					if ( wpmem_get_form_state() == 'loginfailed' || ( is_customize_preview() && get_theme_mod( 'wpmem_show_form_message_dialog', false ) ) ) {
 						$content = wpmem_get_display_message( 'loginfailed' );
 					}
 					$form_id = ( $args['form_id'] ) ? $args['form_id'] : 'wpmem_login_form';
@@ -518,14 +523,9 @@ class WP_Members_Shortcodes {
 
 		$content = '';
 
-		if ( $wpmem->regchk == "captcha" ) {
-			global $wpmem_captcha_err;
-			$wpmem_themsg = wpmem_get_text( 'reg_captcha_err' ) . '<br /><br />' . $wpmem_captcha_err;
-		}
-
 		if ( is_user_logged_in() ) {
 
-			switch( $wpmem->action ) {
+			switch( wpmem_get_current_action() ) {
 
 			case "edit":
 				$content = $content . wpmem_register_form( 'edit' );
@@ -533,19 +533,19 @@ class WP_Members_Shortcodes {
 
 			case "update":
 				// Determine if there are any errors/empty fields.
-				if ( $wpmem->regchk == "updaterr" || $wpmem->regchk == "email" ) {
-					$content = $content . wpmem_get_display_message( $wpmem->regchk, $wpmem_themsg );
+				if ( wpmem_has_error() ) {
+					$content = $content . wpmem_get_display_message( wpmem_get_error_code(), wpmem_get_error_message() );
 					$content = $content . wpmem_register_form( 'edit' );
 				} else {
 					//Case "editsuccess".
-					$content = $content . wpmem_get_display_message( $wpmem->regchk, $wpmem_themsg );
+					$content = $content . wpmem_get_display_message( wpmem_get_form_state(), 'editsuccess' );
 					$content = $content . $this->render_links();
 				}
 				break;
 
 			case "pwdchange":
-				$content = $this->render_pwd_reset( $wpmem->regchk, $content );
-				$content = ( 'pwdchangesuccess' == $wpmem->regchk ) ? $content . $this->render_links() : $content;
+				$content = $this->render_pwd_reset( wpmem_get_form_state(), $content );
+				$content = ( 'pwdchangesuccess' == wpmem_get_form_state() ) ? $content . $this->render_links() : $content;
 				break;
 
 			case "renew":
@@ -563,26 +563,26 @@ class WP_Members_Shortcodes {
 
 		} else {
 
-			if (  ( 'login' == $wpmem->action ) || ( 'register' == $wpmem->action && ! $hide_register ) ) {
+			if (  ( 'login' == wpmem_get_current_action() ) || ( 'register' == wpmem_get_current_action() && ! $hide_register ) ) {
 				
- 				$content = wpmem_get_display_message( $wpmem->regchk, $wpmem_themsg );
-				$content.= ( 'loginfailed' == $wpmem->regchk || 'success' == $wpmem->regchk ) ? wpmem_login_form() : wpmem_register_form();
+ 				$content = wpmem_get_display_message( wpmem_get_form_state(), $wpmem_themsg );
+				$content.= ( 'loginfailed' == wpmem_get_form_state() || 'success' == wpmem_get_form_state() ) ? wpmem_login_form() : wpmem_register_form();
 				
-			} elseif ( 'pwdreset' == $wpmem->action ) {
+			} elseif ( 'pwdreset' == wpmem_get_current_action() ) {
 
-				$content = $this->render_pwd_reset( $wpmem->regchk, $content );
+				$content = $this->render_pwd_reset( wpmem_get_form_state(), $content );
 
-			} elseif ( 'set_password_from_key' == $wpmem->action ) {
+			} elseif ( 'set_password_from_key' == wpmem_get_current_action() ) {
 				
 				$content = ( false != $wpmem->user->pwd_reset->content ) ? $wpmem->user->pwd_reset->content : $content;
 
-			} elseif ( 'getusername' == $wpmem->action ) {
+			} elseif ( 'getusername' == wpmem_get_current_action() ) {
 
-				$content = $this->render_forgot_username( $wpmem->regchk, $content );
+				$content = $this->render_forgot_username( wpmem_get_form_state(), $content );
 
-			} elseif ( 'reconfirm' == $wpmem->action ) {
+			} elseif ( 'reconfirm' == wpmem_get_current_action() ) {
 			
-				$content = $this->render_resend_confirm( $wpmem->regchk, $content );
+				$content = $this->render_resend_confirm( wpmem_get_form_state(), $content );
 			
 			} else {
 
@@ -1196,25 +1196,25 @@ class WP_Members_Shortcodes {
 	 * @since 3.4.0 Moved to shortcodes as private function, renamed from wpmem_page_pwd_reset().
 	 *
 	 * @global object $wpmem
-	 * @param  string $wpmem_regchk
+	 * @param  string $form_state
 	 * @param  string $content
 	 * @return string $content
 	 */
-	private function render_pwd_reset( $wpmem_regchk, $content ) {
+	private function render_pwd_reset( $form_state, $content ) {
 
 		global $wpmem;
 
 		if ( is_user_logged_in() ) {
 
-			switch ( $wpmem_regchk ) {
+			switch ( $form_state ) {
 
 				case "pwdchangesuccess":
-					$content = $content . wpmem_get_display_message( $wpmem_regchk );
+					$content = $content . wpmem_get_display_message( $form_state );
 					break;
 
 				default:
-					if ( isset( $wpmem_regchk ) && '' != $wpmem_regchk ) {
-						$content .= wpmem_get_display_message( $wpmem_regchk, wpmem_get_text( $wpmem_regchk ) );
+					if ( isset( $form_state ) && '' != $form_state ) {
+						$content .= wpmem_get_display_message( $form_state, wpmem_get_text( $form_state ) );
 					}
 					$content = $content . wpmem_change_password_form();
 					break;
@@ -1223,37 +1223,28 @@ class WP_Members_Shortcodes {
 		} else {
 
 			// If the password shortcode page is set as User Profile page.
-			if ( 'getusername' == $wpmem->action ) {
+			if ( 'getusername' == wpmem_get_current_action() ) {
 
-				return $this->render_forgot_username( $wpmem_regchk, $content );
+				return $this->render_forgot_username( $form_state, $content );
 
-			} elseif ( 'set_password_from_key' == $wpmem->action ) {
+			} elseif ( 'set_password_from_key' == wpmem_get_current_action() ) {
 				
 				return ( false != $wpmem->user->pwd_reset->content ) ? $wpmem->user->pwd_reset->content : $content;
 			
 			} else {
 
-				switch( $wpmem_regchk ) {
+				switch( $form_state ) {
 
 					case "pwdresetsuccess":
-						$content = $content . wpmem_get_display_message( $wpmem_regchk );
-						$wpmem_regchk = ''; // Clear regchk.
+						$content = $content . wpmem_get_display_message( $form_state );
+						wpmem_clear_form_state(); 
 						break;
 
 					default:
-						if ( $wpmem->has_errors() ) {
-							$errors = $wpmem->error->get_error_messages();
-							if ( sizeof( $errors ) > 1 ) {
-								$error_string = "";
-								foreach ( $errors as $error ) {
-									$error_string .= $error . '<br />';
-								}
-							} else {
-								$error_string = $errors[0];
-							}
-							$content = wpmem_get_display_message( $error_string );
-						} elseif ( isset( $wpmem_regchk ) && '' != $wpmem_regchk ) {
-							$content = wpmem_get_display_message( $wpmem_regchk, wpmem_get_text( $wpmem_regchk ) );
+						if ( wpmem_has_error() ) {
+							$content = wpmem_get_display_message( wpmem_get_error_code(), wpmem_get_error_message() );
+						} elseif ( isset( $form_state ) && '' != $form_state ) {
+							$content = wpmem_get_display_message( $form_state, wpmem_get_text( $form_state ) );
 						}
 						$content = $content . wpmem_reset_password_form();
 						break;
@@ -1274,16 +1265,14 @@ class WP_Members_Shortcodes {
 	 * @since 3.3.9 Added $atts
 	 * @since 3.4.0 Moved to shortcodes as private function, renamed from wpmem_page_user_edit
 	 *
-	 * @global object $wpmem
-	 * @global string $wpmem_a
 	 * @global string $wpmem_themsg
-	 * @param  string $wpmem_regchk
+	 * @param  string $form_state
 	 * @param  string $content
 	 * @return string $content
 	 */
-	private function render_user_edit( $wpmem_regchk, $content, $atts = false ) {
+	private function render_user_edit( $form_state, $content, $atts = false ) {
 
-		global $wpmem_a, $wpmem_themsg;
+		global $wpmem_themsg;
 		/**
 		 * Filter the default User Edit heading for shortcode.
 		 *
@@ -1293,8 +1282,8 @@ class WP_Members_Shortcodes {
 		 */	
 		$heading = apply_filters( 'wpmem_user_edit_heading', wpmem_get_text( 'profile_heading' ) );
 
-		if ( $wpmem_a == "update") {
-			$content.= wpmem_get_display_message( $wpmem_regchk, $wpmem_themsg );
+		if ( wpmem_get_action() == "update") {
+			$content.= wpmem_get_display_message( $form_state, $wpmem_themsg ); // @todo Can this get the values from the error object?
 		}
 
 		$args['tag'] = 'edit';
@@ -1316,41 +1305,37 @@ class WP_Members_Shortcodes {
 	 * @since 3.0.8
 	 * @since 3.4.0 Moved to shortcodes as private function, renamed from wpmem_page_forgot_username().
 	 *
-	 * @param  string $wpmem_regchk
+	 * @param  string $form_state
 	 * @param  string $content
 	 * @return string $content
 	 */
-	private function render_forgot_username( $wpmem_regchk, $content ) {
+	private function render_forgot_username( $form_state, $content ) {
 
 		if ( ! is_user_logged_in() ) {
 
-			global $wpmem;
-			switch( $wpmem->regchk ) {
+			switch( wpmem_get_form_state() ) {
 
-			case "usernamefailed":
-				$msg = wpmem_get_text( 'usernamefailed' );
-				$content = $content
-					. wpmem_get_display_message( 'usernamefailed', $msg ) 
-					. wpmem_forgot_username_form();
-				$wpmem->regchk = ''; // Clear regchk.
-				break;
+				case "usernamefailed":
+					$msg = wpmem_get_text( 'usernamefailed' );
+					$content = $content
+						. wpmem_get_display_message( 'usernamefailed', $msg ) 
+						. wpmem_forgot_username_form();
+					wpmem_clear_form_state(); 
+					break;
 
-			case "usernamesuccess":
-				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' );
-				$msg = sprintf( wpmem_get_text( 'usernamesuccess' ), $email );
-				$content = $content . wpmem_get_display_message( 'usernamesuccess', $msg );
-				$wpmem->regchk = ''; // Clear regchk.
-				break;
+				case "usernamesuccess":
+					$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' );
+					$msg = sprintf( wpmem_get_text( 'usernamesuccess' ), $email );
+					$content = $content . wpmem_get_display_message( 'usernamesuccess', $msg );
+					wpmem_clear_form_state(); 
+					break;
 
-			default:
-				$content = $content . wpmem_forgot_username_form();
-				break;
+				default:
+					$content = $content . wpmem_forgot_username_form();
+					break;
 			}
-
 		}
-
 		return $content;
-
 	}
 
 	/**
@@ -1360,41 +1345,37 @@ class WP_Members_Shortcodes {
 	 *
 	 * @since 3.5.0
 	 *
-	 * @param  string $wpmem_regchk
+	 * @param  string $form_state
 	 * @param  string $content
 	 * @return string $content
 	 */
-	private function render_resend_confirm( $wpmem_regchk, $content ) {
+	private function render_resend_confirm( $form_state, $content ) {
 
 		if ( ! is_user_logged_in() ) {
 
-			global $wpmem;
-			switch( $wpmem->regchk ) {
+			switch( wpmem_get_form_state() ) {
 
 			case "reconfirmfailed":
 				$msg = wpmem_get_text( 'pwdreseterr' );
 				$content = $content
 					. wpmem_get_display_message( 'pwdreseterr', $msg ) 
 					. wpmem_resend_confirmation_form();
-				$wpmem->regchk = ''; // Clear regchk.
+				wpmem_clear_form_state(); 
 				break;
 
 			case "reconfirmsuccess":
 				$email = wpmem_get_sanitized( 'user_email', '', 'post', 'email' );
 				$msg = wpmem_get_text( 'reconfirm_success' );
 				$content = $content . wpmem_get_display_message( 'reconfirm_success', $msg );
-				$wpmem->regchk = ''; // Clear regchk.
+				wpmem_clear_form_state(); 
 				break;
 
 			default:
 				$content = $content . wpmem_resend_confirmation_form();
 				break;
 			}
-
 		}
-
 		return $content;
-
 	}
 
 	/**
@@ -1405,7 +1386,7 @@ class WP_Members_Shortcodes {
 	 * @since 2.0
 	 * @since 3.4.0 Replaces wpmem_inc_memberlinks().
 	 *
-	 * @gloabl        $user_login
+	 * @global        $user_login
 	 * @global object $wpmem
 	 * @param  string $page
 	 * @return string $str

@@ -241,11 +241,11 @@ class WP_Members_User {
 	public function register_validate( $tag ) {
 		
 		// Get the globals.
-		global $user_ID, $wpmem, $wpmem_themsg; 
+		global $user_ID, $wpmem, $wpmem_themsg; // $wpmem_themsg is a legacy var and it may be used by custom code snippets in reg form validation.
 		
 		// Check the nonce.
 		if ( empty( $_POST ) || ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_' . $tag . '_nonce', false, 'request', 'nonce' ), 'wpmem_longform_nonce' ) ) {
-			$wpmem_themsg = wpmem_get_text( 'reg_generic' );
+			wpmem_add_error( 'reg_generic', wpmem_get_text( 'reg_generic' ) );
 			return;
 		}
 
@@ -326,13 +326,15 @@ class WP_Members_User {
 		// Adds integration for custom error codes triggered by "register_post" or contained in "registration_errors"
 		// @todo This will move towards integrating all WP-Members registration errors into the "registration_errors" filter
 		//       and allow for more standardized custom validation.
-		/* $errors = new WP_Error();
-		do_action( 'register_post', $sanitized_user_login, $user_email, $errors );
-		$errors = apply_filters( 'registration_errors', $errors, $this->post_data['username'], $this->post_data['user_email'] );
-		if ( count( $errors->get_error_messages() ) > 0 ) {
-			$wpmem_themsg = $errors->get_error_message();
-			return;
-		} */
+		if ( 'register' == $tag ) {
+			// Set up error object.
+			//$wpmem->error = ( ! wpmem_has_error() ) ? new WP_Error() : $wpmem->error;
+			//do_action( 'register_post', $this->post_data['username'], $this->post_data['user_email'], $wpmem->error );
+			//$wpmem->error = apply_filters( 'registration_errors', $wpmem->error, $this->post_data['username'], $this->post_data['user_email'] );
+			//if ( wpmem_has_error() ) {
+			//	return;
+			//}
+		}
 
 		if ( 'update' == $tag ) {
 			$pass_arr = array( 'username', 'password', 'confirm_password', 'password_confirm' );
@@ -350,14 +352,14 @@ class WP_Members_User {
 					if ( 'register' == $tag ) {
 						// If the required field is a file type.
 						if ( empty( $_FILES[ $meta_key ]['name'] ) ) {
-							$wpmem_themsg = sprintf( wpmem_get_text( 'reg_empty_field' ), esc_html__( $field['label'], 'wp-members' ) );
+							wpmem_add_error( 'reg_empty_field', sprintf( wpmem_get_text( 'reg_empty_field' ), esc_html__( $field['label'], 'wp-members' ) ) );
 						}
 					}
 				} else {
 					// If the required field is any other field type.
 					if ( ( 'register' == $tag && true == $field['register'] ) || ( 'update' == $tag && true == $field['profile'] ) ) {
 						if ( null == $this->post_data[ $meta_key ] ) {
-							$wpmem_themsg = sprintf( wpmem_get_text( 'reg_empty_field' ), esc_html__( $field['label'], 'wp-members' ) );
+							wpmem_add_error( 'reg_empty_field', sprintf( wpmem_get_text( 'reg_empty_field' ), esc_html__( $field['label'], 'wp-members' ) ) );
 						}
 					}
 				}
@@ -373,7 +375,7 @@ class WP_Members_User {
 				if ( ! empty( $_FILES[ $meta_key ]['name'] ) ) {
 					$extension = pathinfo( sanitize_text_field( $_FILES[ $meta_key ]['name'] ), PATHINFO_EXTENSION );
 					if ( ! in_array( $extension, $allowed_file_types ) ) {
-						$wpmem_themsg = sprintf( wpmem_get_text( 'reg_file_type' ), esc_html__( $field['label'], 'wp-members' ), str_replace( '|', ',', $msg_types ) );
+						wpmem_add_error( 'reg_file_type', sprintf( wpmem_get_text( 'reg_file_type' ), esc_html__( $field['label'], 'wp-members' ), str_replace( '|', ',', $msg_types ) ) );
 					}
 				}
 			}
@@ -385,40 +387,30 @@ class WP_Members_User {
 				$result = wpmu_validate_user_signup( $this->post_data['username'], $this->post_data['user_email'] ); 
 				$errors = $result['errors'];
 				if ( $errors->errors ) {
-					$wpmem_themsg = $errors->get_error_message(); 
-					return $wpmem_themsg; 
-					exit();
+					wpmem_add_error( $errors->get_error_code(), $errors->get_error_message() );
+					return; 
 				}
 
 			} else {
 				// Validate username and email fields.
-				$wpmem_themsg = ( email_exists( $this->post_data['user_email'] ) ) ? "email" : $wpmem_themsg;
-				$wpmem_themsg = ( username_exists( $this->post_data['username'] ) ) ? "user" : $wpmem_themsg;
-				$wpmem_themsg = ( ! is_email( $this->post_data['user_email']) ) ? wpmem_get_text( 'reg_valid_email' ) : $wpmem_themsg;
-				$wpmem_themsg = ( ! validate_username( $this->post_data['username'] ) ) ? wpmem_get_text( 'reg_non_alphanumeric' ) : $wpmem_themsg;
-				$wpmem_themsg = ( ! $this->post_data['username'] ) ? wpmem_get_text( 'reg_empty_username' ) : $wpmem_themsg;
+				( email_exists( $this->post_data['user_email'] )      ) ? wpmem_add_error( 'email',                wpmem_get_text( 'email' ) )                : '';
+				( username_exists( $this->post_data['username'] )     ) ? wpmem_add_error( 'user',                 wpmem_get_text( 'user' ) )                 : '';
+				( ! is_email( $this->post_data['user_email'])         ) ? wpmem_add_error( 'reg_valid_email',      wpmem_get_text( 'reg_valid_email' ) )      : '';
+				( ! validate_username( $this->post_data['username'] ) ) ? wpmem_add_error( 'reg_non_alphanumeric', wpmem_get_text( 'reg_non_alphanumeric' ) ) : '';
+				( ! $this->post_data['username']                      ) ? wpmem_add_error( 'reg_empty_username',   wpmem_get_text( 'reg_empty_username' ) )   : '';
 
 				// If there is an error from username, email, or required field validation, stop registration and return the error.
-				if ( $wpmem_themsg ) {
-					return $wpmem_themsg;
-					exit();
+				if ( wpmem_has_error() ) {
+					return;
 				}
 			}
 
 			// If form contains password and email confirmation, validate that they match.
 			if ( array_key_exists( 'confirm_password', $this->post_data ) && $this->post_data['confirm_password'] != $this->post_data ['password'] ) { 
-				$wpmem_themsg = wpmem_get_text( 'reg_password_match' );
+				wpmem_add_error( 'reg_password_match', wpmem_get_text( 'reg_password_match' ) );
 			}
 			if ( array_key_exists( 'confirm_email', $this->post_data ) && $this->post_data['confirm_email'] != $this->post_data ['user_email'] ) { 
-				$wpmem_themsg = wpmem_get_text( 'reg_email_match' ); 
-			}
-
-			// Process CAPTCHA.
-			if ( 0 != $wpmem->captcha ) {
-				$check_captcha = WP_Members_Captcha::validate();
-				if ( false === $check_captcha ) {
-					return "empty"; // @todo Return and/or set error object. For now changed to return original value.
-				}
+				wpmem_add_error( 'reg_email_match', wpmem_get_text( 'reg_email_match' ) ); 
 			}
 
 			// Check for user defined password.
@@ -478,10 +470,8 @@ class WP_Members_User {
 		
 		// Process CAPTCHA.
 		if ( $wpmem->captcha > 0 ) {
+			// Captcha validation adds its own error, so no need to add it here.
 			$check_captcha = WP_Members_Captcha::validate();
-			if ( false === $check_captcha ) {
-				$errors->add( 'wpmem_captcha_error', sprintf( wpmem_get_text( 'reg_captcha_err' ), esc_html__( $field['label'], 'wp-members' ) ) ); 
-			}
 		}
 
 		return $errors;
@@ -494,12 +484,9 @@ class WP_Members_User {
 	 * @since 3.2.6 Added handler for membership field type.
 	 * @since 3.3.0 Changed from register() to register_finalize().
 	 *
-	 * @global object $wpmem
 	 * @param  int    $user_id
 	 */
 	public function register_finalize( $user_id ) {
-		
-		global $wpmem;
 
 		// If this is WP-Members registration.
 		if ( $this->reg_type['is_wpmem'] ) {
@@ -508,12 +495,12 @@ class WP_Members_User {
 
 			// Set remaining fields to wp_usermeta table.
 			$new_user_fields_meta = array( 'user_url', 'first_name', 'last_name', 'description' );
-			foreach ( $wpmem->fields as $meta_key => $field ) {
+			foreach ( wpmem_fields() as $meta_key => $field ) {
 				// If the field is not excluded, update accordingly.
 				if ( ! in_array( $meta_key, wpmem_get_excluded_meta( 'register' ) ) && ! in_array( $meta_key, $new_user_fields_meta ) ) {
 					if ( $field['register'] && 'user_email' != $meta_key ) {
 						// Assign memberships, if applicable.
-						if ( 'membership' == $field['type'] && 1 == $wpmem->enable_products ) {
+						if ( 'membership' == $field['type'] && wpmem_is_enabled( 'enable_products' ) ) {
 							wpmem_set_user_product( $this->post_data[ $meta_key ], $user_id );
 						} else {
 							update_user_meta( $user_id, $meta_key, $this->post_data[ $meta_key ] );
@@ -737,8 +724,7 @@ class WP_Members_User {
 	 * @since Unknown
 	 *
 	 */
-	public function password_link( $args ) {
-		global $wpmem;
+	public function password_link() {
 		/**
 		 * Filter the password reset arguments.
 		 *
@@ -760,7 +746,7 @@ class WP_Members_User {
 		} else {
 
 			if ( ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_pwdreset_nonce', false, 'request', 'nonce' ), 'wpmem_shortform_nonce' ) ) {
-				$errors->add( 'nonce', wpmem_get_text( 'pwd_reset_nonce' ) );
+				wpmem_add_error( 'nonce', wpmem_get_text( 'pwd_reset_nonce' ) );
 				return "reg_generic";
 			}
 
@@ -773,38 +759,30 @@ class WP_Members_User {
 				$user = false;
 			}
 
-			if ( ! is_wp_error( $user ) && false != $user ) {
-
-				$has_error = false;
-
-				// Check if user is approved.
-				if ( ( wpmem_is_mod_reg() ) && ( ! wpmem_is_user_activated( $user->ID ) ) ) {
-					$errors->add( 'acct_not_approved', wpmem_get_text( 'acct_not_approved' ) );
-					$has_error = true;
-				}
-
-				// Check if user is validated.
-				if ( ( wpmem_is_act_link() ) && ( ! wpmem_is_user_confirmed( $user->ID ) ) ) {
-					$errors->add( 'acct_not_validated', wpmem_get_text( 'acct_not_validated' ) );
-					$has_error = true;
-				}
-
-				// If either of these are an error, dump the user object.
-				$user = ( $has_error ) ? false : $user;
+			// If we have a valid user, it the user approved and/or validated?
+			if ( is_wp_error( $user ) || ! $user ) {
+				wpmem_add_error( 'pwdreseterr', wpmem_get_text( 'pwdreseterr' ) );
+				return "pwdreseterr";
 			}
 
+			// Check if user is approved.
+			if ( ( wpmem_is_mod_reg() ) && ( ! wpmem_is_user_activated( $user->ID ) ) ) {
+				wpmem_add_error( 'acct_not_approved', wpmem_get_text( 'acct_not_approved' ) );
+				return "pwdreseterr";
+			}
+
+			// Check if user is validated.
+			if ( ( wpmem_is_act_link() ) && ( ! wpmem_is_user_confirmed( $user->ID ) ) ) {
+				wpmem_add_error( 'acct_not_validated', wpmem_get_text( 'acct_not_validated' ) );
+				return "pwdreseterr";
+			}
+
+			// If we have a user, then send the reset email.
 			if ( $user ) {
 				wpmem_email_to_user( array( 'user_id'=>$user->ID, 'tag'=>'repass' ) );
 				/** This action is documented in /includes/class-wp-members-user.php */
 				do_action( 'wpmem_pwd_reset', $user->ID, '' );
 				return "pwdresetsuccess";
-
-			} else {
-				// Username did not exist, or cannot reset password.
-				if ( $errors->has_errors() ) {
-					$wpmem->error = $errors;
-				}
-				return "pwdreseterr";
 			}
 		}
 		return;
