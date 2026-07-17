@@ -23,7 +23,7 @@ function wpmem_is_enabled( $option ) {
             return ( isset( $wpmem->{$parts[0]}->{$parts[1]} ) && 1 == $wpmem->{$parts[0]}->{$parts[1]} ) ? true : false;
         }
     } else {
-	    return ( isset( $wpmem->{$option} ) && 1 == $wpmem->{$option} ) ? true : false;
+	    return ( isset( $wpmem->{$option} ) && 0 != $wpmem->{$option} ) ? true : false;
     }
 }
 

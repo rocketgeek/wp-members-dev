@@ -738,7 +738,6 @@ function wpmem_set_user_status( $user_id, $status ) {
  *
  * @global int    $user_ID
  * @global object $wpmem
- * @global string $wpmem_themsg
  * @global array  $userdata
  *
  * @param  string $tag Identifies 'register' or 'update'.  Optional, default: register
@@ -747,16 +746,9 @@ function wpmem_set_user_status( $user_id, $status ) {
 function wpmem_user_register( $tag = "register" ) {
 
 	// Get the globals.
-	global $user_ID, $wpmem, $wpmem_themsg, $userdata;
+	global $user_ID, $wpmem, $userdata;
 	
 	$wpmem->user->register_validate( $tag );
-	
-	// @todo Added as a fix for legacy versions of security extension and any wpmem_pre_register_data action that might null $wpmem_themsg.
-	// @todo Updated to use wpmem_add_error(), but this early check will be obsolete in 3.7.0.
-	if ( $wpmem_themsg ) {
-		wpmem_add_error( 'reg_error', $wpmem_themsg );
-		return;
-	}
 	
 	switch ( $tag ) {
 
@@ -786,13 +778,12 @@ function wpmem_user_register( $tag = "register" ) {
 		 */
 		do_action( 'wpmem_pre_register_data', $wpmem->user->post_data );
 
-		// If the _pre_register_data hook sends back an error message.
-		if ( $wpmem_themsg || wpmem_has_error() ) { 
-			// If $wpmem_themsg has a value here, it is an error. Add new error.
-			if ( $wpmem_themsg ) {
-				wpmem_add_error( 'reg_error', $wpmem_themsg );
-			}
-			return 'reg_error';
+		// Check for legacy errors.
+		$wpmem->user->check_legacy_error();
+
+		// If there's an error after the _pre_update_data action.
+		if ( wpmem_has_error() ) {
+			return "updaterr";
 		}
 
 		// Error checks and form validation are complete at this point.
@@ -889,12 +880,11 @@ function wpmem_user_register( $tag = "register" ) {
 		 */
 		do_action( 'wpmem_pre_update_data', $wpmem->user->post_data );
 		
-		// If the _pre_update_data hook sends back an error message.
-		if ( $wpmem_themsg || wpmem_has_error() ) { 
-			// If $wpmem_themsg has a value here, it is an error. Add new error.
-			if ( $wpmem_themsg ) {
-				wpmem_add_error( 'updaterr', $wpmem_themsg );
-			}
+		// Check for legacy errors.
+		$wpmem->user->check_legacy_error();
+
+		// If there's an error after the _pre_update_data action.
+		if ( wpmem_has_error() ) {
 			return "updaterr";
 		}
 

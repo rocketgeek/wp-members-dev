@@ -127,8 +127,11 @@ class WP_Members_User {
 			
 			$redirect_to = wpmem_get( 'redirect_to', false );
 			$redirect_to = ( $redirect_to ) ? esc_url_raw( trim( $redirect_to ) ) : esc_url_raw( wpmem_current_url() );
+
+			// This is a native WP hook, so it is not prefixed.
 			/** This filter defined in wp-login.php */
 			$redirect_to = apply_filters( 'login_redirect', $redirect_to, '', $user );
+			
 			/**
 			 * Filter the redirect url.
 			 *
@@ -172,8 +175,10 @@ class WP_Members_User {
 		// Default redirect URL.
 		$redirect_to = ( $redirect_to ) ? $redirect_to : home_url();
 
+		// This is a native WP hook, so it is not prefixed.
 		/** This filter is documented in /wp-login.php */
 		$redirect_to = apply_filters( 'logout_redirect', $redirect_to, $redirect_to, wp_get_current_user() );
+		
 		/**
 		 * Filter where the user goes when logged out.
 		 *
@@ -185,10 +190,12 @@ class WP_Members_User {
 		 */
 		$redirect_to = apply_filters( 'wpmem_logout_redirect', $redirect_to, $user_id );
 
+		// Native WP functions.
 		wp_destroy_current_session();
 		wp_clear_auth_cookie();
 		wp_set_current_user( 0 );
 
+		// This is a native WP hook, so it is not prefixed.
 		/** This action is defined in /wp-includes/pluggable.php. */
 		do_action( 'wp_logout', $user_id );
 
@@ -229,19 +236,40 @@ class WP_Members_User {
 	}
 
 	/**
+	 * Checks for legacy errors in the $wpmem_themsg var. 
+	 * 
+	 * $wpmem_themsg is a legacy global variable that was previously
+	 * used to contain error messages to halt registration or profile
+	 * update in the WP-Members forms. This check moves any value in 
+	 * $wpmem_themsg into the $wpmem->error object as a WP_Error. 
+	 * 
+	 * @since 3.6.0
+	 */
+	public function check_legacy_error() {
+		global $wpmem_themsg;
+		if ( $wpmem_themsg ) { 
+			// If $wpmem_themsg has a value here, it is an error. Add new error.
+			wpmem_add_error( 'updaterr', $wpmem_themsg );
+		}
+	}
+
+	/**
 	 * Validate user registration.
 	 *
 	 * @since 3.3.0
 	 *
 	 * @global int    $user_ID
-	 * @global string $wpmem_themsg
+	 * @global object $wpmem
 	 *
 	 * @param  string $tag
 	 */
 	public function register_validate( $tag ) {
 		
 		// Get the globals.
-		global $user_ID, $wpmem, $wpmem_themsg; // $wpmem_themsg is a legacy var and it may be used by custom code snippets in reg form validation.
+		global $user_ID, $wpmem;
+
+		// Set up error object.
+		$wpmem->error = ( ! wpmem_has_error() ) ? new WP_Error() : $wpmem->error;
 		
 		// Check the nonce.
 		if ( empty( $_POST ) || ! wp_verify_nonce( wpmem_get_sanitized( '_wpmem_' . $tag . '_nonce', false, 'request', 'nonce' ), 'wpmem_longform_nonce' ) ) {
@@ -327,13 +355,12 @@ class WP_Members_User {
 		// @todo This will move towards integrating all WP-Members registration errors into the "registration_errors" filter
 		//       and allow for more standardized custom validation.
 		if ( 'register' == $tag ) {
-			// Set up error object.
-			//$wpmem->error = ( ! wpmem_has_error() ) ? new WP_Error() : $wpmem->error;
-			//do_action( 'register_post', $this->post_data['username'], $this->post_data['user_email'], $wpmem->error );
-			//$wpmem->error = apply_filters( 'registration_errors', $wpmem->error, $this->post_data['username'], $this->post_data['user_email'] );
-			//if ( wpmem_has_error() ) {
-			//	return;
-			//}
+			do_action( 'register_post', $this->post_data['username'], $this->post_data['user_email'], $wpmem->error ); // This is a native WP hook, so it is not prefixed.
+			$wpmem->error = apply_filters( 'registration_errors', $wpmem->error, $this->post_data['username'], $this->post_data['user_email'] ); // This is a native WP hook, so it is not prefixed.
+			if ( wpmem_has_error() ) {
+				wpmem_add_error( wpmem_get_error_code(), wpmem_get_error_message() );
+				return;
+			}
 		}
 
 		if ( 'update' == $tag ) {
@@ -434,12 +461,14 @@ class WP_Members_User {
 	}
 
 	/**
-	 * Validates registration fields in the native WP registration.
+	 * Validates registration fields.
+	 * 
+	 * This is necessary for validating native WP registration, but it is also fired
+	 * in the WP-Members registration, front-end user profile update, or any other
+	 * process that triggers the native `registration_errors` hook.
 	 *
 	 * @since 2.8.3
 	 * @since 3.3.0 Ported from wpmem_wp_reg_validate() in wp-registration.php.
-	 *
-	 * @global object $wpmem The WP-Members object class.
 	 *
 	 * @param  array  $errors               A WP_Error object containing any errors encountered during registration.
 	 * @param  string $sanitized_user_login User's username after it has been sanitized.
@@ -447,8 +476,6 @@ class WP_Members_User {
 	 * @return array  $errors               A WP_Error object containing any errors encountered during registration.
 	 */
 	public function wp_register_validate( $errors, $sanitized_user_login, $user_email ) {
-
-		global $wpmem;
 
 		// Get any meta fields that should be excluded.
 		$exclude = wpmem_get_excluded_meta( 'wp-register' );
@@ -468,10 +495,14 @@ class WP_Members_User {
 			}
 		}
 		
-		// Process CAPTCHA.
-		if ( $wpmem->captcha > 0 ) {
-			// Captcha validation adds its own error, so no need to add it here.
+		// validate CAPTCHA.
+		if ( wpmem_is_enabled( 'captcha' ) ) {
 			$check_captcha = WP_Members_Captcha::validate();
+		}
+	
+		// If there are any wpmem errors, put them in the WP error object.
+		if ( wpmem_has_error() ) {
+			$errors->add( wpmem_get_error_code(), wpmem_get_error_message() );
 		}
 
 		return $errors;

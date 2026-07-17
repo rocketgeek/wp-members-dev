@@ -322,6 +322,7 @@ class WP_Members_User_Profile {
 		// @todo Check this as a possible inclusion for front-end use.
 		$display = ( ! isset( $current_screen ) || is_null( $current_screen ) || 'profile' == $current_screen->base ) ? 'user' : 'admin';
 	
+		// This is a native WP global variable (intentional).
 		if ( ! $user_id ) {
 			$user_id = wpmem_get_sanitized( 'user_id', -1, 'request', 'int' );
 			if ( 1 > $user_id ) {

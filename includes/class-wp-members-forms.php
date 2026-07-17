@@ -711,7 +711,7 @@ class WP_Members_Forms {
 		if ( 'login' == $action && $args['login_form_action'] ) {
 			ob_start();
 			/** This action is documented in wp-login.php */
-			do_action( 'login_form' );
+			do_action( 'login_form' ); // This is a native WP filter hook, so it is not prefixed.
 			$add_to_form = ob_get_contents();
 			ob_end_clean();
 			$form.= $add_to_form;
@@ -1376,7 +1376,7 @@ class WP_Members_Forms {
 		if ( 'new' == $tag && $args['register_form_action'] ) {
 			ob_start();
 			/** This action is documented in wp-login.php */
-			do_action( 'register_form' );
+			do_action( 'register_form' ); // This is a native WP filter hook, so it is not prefixed.
 			$add_to_form = ob_get_contents();
 			ob_end_clean();
 			$form.= $add_to_form;
