@@ -350,7 +350,6 @@ class WP_Members_Admin_API {
 	 * @return array $args
 	 */
 	function add_dialog( $args ) {
-		global $wpmem;
 		if ( is_array( $args ) && isset( $args['label'] ) ) {
 			$defaults = array(
 				'name'  => $args['name'],
@@ -365,8 +364,6 @@ class WP_Members_Admin_API {
 
 			$this->dialogs[ $args['name'] ] = $args;
 		}
-		
-		//return $args;
 	}
 
 	/**
@@ -490,11 +487,14 @@ class WP_Members_Admin_API {
 			'pwdresetsuccess'  => esc_html__( "Password reset", 'wp-members' ),
 		);
 
-		// @todo Are we using deprecated dialogs? This will be used to remove them from display in the tab - maybe 3.5.4?
-		// $deprecated_dialogs = ( 1 == get_option( 'wpmem_legacy_dialogs' ) ) ? $wpmem->dialogs->get_deprecated_dialogs() : array();	
-
+		// Are we using deprecated dialogs? This will remove them from the display tab.
+		if ( ! get_option( 'wpmem_legacy_dialogs' ) ) {
+			$deprecated_dialogs = $wpmem->dialogs->get_deprecated_dialogs();
+		} else {
+			$deprecated_dialogs = array();
+		}	
 		foreach ( $dialogs as $key => $val ) {
-			if ( array_key_exists( $key, $dialog_labels ) ) {
+			if ( array_key_exists( $key, $dialog_labels ) && ! array_key_exists( $key, $deprecated_dialogs ) ) {
 				$dialogs[ $key ] = array(
 					'name'  => $key,
 					'label' => $dialog_labels[ $key ],

@@ -79,13 +79,13 @@ class WP_Members_Admin_Tab_Dialogs {
 										$wpmem->admin->do_dialog_input( $dialog );
 									}
 								}
-								//if ( 0 == get_option( 'wpmem_legacy_dialogs' ) ) {
+								if ( 1 == get_option( 'wpmem_legacy_dialogs' ) ) {
 									$wpmem_tos = stripslashes( get_option( 'wpmembers_tos' ) ); ?>
 									<tr valign="top"> 
 										<th scope="row"><?php esc_html_e( 'Terms of Service (TOS)', 'wp-members' ); ?></th> 
 										<td><textarea name="dialogs_tos" rows="3" cols="50" id="" class="large-text code"><?php echo esc_textarea( $wpmem_tos ); ?></textarea></td> 
 									</tr><?php 
-								//} ?>
+								} ?>
 									<tr valign="top">
 										<th scope="row">&nbsp;</th>
 										<td>
@@ -121,14 +121,26 @@ class WP_Members_Admin_Tab_Dialogs {
 		check_admin_referer( 'wpmem_update_dialogs', 'wpmem_nonce' );
 
 		if ( ! empty ( $wpmem->admin->dialogs ) ) {
+			
 			$settings = $wpmem->admin->dialogs;
+			/*
+			 * @todo For now, we'll keep the legacy dialogs on update so that 
+			 *       users can rollback if needed.  Later, as we phase that out,
+			 *       this will just update the posted dialogs rather than including
+			 *       the existing settings.
+			 */
+			$saved_settings = get_option( 'wpmembers_dialogs' );
+			
 			foreach ( $settings as $dialog ) {
 				if ( isset( $_POST[ $dialog['name'] . '_dialog' ] ) ) {
-					$settings[ $dialog['name'] ] = wp_kses( wp_unslash( $_POST[ $dialog['name'] . '_dialog' ] ), 'post' );
+					$saved_settings[ $dialog['name'] ] = wp_kses( wp_unslash( $_POST[ $dialog['name'] . '_dialog' ] ), 'post' );
+					// $settings[ $dialog['name'] ] = wp_kses( wp_unslash( $_POST[ $dialog['name'] . '_dialog' ] ), 'post' );
 				}
 			}
 
-			update_option( 'wpmembers_dialogs', $settings, false );
+			update_option( 'wpmembers_dialogs', $saved_settings, false );
+			//update_option( 'wpmembers_dialogs', $settings, false );
+			
 			// Refresh settings
 			$wpmem->admin->default_dialogs();
 		}

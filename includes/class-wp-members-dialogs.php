@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Members_Dialogs {
 	
 	function __construct() {
-		if ( 1 == get_option( 'wpmem_legacy_dialogs' ) ) {
+		if ( ! get_option( 'wpmem_legacy_dialogs' ) ) {
 			add_filter( 'wpmem_msg_defaults', array( $this, 'map_deprecated_dialogs' ), 10, 3 );
 		}
 	}
@@ -463,6 +463,11 @@ class WP_Members_Dialogs {
 		return apply_filters( 'wpmem_msg_dialog', $str, $tag );
 	}
 
+	/**
+	 * Deprecated messages.
+	 * 
+	 * @since 3.6.0
+	 */
 	public function get_deprecated_dialogs() {
 		return array ( 
 			'user'             => 'reg_username_taken',
@@ -475,6 +480,15 @@ class WP_Members_Dialogs {
 		);
 	}
 
+	/**
+	 * Maps deprecated dialogs by tag.
+	 * 
+	 * @since 3.6.0
+	 * 
+	 * @param  array  $defaults
+	 * @param  string $tag
+	 * @param  array  $dialogs
+	 */
 	public function map_deprecated_dialogs( $defaults, $tag, $dialogs ) {
 
 		$deprecated_dialogs = $this->get_deprecated_dialogs();
