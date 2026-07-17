@@ -209,10 +209,18 @@ class WP_Members {
 	 * Regchk container.
 	 *
 	 * @since  3.0.0
+	 * @deprecated 3.6.0 Legacy variable (used in PayPal extension).
 	 * @access public
 	 * @var    string
 	 */
 	public $regchk;
+
+	/**
+	 * Form state container.
+	 * 
+	 * @since 3.6.0
+	 */
+	public $form_state;
 	
 	/**
 	 * User page settings.
@@ -897,62 +905,65 @@ class WP_Members {
 		 */
 		do_action( 'wpmem_get_action', $this->action );
 
-		// Get the regchk value (if any).
-		$this->regchk = $this->get_regchk( $this->action );
+		// Get the form state (if there is one).
+		$this->form_state = $this->get_form_state( $this->action );
+		$this->regchk = $this->form_state; // @todo This is a legacy variable (used in PayPal extension).
 	}
 	
 	/**
-	 * Gets the regchk value.
+	 * Gets the form state.
 	 *
-	 * regchk is a legacy variable that contains information about the current
+	 * Form state is a variable that contains information about the current
 	 * action being performed. Login, logout, password, registration, profile
-	 * update functions all return a specific value that is stored in regchk.
+	 * update functions all return a specific value about their current state.
 	 * This value and information about the current action can then be used to
 	 * determine what content is to be displayed by the securify function.
+	 * 
+	 * As of 3.6.0, this value should be retrieved using wpmem_get_form_state().
 	 *
 	 * @since 3.0.0
-	 *
-	 * @global string $wpmem_a The WP-Members action variable.
+	 * @since 3.6.0 Renamed from get_regchk() to more intuitive nomenclature.
 	 *
 	 * @param  string $action The current action.
-	 * @return string         The regchk value.
+	 * @return string         The form state.
 	 */
-	function get_regchk( $action ) {
+	private function get_form_state( $action ) {
 
 		switch ( $action ) {
 
 			case 'login':
-				$regchk = $this->user->login();
+				$form_state = $this->user->login();
 				break;
 
 			case 'logout':
-				$regchk = $this->user->logout();
+				$this->user->logout();
 				break;
 			
 			case 'pwdchange':
 			case 'set_password_from_key':
-				$regchk = $this->user->password_update( 'change' );
+				$form_state = $this->user->password_update( 'change' );
 				break;
 
 			case 'pwdreset':
-				$regchk = $this->user->password_update( 'link' );
+				$form_state = $this->user->password_update( 'link' );
 				break;
 			
 			case 'getusername':
-				$regchk = $this->user->retrieve_username();
+				$form_state = $this->user->retrieve_username();
 				break;
 
 			case 'reconfirm':
-				$regchk = $this->user->resend_confirm();
+				$form_state = $this->user->resend_confirm();
 				break;
 			
 			case 'register':
 			case 'update':
-				$regchk = wpmem_user_register( $action  );
+				// Possible return values: updaterr
+				$form_state = wpmem_user_register( $action  );
 				break;
 
 			default:
-				$regchk = ( isset( $regchk ) ) ? $regchk : '';
+				$form_state = ( isset( $form_state ) ) ? $form_state : '';
 				break;
 		}
 		
@@ -964,17 +975,41 @@ class WP_Members {
 		 *
 		 * @since 2.9.0
 		 * @since 3.0.0 Moved to get_regchk() in WP_Members object.
+		 * @deprecated 3.6.0 Use wpmem_form_state instead.
 		 *
 		 * @param  string $this->regchk The value of wpmem_regchk.
 		 * @param  string $this->action The $wpmem_a action.
 		 */
-		$regchk = apply_filters( 'wpmem_regchk', $regchk, $action );
+		$form_state = apply_filters( 'wpmem_regchk', $form_state, $action );
+		/**
+		 * Filter the form state.
+		 * 
+		 * @since 3.6.0
+		 * 
+		 * @param string $form_state
+		 * @param string $form_action
+		 */
+		$form_state = apply_filters( 'wpmem_form_state', $form_state, $action );
+
+		// If the form state is an error:
+		switch ( $form_state ) {
+			case 'loginfailed':
+			case 'captcha':
+			case 'pwdchangempty':
+			case 'pwdchangerr':
+			case 'loggedin':
+			case 'reg_generic':
+			//case 'pwdreseterr':
+			case 'usernamefailed':
+			case 'reconfirmfailed':
+			case 'email':
+				$this->error = new WP_Error();
+				$this->error->add( $form_state, wpmem_get_text( $form_state ) );
+				break;
+			// No case for updaterr or reg_error: that case already adds error message earlier.
+		}
 		
-		// Legacy global variable for use with older extensions.
-		global $wpmem_regchk;
-		$wpmem_regchk = $regchk;
-		
-		return $regchk;
+		return $form_state;
 	}
 	
 	/**
@@ -1109,11 +1144,14 @@ class WP_Members {
 		// Block/unblock Posts.
 		if ( ! is_user_logged_in() && true == $this->is_blocked() ) {
 
-			// If there is a regchk action, show the login and/or registration forms.
-			if ( $this->regchk ) {
+			// If there is a form state, show the login and/or registration forms.
+			if ( $this->form_state || wpmem_has_error() ) {
 
-				$content = wpmem_get_display_message( $this->regchk, $wpmem_themsg );
-				$content .= ( 'loginfailed' == $this->regchk || 'success' == $this->regchk ) ? wpmem_login_form() : wpmem_register_form();
+				$content = '';
+				if ( wpmem_has_error() ) {
+					$content = wpmem_get_display_message( $this->error->get_error_code(), $this->error->get_error_message() );
+				}
+				$content .= ( wpmem_get( 'a', false ) == 'register' ) ? wpmem_register_form() : wpmem_login_form();
 
 			} else {
 

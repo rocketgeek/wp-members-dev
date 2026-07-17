@@ -19,15 +19,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Gets the present state of a form. 
- * 
- * Currently uses the value contained in $wpmem->regchk
+ * Gets the present state of a form.
  * 
  * @since 3.4.8.
  */
 function wpmem_get_form_state() {
 	global $wpmem;
-	return $wpmem->regchk;
+	return $wpmem->form_state;
+}
+
+/**
+ * Clears the form state.
+ * 
+ * @since 3.6.0
+ */
+function wpmem_clear_form_state() {
+	global $wpmem;
+	$wpmem->form_state = '';
+	$wpmem->error = '';
+}
+
+/**
+ * Gets the present action.
+ * 
+ * @since 3.6.0
+ */
+function wpmem_get_current_action() {
+	global $wpmem;
+	return $wpmem->action;
 }
 
 if ( ! function_exists( 'wpmem_login_form' ) ):
