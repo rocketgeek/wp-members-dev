@@ -961,7 +961,7 @@ class WP_Members {
 			
 			case 'register':
 			case 'update':
-				// Possible return values: updaterr
+				// Possible return values: updaterr|reg_error
 				$form_state = wpmem_user_register( $action  );
 				break;
 

@@ -783,7 +783,7 @@ function wpmem_user_register( $tag = "register" ) {
 
 		// If there's an error after the _pre_update_data action.
 		if ( wpmem_has_error() ) {
-			return "updaterr";
+			return "reg_error";
 		}
 
 		// Error checks and form validation are complete at this point.

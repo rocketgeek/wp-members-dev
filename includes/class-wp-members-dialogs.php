@@ -37,7 +37,15 @@ class WP_Members_Dialogs {
 	function get_text( $tag ) {
 		global $wpmem;
 		
-		// Default Form Fields.
+		/*
+		 * Default Form Fields.
+		 * 
+		 * These are the default form fields used in the plugin.  Localization is
+		 * applied in several places dynamically, depending upon the meta key of
+		 * the field being used, so those will show up as translatable strings of
+		 * a variable.  The variable should not be changed.  Instead, use these
+		 * values for translation.
+		 */
 		$default_form_fields = array(
 			'first_name'       => esc_html__( 'First Name', 'wp-members' ),
 			'last_name'        => esc_html__( 'Last Name', 'wp-members' ),
