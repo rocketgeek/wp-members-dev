@@ -21,9 +21,7 @@ class WP_Members_Forms {
 	 *
 	 * @since 3.1.0
 	 */
-	function __construct() {
-		
-	}
+	public function __construct() {}
 
 	/**
 	 * Sets the registration fields.
@@ -171,7 +169,7 @@ class WP_Members_Forms {
 	 *
 	 * @param array $fields
 	 */
-	function localize_fields( $fields ) {
+	public function localize_fields( $fields ) {
 		if ( function_exists( 'wpmem_custom_translation_strings' ) ) {
 			$string_map = wpmem_custom_translation_strings( get_locale() );
 			foreach ( $string_map as $meta_key => $value ) {
@@ -202,7 +200,7 @@ class WP_Members_Forms {
 	 * @param  string $tag A tag so we know where the function is being used.
 	 * @return array       The excluded fields.
 	 */
-	function excluded_fields( $tag ) {
+	public function excluded_fields( $tag ) {
 
 		// Default excluded fields.
 		$excluded_fields = array( 'password', 'confirm_password', 'confirm_email', 'password_confirm', 'email_confirm' );
@@ -290,7 +288,7 @@ class WP_Members_Forms {
 	 * }
 	 * @return string $str The field returned as a string.
 	 */
-	function create_form_field( $args ) {
+	public function create_form_field( $args ) {
 
 		// Set defaults for most possible $args.
 		$id          = ( isset( $args['id'] ) ) ? esc_attr( $args['id'] ) : esc_attr( $args['name'] );
@@ -484,7 +482,7 @@ class WP_Members_Forms {
 	 * }
 	 * @return string $label
 	 */
-	function create_form_label( $args ) {
+	public function create_form_label( $args ) {
 
 		$defaults = array( 
 			'meta_key'   => $args['meta_key'],
@@ -562,7 +560,7 @@ class WP_Members_Forms {
 	 * }
 	 * @return string $form  The HTML for the form as a string.
 	 */
-	function login_form( $mixed, $arr = array() ) {
+	public function login_form( $mixed, $arr = array() ) {
 		
 		global $wpmem;
 
@@ -946,7 +944,7 @@ class WP_Members_Forms {
 	 * @param  mixed  $mixed        (optional) String toggles between new registration ('new') and user profile edit ('edit'), or array containing settings arguments.
 	 * @return string $form         The HTML for the entire form as a string.
 	 */
-	function register_form( $mixed = 'new', $redirect_to = null ) {
+	public function register_form( $mixed = 'new', $redirect_to = null ) {
 		
 		/*
 		 * Removes the action to load form elements for the WP registration 
@@ -1623,7 +1621,7 @@ class WP_Members_Forms {
 	 * @global  stdClass  $wpmem
 	 * @param   string    $process
 	 */
-	function wp_register_form( $process = 'wp' ) {
+	public function wp_register_form( $process = 'wp' ) {
 
 		global $wpmem;
 		$wpmem_fields = wpmem_fields( $process );
@@ -1838,7 +1836,7 @@ class WP_Members_Forms {
 	 *
 	 * @global stdClass $wpmem
 	 */
-	function wp_newuser_form() {
+	public function wp_newuser_form() {
 
 		global $wpmem;
 		echo '<table class="form-table"><tbody>';
@@ -1956,7 +1954,7 @@ class WP_Members_Forms {
 	 * @global object $wpmem
 	 * @return string $str
 	 */
-	function attribution() {
+	private function attribution() {
 
 		global $wpmem;
 		$str = '
@@ -1983,7 +1981,7 @@ class WP_Members_Forms {
 	 * @param   array     $args
 	 * @return  string    $form
 	 */
-	function do_shortform( $form, $args = array() ) {
+	public function do_shortform( $form, $args = array() ) {
 
 		$input_arrays = array(
 			'login' => array(
@@ -2181,7 +2179,7 @@ class WP_Members_Forms {
 	 *
 	 * @since 3.3.2
 	 */
-	function wp_login_form( $args ) {
+	public function wp_login_form( $args ) {
 		return wp_login_form( $args );
 	}
 	
@@ -2194,7 +2192,7 @@ class WP_Members_Forms {
 	 * @param  string $tag
 	 * @return string
 	 */
-	function get_tos_link( $field, $tag = 'new' ) {
+	public function get_tos_link( $field, $tag = 'new' ) {
 		global $wpmem;
 		// Determine if TOS is a WP page or not.
 		$tos_content = stripslashes( get_option( 'wpmembers_tos' ) );
@@ -2243,23 +2241,28 @@ class WP_Members_Forms {
 		return sprintf( $tos_link_text, $tos_link_tag, '</a>' );
 	}
 	
-	function get_reg_row_keys() {
+	private function get_reg_row_keys() {
 		return array( 'meta', 'type', 'value', 'values', 'label_text', 'row_before', 'label', 'field_before', 'field', 'field_after', 'row_after' );
 	}
 
-	function is_reg_form_showing() {
+	public function is_reg_form_showing() {
 		return $this->reg_form_showing;
 	}
 
-	function set_reg_form_showing( $value ) {
+	private function set_reg_form_showing( $value ) {
 		$this->reg_form_showing = $value;
 	}
 
 	/**
 	 * Applies the label link if there is a label_href val in the args.
+	 * 
 	 * @since 3.5.4
+	 * 
+	 * @param  string  $meta_key
+	 * @param  array   $args
+	 * @return string
 	 */
-	function apply_label_link( $meta_key, $args ) {
+	private function apply_label_link( $meta_key, $args ) {
 		// Adjust placeholders.
 		$label_text = str_replace( '%', '%s', esc_html__( $args['label'], 'wp-members' ) );
 

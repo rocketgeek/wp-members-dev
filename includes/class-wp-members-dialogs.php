@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WP_Members_Dialogs {
 	
-	function __construct() {
+	public function __construct() {
 		if ( ! get_option( 'wpmem_legacy_dialogs' ) ) {
 			add_filter( 'wpmem_msg_defaults', array( $this, 'map_deprecated_dialogs' ), 10, 3 );
 		}
@@ -292,7 +292,7 @@ class WP_Members_Dialogs {
 	 * @param  string  $custom  Custom message.
 	 * @return string  $message 
 	 */
-	function get_message( $pretag, $custom = false ) {
+	public function get_message( $pretag, $custom = false ) {
 
 		if ( is_wp_error( $pretag ) ) {
 			$tag = $pretag->get_error_code();
