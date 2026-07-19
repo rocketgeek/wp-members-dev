@@ -212,6 +212,7 @@ class WP_Members_Admin_Posts {
 		); ?>
 		<p><?php
 			echo '<span id="wpmem_post_icon_' . esc_attr( $post_meta_value ) . '" class="dashicons dashicons-' . esc_attr( $post_meta_settings[ $post_meta_value ]['key'] ) . '"></span>';
+			/* translators: "Status" and "Edit" translated in core WP */
 			esc_html_e( 'Status:', 'wp-members' ); ?> <span id="wpmem_post_block_status"><?php echo esc_html( $post_meta_settings[ $post_meta_value ]['text'] ); ?></span> <a href="#" class="hide-if-no-js" id="wpmem_edit_block_status"><?php esc_html_e( 'Edit' ); ?></a>
 		</p>
 		<p>
@@ -226,8 +227,8 @@ class WP_Members_Admin_Posts {
 			echo '<input type="hidden" id="wpmem_block_original_value" name="wpmem_block_original_value" value="' . esc_attr( $original_value ) . '" />';
 			echo '<input type="hidden" id="wpmem_block_original_label" name="wpmem_block_original_label" value="' . esc_attr( $original_label ) . '" />';
 			?>
-			<p>
-				<a href="#" class="hide-if-no-js button" id="wpmem_ok_block_status"><?php esc_html_e( 'Ok' ); ?></a>
+			<p><?php /* translators: "Ok" and "Cancel" are translated in core WP */ ?>
+				<a href="#" class="hide-if-no-js button" id="wpmem_ok_block_status"><?php esc_html_e( 'OK' ); ?></a>
 				<!--<a href="#" class="hide-if-no-js" id="wpmem_cancel_block_status"><?php esc_html_e( 'Cancel' ); ?></a>--><?php // @todo Cannot use this until js is updated to set the radio group back to the original value (otherwise it's confusing for the user). ?>
 			</p>
 			</div>

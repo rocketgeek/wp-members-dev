@@ -183,6 +183,7 @@ class WP_Members_Admin_Tab_Captcha {
 										</tr>
 										<tr>
 											<th scope="row"><?php esc_html_e( 'Image dimensions', 'wp-members' ); ?></th>
+											<?php /* translators: "Width" and "Height" are translated in core WP */ ?>
 											<td><?php esc_html_e( 'Width' ); ?> <input name="dim_w" type="text" size="2" value="<?php echo esc_attr( $args['dim_w'] ); ?>" /> <?php esc_html_e( 'Height' ); ?> <input name="dim_h" type="text" size="2" value="<?php echo esc_attr( $args['dim_h'] ); ?>" /></td>
 										</tr>
 										<tr>

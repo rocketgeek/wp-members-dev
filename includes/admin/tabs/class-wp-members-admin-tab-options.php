@@ -57,8 +57,8 @@ class WP_Members_Admin_Tab_Options {
 		// Build an array of post types
 		$post_types = $wpmem->admin->post_types();
 		$post_arr = array(
-			'post' => esc_html__( 'Posts' ),
-			'page' => esc_html__( 'Pages' ),
+			'post' => esc_html__( 'Posts' ), /* translators: "Posts" is translated in core WP */
+			'page' => esc_html__( 'Pages' ), /* translators: "Pages" is translated in core WP */
 		);
 		if ( $post_types ) {
 			foreach ( $post_types  as $post_type ) { 
@@ -308,7 +308,8 @@ class WP_Members_Admin_Tab_Options {
 									$captcha[] = esc_html__( 'hCaptcha', 'wp-members' ) . '|5';
 									wpmem_form_field_echo( 'wpmem_settings_captcha', 'select', $captcha, $wpmem->captcha ); ?>
 								  </li>
-								<h3><?php esc_html_e( 'Pages' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#pages" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
+								<h3><?php /* translators: "Pages" is translated in core WP */
+									esc_html_e( 'Pages' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#pages" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								  <?php
 									$user_pages = array(
 										'log' => array(
@@ -339,7 +340,8 @@ class WP_Members_Admin_Tab_Options {
 										</div>
 									</li><?php
 								} ?>
-								<h3><?php esc_html_e( 'Stylesheet' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#styles" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
+								<h3><?php /* translators: "Stylesheet" is translated in core WP */ 
+									esc_html_e( 'Stylesheet' ); ?> <a href="https://rocketgeek.com/plugins/wp-members/docs/plugin-settings/options/#styles" target="_blank" title="info" data-tooltip="<?php esc_html_e( 'Click the icon for documentation', 'wp-members' ); ?>"><span class="dashicons dashicons-info"></span></a></h3>
 								  <?php
 								  if ( $wpmem->cssurl != trailingslashit( $wpmem->url ) . 'assets/css/forms/generic-no-float.min.css'
 								    && $wpmem->cssurl != trailingslashit( $wpmem->url ) . 'assets/css/forms/generic-no-float.css' ) {

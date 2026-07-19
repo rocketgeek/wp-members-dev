@@ -240,8 +240,8 @@ class WP_Members_Products_Admin {
 		global $wpmem;
 		// @todo This comes from option tab. Should consider it being an api function.
 		$post_arr = array(
-			'post' => esc_html__( 'Posts' ),
-			'page' => esc_html__( 'Pages' ),
+			'post' => esc_html__( 'Posts' ), /* translators: "Posts" is translated in core WP */
+			'page' => esc_html__( 'Pages' ), /* translators: "Pages" is translated in core WP */
 		);
 		if ( ! empty( $wpmem->post_types ) ) {
 			foreach ( $wpmem->post_types as $key => $post_type ) {

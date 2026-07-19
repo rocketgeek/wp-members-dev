@@ -138,12 +138,13 @@ class WP_Members_Fields_Table extends WP_List_Table {
 	 * @return array $actions
 	 */
 	function get_bulk_actions() {
+		/* translators: "Bulk actions" is translated in core WP */
 		echo '<select name="action" id="bulk-action-selector-top">
 <option value="-1">' . esc_html__( 'Bulk actions' ) . '</option>
 	<option value="delete">' . esc_html__( 'Delete Selected', 'wp-members' ) . '</option>
 	<option value="save">' . esc_html__( 'Save Settings', 'wp-members' ) . '</option>
-</select>
-<input type="submit" name="update_fields" id="doaction" class="button action" value="' . esc_html__( 'Apply' ) . '" />
+</select>'; /* translators: "Apply" is translated in core WP */
+echo '<input type="submit" name="update_fields" id="doaction" class="button action" value="' . esc_html__( 'Apply' ) . '" />
 <input type="submit" name="add_field" id="add_field" class="button action" value="' . esc_html__( 'Add Field', 'wp-members' ) . '" />';
 		return array();
 	}

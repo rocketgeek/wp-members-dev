@@ -142,6 +142,7 @@ class WP_Members_User_Profile {
 
 					// Is this an image or a file?
 					if ( 'file' == $field['type'] || 'image' == $field['type'] ) {
+						/* translators: "None" is translated in core WP */
 						$empty_file = '<span class="description">' . esc_html__( 'None' ) . '</span>';
 						$sanitized_val = intval( $val );
 						if ( 'file' == $field['type'] ) {
@@ -193,6 +194,7 @@ class WP_Members_User_Profile {
 					}
 
 					// Is the field required?
+					/* translators: "(required)" is translated in core WP */
 					$req = ( $field['required'] ) ? ' <span class="description">' . esc_html__( '(required)' ) . '</span>' : '';
 					$label = '<label>' . wpmem_get_field_label( $meta ) . $req . '</label>';
 					
